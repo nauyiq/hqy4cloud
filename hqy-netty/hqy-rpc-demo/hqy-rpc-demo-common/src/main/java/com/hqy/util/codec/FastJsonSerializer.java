@@ -10,17 +10,17 @@ import java.util.Objects;
  * @project: hqy-parent
  * @create 2021-07-08 17:38
  */
-public class FastJsonSerializer implements Serializer {
+public class FastJsonSerializer  {
 
     private FastJsonSerializer(){};
 
-    private volatile FastJsonSerializer instance;
+    private static volatile FastJsonSerializer instance;
 
-    public FastJsonSerializer getInstance() {
+    public static FastJsonSerializer getInstance() {
 
         if (Objects.isNull(instance)) {
 
-            synchronized (this) {
+            synchronized (FastJsonSerializer.class) {
                 instance = new FastJsonSerializer();
             }
         }
@@ -28,13 +28,11 @@ public class FastJsonSerializer implements Serializer {
     }
 
 
-    @Override
-    public byte[] encode(Object target) {
+    public static byte[] encode(Object target) {
         return JsonUtil.toJsonBytes(target);
     }
 
-    @Override
-    public Object decode(byte[] bytes, Class<?> targetClass) {
+    public static Object decode(byte[] bytes, Class<?> targetClass) {
         return JsonUtil.byteParseObject(bytes, targetClass);
     }
 }

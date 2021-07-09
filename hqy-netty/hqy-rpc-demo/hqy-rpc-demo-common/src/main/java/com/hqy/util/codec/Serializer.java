@@ -8,7 +8,7 @@ package com.hqy.util.codec;
  */
 public interface Serializer {
 
-    byte[] encode(Object target);
+     byte[] encode(Object target);
 
     Object decode(byte[] bytes, Class<?> targetClass);
 
