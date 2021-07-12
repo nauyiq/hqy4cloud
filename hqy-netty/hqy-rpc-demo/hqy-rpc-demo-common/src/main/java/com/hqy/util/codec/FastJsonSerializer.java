@@ -28,11 +28,11 @@ public class FastJsonSerializer  {
     }
 
 
-    public static byte[] encode(Object target) {
+    public byte[] encode(Object target) {
         return JsonUtil.toJsonBytes(target);
     }
 
-    public static Object decode(byte[] bytes, Class<?> targetClass) {
+    public Object decode(byte[] bytes, Class<?> targetClass) {
         return JsonUtil.byteParseObject(bytes, targetClass);
     }
 }

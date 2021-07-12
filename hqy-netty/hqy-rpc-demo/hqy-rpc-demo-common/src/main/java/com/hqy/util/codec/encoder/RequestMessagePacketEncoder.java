@@ -1,6 +1,6 @@
 package com.hqy.util.codec.encoder;
 
-import com.hqy.util.codec.Serializer;
+import com.hqy.util.codec.FastJsonSerializer;
 import com.hqy.util.dto.RequestMessagePacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,8 +18,6 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class RequestMessagePacketEncoder extends MessageToByteEncoder<RequestMessagePacket> {
-
-    private final Serializer serializer;
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, RequestMessagePacket requestMessagePacket, ByteBuf byteBuf) throws Exception {
@@ -67,7 +65,7 @@ public class RequestMessagePacketEncoder extends MessageToByteEncoder<RequestMes
             // 方法参数数组长度
             byteBuf.writeInt(len);
             for (int i = 0; i < len; i++) {
-                byte[] bytes = serializer.encode(requestMessagePacket.getMethodArguments()[i]);
+                byte[] bytes = FastJsonSerializer.getInstance().encode(requestMessagePacket.getMethodArguments()[i]);
                 byteBuf.writeInt(bytes.length);
                 byteBuf.writeBytes(bytes);
             }
