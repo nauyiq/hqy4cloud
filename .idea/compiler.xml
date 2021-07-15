@@ -10,6 +10,7 @@
         <module name="hqy-rpc-demo-common" />
         <module name="hqy-netty-core" />
         <module name="hqy-util" />
+        <module name="hqy-netty-test" />
         <module name="hqy-rpc-demo-client" />
       </profile>
     </annotationProcessing>
