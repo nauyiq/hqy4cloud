@@ -9,7 +9,7 @@
         <result column="serial" property="serial" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.hqy.cloud.entity.Payment" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertById" parameterType="com.hqy.cloud.entity.Payment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO payment(SERIAL) VALUES(#{serial});
     </insert>
 

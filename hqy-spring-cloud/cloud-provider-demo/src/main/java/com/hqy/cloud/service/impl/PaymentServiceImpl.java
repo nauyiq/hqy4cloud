@@ -3,6 +3,7 @@ package com.hqy.cloud.service.impl;
 import com.hqy.cloud.dao.PaymentDao;
 import com.hqy.cloud.entity.Payment;
 import com.hqy.cloud.service.PaymentService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
  * @author qy
  * @create 2021/7/15 23:56
  */
+@Service
 public class PaymentServiceImpl implements PaymentService {
 
     @Resource
@@ -22,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment selectById(Long id) {
-        return paymentDao.selectById(id);
+        return paymentDao.selectByPrimaryKey(id);
     }
 
 }

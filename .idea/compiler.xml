@@ -7,11 +7,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="hqy-rpc-demo-common" />
-        <module name="hqy-netty-core" />
+        <module name="cloud-provider-demo" />
         <module name="hqy-util" />
-        <module name="hqy-netty-test" />
+        <module name="hqy-base-common" />
+        <module name="cloud-consumer-demo" />
+        <module name="cloud-eureka-server" />
         <module name="hqy-rpc-demo-client" />
+        <module name="cloud-common-data" />
+        <module name="hqy-base-common-dao" />
+        <module name="cloud-eureka-client" />
+        <module name="hqy-test" />
+        <module name="hqy-netty-test" />
+        <module name="cloud-zookeeper-demo" />
+        <module name="hqy-netty-core" />
+        <module name="cloud-consul-demo" />
+        <module name="hqy-rpc-demo-common" />
       </profile>
     </annotationProcessing>
   </component>
