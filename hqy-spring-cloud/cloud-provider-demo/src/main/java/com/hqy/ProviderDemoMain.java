@@ -11,7 +11,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan(basePackages = "com.hqy.cloud.mapper")
+@MapperScan(basePackages = "com.hqy.cloud.dao")
 public class ProviderDemoMain {
     public static void main(String[] args) {
         SpringApplication.run(ProviderDemoMain.class, args);

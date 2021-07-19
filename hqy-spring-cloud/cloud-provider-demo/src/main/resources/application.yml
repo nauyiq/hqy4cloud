@@ -22,7 +22,7 @@ eureka:
     #访问路径可以显示IP地址
     prefer-ip-address: true
 mybatis:
-  mapperLocations: com.hqy.cloud.mapper/*.xml
+  mapperLocations: classpath:mapper/*.xml
   type-aliases-package: com.hqy    # 所有Entity别名类所在包
   configuration:
     map-underscore-to-camel-case: true
