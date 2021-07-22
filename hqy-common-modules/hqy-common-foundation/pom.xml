@@ -3,22 +3,21 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-parent</artifactId>
+        <artifactId>hqy-common-modules</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
-    <modules>
-        <module>hqy-rpc-demo</module>
-        <module>hqy-netty-core</module>
-        <module>hqy-netty-test</module>
-        <module>hqy-netty-text-websocket</module>
-    </modules>
-
+    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-netty</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>hqy-common-foundation</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+    </dependencies>
 
 
 </project>

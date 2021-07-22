@@ -12,7 +12,7 @@ import javax.persistence.Table;
  * @create 2021/7/15 23:51
  */
 @Data
-@Table(name = "payment")
+@Table(name = "t_payment")
 public class Payment {
 
     @Id

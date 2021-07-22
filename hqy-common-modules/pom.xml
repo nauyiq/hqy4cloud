@@ -7,18 +7,14 @@
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
-    <modules>
-        <module>hqy-rpc-demo</module>
-        <module>hqy-netty-core</module>
-        <module>hqy-netty-test</module>
-        <module>hqy-netty-text-websocket</module>
-    </modules>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-netty</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>hqy-common-foundation</module>
+    </modules>
+
+    <artifactId>hqy-common-modules</artifactId>
 
 
 </project>
