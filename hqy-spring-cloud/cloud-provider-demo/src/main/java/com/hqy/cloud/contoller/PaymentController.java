@@ -4,11 +4,14 @@ import com.hqy.cloud.entity.Payment;
 import com.hqy.cloud.service.PaymentService;
 import com.hqy.common.bind.DataResponse;
 import com.hqy.common.bind.MessageResponse;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author qy
@@ -38,7 +41,11 @@ public class PaymentController {
 
 
     @GetMapping(value = "/payment/get/{id}")
-    public MessageResponse getPaymentById(@PathVariable("id") Long id) {
+    @HystrixCommand(fallbackMethod = "getPaymentByDefault", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value="3000")
+    })
+    public MessageResponse getPaymentById(@PathVariable("id") Long id) throws InterruptedException {
+        TimeUnit.SECONDS.sleep(5);
         Payment payment = paymentService.selectById(id);
         log.info("*****查询结果:{}", payment);
         if (payment != null) {
@@ -46,6 +53,10 @@ public class PaymentController {
         } else {
             return new MessageResponse(false, "没有对应记录,查询ID: " + id, 400);
         }
+    }
+
+    public MessageResponse getPaymentByDefault() {
+        return new MessageResponse(false, "try again latter", 500);
     }
 
 
