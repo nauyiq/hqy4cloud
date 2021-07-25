@@ -7,7 +7,11 @@ spring:
     config:
       server:
         git:
-          uri:
+          uri: git@github.com:nauyiq/hqy-parent-all.git
+          search-paths:
+            - hqy-spring-cloud/cloud-config
+      label: master
+
 eureka:
   client:
     register-with-eureka: true #表示是否将自己注册进EurekaServer默认为true。
