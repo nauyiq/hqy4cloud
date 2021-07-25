@@ -15,7 +15,10 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan(basePackages = "com.hqy.cloud.dao")
 @EnableCircuitBreaker
 public class ProviderDemoMain {
+
     public static void main(String[] args) {
         SpringApplication.run(ProviderDemoMain.class, args);
     }
+
+
 }

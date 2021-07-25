@@ -1,28 +1,16 @@
-package com.hqy.cloud;
+package com.hqy.cloud.config;
 
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author qy
- * @create 2021/7/15 23:34
+ * @create 2021/7/25 16:20
  */
-@SpringBootApplication
-@EnableFeignClients //表示启用openFeign客户端
-@EnableEurekaClient
-@EnableCircuitBreaker
-public class ConsumerDemoMain {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ConsumerDemoMain.class, args);
-    }
-
+@Configuration
+public class HystrixDashboardConfig {
 
     /**
      *此配置是为了服务监控而配置，与服务容错本身无关，springcloud升级后的坑

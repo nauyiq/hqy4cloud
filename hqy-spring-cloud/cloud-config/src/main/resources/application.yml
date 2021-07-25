@@ -1,0 +1,16 @@
+server:
+  port: 3344
+spring:
+  application:
+    name: cloud-config-center
+  cloud:
+    config:
+      server:
+        git:
+          uri:
+eureka:
+  client:
+    register-with-eureka: true #表示是否将自己注册进EurekaServer默认为true。
+    fetchRegistry: true  #是否从EurekaServer抓取已有的注册信息，默认为true。单节点无所谓，集群必须设置为true才能配合ribbon使用负载均衡
+    service-url:
+      defaultZone: http://localhost:10010/eureka

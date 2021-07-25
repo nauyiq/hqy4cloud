@@ -32,9 +32,10 @@
         <org.slf4j.version>1.7.30</org.slf4j.version>
         <tk.mybatis.version>2.1.2</tk.mybatis.version>
         <pagehelper.version>5.1.2</pagehelper.version>
-        <springboot.version>2.2.2.RELEASE</springboot.version>
+        <springboot.version>2.3.8.RELEASE</springboot.version>
         <springcloud.version>Hoxton.SR10</springcloud.version>
         <springcloud.alibaba.version>2.1.2.RELEASE</springcloud.alibaba.version>
+        <hutool.version>5.6.3</hutool.version>
     </properties>
 
 
@@ -74,12 +75,6 @@
                 <version>2.2.2.RELEASE</version>
             </dependency>
 
-            <!--slf4j-->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
 
             <!--mysql-connector-->
             <dependency>
@@ -114,11 +109,7 @@
                 <version>${junit.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
+
 
             <!-- springboot-tk mapper -->
             <dependency>
@@ -132,6 +123,14 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
+            </dependency>
+
+
+            <!--糊涂工具包-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -147,7 +146,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--slf4j-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -181,22 +191,12 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
 
     </dependencies>
 

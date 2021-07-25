@@ -4,7 +4,7 @@ eureka:
   instance:
     hostname: eureka.com  #eureka服务端的实例名称
   client:
-    register-with-eureka: true     #false表示不向注册中心注册自己。
+    register-with-eureka: false     #false表示不向注册中心注册自己。
     fetch-registry: false  #false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
     service-url:
       defaultZone: http://localhost:10010/eureka

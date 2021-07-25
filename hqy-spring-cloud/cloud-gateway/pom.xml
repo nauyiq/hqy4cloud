@@ -9,28 +9,30 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <modules>
-        <module>cloud-eureka-server</module>
-        <module>cloud-eureka-client</module>
-        <module>cloud-consul-demo</module>
-        <module>cloud-zookeeper-demo</module>
-    </modules>
-
-    <artifactId>cloud-registry</artifactId>
-
-    <packaging>pom</packaging>
+    <artifactId>cloud-gateway</artifactId>
 
     <dependencies>
+        <!--gateway-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!--eureka-client-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
+
+
     </dependencies>
+
 
 
 </project>

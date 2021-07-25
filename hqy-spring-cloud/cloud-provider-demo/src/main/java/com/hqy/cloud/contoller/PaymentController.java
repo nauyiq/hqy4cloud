@@ -1,5 +1,6 @@
 package com.hqy.cloud.contoller;
 
+import cn.hutool.core.util.IdUtil;
 import com.hqy.cloud.entity.Payment;
 import com.hqy.cloud.service.PaymentService;
 import com.hqy.common.bind.DataResponse;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author qy
@@ -39,13 +39,19 @@ public class PaymentController {
         }
     }
 
-
+    /**
+     * 服务降级...
+     * Hystrix指定方法降级 fallbackMethod = getPaymentByDefault
+     * @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds", value="3000") 超过3秒表示执行降级方法
+     * @param id
+     * @return
+     * @throws InterruptedException
+     */
     @GetMapping(value = "/payment/get/{id}")
-    @HystrixCommand(fallbackMethod = "getPaymentByDefault", commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value="3000")
+    @HystrixCommand(fallbackMethod = "getPaymentByDefault",commandProperties = {
+            @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds", value="3000")
     })
     public MessageResponse getPaymentById(@PathVariable("id") Long id) throws InterruptedException {
-        TimeUnit.SECONDS.sleep(5);
         Payment payment = paymentService.selectById(id);
         log.info("*****查询结果:{}", payment);
         if (payment != null) {
@@ -55,9 +61,30 @@ public class PaymentController {
         }
     }
 
-    public MessageResponse getPaymentByDefault() {
-        return new MessageResponse(false, "try again latter", 500);
+    public MessageResponse getPaymentByDefault(Long id) {
+        return new MessageResponse(false, "server interval error, try again latter.", 500);
     }
 
+
+    /**
+     * 服务熔断
+     * @param id
+     * @return
+     */
+    @HystrixCommand(fallbackMethod = "getPaymentByDefault",commandProperties = {
+            @HystrixProperty(name = "circuitBreaker.enabled",value = "true"), //是否开启断路器
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold",value = "10"), //请求次数
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",value = "10000"), //时间窗口值
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage",value = "50"), //失败率
+    })
+    @GetMapping(value = "/payment/circuitBreaker/{id}")
+    public MessageResponse paymentCircuitBreaker(@PathVariable("id") Long id) {
+        if (id < 0) {
+            throw new RuntimeException("server interval error, try again latter.");
+        }
+        String uuid = IdUtil.simpleUUID();
+        return new MessageResponse(true, "success, uuid:" + uuid, 0);
+
+    }
 
 }
