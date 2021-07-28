@@ -1,5 +1,5 @@
 env:
-  dev
+  test
 #rabbitmq相关配置
 spring:
   datasource:
