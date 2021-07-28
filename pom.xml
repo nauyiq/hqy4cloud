@@ -16,6 +16,7 @@
         <module>hqy-base-common</module>
         <module>hqy-base-common-dao</module>
         <module>hqy-common-modules</module>
+        <module>hqy-base-common-service</module>
     </modules>
 
     <properties>
