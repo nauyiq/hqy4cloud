@@ -2,6 +2,12 @@ env:
   dev
 #rabbitmq相关配置
 spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包 com.mysql.jdbc.Driver
+    url: jdbc:mysql://120.76.65.160:3306/hqy?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: hongqy@2021
   rabbitmq:
     host: 120.76.65.160
     port: 5672
