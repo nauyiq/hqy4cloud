@@ -11,11 +11,11 @@ import org.springframework.cloud.config.server.EnableConfigServer;
  */
 @SpringBootApplication
 @EnableConfigServer
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 public class CloudConfigMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(EnableDiscoveryClient.class, args);
+        SpringApplication.run(CloudConfigMain.class, args);
     }
 
 }
