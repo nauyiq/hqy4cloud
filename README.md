@@ -10,5 +10,6 @@
      *    path          在类路径、源文件路径等中有不存在的路径时的警告。
      *    serial        当在可序列化的类上缺少 serialVersionUID 定义时的警告。
      *    finally       任何 finally 子句不能正常完成时的警告。
+            rawtypes
      *    all           关于以上所有情况的警告。
      */

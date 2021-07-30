@@ -12,7 +12,7 @@ public class CommonSwitcher extends AbstractSwitcher {
     }
 
 
-    
+
 
     /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）
