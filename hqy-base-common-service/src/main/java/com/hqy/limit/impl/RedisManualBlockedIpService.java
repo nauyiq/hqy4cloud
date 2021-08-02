@@ -53,7 +53,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
         ip = ip.trim();
         cache.add(ip);
         timestampMap.put(ip, new Date().getTime() + blockSeconds * 1000L);
-        LettuceRedisUtil.sadd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
+        LettuceRedisUtil.StringSAdd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
     }
 
     @Override

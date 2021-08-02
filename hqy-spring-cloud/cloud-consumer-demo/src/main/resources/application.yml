@@ -3,6 +3,17 @@ server:
 spring:
   application:
     name: cloud-consumer-demo
+  cloud:
+    stream:
+      binders:
+        defaultRabbit:
+          type: rabbit
+      bindings:
+        input:
+          destination: messageExchange  #表示要使用的Exchange名称定义
+          content-type: application/json #设置消息类型，本次为json，文本则设置“text/plain”
+          binder: defaultRabbit
+          group: consumer8002 # 分组，可以解决消息重复消费的情况，同一组属于竞争关系，消息只能被组内的订阅者中 其中一员消费
 eureka:
   client:
     register-with-eureka: true #表示是否将自己注册进EurekaServer默认为true。

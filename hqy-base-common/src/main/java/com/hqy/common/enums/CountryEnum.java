@@ -1,6 +1,6 @@
 package com.hqy.common.enums;
 
-import com.hytto.gfw.lang.String.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,15 +144,15 @@ public enum CountryEnum {
 
 	;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(com.hytto.gfw.lang.CountryEnum.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CountryEnum.class);
 
-	public static com.hytto.gfw.lang.CountryEnum fromShortName(String xx) {
+	public static CountryEnum fromShortName(String xx) {
 		try {
-			return com.hytto.gfw.lang.CountryEnum.valueOf(xx);
+			return CountryEnum.valueOf(xx);
 		}catch(Exception ex) {
 			LOGGER.warn(ex.getMessage());
 			//默认返回南斯拉夫（不能存在的国家）
-			return com.hytto.gfw.lang.CountryEnum.DEFAULT_EMPTY;
+			return CountryEnum.DEFAULT_EMPTY;
 		}
 	}
 
@@ -174,7 +174,7 @@ public enum CountryEnum {
 	private static final Map<String, CountryEnum> countryEnumMap = new ConcurrentHashMap<>();
 
 	static {
-		for (com.hytto.gfw.lang.CountryEnum s : EnumSet.allOf(com.hytto.gfw.lang.CountryEnum.class)) {
+		for (CountryEnum s : EnumSet.allOf(CountryEnum.class)) {
 			countryEnumMap.put(s.getFullNameEn().toLowerCase().replaceAll(" ",""), s);
 		}
 	}
@@ -184,14 +184,14 @@ public enum CountryEnum {
 	 * @param fullNameEn toLowerCase
 	 * @return
 	 */
-	public static com.hytto.gfw.lang.CountryEnum getCountryEnumByFullNameEn(String fullNameEn) {
+	public static CountryEnum getCountryEnumByFullNameEn(String fullNameEn) {
 		if(StringUtils.isEmpty(fullNameEn)){
-			return com.hytto.gfw.lang.CountryEnum.DEFAULT_EMPTY;
+			return CountryEnum.DEFAULT_EMPTY;
 		}
 		fullNameEn = fullNameEn.toLowerCase().replaceAll(" ","");
-		com.hytto.gfw.lang.CountryEnum countryEnum = countryEnumMap.get(fullNameEn);
+		CountryEnum countryEnum = countryEnumMap.get(fullNameEn);
 		if(countryEnum == null){
-			countryEnum = com.hytto.gfw.lang.CountryEnum.DEFAULT_EMPTY;
+			countryEnum = CountryEnum.DEFAULT_EMPTY;
 			LOGGER.warn("### getCountryEnumByFullNameEn no found fullNameEn:{}",fullNameEn);
 		}
 		return countryEnum;
@@ -227,14 +227,5 @@ public enum CountryEnum {
 		return fullNameCn;
 	}
 
-	public static void main(String args[]) {
-		com.hytto.gfw.lang.CountryEnum xxCountryEnum=	com.hytto.gfw.lang.CountryEnum.getCountryEnumByFullNameEn("Hongkong");
-		System.out.println(xxCountryEnum);
-		System.out.println(xxCountryEnum.getFullNameCn());
-		System.out.println(xxCountryEnum.getFullNameEn());
-
-
-
-	}
 
 }

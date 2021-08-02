@@ -3,6 +3,21 @@ server:
 spring:
   application:
     name: cloud-provider-demo
+  rabbitmq:
+    host: 120.76.65.160
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    stream:
+      binders:
+        defaultRabbit:
+          type: rabbit
+      bindings:
+        output:
+          destination: messageExchange  #表示要使用的Exchange名称定义
+          content-type: application/json #设置消息类型，本次为json，文本则设置“text/plain”
+          binder: defaultRabbit
 eureka:
   client:
     register-with-eureka: true #表示是否将自己注册进EurekaServer默认为true。

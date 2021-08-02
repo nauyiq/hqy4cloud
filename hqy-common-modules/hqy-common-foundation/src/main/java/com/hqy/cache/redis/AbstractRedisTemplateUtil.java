@@ -382,7 +382,7 @@ public abstract class AbstractRedisTemplateUtil {
      * @param by   要增加几(大于0)
      * @return
      */
-    public static double hincr(String key, String item, double by) {
+    public static double hIncr(String key, String item, double by) {
         try {
             return redisTemplate.opsForHash().increment(key, item, by);
         } catch (Exception e) {
@@ -399,7 +399,7 @@ public abstract class AbstractRedisTemplateUtil {
      * @param by   要减少记(小于0)
      * @return
      */
-    public static double hdecr(String key, String item, double by) {
+    public static double hDecr(String key, String item, double by) {
         try {
             return redisTemplate.opsForHash().increment(key, item, -by);
         } catch (Exception e) {
@@ -456,7 +456,7 @@ public abstract class AbstractRedisTemplateUtil {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    public static Long sadd(String key, Object... values) {
+    public static Long sAdd(String key, Object... values) {
         try {
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
@@ -465,9 +465,10 @@ public abstract class AbstractRedisTemplateUtil {
         }
     }
 
-    public static void sadd(String key, String... values) {
+    public static void StringSAdd(String key, long time, String... values) {
         try {
             stringRedisTemplate.opsForSet().add(key, values);
+            if (time > 0) expire(key, time);
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
@@ -480,7 +481,7 @@ public abstract class AbstractRedisTemplateUtil {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    public static Long sadd(String key, long time, Object... values) {
+    public static Long sAdd(String key, long time, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().add(key, values);
             if (time > 0)
