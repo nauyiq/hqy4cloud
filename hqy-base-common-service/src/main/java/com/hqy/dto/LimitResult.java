@@ -5,7 +5,7 @@ package com.hqy.dto;
  * @project: hqy-parent-all
  * @create 2021-07-27 20:12
  */
-public class LimitResultDTO {
+public class LimitResult {
 
     /**
      * 是否限行， true表示拦截， false放行
@@ -22,7 +22,7 @@ public class LimitResultDTO {
      */
     private ReasonEum reason;
 
-    public LimitResultDTO(Boolean limit, ReasonEum reason) {
+    public LimitResult(Boolean limit, ReasonEum reason) {
         this.limit = limit;
         this.reason = reason;
     }

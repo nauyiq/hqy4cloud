@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.Serializable;
@@ -40,13 +41,18 @@ import java.io.Serializable;
 @SuppressWarnings("all")
 public class LettuceRedisConfig {
 
-    @Bean
-    public RedisTemplate<String, Serializable> redisTemplate(LettuceConnectionFactory connectionFactory) {
-        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        redisTemplate.setConnectionFactory(connectionFactory);
-        return redisTemplate;
+    @Bean(name = "LettuceRedisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory factory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        // key序列化
+        template.setKeySerializer(new StringRedisSerializer());
+        // value序列化
+        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        // Hash key序列化
+        template.setHashKeySerializer(new StringRedisSerializer());
+        // 配置连接工厂
+        template.setConnectionFactory(factory);
+        return template;
     }
 
 }

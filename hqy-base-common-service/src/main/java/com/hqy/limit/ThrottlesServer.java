@@ -1,22 +1,12 @@
 package com.hqy.limit;
 
-import com.hqy.util.IpUtil;
 
 /**
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-07-30 16:29
  */
-public interface Throttles {
-
-    /**
-     * 根据ip是否限制
-     * @param remoteAddress
-     * @return
-     */
-     default boolean needLimit(String remoteAddress) {
-         return !IpUtil.isIP(remoteAddress);
-     }
+public interface ThrottlesServer {
 
     /**
      * 解析字符串内容， 判断是否黑客攻击 比如xss
@@ -32,10 +22,19 @@ public interface Throttles {
      */
     boolean isWhiteIp(String remoteAddress);
 
+
     /**
-     * 是否是黑名单
-     * @param remoteAddress
+     ** 是否是行为分析的黑名单ip？
+     * @param remoteAddr
      * @return
      */
-    boolean isBlockedIp(String remoteAddress);
+    boolean isBIBlockedIp(String remoteAddr);
+
+
+    /**
+     * 是否是人工指定的拒绝访问的黑名单ip ？
+     * @param remoteAddr
+     * @return
+     */
+    boolean isManualBlockedIp(String remoteAddr);
 }
