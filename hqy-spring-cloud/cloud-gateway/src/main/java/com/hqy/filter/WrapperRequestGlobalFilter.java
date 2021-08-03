@@ -30,7 +30,7 @@ public class WrapperRequestGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        if (HttpGeneralSwitcher.ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER.isOff()) {
+        if (HttpGeneralSwitcher.ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER_FILTER.isOff()) {
             return chain.filter(exchange);
         }
 

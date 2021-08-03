@@ -1,8 +1,9 @@
 package com.hqy.limit;
 
+import com.hqy.common.HttpRequestInfo;
 import com.hqy.dto.LimitResult;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author qy
@@ -14,10 +15,20 @@ public interface HttpThrottles {
     /**
      * 是否允许本次客户端的请求？
      * 同一ip：每秒允许同一ip请求数. 默认8
-     * 基于servlet的httpRequest节流
      * @param request
      * @return
      */
-    LimitResult limitValue(HttpServletRequest request);
+    LimitResult limitValue(HttpRequestInfo request);
+
+    /**
+     * 检查是否是黑客访问.....
+     * @param requestParams
+     * @param requestIp
+     * @param uri
+     * @param urlOrQueryString
+     * @return
+     */
+    LimitResult checkHackAccess(@SuppressWarnings("rawtypes")Map requestParams, String requestIp, String uri, String urlOrQueryString);
+
 
 }

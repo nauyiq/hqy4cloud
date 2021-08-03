@@ -11,7 +11,10 @@ public class CommonSwitcher extends AbstractSwitcher {
         super(id, name, status);
     }
 
-
+    /**
+     * 节点-是否启用共享的BIBlockIP清单（Redis）;如果false 各个项目自行维护本地缓存的BI的ip禁止名单。
+     */
+    public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(216,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
 
 
     /**

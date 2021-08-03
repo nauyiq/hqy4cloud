@@ -12,11 +12,15 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
 
 
     /**
-     * 节点(Web)-是否启用http请求体 可重复读的请求包装器 20210630 默认开
+     * 节点(Web)-是否启用http请求体 可重复读的请求包装过滤器 20210630 默认开
      */
-    public static final HttpGeneralSwitcher ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER = new HttpGeneralSwitcher(101,"节点(Web)-是否启用http请求体 可重复读的请求包装器",true);
+    public static final HttpGeneralSwitcher ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER_FILTER = new HttpGeneralSwitcher(101,"节点(Web)-是否启用http请求体 可重复读的请求包装过滤器",true);
 
 
+    /**
+     * 节点-是否启用(URI 和请求参数中xss攻击防范)参数校验的限流器...
+     */
+    public static final HttpGeneralSwitcher ENABLE_HTTP_THROTTLE_SECURITY_CHECKING = new HttpGeneralSwitcher(151,"节点-是否启用HTTP限流安全侦测(黑客)",true);
 
 
     protected HttpGeneralSwitcher(int id, String name, boolean status) {

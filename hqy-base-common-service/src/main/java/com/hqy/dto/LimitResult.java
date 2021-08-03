@@ -27,6 +27,15 @@ public class LimitResult {
         this.reason = reason;
     }
 
+    public LimitResult(Boolean limit, String tip, ReasonEum reason) {
+        this.limit = limit;
+        this.tip = tip;
+        this.reason = reason;
+    }
+
+    public LimitResult() {
+    }
+
     public enum ReasonEum {
 
         /**
@@ -82,7 +91,7 @@ public class LimitResult {
         /**
          * 人工指定的黑名单，，限行
          */
-        MAN_MADE_BLOCKED_IP_NG(50408),
+        MANUAL_BLOCKED_IP_NG(50408),
 
         /**
          * BI行为分析的黑名单ip，限行

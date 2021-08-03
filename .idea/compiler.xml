@@ -12,6 +12,7 @@
         <module name="hqy-util" />
         <module name="cloud-eureka-client" />
         <module name="hqy-base-common" />
+        <module name="cloud-consul-demo" />
         <module name="cloud-consumer-demo" />
         <module name="cloud-eureka-server" />
         <module name="hqy-rpc-demo-client" />
@@ -22,10 +23,9 @@
         <module name="hqy-test" />
         <module name="hqy-netty-test" />
         <module name="cloud-hystrix-dashboard" />
-        <module name="cloud-zookeeper-demo" />
         <module name="hqy-netty-text-websocket" />
         <module name="hqy-netty-core" />
-        <module name="cloud-consul-demo" />
+        <module name="cloud-zookeeper-demo" />
         <module name="hqy-rpc-demo-common" />
         <module name="hqy-common-foundation" />
       </profile>

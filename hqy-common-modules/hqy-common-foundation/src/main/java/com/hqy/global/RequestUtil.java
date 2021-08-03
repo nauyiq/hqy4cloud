@@ -1,4 +1,4 @@
-package com.hqy.util;
+package com.hqy.global;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;

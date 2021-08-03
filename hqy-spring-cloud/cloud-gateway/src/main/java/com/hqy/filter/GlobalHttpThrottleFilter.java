@@ -1,7 +1,7 @@
 package com.hqy.filter;
 
 import com.hqy.util.IpUtil;
-import com.hqy.util.RequestUtil;
+import com.hqy.global.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;

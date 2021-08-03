@@ -4,17 +4,19 @@ import com.hqy.cache.redis.LettuceRedisUtil;
 import com.hqy.limit.ManualBlockedIpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 
 /**
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-08-02 10:51
  */
-@Component
+@Service
 @Slf4j
 public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
@@ -25,7 +27,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
     private static final Map<String, Long> timestampMap = new ConcurrentHashMap<>();
 
     //内存存放被人工指定限制的ip
-    private static final Set<String> cache = new HashSet<>();
+    private static final Set<String> cache = new CopyOnWriteArraySet<>();
 
     //定时load redis数据到内存中, 减少网络请求 提高效率
     private static final Timer timer = new Timer(RedisManualBlockedIpService.class.getName());
