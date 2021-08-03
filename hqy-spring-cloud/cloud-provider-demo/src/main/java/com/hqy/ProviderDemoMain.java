@@ -13,7 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @MapperScan(basePackages = "com.hqy.cloud.dao")
-@EnableCircuitBreaker
+//@EnableCircuitBreaker
 public class ProviderDemoMain {
 
     public static void main(String[] args) {

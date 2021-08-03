@@ -9,7 +9,7 @@ package com.hqy.cache.simple;
 public class NoProlongedCache {
 
 
-    private static
+//    private static
 
 
 }
