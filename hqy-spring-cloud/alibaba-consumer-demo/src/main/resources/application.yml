@@ -1,0 +1,12 @@
+server:
+  port: 80
+spring:
+  application:
+    name: alibaba-consumer-demo
+  cloud:
+    nacos: #注册中心改用nacos
+      discovery:
+        server-addr: localhost:8848 #配置nacos地址
+
+service-url:
+  nacos-user-service: http://alibaba-provider-demo

@@ -18,6 +18,8 @@
         <module>cloud-hystrix-dashboard</module>
         <module>cloud-gateway</module>
         <module>cloud-config</module>
+        <module>alibaba-provider-demo</module>
+        <module>alibaba-consumer-demo</module>
     </modules>
 
     <artifactId>hqy-spring-cloud</artifactId>

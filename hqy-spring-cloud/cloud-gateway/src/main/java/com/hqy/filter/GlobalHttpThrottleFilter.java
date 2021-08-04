@@ -11,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
  * @create 2021-07-27 16:42
  */
 @Slf4j
+@Component
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     @Resource
