@@ -10,10 +10,11 @@ public interface ThrottlesServer {
 
     /**
      * 解析字符串内容， 判断是否黑客攻击 比如xss
-     * @param paramStringOrUri
+     * @param paramStringOrUri 请求url或者请求参数
+     * @param mode 0：参数校验模式 1：uri校验模式
      * @return
      */
-    boolean isHackAccess(String paramStringOrUri);
+    boolean isHackAccess(String paramStringOrUri, int mode);
 
     /**
      * 是否是白名单
@@ -30,6 +31,20 @@ public interface ThrottlesServer {
      */
     boolean isBIBlockedIp(String remoteAddr);
 
+    /**
+     * bi行为分析 添加黑名单 并设置封禁的时间
+     * @param remoteAddr
+     * @param blockSeconds
+     */
+    void addBiBlockIp(String remoteAddr, Integer blockSeconds);
+
+    /**
+     * 添加人工手动黑名单 并设置封禁的时间
+     * @param remoteAddr
+     * @param blockSeconds
+     */
+    void addManualBlockIp(String remoteAddr, Integer blockSeconds);
+
 
     /**
      * 是否是人工指定的拒绝访问的黑名单ip ？
@@ -37,4 +52,8 @@ public interface ThrottlesServer {
      * @return
      */
     boolean isManualBlockedIp(String remoteAddr);
+
+
+
+
 }

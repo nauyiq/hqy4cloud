@@ -156,7 +156,6 @@ public abstract class AbstractRedisTemplateUtil {
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
-
     }
 
     /**
@@ -172,6 +171,7 @@ public abstract class AbstractRedisTemplateUtil {
         }
     }
 
+
     /**
      * 缓存String类型的value， 使用指定时间， 单位秒
      * @param key
@@ -183,6 +183,15 @@ public abstract class AbstractRedisTemplateUtil {
             stringRedisTemplate.opsForValue().set(key, value, second, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("操作失败: ", e);
+        }
+    }
+
+    public static Boolean stringSetEx(String key, String value, Long second) {
+        try {
+            return stringRedisTemplate.opsForValue().setIfPresent(key, value, second, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.error("操作失败: ", e);
+            return false;
         }
     }
 

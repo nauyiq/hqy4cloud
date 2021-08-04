@@ -10,7 +10,7 @@ public class LimitResult {
     /**
      * 是否限行， true表示拦截， false放行
      */
-    private Boolean limit;
+    private Boolean limit = false;
 
     /**
      * 拦截的辅助提示信息，url，ua等等...
@@ -20,14 +20,14 @@ public class LimitResult {
     /**
      * 拦截的原因
      */
-    private ReasonEum reason;
+    private ReasonEnum reason = ReasonEnum.NOT_ENABLE_HTTP_THROTTLE_OK;
 
-    public LimitResult(Boolean limit, ReasonEum reason) {
+    public LimitResult(Boolean limit, ReasonEnum reason) {
         this.limit = limit;
         this.reason = reason;
     }
 
-    public LimitResult(Boolean limit, String tip, ReasonEum reason) {
+    public LimitResult(Boolean limit, String tip, ReasonEnum reason) {
         this.limit = limit;
         this.tip = tip;
         this.reason = reason;
@@ -36,7 +36,9 @@ public class LimitResult {
     public LimitResult() {
     }
 
-    public enum ReasonEum {
+
+
+    public enum ReasonEnum {
 
         /**
          * 无条件放行，
@@ -113,7 +115,7 @@ public class LimitResult {
 
         public int code;
 
-        ReasonEum(int code) {
+        ReasonEnum(int code) {
             this.code = code;
         }
     }
@@ -135,11 +137,15 @@ public class LimitResult {
         this.tip = tip;
     }
 
-    public ReasonEum getReason() {
+    public ReasonEnum getReason() {
         return reason;
     }
 
-    public void setReason(ReasonEum reason) {
+    public void setReason(ReasonEnum reason) {
         this.reason = reason;
+    }
+
+    public boolean isNeedLimit() {
+        return limit;
     }
 }

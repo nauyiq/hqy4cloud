@@ -31,4 +31,17 @@ public interface HttpThrottles {
     LimitResult checkHackAccess(@SuppressWarnings("rawtypes")Map requestParams, String requestIp, String uri, String urlOrQueryString);
 
 
+    /**
+     * 是否是uri白名单
+     * @param uri
+     * @return
+     */
+    boolean isWhiteURI(String uri);
+
+    /**
+     *
+     * @param remoteAddr
+     * @return
+     */
+    boolean isManualWhiteIp(String remoteAddr);
 }

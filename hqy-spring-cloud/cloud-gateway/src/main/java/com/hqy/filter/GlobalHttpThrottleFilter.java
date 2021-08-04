@@ -1,18 +1,20 @@
 package com.hqy.filter;
 
-import com.hqy.util.IpUtil;
+import com.hqy.common.swticher.HttpGeneralSwitcher;
+import com.hqy.dto.LimitResult;
 import com.hqy.global.RequestUtil;
+import com.hqy.limit.impl.GatewayHttpThrottles;
+import com.hqy.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
+import javax.annotation.Resource;
 
 /**
  * 全球的http节流过滤器
@@ -23,28 +25,50 @@ import java.net.URI;
 @Slf4j
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
+    @Resource
+    private GatewayHttpThrottles httpThrottles;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-        ServerHttpResponse response = exchange.getResponse();
 
         String url = request.getPath().pathWithinApplication().value();
+        String uri = request.getURI().getPath();
 
-        //1.静态资源放行
-        //2.option请求放行
         if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS) {
+            //1.静态资源放行
+            //2.option请求放行
             return chain.filter(exchange);
+        }
+
+        if (httpThrottles.isWhiteURI(uri)) {
+            // uri白名单;
+            return chain.filter(exchange);
+        }
+
+        String requestIp = IpUtil.getRequestIp(request);
+        if (httpThrottles.isManualWhiteIp(requestIp)) {
+            //人工白名单
+            return chain.filter(exchange);
+        }
+
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff() && HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
+            //没有启用限流器...继续执行责任链 链条
+            return chain.filter(exchange);
+        } else {
+            LimitResult limitResult = httpThrottles.limitValue(request);
+
+            if (limitResult.isNeedLimit()) {
+                //TODO 记录嫌疑ip
+            }
+
+
+
         }
 
 
 
-
-
-        String requestIp = IpUtil.getRequestIp(request);
-
-        URI uri = request.getURI();
 
 
         return null;
