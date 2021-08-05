@@ -3,32 +3,27 @@ server:
 spring:
   application:
     name: cloud-provider-demo
-#  autoconfigure:
-#    exclude: org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
-  cloud:
-    nacos: #注册中心改用nacos
-      discovery:
-        server-addr: localhost:8848 #配置nacos地址
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包 com.mysql.jdbc.Driver
     url: jdbc:mysql://120.76.65.160:3306/hqy?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: hongqy@2021
-  rabbitmq:
-    host: 120.76.65.160
-    port: 5672
-    username: guest
-    password: guest
-    stream:
-      binders:
-        defaultRabbit:
-          type: rabbit
-      bindings:EurekaClient
-        output:
-          destination: messageExchange  #表示要使用的Exchange名称定义
-          content-type: application/json #设置消息类型，本次为json，文本则设置“text/plain”
-          binder: defaultRabbit
+#  rabbitmq:
+#    host: 120.76.65.160
+#    port: 5672
+#    username: guest
+#    password: guest
+#  cloud:
+#    stream:
+#      binders:
+#        defaultRabbit:
+#          type: rabbit
+#      bindings: EurekaClient
+#        output:
+#          destination: messageExchange  #表示要使用的Exchange名称定义
+#          content-type: application/json #设置消息类型，本次为json，文本则设置“text/plain”
+#          binder: defaultRabbit
 eureka:
   client:
     register-with-eureka: true #表示是否将自己注册进EurekaServer默认为true。

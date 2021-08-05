@@ -28,7 +28,7 @@ public interface HttpThrottles {
      * @param urlOrQueryString
      * @return
      */
-    LimitResult checkHackAccess(@SuppressWarnings("rawtypes")Map requestParams, String requestIp, String uri, String urlOrQueryString);
+    LimitResult checkHackAccess(String requestParams, String requestIp, String uri, String urlOrQueryString);
 
 
     /**

@@ -1,7 +1,5 @@
-package com.hqy.limit.impl;
+package com.hqy.server;
 
-import com.hqy.limit.BiBlockedIpService;
-import com.hqy.limit.ManualBlockedIpService;
 import com.hqy.limit.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
@@ -79,26 +77,26 @@ public class ThrottlesProcess implements ThrottlesServer {
      */
     @Override
     public boolean isBIBlockedIp(String remoteAddr) {
-        BiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
+        RedisBiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
         return service.isBlockIp(remoteAddr);
     }
 
     @Override
     public boolean isManualBlockedIp(String remoteAddr) {
-        ManualBlockedIpService service = SpringContextHolder.getBean(RedisManualBlockedIpService.class);
+        RedisManualBlockedIpService service = SpringContextHolder.getBean(RedisManualBlockedIpService.class);
         return service.isBlockIp(remoteAddr);
     }
 
     @Override
     public void addBiBlockIp(String remoteAddr, Integer blockSeconds) {
-        BiBlockedIpService biBlockedIpService = SpringContextHolder.getBean(BiBlockedIpService.class);
-        biBlockedIpService.addBlockIp(remoteAddr, blockSeconds);
+        RedisBiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
+        service.addBlockIp(remoteAddr, blockSeconds);
     }
 
     @Override
     public void addManualBlockIp(String remoteAddr, Integer blockSeconds) {
-        ManualBlockedIpService manualBlockedIpService = SpringContextHolder.getBean(ManualBlockedIpService.class);
-        manualBlockedIpService.addBlockIp(remoteAddr, blockSeconds);
+        RedisManualBlockedIpService service = SpringContextHolder.getBean(RedisManualBlockedIpService.class);
+        service.addBlockIp(remoteAddr, blockSeconds);
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.hqy.common;
 
-import java.util.Map;
-
 /**
  * @author qy
  * @project: hqy-parent-all
@@ -21,6 +19,6 @@ public interface HttpRequestInfo {
 
     String getHeader(String header);
 
-    Map<String, String> getRequestParams();
+    String getRequestParams();
 
 }

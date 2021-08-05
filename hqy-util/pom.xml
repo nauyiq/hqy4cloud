@@ -38,6 +38,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common</artifactId>

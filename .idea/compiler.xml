@@ -12,6 +12,8 @@
         <module name="hqy-util" />
         <module name="cloud-eureka-client" />
         <module name="hqy-base-common" />
+        <module name="alibaba-consumer-demo" />
+        <module name="alibaba-provider-demo" />
         <module name="cloud-consumer-demo" />
         <module name="cloud-eureka-server" />
         <module name="hqy-rpc-demo-client" />

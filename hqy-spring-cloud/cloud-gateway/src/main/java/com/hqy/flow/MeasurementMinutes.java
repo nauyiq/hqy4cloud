@@ -1,4 +1,4 @@
-package com.hqy.global.flow;
+package com.hqy.flow;
 
 /**
  * 分钟计量单位
@@ -18,7 +18,7 @@ public enum MeasurementMinutes {
 
     ONE_HOUR_MINUTES(60);
 
-    MeasurementMinutes(int x) {
+     MeasurementMinutes(int x) {
         this.minutes = x;
     }
 

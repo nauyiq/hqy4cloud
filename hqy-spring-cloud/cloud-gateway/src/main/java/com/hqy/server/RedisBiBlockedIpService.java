@@ -1,4 +1,4 @@
-package com.hqy.limit.impl;
+package com.hqy.server;
 
 import com.hqy.common.swticher.HttpGeneralSwitcher;
 import com.hqy.limit.BiBlockedIpService;
@@ -15,11 +15,17 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @project: hqy-parent-all
  * @create 2021-08-03 11:25
  */
-@Component
 @Slf4j
+@Component
 public class RedisBiBlockedIpService implements BiBlockedIpService {
 
     private static final String KEY = "BI_BLOCK_IP";
+
+//    private static final RedisBiBlockedIpService instance = new RedisBiBlockedIpService();
+
+//    public static RedisBiBlockedIpService getInstance() {
+//        return instance;
+//    }
 
     //过期时间集合
     private static final Map<String, Long> timestampMap = new ConcurrentHashMap<>();
@@ -29,7 +35,7 @@ public class RedisBiBlockedIpService implements BiBlockedIpService {
     //定时load redis数据到内存中, 减少网络请求 提高效率
     private static final Timer timer = new Timer(RedisBiBlockedIpService.class.getName());
 
-    public RedisBiBlockedIpService() {
+    private RedisBiBlockedIpService() {
         long delay = 3 * 60 * 1000;
         long period = 10 * 60 * 1000;
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -69,7 +75,7 @@ public class RedisBiBlockedIpService implements BiBlockedIpService {
 
     @Override
     public Set<String> getAllBlockIpSet() {
-        return null;
+        return new HashSet<>();
     }
 
     @Override

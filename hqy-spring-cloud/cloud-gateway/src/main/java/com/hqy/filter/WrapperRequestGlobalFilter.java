@@ -15,6 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,6 +36,7 @@ public class WrapperRequestGlobalFilter implements GlobalFilter, Ordered {
         }
 
         ServerHttpRequest request = exchange.getRequest();
+        Map<String, String> map = request.getQueryParams().toSingleValueMap();
         if (request.getMethod() == HttpMethod.OPTIONS || Objects.isNull(request.getHeaders().getContentType())) {
             //1.Content-Type为空放开
             //2.OPTIONS 请求放开

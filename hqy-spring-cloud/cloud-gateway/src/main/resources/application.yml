@@ -13,15 +13,29 @@ spring:
 #          uri: http://localhost:8001         #匹配后提供服务的路由地址
           uri: lb://CLOUD-PROVIDER-DEMO       #根据服务名进行动态路由，匹配后提供服务的路由地址
           predicates: #predicates就是为了实现一组匹配规则， 让请求过来找到对应的route进行处理
-            - Path=/payment/get/**         # 断言，路径相匹配的进行路由
+            - Path=/payment/**         # 断言，路径相匹配的进行路由
            # - After=2021-07-25T15:10:03.685+08:00[Asia/Shanghai] #请求时间在配置之后才能路由
            # - Before=2021-07-25T15:10:03.685+08:00[Asia/Shanghai] #请求时间在配置之前才能路由
            # - Between=2021-07-25T17:45:06.206+08:00[Asia/Shanghai],2022-07-25T18:59:06.206+08:00[Asia/Shanghai] #请求时间必须在配置的时间段内才能路由
            # - Cookie=username,hqy  #请求必须携带某个配置的cookie， value可以是正则
            # - Header=X-Request-Id, \d+  # 请求头要有X-Request-Id属性并且值为整数的正则表达式
            # - Host=**.nauyiq.com #请求的host路径匹配
-            - Method=GET #请求方法必须是GET
+#            - Method=GET #请求方法必须是GET
            # - Query=id, \d+  # 要有参数名id并且值还要是整数才能路由
+  redis:
+#    cluster:
+#      nodes:
+#        - 120.76.65.160:6379
+#        - 106.55.173.37:6379
+    password: hongqy@2021
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 300
+        max-idle: 100
+        min-idle: 20
+    database: 7 #网关的redis数据存放到 db7
+    host: 120.76.65.160
 eureka:
   instance:
     hostname: cloud-gateway-service
@@ -32,6 +46,7 @@ eureka:
       register-with-eureka: true
       fetch-registry: true
       defaultZone: http://localhost:10010/eureka
+
 
 
 

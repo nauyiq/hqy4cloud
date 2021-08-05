@@ -1,10 +1,10 @@
-package com.hqy.limit.impl;
+package com.hqy.server;
 
-import com.hqy.cache.redis.LettuceRedisUtil;
+import com.hqy.cache.redis.LettuceRedis;
 import com.hqy.limit.ManualBlockedIpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,9 +16,15 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @project: hqy-parent-all
  * @create 2021-08-02 10:51
  */
-@Service
 @Slf4j
+@Component
 public class RedisManualBlockedIpService implements ManualBlockedIpService {
+
+//    private static final RedisManualBlockedIpService instance = new RedisManualBlockedIpService();
+
+//    public static RedisManualBlockedIpService getInstance() {
+//        return instance;
+//    }
 
     //redis key
     private static final String KEY_BLOCKED = "MANUAL_BLOCK_IP";
@@ -55,28 +61,28 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
         ip = ip.trim();
         cache.add(ip);
         timestampMap.put(ip, new Date().getTime() + blockSeconds * 1000L);
-        LettuceRedisUtil.StringSAdd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
+        LettuceRedis.getInstance().StringSAdd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
     }
 
     @Override
     public void removeBlockIp(String ip) {
-        LettuceRedisUtil.smove(KEY_BLOCKED, ip);
+        LettuceRedis.getInstance().smove(KEY_BLOCKED, ip);
         cache.remove(ip);
         timestampMap.remove(ip);
     }
 
     @Override
     public void clearAllBlockIp() {
-        LettuceRedisUtil.del(KEY_BLOCKED);
+        LettuceRedis.getInstance().del(KEY_BLOCKED);
         cache.clear();
         timestampMap.clear();
     }
 
     @Override
     public Set<String> getAllBlockIpSet() {
-        Set<String> ips = LettuceRedisUtil.stringSMembers(KEY_BLOCKED);
+        Set<String> ips = LettuceRedis.getInstance().stringSMembers(KEY_BLOCKED);
         if (CollectionUtils.isEmpty(ips)) {
-            return null;
+            return new HashSet<>();
         } else {
             Date nowDate = new Date();
             boolean foundTimeoutItems = false;
@@ -91,8 +97,8 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
                 }
             }
             if (foundTimeoutItems) {
-                LettuceRedisUtil.sMove(KEY_BLOCKED, removeString.toArray(new String[0]));
-                ips = LettuceRedisUtil.stringSMembers(KEY_BLOCKED);
+                LettuceRedis.getInstance().sMove(KEY_BLOCKED, removeString.toArray(new String[0]));
+                ips = LettuceRedis.getInstance().stringSMembers(KEY_BLOCKED);
             }
             return ips;
         }
@@ -104,7 +110,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
         ip = ip.trim();
         boolean blocked = cache.contains(ip);
         if (blocked) {
-            if (!LettuceRedisUtil.sIsMember(KEY_BLOCKED, ip)) {
+            if (!LettuceRedis.getInstance().sIsMember(KEY_BLOCKED, ip)) {
                 timestampMap.remove(ip);
                 cache.remove(ip);
                 return false;
@@ -117,7 +123,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
                         if (nowDate.getTime() > timestampMap.get(ip)) {
                             timestampMap.remove(ip);
                             cache.remove(ip);
-                            LettuceRedisUtil.sMove(KEY_BLOCKED, ip);
+                            LettuceRedis.getInstance().sMove(KEY_BLOCKED, ip);
                         }
                     }
                 }

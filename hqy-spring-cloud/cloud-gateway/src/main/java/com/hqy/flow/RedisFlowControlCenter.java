@@ -1,4 +1,4 @@
-package com.hqy.global.flow;
+package com.hqy.flow;
 
 import com.hqy.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import java.util.Objects;
 
 /**
  * 基于Redis的流量控制器;流量控制管理中心；
- *
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-08-04 14:14

@@ -1,4 +1,5 @@
-package com.hqy.global.flow;
+package com.hqy.flow;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,5 +41,4 @@ public class FlowControlConfig {
      * 计量时间窗口 默认一分钟
      */
     private MeasurementMinutes window = MeasurementMinutes.ONE_MINUTE;
-
 }

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RefreshScope
 public class NodeInfoController {
 
-    @Value("${env}")
-    private String env;
+//    @Value("${env}")
+//    private String env;
 
     @Value("${server.port}")
     private String port;
@@ -29,7 +29,7 @@ public class NodeInfoController {
 
     @GetMapping(value = "/serverInfo")
     public MessageResponse getEnvInfo(){
-        return new MessageResponse(true, "serverName:" + name + " port:" + port + " env:" + env, 0);
+        return new MessageResponse(true, "serverName:" + name + " port:" + port , 0);
     }
 
 

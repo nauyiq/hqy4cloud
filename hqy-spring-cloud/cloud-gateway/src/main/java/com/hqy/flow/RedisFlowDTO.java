@@ -1,4 +1,4 @@
-package com.hqy.global.flow;
+package com.hqy.flow;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

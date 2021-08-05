@@ -2,14 +2,14 @@ package com.hqy.filter;
 
 import com.hqy.common.swticher.HttpGeneralSwitcher;
 import com.hqy.dto.LimitResult;
-import com.hqy.global.RequestUtil;
-import com.hqy.limit.impl.GatewayHttpThrottles;
-import com.hqy.util.IpUtil;
+import com.hqy.server.GatewayHttpThrottles;
+import com.hqy.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -49,7 +49,7 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String requestIp = IpUtil.getRequestIp(request);
+        String requestIp = RequestUtil.getIpAddress(request);
         if (httpThrottles.isManualWhiteIp(requestIp)) {
             //人工白名单
             return chain.filter(exchange);
@@ -60,20 +60,21 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         } else {
             LimitResult limitResult = httpThrottles.limitValue(request);
-
             if (limitResult.isNeedLimit()) {
                 //TODO 记录嫌疑ip
+                log.warn("### THROTTLE_HTTP_LIMIT_ERROR :{},{}", url, limitResult);
+                //TODO 记录嫌疑ip
+
+                //返回403 表示当前请求被封禁
+                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                return exchange.getResponse().setComplete();
+            } else {
+                //TODO 可以异步对请求进行采集分析？？？ 采集责任链？
             }
-
-
-
         }
 
-
-
-
-
-        return null;
+        //继续执行责任链
+        return chain.filter(exchange);
     }
 
     @Override

@@ -1,12 +1,13 @@
-package com.hqy.limit.impl;
+package com.hqy.server;
 
 import com.hqy.common.HttpRequestInfo;
 import com.hqy.common.swticher.HttpGeneralSwitcher;
 import com.hqy.dto.LimitResult;
-import com.hqy.global.flow.RedisFlowControlCenter;
-import com.hqy.global.flow.RedisFlowDTO;
+import com.hqy.flow.RedisFlowControlCenter;
+import com.hqy.flow.RedisFlowDTO;
 import com.hqy.limit.HttpThrottles;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
             @Override
             public String getRequestUrl() {
-                return request.getPath().pathWithinApplication().value();
+                return request.getURI().toString();
             }
 
             @Override
@@ -54,7 +55,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
             @Override
             public String getRequestIp() {
-                return Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
+                return RequestUtil.getIpAddress(request);
             }
 
             @Override
@@ -72,8 +73,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
             }
 
             @Override
-            public Map<String, String> getRequestParams() {
-                return request.getQueryParams().toSingleValueMap();
+            public String getRequestParams() {
+                return RequestUtil.resolveBodyFromRequest(request);
             }
         };
 
@@ -177,14 +178,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
      * @return
      */
     @Override
-    public LimitResult checkHackAccess(@SuppressWarnings("rawtypes")Map requestParams, String requestIp, String uri, String urlOrQueryString) {
+    public LimitResult checkHackAccess(String requestParams, String requestIp, String uri, String urlOrQueryString) {
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() && Objects.nonNull(requestParams)) {
             if (!requestParams.isEmpty()) {
-                String paramString = JsonUtil.toJson(requestParams);
-                boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(paramString, ThrottlesProcess.PARAMS_CHECK_MODE);
+                boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
                 if (hackAccess) {
-                    log.warn("@@@ HACK TOOL REJECT (param) !!! {} , {} ", paramString, requestIp);
+                    log.warn("@@@ HACK TOOL REJECT (param) !!! {} , {} ", requestParams, requestIp);
                     // 纳入黑名单，访问限制!!!!
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
@@ -192,7 +192,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     }
                     // 记录ip 被阻塞 持久化服务~
                     ThrottlesProcess.getInstance().
-                            persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", paramString);
+                            persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", requestParams);
                     return new LimitResult(true, LimitResult.ReasonEnum.HACK_TOOL_ACCESS_NG);
                 }
             }
