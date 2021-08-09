@@ -9,6 +9,8 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/hqy-netty/hqy-rpc-demo/hqy-rpc-demo-common/pom.xml" />
+        <option value="$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-api/pom.xml" />
+        <option value="$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-impl/pom.xml" />
       </list>
     </option>
   </component>

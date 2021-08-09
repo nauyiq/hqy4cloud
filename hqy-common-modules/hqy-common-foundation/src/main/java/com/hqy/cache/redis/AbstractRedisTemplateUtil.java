@@ -118,8 +118,20 @@ public abstract class AbstractRedisTemplateUtil {
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
+    }
 
-
+    /**
+     * 返回前缀匹配到的key的数据集合
+     * @param pattern
+     * @return
+     */
+    public Set<String> keys(String pattern) {
+        try {
+            return stringRedisTemplate.keys(pattern);
+        } catch (Exception e) {
+            log.error("操作失败: ", e);
+            return null;
+        }
     }
 
     // ==================================================== String ==============================================
@@ -542,7 +554,7 @@ public abstract class AbstractRedisTemplateUtil {
      * @param values 值 可以是多个
      * @return 移除的个数
      */
-    public Long smove(String key, Object... values) {
+    public Long sMove(String key, Object... values) {
         try {
             return redisTemplate.opsForSet().remove(key, values);
         } catch (Exception e) {

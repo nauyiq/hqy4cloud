@@ -20,12 +20,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
-//    private static final RedisManualBlockedIpService instance = new RedisManualBlockedIpService();
-
-//    public static RedisManualBlockedIpService getInstance() {
-//        return instance;
-//    }
-
     //redis key
     private static final String KEY_BLOCKED = "MANUAL_BLOCK_IP";
 
@@ -41,7 +35,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
     public RedisManualBlockedIpService() {
         long delay = 3 * 60 * 1000;
-        long period = 10 * 60 * 1000;
+        long period = 15 * 60 * 1000;
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -66,7 +60,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
     @Override
     public void removeBlockIp(String ip) {
-        LettuceRedis.getInstance().smove(KEY_BLOCKED, ip);
+        LettuceRedis.getInstance().sMove(KEY_BLOCKED, ip);
         cache.remove(ip);
         timestampMap.remove(ip);
     }

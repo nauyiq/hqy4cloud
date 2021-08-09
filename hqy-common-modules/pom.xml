@@ -12,6 +12,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>hqy-common-foundation</module>
+        <module>hqy-commmon-mq-collector-api</module>
+        <module>hqy-commmon-mq-collector-impl</module>
+        <module>hqy-public-basic-service-api</module>
+        <module>hqy-public-basic-service-impl</module>
     </modules>
 
     <artifactId>hqy-common-modules</artifactId>
