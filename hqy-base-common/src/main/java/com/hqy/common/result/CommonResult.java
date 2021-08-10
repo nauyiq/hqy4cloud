@@ -9,9 +9,9 @@ public enum CommonResult {
 
     SUCCESS(0, "OK."),
 
-    SYSTEM_ERROR(9999, "Internal error, Please try again later."),
+    SYSTEM_ERROR(9999, "System internal error, Please try again later."),
 
-
+    ERROR_PARAM(1001, "invalid parameter, Internal error"),
     ;
 
     public int code;

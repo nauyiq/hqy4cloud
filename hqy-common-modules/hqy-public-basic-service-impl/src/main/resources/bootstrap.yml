@@ -1,0 +1,47 @@
+server:
+  port: 9000
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: public-basic-service
+  cloud:
+    nacos:
+      config:
+        server-addr: 120.76.65.160:80
+        file-extension: yaml
+        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+        group: DEV_GROUP
+        extension-configs[0]:
+          data-id: redis-config.yaml
+          group: DEV_GROUP
+          refresh: true
+        extension-configs[1]:
+          data-id: db-config.yaml
+          group: DEV_GROUP
+          refresh: true
+      discovery:
+        server-addr: 120.76.65.160:80
+#    sentinel:
+#      transport:
+#        dashboard: localhost:8080
+#        port: 8791
+management: #暴露所有
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: spring-cloud://120.76.65.160
+  scan:
+    base-packages: com.hqy.basic.service
+  application:
+    qos-enable: false
+    qos-accept-foreign-ip: false
+    name: public-basic-service
+    id: public-basic-service
+

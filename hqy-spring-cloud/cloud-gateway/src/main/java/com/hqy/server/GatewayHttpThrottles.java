@@ -1,5 +1,8 @@
 package com.hqy.server;
 
+import cn.hutool.core.thread.GlobalThreadPool;
+import com.hqy.basic.entity.ThrottledIpBlock;
+import com.hqy.basic.service.CollPersistService;
 import com.hqy.common.HttpRequestInfo;
 import com.hqy.common.swticher.HttpGeneralSwitcher;
 import com.hqy.dto.LimitResult;
@@ -10,6 +13,7 @@ import com.hqy.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -147,7 +151,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     if (needLimit && redisFlowDTO.getBlockSeconds() > 0) {
                         ThrottlesProcess.getInstance().addBiBlockIp(requestIp, redisFlowDTO.getBlockSeconds());
                         // 记录ip 被阻塞 持久化到数据库
-                        ThrottlesProcess.getInstance().persistBlockIpAction(requestIp, redisFlowDTO.getBlockSeconds(), url, "BiBlock(RedisFlowControl)", request.getUri());
+                        persistBlockIpAction(requestIp, redisFlowDTO.getBlockSeconds(), url, "BiBlock(RedisFlowControl)", request.getUri());
                     }
                 }
 
@@ -189,8 +193,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                         ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
-                    ThrottlesProcess.getInstance().
-                            persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", requestParams);
+                    persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", requestParams);
                     return new LimitResult(true, LimitResult.ReasonEnum.HACK_TOOL_ACCESS_NG);
                 }
             }
@@ -205,8 +208,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                         ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
-                    ThrottlesProcess.getInstance().
-                            persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
+                    persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
                     return new LimitResult(true, LimitResult.ReasonEnum.HACK_TOOL_ACCESS_NG);
                 }
             }
@@ -220,8 +222,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                         ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
-                    ThrottlesProcess.getInstance().
-                            persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
+                    persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
                     return new LimitResult(true, LimitResult.ReasonEnum.HACK_TOOL_ACCESS_NG);
                 }
             }
@@ -245,5 +246,29 @@ public class GatewayHttpThrottles implements HttpThrottles {
     @Override
     public boolean isManualWhiteIp(String remoteAddr) {
         return ThrottlesProcess.getInstance().isManualBlockedIp(remoteAddr);
+    }
+
+
+    @Reference
+    private CollPersistService collPersistService;
+
+
+    /**
+     * 记录封禁 行为日志，历史记录，方便将来查看...
+     * @param ip 被封禁的ip
+     * @param blockSeconds 被堵塞的时间时长，秒
+     * @param url 被拦截时的访问url  例如是人工指定？还是HttpThrottleFilter(发现了恶意访问)，还是BIBlock(恶意关键词等..)
+     * @param createdBy 阻塞操作的组件或者逻辑
+     * @param accessParamJson 请求参数json
+     */
+    public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
+        final ThrottledIpBlock throttledIpBlock = new ThrottledIpBlock();
+        throttledIpBlock.setIp(ip);
+        throttledIpBlock.setAccessJson(accessParamJson);
+        throttledIpBlock.setBlockedSeconds(blockSeconds);
+        throttledIpBlock.setUrl(url);
+        throttledIpBlock.setThrottleBy(createdBy);
+        //TODO 等待框架层优化实现调用的链路服务, 环境等
+        GlobalThreadPool.execute(() -> collPersistService.saveThrottledIpBlockHistory(throttledIpBlock));
     }
 }

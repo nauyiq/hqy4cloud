@@ -9,30 +9,29 @@
         <outputRelativeToContentRoot value="true" />
         <module name="cloud-provider-demo" />
         <module name="hqy-base-common-service" />
-        <module name="hqy-util" />
         <module name="cloud-eureka-client" />
         <module name="hqy-base-common" />
         <module name="alibaba-consumer-demo" />
         <module name="alibaba-provider-demo" />
         <module name="hqy-common-mq-collector-impl" />
-        <module name="cloud-consumer-demo" />
+        <module name="hqy-rpc-demo-client" />
         <module name="hqy-public-basic-service-api" />
         <module name="cloud-eureka-server" />
-        <module name="hqy-rpc-demo-client" />
+        <module name="hqy-util" />
         <module name="cloud-common-data" />
         <module name="hqy-base-common-dao" />
         <module name="cloud-gateway" />
         <module name="cloud-config" />
-        <module name="hqy-test" />
         <module name="hqy-netty-test" />
         <module name="hqy-common-mq-collector-api" />
+        <module name="cloud-consul-demo" />
         <module name="cloud-hystrix-dashboard" />
         <module name="hqy-mq-collector-impl" />
         <module name="cloud-zookeeper-demo" />
         <module name="hqy-netty-text-websocket" />
         <module name="hqy-netty-core" />
         <module name="hqy-public-basic-service-impl" />
-        <module name="cloud-consul-demo" />
+        <module name="cloud-consumer-demo" />
         <module name="hqy-rpc-demo-common" />
         <module name="hqy-common-foundation" />
       </profile>
@@ -40,6 +39,7 @@
     <bytecodeTargetLevel>
       <module name="hqy-mq-collector-api" target="1.8" />
       <module name="hqy-mq-collector-impl" target="1.8" />
+      <module name="hqy-test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
