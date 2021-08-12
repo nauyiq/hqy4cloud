@@ -53,11 +53,6 @@ public class ThrottledIpBlock {
     private Integer blockedSeconds;
 
     /**
-     * 请求的项目名
-     */
-    private String appName;
-
-    /**
      * 所属环境
      */
     private String env;

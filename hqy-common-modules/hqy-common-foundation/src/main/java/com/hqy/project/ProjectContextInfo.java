@@ -35,11 +35,20 @@ public class ProjectContextInfo implements Serializable {
      */
     public static String env = "dev";
 
-
     /**
      * 当前服务的主端口号
      */
     private Integer port;
+
+    /**
+     * 本机服务的ip地址
+     */
+    private String hostIp;
+
+    /**
+     * 是否提供websocket服务...
+     */
+    private Boolean enableSocket;
 
 
     /**

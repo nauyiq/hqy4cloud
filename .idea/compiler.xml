@@ -25,6 +25,7 @@
         <module name="hqy-netty-test" />
         <module name="hqy-common-mq-collector-api" />
         <module name="cloud-consul-demo" />
+        <module name="hqy-thrift-rpc" />
         <module name="cloud-hystrix-dashboard" />
         <module name="hqy-mq-collector-impl" />
         <module name="cloud-zookeeper-demo" />

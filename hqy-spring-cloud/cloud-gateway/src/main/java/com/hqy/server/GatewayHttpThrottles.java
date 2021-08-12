@@ -268,7 +268,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
         throttledIpBlock.setBlockedSeconds(blockSeconds);
         throttledIpBlock.setUrl(url);
         throttledIpBlock.setThrottleBy(createdBy);
-        //TODO 等待框架层优化实现调用的链路服务, 环境等
         GlobalThreadPool.execute(() -> collPersistService.saveThrottledIpBlockHistory(throttledIpBlock));
     }
 }
