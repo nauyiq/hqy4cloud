@@ -65,6 +65,17 @@
             <version>1.16</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>

@@ -18,7 +18,7 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 系统启动时间
      */
-    public static long startupTimeMillis;
+    public static long startupTimeMillis = System.currentTimeMillis();
 
     /**
      * 判断系统是不是刚启动
@@ -46,9 +46,14 @@ public class ProjectContextInfo implements Serializable {
     private String hostIp;
 
     /**
-     * 是否提供websocket服务...
+     * 当前服务的辅助端口号，通常是websocket暴露的端口 非必填
      */
-    private Boolean enableSocket;
+    private Integer port2;
+
+    /**
+     * 灰白度的值
+     */
+    private Integer pubValue = 0;
 
 
     /**
