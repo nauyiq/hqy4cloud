@@ -47,12 +47,12 @@ public class AbstractSwitcher extends IdSwitcher {
     /**
      * 开关状态(boolean/unsigned short/String)
      */
-    private Object status = false;
+    private Object status;
 
     /**
      * 开关类型枚举 (boolean/unsigned short/String)
      */
-    private S_TYPE type = S_TYPE.BOOLEAN;
+    private S_TYPE type;
 
     /**
      * 选项列表，开关value的备选值
@@ -231,7 +231,7 @@ public class AbstractSwitcher extends IdSwitcher {
 
     public static AbstractSwitcher getSwitcherById(int id, Class<? extends AbstractSwitcher> clazz) {
         AbstractSwitcher[] arr = allValues(clazz);
-        if (arr == null || arr.length == 0) {
+        if (arr.length == 0) {
             return null;
         }
         for (AbstractSwitcher xx : arr) {
@@ -243,10 +243,10 @@ public class AbstractSwitcher extends IdSwitcher {
     }
 
     public String toString() {
-        return new StringBuffer().append("[id=").append(this.getId())
-                .append(",name=").append(this.getName())
-                .append(",status=").append(status)
-                .append("]").toString();
+        return "[id=" + this.getId() +
+                ",name=" + this.getName() +
+                ",status=" + status +
+                "]";
     }
 
     /**

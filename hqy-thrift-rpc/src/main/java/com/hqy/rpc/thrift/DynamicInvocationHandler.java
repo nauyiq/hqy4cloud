@@ -2,6 +2,7 @@ package com.hqy.rpc.thrift;
 
 import com.hqy.rpc.route.AbstractRPCRouter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.pool2.ObjectPool;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -15,10 +16,15 @@ import java.lang.reflect.Method;
 @Slf4j
 public class DynamicInvocationHandler<T> extends AbstractRPCRouter implements InvocationHandler {
 
-
     private static InvokeCallback callback;
 
-//    private
+    private MultiplexThriftServiceFactory<T> factory;
+
+    private ObjectPool<T> objectPoolGray;
+
+    private ObjectPool<T> objPoolWhite;
+
+    private ObjectPool<T> objPoolAll;
 
 
 

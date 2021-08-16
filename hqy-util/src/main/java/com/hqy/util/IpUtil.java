@@ -9,7 +9,10 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -91,7 +94,7 @@ public class IpUtil {
             } else if (cloudFlareCountry.equals(CountryEnum.CN) || cloudFlareCountry.equals(CountryEnum.HK)) {
                 return true;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -99,39 +102,39 @@ public class IpUtil {
 
     public static String getRequestIp(HttpServletRequest request) {
         String debug = request.getQueryString();
-        if(debug != null && debug.contains("mock_ip=true")) {
+        if (debug != null && debug.contains("mock_ip=true")) {
             //模拟生成多个ip，协助AB测试
             //socket.io限流，HTTP限流 和 ab测试场景等模拟压测时使用
             try {
                 helper = SpringContextHolder.getBean(MockIpHelper.class);
                 String mock_ip = helper.generateIp(request);
-                if(mock_ip != null) {
+                if (mock_ip != null) {
                     return mock_ip;
                 }
-            }catch(Exception ex) {
-                if(warn_of_helper_bean) {
-                }else {
+            } catch (Exception ex) {
+                if (warn_of_helper_bean) {
+                } else {
                     log.warn(ex.getMessage());
                     warn_of_helper_bean = true;
                 }
 
             }
         }
-        if(helper == null) {
+        if (helper == null) {
             try {
                 helper = SpringContextHolder.getBean(MockIpHelper.class);
-            }catch(Exception ex) {
-                if(warn_of_helper_bean) {
-                }else {
+            } catch (Exception ex) {
+                if (warn_of_helper_bean) {
+                } else {
                     log.warn(ex.getMessage());
                     warn_of_helper_bean = true;
                 }
             }
-        }else {
+        } else {
             //测试环境调试模式下，获取一个模拟的ip
             //socket.io限流，HTTP限流 和 ab测试场景等模拟压测时使用
             String ip0 = helper.tryGetIp(request);
-            if(ip0 != null) {
+            if (ip0 != null) {
                 return ip0;
             }
         }
@@ -189,6 +192,48 @@ public class IpUtil {
             return list.get(0);
         }
         return request.getRemoteAddress().getHostString();
+    }
+
+    /**
+     * 获取本地主机地址
+     * @return
+     */
+    public static String getHostAddress() {
+        try {
+            InetAddress candidateAddress = null;
+            // 遍历所有的网络接口
+            for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces.hasMoreElements();) {
+                NetworkInterface iface = ifaces.nextElement();
+                // 在所有的接口下再遍历IP
+                for (Enumeration<InetAddress> inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements(); ) {
+                    InetAddress inetAddr = inetAddrs.nextElement();
+                    if (!inetAddr.isLoopbackAddress()) {// 排除loopback类型地址
+                        if (inetAddr.getHostAddress().startsWith(DOCKER_IP_PREFIX)) {// 排除docker 的地址
+                            log.warn("IGNORE :{}", inetAddr);
+                            continue;
+                        }
+                        if (inetAddr.getHostAddress().endsWith(VIRTUAL_IP_ENDING)) {// 排除 虚拟地址
+                            log.warn("IGNORE :{}", inetAddr);
+                            continue;
+                        }
+                        if (inetAddr.isSiteLocalAddress()) {
+                            return inetAddr.getHostAddress();
+                        } else if (candidateAddress == null) {
+                            candidateAddress = inetAddr;
+                        }
+                    }
+                }
+            }
+            if (candidateAddress != null && !candidateAddress.getHostAddress().contains(":")) {
+                return candidateAddress.getHostAddress();
+            }
+            // 如果没有发现 non-loopback地址.只能用最次选的方案
+            InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
+            return jdkSuppliedAddress.getHostAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

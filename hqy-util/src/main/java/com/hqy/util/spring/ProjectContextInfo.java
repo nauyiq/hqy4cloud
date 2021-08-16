@@ -1,4 +1,4 @@
-package com.hqy.project;
+package com.hqy.util.spring;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +28,12 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 项目名
      */
-    public static String appName;
+    private String appName;
 
     /**
      * 环境
      */
-    public static String env = "dev";
+    private String env = "dev";
 
     /**
      * 当前服务的主端口号
@@ -55,6 +55,17 @@ public class ProjectContextInfo implements Serializable {
      */
     private Integer pubValue = 0;
 
+    public ProjectContextInfo() {
+    }
+
+    public ProjectContextInfo(String appName, String env, Integer port, String hostIp, Integer port2, Integer pubValue) {
+        this.appName = appName;
+        this.env = env;
+        this.port = port;
+        this.hostIp = hostIp;
+        this.port2 = port2;
+        this.pubValue = pubValue;
+    }
 
     /**
      * 判断系统是否刚启动不久
