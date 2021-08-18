@@ -1,11 +1,19 @@
 package com.hqy.rpc.thrift;
 
+import com.hqy.rpc.nacos.NodeHeartbeatListener;
+import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.rpc.route.AbstractRPCRouter;
+import com.hqy.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.event.EventListener;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * 每个RPCService 接口对应一个Handler， 可以接受nacos的事件通知
@@ -14,23 +22,41 @@ import java.lang.reflect.Method;
  * @create 2021-08-13 9:56
  */
 @Slf4j
-public class DynamicInvocationHandler<T> extends AbstractRPCRouter implements InvocationHandler {
+public class DynamicInvocationHandler<T> extends AbstractRPCRouter
+        implements InvocationHandler, NodeHeartbeatListener {
 
     private static InvokeCallback callback;
-
+    private GenericObjectPoolConfig<T> config;
     private MultiplexThriftServiceFactory<T> factory;
-
+    //灰度服务的对象池
     private ObjectPool<T> objectPoolGray;
-
+    //白度服务的对象池
     private ObjectPool<T> objPoolWhite;
-
+    //所有类型的对象池
     private ObjectPool<T> objPoolAll;
+    //高优先级的对象池
+    private ObjectPool<T> objPoolHighPriority;
+    //ip
+    private static final String hostIp = IpUtil.getHostAddress();
 
-
-
+    public DynamicInvocationHandler(Class<T> service, List<UsingIpPort> addressesGray, List<UsingIpPort> addressesWhite, InvokeCallback callback) {
+        config = new GenericObjectPoolConfig<>();
+        int cpu = Runtime.getRuntime().availableProcessors();
+        int minIdle = cpu * 6;
+        config.setMinIdle(minIdle);
+        config.setMaxIdle(minIdle * 8);
+        config.setMaxIdle(minIdle * 8);
+//        this.factory = new MultiplexThriftServiceFactory<>(service, )
+    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return null;
+    }
+
+    @Override
+    @EventListener(classes = HeartbeatEvent.class)
+    public void onHeartbeat(ApplicationEvent heartbeatEvent) {
+
     }
 }
