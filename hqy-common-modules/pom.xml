@@ -16,6 +16,7 @@
         <module>hqy-commmon-mq-collector-impl</module>
         <module>hqy-public-basic-service-api</module>
         <module>hqy-public-basic-service-impl</module>
+        <module>hqy-data-structures-and-algorithms</module>
     </modules>
 
     <artifactId>hqy-common-modules</artifactId>

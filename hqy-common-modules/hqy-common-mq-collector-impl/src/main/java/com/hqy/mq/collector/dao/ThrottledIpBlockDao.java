@@ -1,7 +1,7 @@
-package com.hqy.basic.dao;
+package com.hqy.mq.collector.dao;
 
-import com.hqy.basic.entity.ThrottledIpBlock;
 import com.hqy.dao.base.BaseDao;
+import com.hqy.mq.collector.entity.ThrottledIpBlock;
 import org.springframework.stereotype.Repository;
 
 /**

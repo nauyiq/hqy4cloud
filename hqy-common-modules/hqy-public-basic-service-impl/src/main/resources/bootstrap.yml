@@ -2,13 +2,13 @@ server:
   port: 9000
 spring:
   main:
-    allow-bean-definition-overriding: true
+    allow-bean-definition-overriding: true #使用dubbo服务最好加此配置
   application:
     name: public-basic-service
   cloud:
     nacos:
       config:
-        server-addr: 120.76.65.160:80
+        server-addr: www.hongqy.cn:80
         file-extension: yaml
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
         group: DEV_GROUP
@@ -21,7 +21,7 @@ spring:
           group: DEV_GROUP
           refresh: true
       discovery:
-        server-addr: 120.76.65.160:80
+        server-addr: www.hongqy.cn:80
 #    sentinel:
 #      transport:
 #        dashboard: localhost:8080
@@ -36,7 +36,7 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://120.76.65.160
+    address: spring-cloud://www.hongqy.cn
   scan:
     base-packages: com.hqy.basic.service
   application:

@@ -28,6 +28,10 @@ spring:
         file-extension: yaml
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
         group: DEV_GROUP
+        extension-configs[0]:
+          data-id: rabbitmq-config.yaml
+          group: DEV_GROUP
+          refresh: true
       discovery:
         server-addr: 120.76.65.160:80
 management: #暴露所有
@@ -35,14 +39,14 @@ management: #暴露所有
     web:
       exposure:
         include: "*"
-dubbo:
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    address: spring-cloud://120.76.65.160
-  application:
-    qos-enable: false
-    qos-accept-foreign-ip: false
-    name: cloud-gateway
-    id: cloud-gateway
+#dubbo:
+#  protocol:
+#    name: dubbo
+#    port: -1
+#  registry:
+#    address: spring-cloud://120.76.65.160
+#  application:
+#    qos-enable: false
+#    qos-accept-foreign-ip: false
+#    name: cloud-gateway
+#    id: cloud-gateway

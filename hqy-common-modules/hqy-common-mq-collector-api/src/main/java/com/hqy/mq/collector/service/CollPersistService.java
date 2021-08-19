@@ -1,6 +1,7 @@
-package com.hqy.basic.service;
+package com.hqy.mq.collector.service;
 
-import com.hqy.basic.entity.ThrottledIpBlock;
+
+import com.hqy.mq.collector.entity.ThrottledIpBlock;
 
 /**
  * @author qy

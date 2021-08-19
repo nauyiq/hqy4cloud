@@ -1,8 +1,9 @@
-package com.hqy.basic.service;
+package com.hqy.mq.collector.service;
 
-import com.hqy.basic.dao.ThrottledIpBlockDao;
-import com.hqy.basic.entity.ThrottledIpBlock;
-import org.apache.dubbo.config.annotation.Service;
+
+import com.hqy.mq.collector.dao.ThrottledIpBlockDao;
+import com.hqy.mq.collector.entity.ThrottledIpBlock;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 

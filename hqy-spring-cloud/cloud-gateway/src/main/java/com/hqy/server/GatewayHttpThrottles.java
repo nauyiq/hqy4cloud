@@ -1,19 +1,18 @@
 package com.hqy.server;
 
 import cn.hutool.core.thread.GlobalThreadPool;
-import com.hqy.basic.entity.ThrottledIpBlock;
-import com.hqy.basic.service.CollPersistService;
 import com.hqy.common.HttpRequestInfo;
 import com.hqy.common.swticher.HttpGeneralSwitcher;
 import com.hqy.dto.LimitResult;
 import com.hqy.flow.RedisFlowControlCenter;
 import com.hqy.flow.RedisFlowDTO;
 import com.hqy.limit.HttpThrottles;
+import com.hqy.mq.collector.entity.ThrottledIpBlock;
 import com.hqy.util.RequestUtil;
+import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -249,12 +248,11 @@ public class GatewayHttpThrottles implements HttpThrottles {
     }
 
 
-    @Reference
-    private CollPersistService collPersistService;
 
 
     /**
      * 记录封禁 行为日志，历史记录，方便将来查看...
+     * 将异常信息通过消息队列进行数据的异步持久化...
      * @param ip 被封禁的ip
      * @param blockSeconds 被堵塞的时间时长，秒
      * @param url 被拦截时的访问url  例如是人工指定？还是HttpThrottleFilter(发现了恶意访问)，还是BIBlock(恶意关键词等..)
@@ -268,6 +266,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         throttledIpBlock.setBlockedSeconds(blockSeconds);
         throttledIpBlock.setUrl(url);
         throttledIpBlock.setThrottleBy(createdBy);
-        GlobalThreadPool.execute(() -> collPersistService.saveThrottledIpBlockHistory(throttledIpBlock));
+        MqPersistDataServer mqPersistDataServer = SpringContextHolder.getBean(MqPersistDataServer.class);
+        GlobalThreadPool.execute(() -> mqPersistDataServer.persistBlockIpAction(throttledIpBlock));
     }
 }

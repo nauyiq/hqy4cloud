@@ -12,38 +12,40 @@
     <artifactId>cloud-gateway</artifactId>
 
     <dependencies>
-        <!--gateway-->
+        <!--spring-cloud-gateway-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--nacos-client-->
+        <!--spring-cloud-alibaba-nacos-client-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-
-        <!--nacos-config-->
+        <!--spring-cloud-alibaba-nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+        <!--spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
+        <!--dubbo rpc 接入-->
+        <!--<dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-dubbo</artifactId>
-        </dependency>
+        </dependency>-->
 
+        <!--gateway服务不提供持久化服务-->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-public-basic-service-api</artifactId>
+            <artifactId>hqy-common-mq-collector-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
@@ -53,13 +55,13 @@
             </exclusions>
         </dependency>
 
+        <!--引入springboot 整合rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
 
-        <!--eureka-client-->
-        <!--<dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>-->
-
+        <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-util</artifactId>
@@ -72,6 +74,7 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common-service</artifactId>
@@ -83,8 +86,6 @@
             </exclusions>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-
     </dependencies>
 
 
