@@ -12,9 +12,14 @@ public class CommonSwitcher extends AbstractSwitcher {
     }
 
     /**
+     * 节点-是否启用灰度机制？启用后 需要区分灰度与白度，否则不区分
+     */
+    public static final CommonSwitcher ENABLE_GRAY_MECHANISM = new CommonSwitcher(200,"节点-是否启用灰度机制",false);
+
+    /**
      * 节点-是否启用共享的BIBlockIP清单（Redis）;如果false 各个项目自行维护本地缓存的BI的ip禁止名单。
      */
-    public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(200,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
+    public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(201,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
 
     /**
      * 节点-同IP/Env RPC调度优先(非灰度机制才有效)

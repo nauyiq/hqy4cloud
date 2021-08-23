@@ -34,7 +34,7 @@ public class RabbitMqConfig {
     }
 
     /**
-     * 将gateway队列绑定好采集服务的exchange中
+     * 将gateway队列绑定到采集服务的exchange中
      * @return
      */
     @Bean

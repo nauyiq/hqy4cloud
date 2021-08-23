@@ -1,17 +1,26 @@
 package com.hqy.rpc.thrift;
 
 import com.facebook.nifty.client.FramedClientConnector;
+import com.facebook.nifty.client.NiftyClientChannel;
 import com.facebook.swift.service.ThriftClientManager;
 import com.google.common.net.HostAndPort;
+import com.hqy.common.exception.NoAvailableProvidersException;
 import com.hqy.common.swticher.CommonSwitcher;
+import com.hqy.concurrent.ThreadLocalPool;
+import com.hqy.rpc.regist.GreyWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.jboss.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,19 +35,19 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T> {
 
-    private Class<T> serviceClass;
+    private final Class<T> serviceClass;
 
     private final static AtomicInteger createCount = new AtomicInteger(0);
 
-    private FramedClientConnector connectorsAll[];
+    private FramedClientConnector[] connectorsAll;
 
-    private FramedClientConnector connectorsGray[];
+    private FramedClientConnector[] connectorsGray;
 
-    private FramedClientConnector connectorsWhite[];
+    private FramedClientConnector[] connectorsWhite;
 
-    private FramedClientConnector connectorsHighPriority[];
+    private FramedClientConnector[] connectorsHighPriority;
 
-    private String hostIp;
+    private final String hostIp;
 
     /**
      * 可重入锁：多线程环境下（事件异步通知可用服务节点变化），保障 connectors 线程安全
@@ -145,21 +154,80 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
 
     @Override
     public T create() throws Exception {
-        FramedClientConnector connector = null;
+        FramedClientConnector connector;
+        //根据当前节点颜色 和有无启用灰度策略 找出合适的连接数组
+        FramedClientConnector[] connectors = findSuitableConnectors();
+        try {
+            lock.lock();
+            if (connectors.length == 0) {
+                throw new NoAvailableProvidersException("No available connectors for create pool object.");
+            }
+            int idx = createCount.incrementAndGet() % connectors.length;
+            connector = connectors[idx];
+            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
+        } finally {
+            lock.unlock();
+            //防止整形溢出！！
+            if(createCount.get() == 1000000000){
+                createCount.set(0);
+            }
+        }
 
-
-        return null;
+        if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+            log.info("create new client, connector:{}", connector);
+        }
+        return MultiplexThriftClientManager.getThriftClientManager().createClient(connector, serviceClass).get();
     }
 
     @Override
     public PooledObject<T> wrap(T t) {
+        return new DefaultPooledObject<>(t);
+    }
+
+    @Override
+    public void destroyObject(PooledObject<T> p) throws Exception {
+        NiftyClientChannel clientChannel = getClientChannel(p.getObject());
+        if (Objects.isNull(clientChannel)) return;
+        if (clientChannel.getNettyChannel().isConnected()) {
+            clientChannel.close();
+        }
+        //关闭一个Channel
+        log.info("[destroyObject] channel:{}", toChannelString(clientChannel));
+    }
+
+    private String toChannelString(NiftyClientChannel clientChannel) {
+        Channel channel = clientChannel.getNettyChannel();
+        return String.format("(%s - > %s)", channel.getLocalAddress(), channel.getRemoteAddress());
+    }
+
+    private NiftyClientChannel getClientChannel(T object) {
+        try {
+            return (NiftyClientChannel)MultiplexThriftClientManager.getThriftClientManager().getRequestChannel(object);
+        } catch (Exception e) {
+            log.error("[ENABLE_GRAY_MECHANISM][getClientChannel] failed.", e);
+        }
         return null;
     }
 
     private FramedClientConnector[] findSuitableConnectors() {
+        ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
+        if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn()) { //是否启用灰度机制
+            if (contextInfo.getPubValue().equals(GreyWhitePub.GRAY.value)) {
+                return connectorsGray;
+            }
+            if (contextInfo.getPubValue().equals(GreyWhitePub.WHITE.value)) {
+                return connectorsWhite;
+            }
+        } else {
+            if (CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn() || (connectorsHighPriority != null && connectorsHighPriority.length > 0)) {
+                if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                    log.info("### 非灰度模式下优先使用 同IP的服务节点:YES ! {} ", hostIp);
+                }
+                return connectorsHighPriority;
+            }
+            return connectorsAll;
+        }
 
-
-        return null;
-
+        throw new IllegalStateException("内部状态错误，灰度机制不清晰！Internal error ！");
     }
 }

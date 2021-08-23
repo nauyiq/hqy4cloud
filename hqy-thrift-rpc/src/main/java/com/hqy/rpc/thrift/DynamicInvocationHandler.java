@@ -1,6 +1,7 @@
 package com.hqy.rpc.thrift;
 
 import com.hqy.rpc.nacos.NodeHeartbeatListener;
+import com.hqy.rpc.regist.GreyWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.rpc.route.AbstractRPCRouter;
 import com.hqy.util.IpUtil;
@@ -46,7 +47,25 @@ public class DynamicInvocationHandler<T> extends AbstractRPCRouter
         config.setMinIdle(minIdle);
         config.setMaxIdle(minIdle * 8);
         config.setMaxIdle(minIdle * 8);
-//        this.factory = new MultiplexThriftServiceFactory<>(service, )
+        this.factory = new MultiplexThriftServiceFactory<>(service, addressesGray, addressesWhite, hostIp);
+        initializeObjPool(addressesGray,addressesWhite);
+        this.callback = callback;
+    }
+
+    private void initializeObjPool(List<UsingIpPort> addressesGray, List<UsingIpPort> addressesWhite) {
+        super.setGrayProviders(addressesGray);
+        super.setWhiteProviders(addressesWhite);
+
+        //初始化对象池
+        initializeObjPoolOfMode(addressesGray, GreyWhitePub.GRAY);
+
+
+    }
+
+    private void initializeObjPoolOfMode(List<UsingIpPort> usingIpPorts, GreyWhitePub pub) {
+        if (GreyWhitePub.GRAY.equals(pub)) {
+//            setGrayProviders();
+        }
     }
 
     @Override

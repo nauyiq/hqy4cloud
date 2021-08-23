@@ -13,7 +13,7 @@ public enum GreyWhitePub {
     WHITE(100);
     ;
 
-    private int value;
+    public int value;
 
     GreyWhitePub(int value) {
         this.value = value;
