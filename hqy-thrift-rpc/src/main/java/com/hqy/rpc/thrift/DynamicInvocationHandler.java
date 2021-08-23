@@ -26,7 +26,7 @@ import java.util.List;
 public class DynamicInvocationHandler<T> extends AbstractRPCRouter
         implements InvocationHandler, NodeHeartbeatListener {
 
-    private static InvokeCallback callback;
+    private final InvokeCallback callback;
     private GenericObjectPoolConfig<T> config;
     private MultiplexThriftServiceFactory<T> factory;
     //灰度服务的对象池

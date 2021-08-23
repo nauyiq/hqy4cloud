@@ -17,6 +17,7 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
     public static final HttpGeneralSwitcher ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER_FILTER = new HttpGeneralSwitcher(101,"节点(Web)-是否启用http请求体 可重复读的请求包装过滤器",true);
 
 
+
     /**
      * 场景： 启用配置化的Ip访问限制策略（126） 节点后 ，  黑客行为检测 规则:   如果false使用原来的检测(一次黑客行为就拉黑);    true则走限制 配置化的规则(次数可以配置)
      */

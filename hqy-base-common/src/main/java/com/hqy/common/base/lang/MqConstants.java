@@ -13,8 +13,15 @@ public interface MqConstants {
      */
     String AMQP_GATEWAY_QUEUE = "GATEWAY_QUEUE";
 
+    int QUEUE_TTL = 30 * 1000;
+
+
     // =============================== EXCHANGE ==================================
 
 
     String AMQP_COLL_EXCHANGE = "COLL_FANOUT_EXCHANGE";
+
+
+    String X_MESSAGE_TTL_KEY = "x-message-ttl";
+
 }
