@@ -1,4 +1,4 @@
-package com.hqy.dao.aop;
+package com.hqy.dao.multiple.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
  * @project: hqy-parent-all
  * @create 2021-08-09 18:25
  */
-@Component
 @Slf4j
 @Aspect
-@Order(0) // execute before @Transactional
+@Order(0)
+@Component
 public class MultipleDataSourceAop {
 }
