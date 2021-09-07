@@ -1,13 +1,9 @@
 package com.hqy.mq.collector.config;
 
 import com.hqy.common.base.lang.MqConstants;
-import com.hqy.common.swticher.CommonSwitcher;
 import com.hqy.common.swticher.InternalGeneralSwitcher;
 import org.apache.commons.collections4.map.HashedMap;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,10 +35,11 @@ public class RabbitMqConfig {
             return new Queue(MqConstants.AMQP_GATEWAY_QUEUE, true);
         } else {
             Map<String, Object> args = new HashedMap<>();
-            args.put(MqConstants.X_MESSAGE_TTL_KEY, MqConstants.QUEUE_TTL);
+            args.put(MqConstants.X_MESSAGE_TTL_KEY, MqConstants.QUEUE_TTL);  //给队列设置过期时间
+            args.put(MqConstants.X_DEAD_LETTER_EXCHANGE, MqConstants.DIRECT_DEATH_EXCHANGE); //绑定死信交换机
+            args.put(MqConstants.X_DEAD_LETTER_ROUTING_KEY, MqConstants.DEATH_ROUTING_KEY); //绑定死信交换机的routing key
             return new Queue(MqConstants.AMQP_GATEWAY_QUEUE, true, false, false, args);
         }
-
 
     }
 
@@ -54,6 +51,24 @@ public class RabbitMqConfig {
     public Binding gatewayBinding() {
         return BindingBuilder.bind(gatewayQueue()).to(fanoutExchange());
     }
+
+
+    @Bean
+    public DirectExchange deathExchange() {
+        return new DirectExchange(MqConstants.DIRECT_DEATH_EXCHANGE, true, false);
+    }
+
+    @Bean
+    public Queue deathQueue() {
+        return new Queue(MqConstants.DIRECT_DEATH_QUEUE, true, false, false);
+    }
+
+
+    @Bean
+    public Binding deathBinds() {
+        return BindingBuilder.bind(deathQueue()).to(deathExchange()).with(MqConstants.DEATH_ROUTING_KEY);
+    }
+
 
 
 }

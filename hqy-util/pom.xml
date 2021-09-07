@@ -47,4 +47,45 @@
 
     </dependencies>
 
+    <build>
+        <resources>
+            <resource>
+                <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.BIN</include>
+                    <include>**/*.bin</include>
+                    <include>**/*.key</include>
+                    <include>**/*.json</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <!--<Agent-Class>
+                                com.hytto.gfw.util.hotjvm.agent.HotServerAgent
+                            </Agent-Class>-->
+                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                            <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                            <Class-Path>. tools-1.8.jar</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
 </project>

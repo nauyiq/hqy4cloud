@@ -1,17 +1,13 @@
 package com.hqy.common.enums;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+//import org.apache.commons.lang3.StringUtils;
 
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author rosun:285350134@qq.com
- *
- */
+
 public enum CountryEnum {
 	AD("AD", "安道尔共和国", "Andorra", 376), AE("AE", "阿拉伯联合酋长国", "United Arab Emirates", 971),
 	AF("AF", "阿富汗", "Afghanistan", 93), AG("AG", "安提瓜和巴布达", "Antigua and Barbuda", 1268),
@@ -144,13 +140,11 @@ public enum CountryEnum {
 
 	;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CountryEnum.class);
 
 	public static CountryEnum fromShortName(String xx) {
 		try {
 			return CountryEnum.valueOf(xx);
 		}catch(Exception ex) {
-			LOGGER.warn(ex.getMessage());
 			//默认返回南斯拉夫（不能存在的国家）
 			return CountryEnum.DEFAULT_EMPTY;
 		}
@@ -185,14 +179,13 @@ public enum CountryEnum {
 	 * @return
 	 */
 	public static CountryEnum getCountryEnumByFullNameEn(String fullNameEn) {
-		if(StringUtils.isEmpty(fullNameEn)){
+		if(fullNameEn == null || fullNameEn.equals("")){
 			return CountryEnum.DEFAULT_EMPTY;
 		}
 		fullNameEn = fullNameEn.toLowerCase().replaceAll(" ","");
 		CountryEnum countryEnum = countryEnumMap.get(fullNameEn);
 		if(countryEnum == null){
 			countryEnum = CountryEnum.DEFAULT_EMPTY;
-			LOGGER.warn("### getCountryEnumByFullNameEn no found fullNameEn:{}",fullNameEn);
 		}
 		return countryEnum;
 	}

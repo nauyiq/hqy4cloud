@@ -9,9 +9,8 @@
     </parent>
 
     <modules>
-        <module>hqy-rpc-demo</module>
         <module>hqy-netty-core</module>
-        <module>hqy-netty-test</module>
+        <module>hqy-netty-websocket-demo</module>
         <module>hqy-netty-text-websocket</module>
     </modules>
 

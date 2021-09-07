@@ -12,11 +12,12 @@
     <packaging>pom</packaging>
     <modules>
         <module>hqy-common-foundation</module>
-        <module>hqy-commmon-mq-collector-api</module>
-        <module>hqy-commmon-mq-collector-impl</module>
+        <module>hqy-common-mq-collector-api</module>
+        <module>hqy-common-mq-collector-impl</module>
         <module>hqy-public-basic-service-api</module>
         <module>hqy-public-basic-service-impl</module>
         <module>hqy-data-structures-and-algorithms</module>
+        <module>hqy-common-elasticsearch-api</module>
     </modules>
 
     <artifactId>hqy-common-modules</artifactId>

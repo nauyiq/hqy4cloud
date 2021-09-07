@@ -2,7 +2,6 @@ package com.hqy.rpc.thrift;
 
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
-import com.facebook.swift.service.ThriftClientManager;
 import com.google.common.net.HostAndPort;
 import com.hqy.common.exception.NoAvailableProvidersException;
 import com.hqy.common.swticher.CommonSwitcher;
