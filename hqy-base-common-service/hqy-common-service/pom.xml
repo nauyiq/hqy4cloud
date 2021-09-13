@@ -3,27 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-common-modules</artifactId>
+        <artifactId>hqy-base-common-service</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-common-mq-collector-api</artifactId>
+    <artifactId>hqy-common-service</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
+            <artifactId>hqy-common-foundation</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!--springboot-rabbitmq支持-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
 
 </project>

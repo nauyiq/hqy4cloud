@@ -77,7 +77,7 @@
         <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-service</artifactId>
+            <artifactId>hqy-common-service</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>

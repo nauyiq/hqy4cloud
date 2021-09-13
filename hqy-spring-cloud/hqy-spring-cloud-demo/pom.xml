@@ -3,19 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-parent</artifactId>
+        <artifactId>hqy-spring-cloud</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-base-common-dao</artifactId>
+    <artifactId>hqy-spring-cloud-demo</artifactId>
+
     <packaging>pom</packaging>
 
     <modules>
-        <module>hqy-base-multiple-datasource</module>
-        <module>hqy-base-common-dao-api</module>
+        <module>alibaba-consumer-demo</module>
+        <module>alibaba-provider-demo</module>
+        <module>cloud-common-data</module>
+        <module>cloud-config</module>
+        <module>cloud-consumer-demo</module>
+        <module>cloud-provider-demo</module>
+        <module>cloud-registry</module>
     </modules>
 
 </project>

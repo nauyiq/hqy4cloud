@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao</artifactId>
+            <artifactId>hqy-base-common-dao-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

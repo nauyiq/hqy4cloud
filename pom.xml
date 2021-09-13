@@ -45,6 +45,7 @@
         <guava.version>22.0</guava.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <source.plugin.version>3.0.1</source.plugin.version>
+        <quartz.version>2.3.0</quartz.version>
     </properties>
 
 
@@ -197,6 +198,12 @@
                 <version>${elasticsearch.version}</version>
             </dependency>
 
+            <!-- Quartz -->
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

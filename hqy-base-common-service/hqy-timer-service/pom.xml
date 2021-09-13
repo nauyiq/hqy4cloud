@@ -3,19 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-parent</artifactId>
+        <artifactId>hqy-base-common-service</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-base-common-dao</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>hqy-timer-service</artifactId>
 
-    <modules>
-        <module>hqy-base-multiple-datasource</module>
-        <module>hqy-base-common-dao-api</module>
-    </modules>
 
 </project>

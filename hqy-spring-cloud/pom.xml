@@ -11,37 +11,29 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>cloud-registry</module>
-        <module>cloud-consumer-demo</module>
-        <module>cloud-provider-demo</module>
-        <module>cloud-common-data</module>
-        <module>cloud-hystrix-dashboard</module>
         <module>cloud-gateway</module>
-        <module>cloud-config</module>
-        <module>alibaba-provider-demo</module>
-        <module>alibaba-consumer-demo</module>
+        <module>hqy-spring-cloud-demo</module>
     </modules>
 
     <artifactId>hqy-spring-cloud</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-
     </dependencies>
 
 
