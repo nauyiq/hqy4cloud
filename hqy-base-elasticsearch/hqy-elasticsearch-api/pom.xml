@@ -40,6 +40,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 

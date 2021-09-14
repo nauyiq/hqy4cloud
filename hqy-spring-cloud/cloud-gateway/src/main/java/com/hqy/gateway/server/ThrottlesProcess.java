@@ -1,6 +1,8 @@
 package com.hqy.gateway.server;
 
 import com.hqy.service.limit.ThrottlesServer;
+import com.hqy.service.limit.impl.RedisBiBlockedIpService;
+import com.hqy.service.limit.impl.RedisManualBlockedIpService;
 import com.hqy.util.HtmlCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +70,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isWhiteIp(String remoteAddress) {
+
         return false;
     }
 

@@ -1,18 +1,23 @@
 package com.hqy.elasticsearch.service;
 
+import com.hqy.fundation.common.result.PageResult;
+import com.hqy.util.proxy.CommonBeanUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author qy
@@ -25,6 +30,7 @@ public enum ElasticsearchHelper {
 
     /**
      * 构建分页 SearchSourceBuilder
+     *
      * @param sourceBuilder
      * @param pageNum
      * @param pageSize
@@ -32,7 +38,7 @@ public enum ElasticsearchHelper {
      */
     public SearchSourceBuilder limit(SearchSourceBuilder sourceBuilder, int pageNum, int pageSize) {
         if (sourceBuilder == null) {
-            return null;
+            throw new RuntimeException("分页失败, SearchSourceBuilder is null.");
         }
         if (pageNum != 0) {
             pageNum = (pageNum - 1) * pageSize;
@@ -44,6 +50,7 @@ public enum ElasticsearchHelper {
 
     /**
      * 设置高亮字段
+     *
      * @param sourceBuilder
      * @param highlightField
      * @return
@@ -64,10 +71,11 @@ public enum ElasticsearchHelper {
 
     /**
      * 多条件查询
-     * @param andQueryMap 精确查询参数map  参数and连接
-     * @param orQueryMap  精确查询参数map  参数or连接
-     * @param andLikeQueryMap  模糊查询参数map 参数and连接
-     * @param orLikeQueryMap 模糊查询参数map 参数or连接
+     *
+     * @param andQueryMap     精确查询参数map  参数and连接
+     * @param orQueryMap      精确查询参数map  参数or连接
+     * @param andLikeQueryMap 模糊查询参数map 参数and连接
+     * @param orLikeQueryMap  模糊查询参数map 参数or连接
      * @return
      */
     public BoolQueryBuilder conditionQuery(Map<String, Object> andQueryMap,
@@ -112,20 +120,78 @@ public enum ElasticsearchHelper {
     }
 
     /**
-     * 分出处理结果集
+     * 处理结果集
+     *
      * @param searchResponse 结果集
      * @param highlightField 需要解析的高亮字段，空则不解析
-     * @param tClass 返回的class
+     * @param tClass         返回的class
      * @param <T>
      * @return
      */
-    public <T> List<T>  analyseResult(SearchResponse searchResponse,  String highlightField, Class<T> tClass) {
+    public <T> List<T> analyseResult(SearchResponse searchResponse, String highlightField, Class<T> tClass) {
         if (Objects.isNull(searchResponse)) {
             return null;
         }
+        SearchHits hits = searchResponse.getHits();
+        return getResultList(highlightField, tClass, hits);
+    }
+
+    /**
+     * 分页处理结果集
+     * @param searchResponse
+     * @param highlightField
+     * @param pageNumber
+     * @param pageSize
+     * @param tClass
+     * @param <T>
+     * @return
+     */
+    public <T> PageResult<T> analyseResult(SearchResponse searchResponse,
+                                           String highlightField,
+                                           int pageNumber,
+                                           int pageSize,
+                                           Class<T> tClass) {
+        SearchHits hits = searchResponse.getHits();
+        List<T> resultList = getResultList(highlightField, tClass, hits);
+        long total = hits.getTotalHits().value;
+        int pages = (int) ((total + pageSize - 1) / pageSize);
+        return new PageResult<>(pageNumber, total, pages, resultList);
+    }
 
 
+    public <T> List<T> getResultList(String highlightField, Class<T> tClass, SearchHits hits) {
+        return Arrays.stream(hits.getHits()).map(e -> {
+            Map<String, HighlightField> highlightFields = e.getHighlightFields();
+            HighlightField highlight = highlightFields.get(highlightField);
+            Map<String, Object> sourceAsMap = e.getSourceAsMap();
+            if (Objects.nonNull(highlight)) {
+                Text[] fragments = highlight.fragments();
+                StringBuilder newField = new StringBuilder();
+                for (Text fragment : fragments) {
+                    newField.append(fragment);
+                }
+                sourceAsMap.put(highlightField, newField.toString());
+            }
+            return CommonBeanUtil.map2Bean(sourceAsMap, tClass);
+        }).collect(Collectors.toList());
+    }
 
+    public List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField) {
+        SearchHit[] hits = response.getHits().getHits();
+        return Arrays.stream(hits).map(e -> {
+            Map<String, HighlightField> highlightFields = e.getHighlightFields();
+            HighlightField highlight = highlightFields.get(highlightField);
+            Map<String, Object> sourceAsMap = e.getSourceAsMap();
+            if (Objects.nonNull(highlight)) {
+                Text[] fragments = highlight.fragments();
+                StringBuilder newField = new StringBuilder();
+                for (Text fragment : fragments) {
+                    newField.append(fragment);
+                }
+                sourceAsMap.put(highlightField, newField.toString());
+            }
+            return sourceAsMap;
+        }).collect(Collectors.toList());
     }
 
 

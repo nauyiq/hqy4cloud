@@ -1,4 +1,4 @@
-package com.hqy.gateway.server;
+package com.hqy.service.limit.impl;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.service.limit.ManualBlockedIpService;
@@ -55,7 +55,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
         ip = ip.trim();
         cache.add(ip);
         timestampMap.put(ip, new Date().getTime() + blockSeconds * 1000L);
-        LettuceRedis.getInstance().StringSAdd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
+        LettuceRedis.getInstance().strSAdd(KEY_BLOCKED, Integer.MAX_VALUE, ip);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
     @Override
     public Set<String> getAllBlockIpSet() {
-        Set<String> ips = LettuceRedis.getInstance().stringSMembers(KEY_BLOCKED);
+        Set<String> ips = LettuceRedis.getInstance().strSMembers(KEY_BLOCKED);
         if (CollectionUtils.isEmpty(ips)) {
             return new HashSet<>();
         } else {
@@ -92,7 +92,7 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
             }
             if (foundTimeoutItems) {
                 LettuceRedis.getInstance().sMove(KEY_BLOCKED, removeString.toArray(new String[0]));
-                ips = LettuceRedis.getInstance().stringSMembers(KEY_BLOCKED);
+                ips = LettuceRedis.getInstance().strSMembers(KEY_BLOCKED);
             }
             return ips;
         }

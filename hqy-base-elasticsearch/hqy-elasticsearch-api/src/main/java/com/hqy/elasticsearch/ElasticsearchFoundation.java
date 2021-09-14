@@ -1,5 +1,6 @@
 package com.hqy.elasticsearch;
 
+import com.hqy.fundation.common.result.PageResult;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -111,13 +112,13 @@ public interface ElasticsearchFoundation {
      */
     boolean checkExistDocument(String index, String id);
 
-    /**
+  /*  *//**
      * 返回高亮结果数据
      * @param response
      * @param highlightField
      * @return
-     */
-    List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField);
+     *//*
+    List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField);*/
 
     /**
      * 返回高亮结果数据
@@ -148,5 +149,30 @@ public interface ElasticsearchFoundation {
                                              String field,
                                              String sortField,
                                              String highlightField);
+
+
+    /**
+     * 分页通用查询方法，精确查询（match），模糊查询
+     * @param index 索引
+     * @param highlightField 高亮字段
+     * @param andQueryMap   精确查询参数map  参数and连接
+     * @param orQueryMap    精确查询参数map  参数or连接
+     * @param andLikeMap    模糊查询参数map 参数and连接
+     * @param orLikeMap     模糊查询参数map 参数or连接
+     * @param pageNumber    第几页
+     * @param pageSize      一页几条
+     * @param tClass
+     * @param <T>
+     * @return
+     */
+    <T> PageResult<T> search(String index,
+                             String highlightField,
+                             Map<String, Object> andQueryMap,
+                             Map<String, Object> orQueryMap,
+                             Map<String, Object> andLikeMap,
+                             Map<String, Object> orLikeMap,
+                             int pageNumber,
+                             int pageSize,
+                             Class<T> tClass);
 
 }

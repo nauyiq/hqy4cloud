@@ -465,7 +465,7 @@ public abstract class AbstractRedisTemplateUtil {
     }
 
 
-    public Set<String> stringSMembers(String key) {
+    public Set<String> strSMembers(String key) {
         try {
             return stringRedisTemplate.opsForSet().members(key);
         } catch (Exception e) {
@@ -504,7 +504,16 @@ public abstract class AbstractRedisTemplateUtil {
         }
     }
 
-    public void StringSAdd(String key, long time, String... values) {
+    public void strSAdd(String key, String... values) {
+        try {
+            stringRedisTemplate.opsForSet().add(key, values);
+        } catch (Exception e) {
+            log.error("操作失败: ", e);
+        }
+    }
+
+
+    public void strSAdd(String key, long time, String... values) {
         try {
             stringRedisTemplate.opsForSet().add(key, values);
             if (time > 0) expire(key, time);

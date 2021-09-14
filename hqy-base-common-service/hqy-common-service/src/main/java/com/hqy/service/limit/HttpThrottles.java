@@ -37,7 +37,7 @@ public interface HttpThrottles {
     boolean isWhiteURI(String uri);
 
     /**
-     *
+     * 当前ip 是否是人工白名单
      * @param remoteAddr
      * @return
      */

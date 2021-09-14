@@ -21,7 +21,7 @@ import java.util.Objects;
 
 /**
  * Http限流器，内部实现了系统忙或者客户端频繁访问时，判定要否限流的功能。也能识别出基本的hack或者数据采集，继而判定要限制访问。<br>
- * 核心实现 依赖google 的CacheBuilder
+ * 核心实现 依赖 redis 和 google 的CacheBuilder
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-07-27 19:58
@@ -227,7 +227,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
             }
 
         }
-
         return new LimitResult();
     }
 
@@ -238,13 +237,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
      */
     @Override
     public boolean isWhiteURI(String uri) {
-        //TODO 可从配置文件加载...
-        return false;
+        return ThrottlesProcess.getInstance().isWhiteIp(uri);
     }
+
 
     @Override
     public boolean isManualWhiteIp(String remoteAddr) {
-        return ThrottlesProcess.getInstance().isManualBlockedIp(remoteAddr);
+        return ThrottlesProcess.getInstance().isWhiteIp(remoteAddr);
     }
 
 

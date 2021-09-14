@@ -1,4 +1,4 @@
-package com.hqy.gateway.server;
+package com.hqy.service.limit.impl;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;

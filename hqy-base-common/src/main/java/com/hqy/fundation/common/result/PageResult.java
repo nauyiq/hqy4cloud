@@ -1,6 +1,7 @@
 package com.hqy.fundation.common.result;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class PageResult<T> implements Serializable {
     /**
      * 结果集
      */
-    private List<T> resultList;
+    private List<T> resultList = new ArrayList<>();
 
     public PageResult() {
     }

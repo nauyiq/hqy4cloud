@@ -1,8 +1,8 @@
 package com.hqy.elasticsearch.service;
 
 import com.hqy.elasticsearch.ElasticsearchFoundation;
+import com.hqy.fundation.common.result.PageResult;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
-import com.hqy.util.JsonUtil;
 import com.hqy.util.proxy.CommonBeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,28 +27,22 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.core.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.rest.RestStatus;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * es工具类
@@ -192,7 +186,7 @@ public class ElasticsearchService implements ElasticsearchFoundation {
     }
 
     @Override
-    public boolean deleteDocument(String index, String id)  {
+    public boolean deleteDocument(String index, String id) {
         if (StringUtils.isAnyBlank(index, id)) {
             return false;
         }
@@ -267,80 +261,99 @@ public class ElasticsearchService implements ElasticsearchFoundation {
     }
 
     @Override
-    public boolean checkExistDocument(String index, String id) throws IOException {
-        if (StringUtils.isAnyBlank(id,index)) {
+    public boolean checkExistDocument(String index, String id) {
+        if (StringUtils.isAnyBlank(id, index)) {
             return false;
         }
-        GetRequest request = new GetRequest(index, id);
-        //不获取返回的_source的上下文
-        request.fetchSourceContext(new FetchSourceContext(false));
-        request.storedFields("_none_");
-        return client.exists(request, RequestOptions.DEFAULT);
+        try {
+            GetRequest request = new GetRequest(index, id);
+            //不获取返回的_source的上下文
+            request.fetchSourceContext(new FetchSourceContext(false));
+            request.storedFields("_none_");
+            return client.exists(request, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            log.error("[es] checkExistDocument failure, index:{} id:{}", index, id);
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+
+    @Override
+    public <T> List<T> getHighlightResponse(SearchResponse response, String highlightField, Class<T> tClass) {
+        try {
+            return ElasticsearchHelper.instance.analyseResult(response, highlightField, tClass);
+        } catch (Exception e) {
+            log.error("[es] getHighlightResponse failure, highlightField:{}, tClass:{}", highlightField, tClass.getSimpleName());
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
-    public List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField) throws IOException {
-        SearchHit[] hits = response.getHits().getHits();
-        return Arrays.stream(hits).map(e -> {
-            Map<String, HighlightField> highlightFields = e.getHighlightFields();
-            HighlightField highlight = highlightFields.get(highlightField);
-            Map<String, Object> sourceAsMap = e.getSourceAsMap();
-            if (Objects.nonNull(highlight)) {
-                Text[] fragments = highlight.fragments();
-                StringBuilder newField = new StringBuilder();
-                for (Text fragment : fragments) {
-                    newField.append(fragment);
+    public List<Map<String, Object>> searchListData(String index,
+                                                    SearchSourceBuilder query,
+                                                    int size, int from, String field,
+                                                    String sortField,
+                                                    String highlightField) {
+        try {
+            SearchRequest request = new SearchRequest(index);
+            if (StringUtils.isNotEmpty(field)) {
+                //只查询特定字段。如果需要查询所有字段则不设置该项。
+                query.fetchSource(new FetchSourceContext(true, field.split(","), Strings.EMPTY_ARRAY));
+                from = from == 0 ? 0 : (from - 1) * size;
+                //设置确定结果要从哪个索引开始搜索的from选项，默认为0
+                query.from(from);
+                query.size(size);
+                if (StringUtils.isNotEmpty(sortField)) {
+                    //排序字段，注意如果proposal_no是text类型会默认带有keyword性质，需要拼接.keyword
+                    query.sort(sortField + ".keyword", SortOrder.ASC);
                 }
-                sourceAsMap.put(highlightField, newField.toString());
+                ElasticsearchHelper.instance.highlight(query, highlightField);
+                //不返回源数据。只有条数之类的数据。
+                //builder.fetchSource(false);
+                request.source(query);
+                SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+                if (response.status().getStatus() == 200) {
+                    // 解析对象
+                    return ElasticsearchHelper.instance.getHighlightResponse(response, highlightField);
+                }
             }
-            return sourceAsMap;
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public <T> List<T> getHighlightResponse(SearchResponse response, String highlightField, Class<T> tClass) throws IOException {
-        List<Map<String, Object>> result = getHighlightResponse(response, highlightField);
-        String json = JsonUtil.toJson(result);
-        return JsonUtil.toList(json, tClass);
-    }
-
-    @Override
-    public List<Map<String, Object>> searchListData(String index, SearchSourceBuilder query, int size, int from, String field, String sortField, String highlightField) throws IOException {
-        SearchRequest request = new SearchRequest(index);
-        if (StringUtils.isNotEmpty(field)) {
-            //只查询特定字段。如果需要查询所有字段则不设置该项。
-            query.fetchSource(new FetchSourceContext(true, field.split(","), Strings.EMPTY_ARRAY));
-        }
-        from = from <= 0 ? 0 : from * size;
-        //设置确定结果要从哪个索引开始搜索的from选项，默认为0
-        query.from(from);
-        query.size(size);
-        if (StringUtils.isNotEmpty(sortField)){
-            //排序字段，注意如果proposal_no是text类型会默认带有keyword性质，需要拼接.keyword
-            query.sort(sortField + ".keyword", SortOrder.ASC);
-        }
-        //高亮
-        HighlightBuilder highlight = new HighlightBuilder();
-        highlight.field(highlightField);
-        //关闭多个高亮
-        highlight.requireFieldMatch(false);
-        highlight.preTags("<span style='color:red'>");
-        highlight.postTags("</span>");
-        query.highlighter(highlight);
-        //不返回源数据。只有条数之类的数据。
-        //builder.fetchSource(false);
-        request.source(query);
-        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
-        log.error("=="+response.getHits().getTotalHits());
-        if (response.status().getStatus() == 200) {
-            // 解析对象
-            return getHighlightResponse(response, highlightField);
+        } catch (Exception e) {
+            log.error("[es] searchListData failure");
+            log.error(e.getMessage(), e);
         }
         return null;
     }
 
-
-
-
-
+    @Override
+    public <T> PageResult<T> search(String index,
+                                    String highlightField,
+                                    Map<String, Object> andQueryMap,
+                                    Map<String, Object> orQueryMap, Map<String, Object> andLikeMap,
+                                    Map<String, Object> orLikeMap, int pageNumber, int pageSize,
+                                    Class<T> tClass) {
+        if (StringUtils.isBlank(index)) {
+            return new PageResult<>();
+        }
+        try {
+            SearchRequest request = new SearchRequest(index);
+            //构建搜索条件
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            BoolQueryBuilder boolQueryBuilder = ElasticsearchHelper.instance.conditionQuery(andQueryMap, orQueryMap, andLikeMap, orLikeMap);
+            sourceBuilder.query(boolQueryBuilder);
+            if (StringUtils.isNotBlank(highlightField)) {
+                ElasticsearchHelper.instance.highlight(sourceBuilder, highlightField);
+            }
+            sourceBuilder = ElasticsearchHelper.instance.limit(sourceBuilder, pageNumber, pageSize);
+            sourceBuilder.timeout(new TimeValue(30, TimeUnit.SECONDS));
+            request.source(sourceBuilder);
+            SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+            return ElasticsearchHelper.instance.analyseResult(response, highlightField, pageNumber, pageSize, tClass);
+        } catch (Exception e) {
+            log.error("[es] search failure");
+            log.error(e.getMessage(), e);
+            return new PageResult<>();
+        }
+    }
 }
