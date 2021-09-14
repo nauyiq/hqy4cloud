@@ -1,9 +1,0 @@
-env:
-  dev
-#rabbitmq相关配置
-spring:
-  rabbitmq:
-    host: 120.76.65.160
-    port: 5672
-    username: guest
-    password: guest

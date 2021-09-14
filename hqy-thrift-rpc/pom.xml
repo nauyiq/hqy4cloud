@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy-parent</artifactId>
+        <groupId>com.hqy</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hqy-thrift-rpc</artifactId>
+
+    <description>引入Thrift源码, 自定义RPC框架</description>
+
+    <dependencies>
+        <!--nacos-client-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!--nacos-config-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-foundation</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.facebook.swift</groupId>
+            <artifactId>swift-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.facebook.swift</groupId>
+            <artifactId>swift-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>configuration</artifactId>
+            <version>0.119</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>stats</artifactId>
+            <version>0.119</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.facebook.nifty</groupId>
+            <artifactId>nifty-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.weakref</groupId>
+            <artifactId>jmxutils</artifactId>
+            <version>1.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+    </dependencies>
+
+</project>

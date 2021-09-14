@@ -18,6 +18,8 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
+    private final static ProjectContextInfo contextInfo = new ProjectContextInfo();
+
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         SpringContextHolder.applicationContext = context; // NOSONAR
@@ -124,9 +126,9 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
 
-//	public static GfwContextInfo getGfwContextInfo(){
-//		return congtextInfo;
-//	}
+	public static ProjectContextInfo getProjectContextInfo(){
+		return contextInfo;
+	}
 
     /**
      * 处理spring event

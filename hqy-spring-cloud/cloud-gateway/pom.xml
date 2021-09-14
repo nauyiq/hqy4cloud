@@ -12,18 +12,56 @@
     <artifactId>cloud-gateway</artifactId>
 
     <dependencies>
-        <!--gateway-->
+        <!--spring-cloud-gateway-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--eureka-client-->
+        <!--spring-cloud-alibaba-nacos-client-->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
+        <!--spring-cloud-alibaba-nacos-config-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!--spring-boot-starter-actuator-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--dubbo rpc 接入-->
+        <!--<dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-dubbo</artifactId>
+        </dependency>-->
+
+        <!--gateway服务不提供持久化服务-->
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-mq-collector-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.hqy</groupId>
+                    <artifactId>hqy-base-common-dao</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--引入springboot 整合rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-util</artifactId>
@@ -36,9 +74,10 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-service</artifactId>
+            <artifactId>hqy-common-service</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -47,9 +86,66 @@
             </exclusions>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-
     </dependencies>
+
+
+    <build>
+        <finalName>hqy-gateway-service</finalName>
+        <resources>
+            <resource>
+                <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>*.properties</include>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <classesDirectory>target/classes/</classesDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.hqy.gateway.GatewayMain</mainClass>
+                            <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
+                            <useUniqueVersions>false</useUniqueVersions>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                       <!-- <manifestEntries>
+                            <Class-Path>. lib/tools-1.8.jar</Class-Path>
+                        </manifestEntries>-->
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <type>jar</type>
+                            <includeTypes>jar</includeTypes>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 
 

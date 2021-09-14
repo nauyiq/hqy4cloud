@@ -1,0 +1,13 @@
+server:
+  port: 10010
+eureka:
+  instance:
+    hostname: eureka.com  #eureka服务端的实例名称
+  client:
+    register-with-eureka: false     #false表示不向注册中心注册自己。
+    fetch-registry: false  #false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+    service-url:
+      defaultZone: http://localhost:10010/eureka
+  server:
+    enable-self-preservation: true  #eureka自我保护机制，保证不可用服务不会被马上剔除 (默认开)
+    eviction-interval-timer-in-ms: 2000  #清理无效节点的时间间隔，默认60000毫秒，即60秒

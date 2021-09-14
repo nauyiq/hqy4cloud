@@ -11,16 +11,18 @@
     <modules>
         <module>hqy-netty</module>
         <module>hqy-util</module>
-        <module>hqy-test</module>
         <module>hqy-spring-cloud</module>
         <module>hqy-base-common</module>
         <module>hqy-base-common-dao</module>
         <module>hqy-common-modules</module>
         <module>hqy-base-common-service</module>
+        <module>hqy-thrift-rpc</module>
+        <module>hqy-base-elasticsearch</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
@@ -38,6 +40,14 @@
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
         <hutool.version>5.6.3</hutool.version>
         <servlet.version>3.1.0</servlet.version>
+        <swift.version>0.22.1</swift.version>
+        <thrift.version>0.9.3</thrift.version>
+        <nifty.version>0.23.0</nifty.version>
+        <guava.version>22.0</guava.version>
+        <elasticsearch.version>7.14.0</elasticsearch.version>
+        <source.plugin.version>3.0.1</source.plugin.version>
+        <quartz.version>2.3.0</quartz.version>
+        <commons.beanutils.version>1.9.3</commons.beanutils.version>
     </properties>
 
 
@@ -139,6 +149,69 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.facebook.swift</groupId>
+                <artifactId>swift-codec</artifactId>
+                <version>${swift.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.facebook.swift</groupId>
+                <artifactId>swift-annotations</artifactId>
+                <version>${swift.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${thrift.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.facebook.nifty</groupId>
+                <artifactId>nifty-core</artifactId>
+                <version>${nifty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <!-- Quartz -->
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons.beanutils.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -209,11 +282,80 @@
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
 
     </dependencies>
 
-
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- 打包源代码插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${source.plugin.version}</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${source.plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${source.plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Build-Jdk>${jdk.version}</Build-Jdk>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.5.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -225,7 +367,7 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 
 </project>

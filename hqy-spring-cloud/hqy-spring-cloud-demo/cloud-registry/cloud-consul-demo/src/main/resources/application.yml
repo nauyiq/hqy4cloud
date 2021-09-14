@@ -1,0 +1,11 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: cloud-consul-server
+  cloud:
+    consul:
+      host: localhost #本地consul服务ip
+      port: 8500  #本地consul端口
+      discovery:
+        service-name: ${spring.application.name}

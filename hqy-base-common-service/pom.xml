@@ -10,22 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-base-common-service</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
+    <modules>
+        <module>hqy-common-service</module>
+        <module>hqy-timer-service</module>
+    </modules>
 
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-foundation</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
 
 </project>
