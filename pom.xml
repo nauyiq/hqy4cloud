@@ -47,6 +47,7 @@
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <source.plugin.version>3.0.1</source.plugin.version>
         <quartz.version>2.3.0</quartz.version>
+        <commons.beanutils.version>1.9.3</commons.beanutils.version>
     </properties>
 
 
@@ -206,6 +207,11 @@
                 <version>${quartz.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons.beanutils.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -279,6 +285,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
 
     </dependencies>

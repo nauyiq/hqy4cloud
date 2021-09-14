@@ -2,6 +2,7 @@ package com.hqy.elasticsearch;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,36 +19,32 @@ public interface ElasticsearchFoundation {
      * 创建索引(类似db中库的存在)
      * @param index
      * @return
-     * @throws IOException
      */
-    boolean createIndex(String index) throws IOException;
+    boolean createIndex(String index);
 
 
     /**
      * 删除索引
      * @param index
      * @return
-     * @throws IOException
      */
-    boolean deleteIndex(String index) throws IOException;
+    boolean deleteIndex(String index);
 
 
     /**
      * 判断索引是否存在
      * @param index
      * @return
-     * @throws IOException
      */
-    boolean checkIndexExist(String index) throws IOException;
+    boolean checkIndexExist(String index);
 
     /**
      * 添加文档, 使用随机id
      * @param jsonData 文档json数据
      * @param index 索引库
      * @return
-     * @throws IOException
      */
-    String addDocument(String jsonData, String index) throws IOException;
+    String addDocument(String jsonData, String index);
 
     /**
      * 添加文档，使用指定id
@@ -55,18 +52,24 @@ public interface ElasticsearchFoundation {
      * @param index 索引库
      * @param id id，为null时使用随机id
      * @return
-     * @throws IOException
      */
-    String addDocument(String jsonData, String index, String id) throws IOException;
+    String addDocument(String jsonData, String index, String id);
+
+    /**
+     * 添加文档
+     * @param index
+     * @param jsonDataList
+     * @return
+     */
+    boolean bulkAddDocument(String index, List<String> jsonDataList);
 
     /**
      * 通过id删除索引
      * @param index
      * @param id
      * @return
-     * @throws IOException
      */
-    boolean deleteDocument(String index, String id) throws IOException;
+    boolean deleteDocument(String index, String id);
 
 
     /**
@@ -75,27 +78,24 @@ public interface ElasticsearchFoundation {
      * @param index
      * @param id
      * @return
-     * @throws IOException
      */
-    boolean updateDocument(String jsonData, String index, String id) throws IOException;
+    boolean updateDocument(String jsonData, String index, String id);
 
     /**
      * 根据id获取文档
      * @param index
      * @param id
      * @return
-     * @throws IOException
      */
-    Map<String, Object> getDocument(String index, String id) throws IOException;
+    Map<String, Object> getDocument(String index, String id);
 
     /**
      * 根据id获取文档
      * @param index
      * @param id
      * @return
-     * @throws IOException
      */
-    Class<?> getDocument(String index, String id, Class<?> clazz) throws IOException;
+    <T> T getDocument(String index, String id, Class<T> tClass);
 
     /**
      * 获取低水平客户端
@@ -108,20 +108,45 @@ public interface ElasticsearchFoundation {
      * @param index
      * @param id
      * @return
-     * @throws IOException
      */
-    boolean checkExistDocument(String index, String id) throws IOException;
+    boolean checkExistDocument(String index, String id);
 
     /**
      * 返回高亮结果数据
      * @param response
      * @param highlightField
      * @return
-     * @throws IOException
      */
-    List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField) throws IOException;
+    List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField);
+
+    /**
+     * 返回高亮结果数据
+     * @param response
+     * @param highlightField
+     * @param tClass
+     * @param <T>
+     * @return
+     */
+    <T> List<T> getHighlightResponse(SearchResponse response, String highlightField, Class<T> tClass);
 
 
-//    public List<Class<?>>
+    /**
+     * 查询并分页
+     * @param index  索引名称
+     * @param query  查询条件
+     * @param size   文档大小限制
+     * @param from   从第几页开始
+     * @param field  需要显示的字段，逗号分隔（缺省为全部字段）
+     * @param sortField 排序字段
+     * @param highlightField 高亮字段
+     * @return
+     */
+    List<Map<String, Object>> searchListData(String index,
+                                             SearchSourceBuilder query,
+                                             int size,
+                                             int from,
+                                             String field,
+                                             String sortField,
+                                             String highlightField);
 
 }

@@ -12,18 +12,20 @@
         <module name="hqy-netty-text-websocket" />
         <module name="hqy-common-service" />
         <module name="hqy-data-structures-and-algorithms" />
+        <module name="hqy-elasticsearch-service" />
+        <module name="hqy-elasticsearch-demo" />
         <module name="cloud-zookeeper-demo" />
         <module name="hqy-base-common" />
         <module name="cloud-eureka-client" />
         <module name="hqy-util" />
         <module name="hqy-netty-test" />
-        <module name="hqy-common-elasticsearch-api" />
         <module name="cloud-eureka-server" />
         <module name="cloud-provider-demo" />
-        <module name="hqy-common-foundation" />
+        <module name="hqy-elasticsearch-api" />
         <module name="cloud-config" />
         <module name="cloud-consumer-demo" />
         <module name="hqy-base-common-dao-api" />
+        <module name="hqy-common-foundation" />
         <module name="hqy-common-mq-collector-api" />
         <module name="hqy-common-mq-collector-impl" />
         <module name="hqy-timer-service" />
@@ -40,6 +42,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="cloud-hystrix-dashboard" target="1.8" />
+      <module name="hqy-common-elasticsearch-api" target="1.8" />
       <module name="hqy-mq-collector-api" target="1.8" />
       <module name="hqy-mq-collector-impl" target="1.8" />
       <module name="hqy-rpc-demo" target="1.8" />
