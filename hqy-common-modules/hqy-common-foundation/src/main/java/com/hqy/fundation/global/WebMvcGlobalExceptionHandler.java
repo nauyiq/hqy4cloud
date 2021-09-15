@@ -2,7 +2,8 @@ package com.hqy.fundation.global;
 
 import com.hqy.fundation.common.bind.MessageResponse;
 import com.hqy.fundation.common.result.CommonResult;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @create 2021-08-09 19:28
  */
 @ControllerAdvice
-@Slf4j
 public class WebMvcGlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(WebMvcGlobalExceptionHandler.class);
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody

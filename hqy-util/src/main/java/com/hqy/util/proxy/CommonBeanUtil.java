@@ -1,6 +1,5 @@
 package com.hqy.util.proxy;
 
-import cn.hutool.core.bean.BeanUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

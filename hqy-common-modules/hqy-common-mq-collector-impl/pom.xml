@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>公共的mq服务</description>
+
     <artifactId>hqy-common-mq-collector-impl</artifactId>
 
     <dependencies>
@@ -35,6 +37,7 @@
             <artifactId>hqy-common-mq-collector-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
 
         <!--Spring cloud alibaba dubbo-->
         <!--<dependency>

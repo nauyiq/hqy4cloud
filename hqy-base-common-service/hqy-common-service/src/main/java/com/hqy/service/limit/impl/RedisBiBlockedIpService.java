@@ -3,9 +3,12 @@ package com.hqy.service.limit.impl;
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.service.limit.BiBlockedIpService;
+import com.hqy.service.limit.config.ManualLimitListProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -15,13 +18,18 @@ import java.util.stream.Collectors;
 
 /**
  * 基于Redis的IP黑名单管理；注意，内部为了优化redis，如果不启用ENABLE_SHARED_BLOCK_IP_LIST的场合，不使用redis来存储，而是使用本地缓存
+ *
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-08-03 11:25
  */
 @Slf4j
 @Component
+@EnableConfigurationProperties(ManualLimitListProperties.class)
 public class RedisBiBlockedIpService implements BiBlockedIpService {
+
+    @Autowired
+    private ManualLimitListProperties manualLimitListProperties;
 
     private static final String KEY = "BI_BLOCK_IP:";
     //过期时间集合
@@ -48,7 +56,7 @@ public class RedisBiBlockedIpService implements BiBlockedIpService {
         }, delay, period);
     }
 
-    private int x  = 0;
+    private int x = 0;
 
     @Override
     public void addBlockIp(String ip, int blockSeconds) {
@@ -59,7 +67,7 @@ public class RedisBiBlockedIpService implements BiBlockedIpService {
         if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             //TODO 基于本地内存缓存的实现
         } else {
-            LettuceRedis.getInstance().set(key, ip, (long)blockSeconds);
+            LettuceRedis.getInstance().set(key, ip, (long) blockSeconds);
         }
         timestampMap.put(ip, expireTimeStamp);
         cache.add(key);
@@ -105,43 +113,48 @@ public class RedisBiBlockedIpService implements BiBlockedIpService {
 
     @Override
     public boolean isBlockIp(String ip) {
-       ip = ip.trim();
-       String key = KEY + ip;
-       if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
-           //TODO 判断内存缓存中的数据
-           return false;
-       } else {
-           boolean blocked = cache.contains(key);
-           if (blocked) {
-               String redisData = LettuceRedis.getInstance().getString(key);
-               boolean contains = StringUtils.isNotBlank(redisData);
-               if (!contains) {
-                   timestampMap.remove(ip);
-                   cache.remove(key);
-                   return false;
-               } else {
-                   // 如果包含， 有可能是已经过期了，受限于redis，被识别为没有过期
-                   int x = new Random().nextInt(100);
-                   if (x % 4 == 0) {
-                       Date now = new Date();
-                       if (timestampMap.containsKey(ip)) {
-                           if (now.getTime() > timestampMap.get(ip)) {
-                               timestampMap.remove(ip);
-                               LettuceRedis.getInstance().del(key);
-                               cache.remove(key);
-                               return false;
-                           }
-                       }
-                   }
-               }
-           }
-           return blocked;
-       }
+        Set<String> blockedIps = manualLimitListProperties.getBlockedIps();
+        if (blockedIps.contains(ip)) {
+            return true;
+        }
+        ip = ip.trim();
+        String key = KEY + ip;
+        if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            //TODO 判断内存缓存中的数据
+            return false;
+        } else {
+            boolean blocked = cache.contains(key);
+            if (blocked) {
+                String redisData = LettuceRedis.getInstance().getString(key);
+                boolean contains = StringUtils.isNotBlank(redisData);
+                if (!contains) {
+                    timestampMap.remove(ip);
+                    cache.remove(key);
+                    return false;
+                } else {
+                    // 如果包含， 有可能是已经过期了，受限于redis，被识别为没有过期
+                    int x = new Random().nextInt(100);
+                    if (x % 4 == 0) {
+                        Date now = new Date();
+                        if (timestampMap.containsKey(ip)) {
+                            if (now.getTime() > timestampMap.get(ip)) {
+                                timestampMap.remove(ip);
+                                LettuceRedis.getInstance().del(key);
+                                cache.remove(key);
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return blocked;
+        }
     }
 
 
     /**
      * 检查是否过期
+     *
      * @param ip
      * @param now
      * @return

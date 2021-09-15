@@ -189,7 +189,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     // 纳入黑名单，访问限制!!!!
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", requestParams);
@@ -204,7 +204,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     // 纳入黑名单，访问限制!!!!
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
@@ -218,7 +218,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     log.warn("@@@ HACK TOOL REJECT (URI)!!!,{}, remoteAddr:{} ", uri, requestIp);
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addBiBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
@@ -251,7 +251,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
     /**
      * 记录封禁 行为日志，历史记录，方便将来查看...
-     * 将异常信息通过消息队列进行数据的异步持久化...
+     * 将有问题的ip 通过消息队列进行数据的异步持久化...
      * @param ip 被封禁的ip
      * @param blockSeconds 被堵塞的时间时长，秒
      * @param url 被拦截时的访问url  例如是人工指定？还是HttpThrottleFilter(发现了恶意访问)，还是BIBlock(恶意关键词等..)
@@ -259,8 +259,15 @@ public class GatewayHttpThrottles implements HttpThrottles {
      * @param accessParamJson 请求参数json
      */
     public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
+            log.warn("ignore persistThrottleInfo: {},{}, reason:{}", ip, url, createdBy);
+            return;
+        }
         final ThrottledIpBlock throttledIpBlock = new ThrottledIpBlock();
         throttledIpBlock.setIp(ip);
+        if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > 1024) {
+            accessParamJson = accessParamJson.substring(0, 1024); //只截取前1024个字符的提示信息,太长了就丢掉
+        }
         throttledIpBlock.setAccessJson(accessParamJson);
         throttledIpBlock.setBlockedSeconds(blockSeconds);
         throttledIpBlock.setUrl(url);

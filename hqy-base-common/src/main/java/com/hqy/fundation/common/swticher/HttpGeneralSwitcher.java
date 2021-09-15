@@ -17,7 +17,6 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
     public static final HttpGeneralSwitcher ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER_FILTER = new HttpGeneralSwitcher(101,"节点(Web)-是否启用http请求体 可重复读的请求包装过滤器",true);
 
 
-
     /**
      * 场景： 启用配置化的Ip访问限制策略（126） 节点后 ，  黑客行为检测 规则:   如果false使用原来的检测(一次黑客行为就拉黑);    true则走限制 配置化的规则(次数可以配置)
      */
@@ -41,6 +40,10 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
     public static final HttpGeneralSwitcher ENABLE_SHARE_IP_OVER_REQUEST_STATISTICS = new HttpGeneralSwitcher(152, "节点-是否所有项目共享超限统计计数方式", true);
 
 
+    /**
+     * 节点-是否启用HTTP限流结果持久化
+     */
+    public static final HttpGeneralSwitcher ENABLE_HTTP_THROTTLE_PERSISTENCE = new HttpGeneralSwitcher(153,"节点-是否启用HTTP限流结果持久化",true);
 
     protected HttpGeneralSwitcher(int id, String name, boolean status) {
         super(id, name, status);

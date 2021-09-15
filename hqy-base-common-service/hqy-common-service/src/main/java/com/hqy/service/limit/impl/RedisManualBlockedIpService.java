@@ -2,8 +2,11 @@ package com.hqy.service.limit.impl;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.service.limit.ManualBlockedIpService;
+import com.hqy.service.limit.config.ManualLimitListProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -18,7 +21,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 @Component
+@EnableConfigurationProperties(ManualLimitListProperties.class)
 public class RedisManualBlockedIpService implements ManualBlockedIpService {
+
+    @Autowired
+    private ManualLimitListProperties manualLimitListProperties;
 
     //redis key
     private static final String KEY_BLOCKED = "MANUAL_BLOCK_IP";
@@ -101,6 +108,10 @@ public class RedisManualBlockedIpService implements ManualBlockedIpService {
 
     @Override
     public boolean isBlockIp(String ip) {
+        Set<String> blockedIps = manualLimitListProperties.getBlockedIps();
+        if (blockedIps.contains(ip)) {
+            return true;
+        }
         ip = ip.trim();
         boolean blocked = cache.contains(ip);
         if (blocked) {

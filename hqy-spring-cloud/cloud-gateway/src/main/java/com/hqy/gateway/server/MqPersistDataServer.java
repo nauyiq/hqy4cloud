@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * 采用direct模式的交换机，专门用于mq采集
+ * 采用direct模式的交换机，专门用于bi采集
  * 交换机名称:coll_direct_exchange
  * 将需要持久化采集的数据 放进mq中...
  * @author qy
@@ -22,6 +22,10 @@ public class MqPersistDataServer {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * mq持久化封禁ip行为
+     * @param throttledIpBlock
+     */
     public void persistBlockIpAction(ThrottledIpBlock throttledIpBlock) {
         /**
          * 单独为设置TTL的时候 当队列的消息没有被消费而过期时

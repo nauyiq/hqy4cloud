@@ -23,6 +23,13 @@ public interface ThrottlesServer {
      */
     boolean isWhiteIp(String remoteAddress);
 
+    /**
+     * 是否是白名单uri
+     * @param uri
+     * @return
+     */
+    boolean isWhiteUri(String uri);
+
 
     /**
      ** 是否是行为分析的黑名单ip？

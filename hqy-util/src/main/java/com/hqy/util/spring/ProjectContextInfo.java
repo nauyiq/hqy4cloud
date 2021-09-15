@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务上下文信息
@@ -54,6 +56,11 @@ public class ProjectContextInfo implements Serializable {
      * 灰白度的值
      */
     private Integer pubValue = 0;
+
+    /**
+     * 全局上下文属性定义
+     */
+    private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     public ProjectContextInfo() {
     }

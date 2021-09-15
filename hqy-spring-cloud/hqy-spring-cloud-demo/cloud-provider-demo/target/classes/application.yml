@@ -39,7 +39,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 mapper:
-  mappers: com.hqy.dao.base.BaseDao
+  mappers: com.hqy.base.BaseDao
   not-empty: false
   identity: mysql
 management: #暴露所有

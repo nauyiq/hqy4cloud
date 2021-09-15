@@ -34,7 +34,6 @@ public enum RedisFlowControlCenter {
     /**
      * 笼统的针对每个ip请求总数的超限判断.<br>
      * 如需判定 针对单个uri的超限判定，请使用 needLimitPerTimeWindow4Uri 方法；
-     *
      * @param remoteAddr
      * @param method
      * @param uri

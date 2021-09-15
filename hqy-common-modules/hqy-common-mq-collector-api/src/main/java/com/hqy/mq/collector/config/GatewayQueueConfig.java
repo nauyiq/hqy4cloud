@@ -14,7 +14,7 @@ import java.util.Map;
  * @create 2021/8/19 23:37
  */
 @Configuration
-public class RabbitMqConfig {
+public class GatewayQueueConfig {
 
     /**
      * 注册采集服务用到的FanoutExchange
