@@ -24,7 +24,7 @@ spring:
             # - Query=id, \d+  # 要有参数名id并且值还要是整数才能路由
     nacos:
       config:
-        server-addr: 120.76.65.160:80
+        server-addr: 120.76.65.160:8848
         file-extension: yaml
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
         group: DEV_GROUP
@@ -33,7 +33,7 @@ spring:
           group: DEV_GROUP
           refresh: true
       discovery:
-        server-addr: 120.76.65.160:80
+        server-addr: 120.76.65.160:8848
 management: #暴露所有
   endpoints:
     web:

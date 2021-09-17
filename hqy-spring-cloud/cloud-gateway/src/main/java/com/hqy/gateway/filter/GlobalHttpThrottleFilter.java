@@ -5,7 +5,7 @@ import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.util.JsonUtil;
-import com.hqy.util.RequestUtil;
+import com.hqy.gateway.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

@@ -22,13 +22,31 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba.nacos</groupId>
+                    <artifactId>nacos-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--spring-cloud-alibaba-nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba.nacos</groupId>
+                    <artifactId>nacos-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+        </dependency>
+
 
         <!--spring-boot-starter-actuator-->
         <dependency>
@@ -50,7 +68,11 @@
             <exclusions>
                 <exclusion>
                     <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-common-dao</artifactId>
+                    <artifactId>hqy-base-common-dao-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.hqy</groupId>
+                    <artifactId>hqy-base-multiple-datasource</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

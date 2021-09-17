@@ -8,7 +8,7 @@ import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.mq.collector.entity.ThrottledIpBlock;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
-import com.hqy.util.RequestUtil;
+import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
