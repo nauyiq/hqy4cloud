@@ -30,9 +30,14 @@ public abstract class Node {
     protected String env;
 
     /**
-     * 节点名称
+     * 节点名称 (中文名)
      */
     protected String name;
+
+    /**
+     * 节点名称 (英文名)
+     */
+    protected String nameEn;
 
     /**
      * 哈希因子，区分集群中的某个节点时使用

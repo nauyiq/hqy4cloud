@@ -1,7 +1,6 @@
 package com.hqy.rpc.thrift;
 
-import com.hqy.rpc.nacos.NodeHeartbeatListener;
-import com.hqy.rpc.regist.GreyWhitePub;
+import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.rpc.route.AbstractRPCRouter;
 import com.hqy.util.IpUtil;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 @Slf4j
 public class DynamicInvocationHandler<T> extends AbstractRPCRouter
-        implements InvocationHandler, NodeHeartbeatListener {
+        implements InvocationHandler {
 
     private final InvokeCallback callback;
     private GenericObjectPoolConfig<T> config;
@@ -57,13 +56,13 @@ public class DynamicInvocationHandler<T> extends AbstractRPCRouter
         super.setWhiteProviders(addressesWhite);
 
         //初始化对象池
-        initializeObjPoolOfMode(addressesGray, GreyWhitePub.GRAY);
+        initializeObjPoolOfMode(addressesGray, GrayWhitePub.GRAY);
 
 
     }
 
-    private void initializeObjPoolOfMode(List<UsingIpPort> usingIpPorts, GreyWhitePub pub) {
-        if (GreyWhitePub.GRAY.equals(pub)) {
+    private void initializeObjPoolOfMode(List<UsingIpPort> usingIpPorts, GrayWhitePub pub) {
+        if (GrayWhitePub.GRAY.equals(pub)) {
 //            setGrayProviders();
         }
     }
@@ -73,9 +72,4 @@ public class DynamicInvocationHandler<T> extends AbstractRPCRouter
         return null;
     }
 
-    @Override
-    @EventListener(classes = HeartbeatEvent.class)
-    public void onHeartbeat(ApplicationEvent heartbeatEvent) {
-
-    }
 }

@@ -6,7 +6,7 @@ package com.hqy.rpc.regist;
  * @project: hqy-parent-all
  * @create 2021-08-13 10:44
  */
-public enum GreyWhitePub {
+public enum GrayWhitePub {
 
     GRAY(50),
 
@@ -15,7 +15,7 @@ public enum GreyWhitePub {
 
     public int value;
 
-    GreyWhitePub(int value) {
+    GrayWhitePub(int value) {
         this.value = value;
     }
 

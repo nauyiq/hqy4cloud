@@ -1,5 +1,6 @@
 package com.hqy.util.spring;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务上下文信息
+ *
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-08-10 19:16
@@ -78,18 +80,19 @@ public class ProjectContextInfo implements Serializable {
      * 判断系统是否刚启动不久
      * @return
      */
-    public static boolean isJustStarted() {
+    public boolean isJustStarted() {
         return isJustStarted(null);
     }
+
 
     /**
      * 判断系统是否刚启动不久
      * @param ignoreMinutes 启动耗时分钟数，多少分钟算是刚启动....
      * @return
      */
-    public static boolean isJustStarted(Integer ignoreMinutes) {
+    public boolean isJustStarted(Integer ignoreMinutes) {
         if (justStarted) {
-            if (ignoreMinutes == null ||ignoreMinutes < 0) {
+            if (ignoreMinutes == null || ignoreMinutes < 0) {
                 ignoreMinutes = 3;
             }
             long x = System.currentTimeMillis() - startupTimeMillis;
@@ -100,6 +103,15 @@ public class ProjectContextInfo implements Serializable {
         return justStarted;
     }
 
+    @JsonIgnore
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
 
+    public static class AttributesKey {
+
+        public static final String NACOS_NAMING_SERVICE = "nacos_naming_service";
+
+    }
 }

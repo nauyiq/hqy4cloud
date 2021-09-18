@@ -38,7 +38,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
 
     private final int MULTIPLE_BASE = 4;
 
-    private static int MAX_RETRY_TIMES = 64;
+    private static final int MAX_RETRY_TIMES = 64;
 
     @Value("${thrift.listen.port:10001}")
     int serverPort = 10001;

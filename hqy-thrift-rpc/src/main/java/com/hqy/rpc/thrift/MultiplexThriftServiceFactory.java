@@ -6,7 +6,7 @@ import com.google.common.net.HostAndPort;
 import com.hqy.fundation.common.exception.NoAvailableProvidersException;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.fundation.concurrent.ThreadLocalPool;
-import com.hqy.rpc.regist.GreyWhitePub;
+import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
@@ -211,10 +211,10 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
     private FramedClientConnector[] findSuitableConnectors() {
         ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
         if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn()) { //是否启用灰度机制
-            if (contextInfo.getPubValue().equals(GreyWhitePub.GRAY.value)) {
+            if (contextInfo.getPubValue().equals(GrayWhitePub.GRAY.value)) {
                 return connectorsGray;
             }
-            if (contextInfo.getPubValue().equals(GreyWhitePub.WHITE.value)) {
+            if (contextInfo.getPubValue().equals(GrayWhitePub.WHITE.value)) {
                 return connectorsWhite;
             }
         } else {

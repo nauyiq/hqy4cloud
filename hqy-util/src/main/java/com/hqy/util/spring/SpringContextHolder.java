@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @author qy
  * @create 2021-07-22 16:25
@@ -18,7 +20,7 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    private final static ProjectContextInfo contextInfo = new ProjectContextInfo();
+    private static ProjectContextInfo contextInfo = new ProjectContextInfo();
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -130,9 +132,15 @@ public class SpringContextHolder implements ApplicationContextAware {
 		return contextInfo;
 	}
 
+    public static void registerContextInfo(ProjectContextInfo info) {
+        if (Objects.nonNull(info)) {
+            contextInfo = info;
+        }
+    }
+
+
     /**
      * 处理spring event
-     *
      * @param event
      */
     public static void publishEvent(ApplicationEvent event) {
