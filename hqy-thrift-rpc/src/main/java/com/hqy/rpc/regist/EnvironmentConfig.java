@@ -17,7 +17,6 @@ import java.util.Random;
  * @create 2021-08-16 14:23
  */
 @Slf4j
-@Component
 public class EnvironmentConfig implements InitializingBean {
 
     /**
@@ -101,6 +100,15 @@ public class EnvironmentConfig implements InitializingBean {
      */
     public boolean isDevTestEnvironment() {
         return ENV_TEST.equalsIgnoreCase(env) || ENV_DEV.equalsIgnoreCase(env);
+    }
+
+
+    /**
+     * 是否开发环境？？
+     * @return
+     */
+    public boolean isDevEnvironment() {
+        return ENV_DEV.equalsIgnoreCase(env);
     }
 
     /**

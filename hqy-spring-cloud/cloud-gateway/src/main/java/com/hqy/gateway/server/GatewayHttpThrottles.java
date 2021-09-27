@@ -10,6 +10,7 @@ import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.SpringContextHolder;
+import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -273,6 +274,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
         throttledIpBlock.setUrl(url);
         throttledIpBlock.setThrottleBy(createdBy);
         MqPersistDataServer mqPersistDataServer = SpringContextHolder.getBean(MqPersistDataServer.class);
-        GlobalThreadPool.execute(() -> mqPersistDataServer.persistBlockIpAction(throttledIpBlock));
+        ParentExecutorService.getInstance().execute(() -> mqPersistDataServer.persistBlockIpAction(throttledIpBlock));
     }
 }

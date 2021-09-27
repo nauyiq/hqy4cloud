@@ -15,7 +15,7 @@ public class ParentExecutorService extends ExecutorServiceProject {
 
     private static volatile ParentExecutorService instance = null;
 
-    public ParentExecutorService getInstance() {
+    public static ParentExecutorService getInstance() {
         if (Objects.isNull(instance)) {
             synchronized (ParentExecutorService.class) {
                 if (Objects.isNull(instance)) {

@@ -1,6 +1,5 @@
 package com.hqy.rpc.nacos;
 
-import cn.hutool.core.lang.UUID;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
@@ -8,10 +7,10 @@ import com.hqy.rpc.regist.Node;
 import com.hqy.rpc.regist.UsingIpPort;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,6 +47,8 @@ public class NacosNode extends Node {
      * 灰白度 默认灰度发布
      */
     private int pubValue;
+
+    private Map<String, String> metaData = new HashMap<>();
 
 
     public NacosNode() {
