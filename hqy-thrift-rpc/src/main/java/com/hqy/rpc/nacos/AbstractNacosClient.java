@@ -11,7 +11,6 @@ import com.alibaba.nacos.common.notify.listener.Subscriber;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.listener.NodeActivityListener;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.Node;
 import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -156,8 +155,8 @@ public abstract class AbstractNacosClient implements NacosClient {
         allNodes.clear();
         grayWhiteMap.clear();
 
-        allNodes = nodes.stream().filter(Node::getAlive).peek(node -> {
-            if (!Node.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
+        allNodes = nodes.stream().filter(NacosNode::getAlive).peek(node -> {
+            if (!NacosNode.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
                 //更新hash路由 final String key = hashFactor .concat("___").concat(value);
                 String key = genTmpKey(node.getHashFactor(), node.getNameEn());
                 hashHandlerMap.put(key, node.getUip());
@@ -188,7 +187,7 @@ public abstract class AbstractNacosClient implements NacosClient {
                     List<NacosNode> newNodes;
                     try {
                         String serverName = getBaseServerName();
-                        NamingService namingService = NamingServiceContext.getNamingService();
+                        NamingService namingService = NamingServiceClient.getNamingService();
                         List<Instance> instances = namingService.getAllInstances(serverName);
                         if (CollectionUtils.isEmpty(instances)) {
                             throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
@@ -203,17 +202,17 @@ public abstract class AbstractNacosClient implements NacosClient {
         } else {
             log.debug("hashHandlerMap not EMPTY: {}", JsonUtil.toJson(hashHandlerMap));
         }
-        final String key = genTmpKey(hashFactor,value);
+        final String key = genTmpKey(hashFactor, value);
         return hashHandlerMap.get(key);
     }
 
     @Override
     public void close() {
         try {
-            NamingService namingService = NamingServiceContext.getNamingService();
+            NamingService namingService = NamingServiceClient.getNamingService();
             if (namingService != null) {
                 namingService.shutDown();
-                NamingServiceContext.close();
+                NamingServiceClient.close();
             }
         } catch (NacosException e) {
             log.error(e.getErrMsg(), e);
@@ -278,7 +277,7 @@ public abstract class AbstractNacosClient implements NacosClient {
     }
 
     protected int loadServerNode() {
-        NamingService namingService = NamingServiceContext.getNamingService();
+        NamingService namingService = NamingServiceClient.getNamingService();
         List<NacosNode> newNodes = new ArrayList<>();
 
         try {

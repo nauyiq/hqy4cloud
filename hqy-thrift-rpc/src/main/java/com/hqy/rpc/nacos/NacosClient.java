@@ -2,7 +2,6 @@ package com.hqy.rpc.nacos;
 
 import com.hqy.rpc.nacos.listener.NodeActivityListener;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.Node;
 import com.hqy.rpc.regist.UsingIpPort;
 
 import java.util.List;

@@ -3,9 +3,9 @@ package com.hqy.rpc.nacos;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.Node;
 import com.hqy.rpc.regist.UsingIpPort;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,8 +20,10 @@ import java.util.Map;
  * @create 2021-08-13 10:21
  */
 @Data
+@Builder
 @AllArgsConstructor
-public class NacosNode extends Node {
+public class NacosNode {
+
 
     /**
      * 节点id - uuid
@@ -29,9 +31,20 @@ public class NacosNode extends Node {
     private String nodeId;
 
     /**
-     * 服务的第二个端口， 通道是websocket服务暴露的端口
+     * 使用的ip，端口等信息（这里注册rpc服务的端口和ip）
      */
-    private Integer port2;
+    private UsingIpPort uip;
+
+    /**
+     * http服务端口
+     */
+    private Integer port;
+
+    /**
+     * 服务的第二个端口， 通道是websocket服务暴露的端口
+     * -1 表示当前服务没有暴露端口2
+     */
+    private Integer port2 = -1;
 
     /**
      * 当前节点的hash值
@@ -48,7 +61,35 @@ public class NacosNode extends Node {
      */
     private int pubValue;
 
-    private Map<String, String> metaData = new HashMap<>();
+    /**
+     * 默认的hash因子
+     */
+    public static final String DEFAULT_HASH_FACTOR = "default";
+
+    /**
+     * 当前节点在注册中心是否是脱机状态... true表示存活
+     */
+    private Boolean alive = true;
+
+    /**
+     * 当前服务所属环境
+     */
+    private String env;
+
+    /**
+     * 节点名称 (中文名)
+     */
+    private String name;
+
+    /**
+     * 节点名称 (英文名)
+     */
+    private String nameEn;
+
+    /**
+     * 哈希因子，区分集群中的某个节点时使用
+     */
+    private String hashFactor = DEFAULT_HASH_FACTOR;
 
 
     public NacosNode() {
@@ -57,47 +98,50 @@ public class NacosNode extends Node {
     }
 
     public static NacosNode convert2Node(Instance instance) {
-        NacosNode node = new NacosNode();
-        Map<String, String> metadata = instance.getMetadata();
 
-        node.setEnv(EnvironmentConfig.getInstance().getEnvironment());
-        node.setName(metadata.get("name"));
-        node.setNameEn(instance.getServiceName());
-        node.setNodeId(instance.getInstanceId());
-
-        String created = metadata.get("created");
-        if (StringUtils.isNotBlank(created)) {
-            node.setCreated(new Date(Long.parseLong(created)));
-        }
-
-        String port2 = metadata.get("port2");
-        if (StringUtils.isNotBlank(port2)) {
-            node.setPort2(Integer.valueOf(port2));
-        }
-
-        String hash = metadata.get("hash");
-        if (StringUtils.isNotBlank(hash)) {
-            node.setHash(Integer.valueOf(hash));
-        }
-
-        String pubValue = metadata.get("pubValue");
-        if (StringUtils.isNotBlank(pubValue)) {
-            node.setPubValue(Integer.parseInt(pubValue));
-        }
-
-        node.setAlive(instance.isHealthy());
 
         String ip = instance.getIp();
+        String nameEn = instance.getServiceName();
+        String nodeId = instance.getInstanceId();
+        String env = EnvironmentConfig.getInstance().getEnvironment();
         int port = instance.getPort();
+
+        //原数据
+        Map<String, String> metadata = instance.getMetadata();
+
+        int usingPort = 0;
+        if (StringUtils.isNotBlank(metadata.get("usingPort"))) {
+            usingPort = Integer.parseInt(metadata.get("usingPort"));
+        }
+
+        String name = metadata.get("name");
+        Date created = new Date(Long.parseLong(metadata.get("created")));
+
+        int port2 = 0;
+        if (StringUtils.isNotBlank(metadata.get("port2"))) {
+            port2 = Integer.parseInt(metadata.get("port2"));
+        }
+
+        int hash = 0;
+        if (StringUtils.isNotBlank(metadata.get("hash"))) {
+            hash = Integer.parseInt(metadata.get("hash"));
+        }
+
+        int pubValue = 0;
+        if (StringUtils.isNotBlank(metadata.get("pubValue"))) {
+            pubValue = Integer.parseInt(metadata.get("pubValue"));
+        }
+
+        boolean alive = instance.isHealthy() && instance.isEnabled();
+
         int index = 0;
         if (StringUtils.isNotBlank(metadata.get("index"))) {
             index = Integer.parseInt(metadata.get("index"));
         }
 
-        UsingIpPort usingIpPort = new UsingIpPort(ip, port, index);
-
-        node.setUip(usingIpPort);
-
-        return node;
+        return NacosNode.builder().uip(new UsingIpPort(ip, usingPort, index))
+                                    .nameEn(nameEn).name(name).nodeId(nodeId)
+                                    .env(env).created(created).port(port).port2(port2)
+                                    .hash(hash).pubValue(pubValue).alive(alive).build();
     }
 }
