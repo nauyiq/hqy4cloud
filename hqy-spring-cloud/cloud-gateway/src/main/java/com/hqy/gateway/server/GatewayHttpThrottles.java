@@ -1,14 +1,13 @@
 package com.hqy.gateway.server;
 
-import cn.hutool.core.thread.GlobalThreadPool;
 import com.hqy.fundation.common.HttpRequestInfo;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
+import com.hqy.gateway.util.RequestUtil;
 import com.hqy.mq.collector.entity.ThrottledIpBlock;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
-import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
@@ -267,7 +266,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
         final ThrottledIpBlock throttledIpBlock = new ThrottledIpBlock();
         throttledIpBlock.setIp(ip);
         if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > 1024) {
-            accessParamJson = accessParamJson.substring(0, 1024); //只截取前1024个字符的提示信息,太长了就丢掉
+            //只截取前1024个字符的提示信息,太长了就丢掉
+            accessParamJson = accessParamJson.substring(0, 1024);
         }
         throttledIpBlock.setAccessJson(accessParamJson);
         throttledIpBlock.setBlockedSeconds(blockSeconds);

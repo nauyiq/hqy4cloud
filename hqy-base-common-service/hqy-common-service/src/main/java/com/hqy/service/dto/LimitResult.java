@@ -1,9 +1,9 @@
 package com.hqy.service.dto;
 
 /**
+ * 限流结果封装类
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 20:12
+ * @date  2021-07-27 20:12
  */
 public class LimitResult {
 
@@ -35,7 +35,6 @@ public class LimitResult {
 
     public LimitResult() {
     }
-
 
 
     public enum ReasonEnum {
@@ -108,8 +107,7 @@ public class LimitResult {
         /**
          * 多次尝试访问不存在的接口，限行
          */
-        ACCESS_NON_INTERFACE_NG(50504);
-
+        ACCESS_NON_INTERFACE_NG(50504)
 
         ;
 

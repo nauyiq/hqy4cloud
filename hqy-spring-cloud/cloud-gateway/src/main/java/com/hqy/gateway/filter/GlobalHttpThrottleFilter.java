@@ -1,5 +1,6 @@
 package com.hqy.gateway.filter;
 
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.bind.MessageResponse;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.server.GatewayHttpThrottles;
@@ -27,14 +28,16 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * 全球的http节流过滤器
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 16:42
+ * @author qiyuan.hong
+ * @date  2021-07-27 16:42
  */
 @Slf4j
 @Component
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
+    /**
+     * Http限流器组件
+     */
     @Resource
     private GatewayHttpThrottles httpThrottles;
 
@@ -42,33 +45,33 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-
         String url = request.getPath().pathWithinApplication().value();
         String uri = request.getURI().getPath();
-
         ServerHttpResponse httpResponse = exchange.getResponse();
 
+        //静态资源放行和option请求放行
         if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS) {
-            //1.静态资源放行
-            //2.option请求放行
             return chain.filter(exchange);
         }
 
+        // uri白名单方形
         if (httpThrottles.isWhiteURI(uri)) {
-            // uri白名单;
             return chain.filter(exchange);
         }
 
+        //获取请求客户端的ip地址
         String requestIp = RequestUtil.getIpAddress(request);
+        //如果是人工白名单则放行
         if (httpThrottles.isManualWhiteIp(requestIp)) {
-            //人工白名单
             return chain.filter(exchange);
         }
 
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff() && HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
-            //没有启用限流器...继续执行责任链 链条
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff() &&
+                HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
+            //没有启用限流器...继续执行责任链 ->
             return chain.filter(exchange);
         } else {
+            //获取限流结果
             LimitResult limitResult = httpThrottles.limitValue(request);
             if (limitResult.isNeedLimit()) {
                 //TODO 记录嫌疑ip
@@ -77,12 +80,12 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
                 //返回403 表示当前请求被封禁
                 String resultTip = limitResult.getTip();
                 if (StringUtils.isBlank(requestIp)) {
-                    resultTip = "Illegal Request, Limit a few minutes.";
+                    resultTip = BaseStringConstants.ILLEGAL_REQUEST_MESSAGE;
                 }
                 MessageResponse response = new MessageResponse(false, resultTip, 403);
                 return Mono.defer(() -> {
                     byte[] bytes = JsonUtil.toJson(response).getBytes(StandardCharsets.UTF_8);
-                    httpResponse.getHeaders().add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                    httpResponse.getHeaders().add(BaseStringConstants.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
                     httpResponse.setStatusCode(HttpStatus.FORBIDDEN);
                     DataBuffer buffer = httpResponse.bufferFactory().wrap(bytes);
                     return httpResponse.writeWith(Flux.just(buffer));

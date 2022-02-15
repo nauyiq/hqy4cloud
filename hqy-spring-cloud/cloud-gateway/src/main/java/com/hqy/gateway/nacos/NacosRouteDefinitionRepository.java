@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-17 10:24
+ * nacos配置自动更新 监听RefreshRoutesEvent
+ * @author qiyuan.hong
+ * @date  2021-09-17 10:24
  */
 @Slf4j
 public class NacosRouteDefinitionRepository implements RouteDefinitionRepository {
