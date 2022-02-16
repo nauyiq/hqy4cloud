@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.stereotype.Component;
 
 /**
  * ################ Redis 基础配置 ##############
@@ -34,11 +34,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * <p>
  * 基于Lettuce的RedisTemplate
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-22 16:28
+ * @date  2021-07-22 16:28
  */
-@Configuration
-@SuppressWarnings("all")
+@Component
 public class LettuceRedisConfig {
 
     @Bean("LettuceRedisTemplate")
@@ -62,7 +60,6 @@ public class LettuceRedisConfig {
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         // hash的value序列化方式采用jackson
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
-//        template.afterPropertiesSet();
         // 配置连接工厂
         template.setConnectionFactory(factory);
         return template;

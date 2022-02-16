@@ -1,6 +1,7 @@
 package com.hqy.rpc.nacos;
 
 import com.hqy.rpc.nacos.listener.NodeActivityListener;
+import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
 
@@ -19,28 +20,28 @@ public interface NacosClient {
      * 轮训获取一个或者的节点， 负载均衡（不区分灰白度）
      * @return
      */
-    NacosNode getOneLivingNode();
+    ClusterNode getOneLivingNode();
 
     /**
      * 轮训获取一个或者的节点， 负载均衡
      * @param pub 需要区别是灰度还是白度
      * @return
      */
-    NacosNode getOneLivingNode(GrayWhitePub pub);
+    ClusterNode getOneLivingNode(GrayWhitePub pub);
 
 
     /**
      * 轮询获取所有活着的节点，负载均衡（不区分灰度 白度）
      * @return
      */
-    List<NacosNode> getAllLivingNode();
+    List<ClusterNode> getAllLivingNode();
 
     /**
      * 轮询获取所有活着的节点，负载均衡（区分灰度 白度）
      * @param pub
      * @return
      */
-    List<NacosNode> getAllLivingNode(GrayWhitePub pub);
+    List<ClusterNode> getAllLivingNode(GrayWhitePub pub);
 
 
     /**
@@ -61,7 +62,7 @@ public interface NacosClient {
      * 刷新节点信息（通常是由nacos收到变更事件后）
      * @param nodes
      */
-    public void updateIpPorts(List<NacosNode> nodes);
+    public void updateIpPorts(List<ClusterNode> nodes);
 
     /**
      * hash 路由，获取hash节点

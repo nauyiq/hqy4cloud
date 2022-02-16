@@ -1,6 +1,7 @@
 package com.hqy.gateway.server;
 
 import com.hqy.fundation.common.HttpRequestInfo;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
@@ -23,8 +24,7 @@ import java.util.Objects;
  * Http限流器，内部实现了系统忙或者客户端频繁访问时，判定要否限流的功能。也能识别出基本的hack或者数据采集，继而判定要限制访问。<br>
  * 核心实现 依赖 redis 和 google 的CacheBuilder
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 19:58
+ * @date  2021-07-27 19:58
  */
 @Slf4j
 @Component
@@ -93,15 +93,14 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
         //TODO 服务刚启动...根据环境进行放行规则...
 
-        //TODO 服务刚启动...根据环境进行放行规则...
-
+        //请求ip
         String requestIp = request.getRequestIp();
+        //请求url
         String url = request.getRequestUrl();
         if (StringUtils.isBlank(url)) {
             url = request.getUri();
         }
-
-        final String errMsg = "Too many requests from [remoteAddr=" + requestIp + ", url=" + url  + "] ";
+        final String errMsg = "Too many requests from [requestIp=" + requestIp + ", url=" + url  + "] ";
 
         // 是否是人工指定的黑名单阻塞的ip
         if (ThrottlesProcess.getInstance().isManualBlockedIp(requestIp)) {
@@ -109,7 +108,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             return new LimitResult(true, errMsg.concat("[MBK]"), LimitResult.ReasonEnum.MANUAL_BLOCKED_IP_NG);
         }
         // 是否是行为分析的黑名单ip
-        if (ThrottlesProcess.getInstance().isBIBlockedIp(requestIp)) {
+        if (ThrottlesProcess.getInstance().isBiBlockedIp(requestIp)) {
             log.warn("@@@ BI BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
@@ -117,7 +116,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult;
             //聚合浓缩黑客判定方法
-            if (url.contains("?")) { //有?就走正常的url校验
+            if (url.contains(BaseStringConstants.QUESTION_MARK)) {
+                //有?就走正常的url校验
                 hackCheckLimitResult = checkHackAccess(request.getRequestParams(), requestIp, request.getUri(), url);
             } else {
                 //防止双引号脚本的内容攻击....
@@ -131,7 +131,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
         //TODO CHECK DB BUSY?
 
-        //TODO CHECK DB BUSY?
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             //未开启限流器

@@ -35,9 +35,12 @@ public class GatewayQueueConfig {
             return new Queue(MqConstants.AMQP_GATEWAY_QUEUE, true);
         } else {
             Map<String, Object> args = new HashedMap<>();
-            args.put(MqConstants.X_MESSAGE_TTL_KEY, MqConstants.QUEUE_TTL);  //给队列设置过期时间
-            args.put(MqConstants.X_DEAD_LETTER_EXCHANGE, MqConstants.DIRECT_DEATH_EXCHANGE); //绑定死信交换机
-            args.put(MqConstants.X_DEAD_LETTER_ROUTING_KEY, MqConstants.DEATH_ROUTING_KEY); //绑定死信交换机的routing key
+            //给队列设置过期时间
+            args.put(MqConstants.X_MESSAGE_TTL_KEY, MqConstants.QUEUE_TTL);
+            //绑定死信交换机
+            args.put(MqConstants.X_DEAD_LETTER_EXCHANGE, MqConstants.DIRECT_DEATH_EXCHANGE);
+            //绑定死信交换机的routing key
+            args.put(MqConstants.X_DEAD_LETTER_ROUTING_KEY, MqConstants.DEATH_ROUTING_KEY);
             return new Queue(MqConstants.AMQP_GATEWAY_QUEUE, true, false, false, args);
         }
 

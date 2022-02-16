@@ -10,6 +10,7 @@ import com.alibaba.nacos.common.notify.NotifyCenter;
 import com.alibaba.nacos.common.notify.listener.Subscriber;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.listener.NodeActivityListener;
+import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.regist.UsingIpPort;
 import com.hqy.util.JsonUtil;
@@ -17,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -29,8 +31,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-17 17:22
+ * @date  2021-09-17 17:22
  */
 public abstract class AbstractNacosClient implements NacosClient {
 
@@ -42,12 +43,12 @@ public abstract class AbstractNacosClient implements NacosClient {
     /**
      * 活着的节点一览表
      */
-    protected static List<NacosNode> allNodes = new CopyOnWriteArrayList<>();
+    protected static List<ClusterNode> allNodes = new CopyOnWriteArrayList<>();
 
     /**
      * 活着的节点一览表 ，根据灰白模式 缓存起来的MAP
      */
-    protected Map<GrayWhitePub, List<NacosNode>> grayWhiteMap = new ConcurrentHashMap<>();
+    protected Map<GrayWhitePub, List<ClusterNode>> grayWhiteMap = new ConcurrentHashMap<>();
 
     /**
      * hash因子模式下  。 KEY：hash因子 + “___” +  rpc接口的module name， Value： 对应的目标rpc服务的uip信息
@@ -67,20 +68,20 @@ public abstract class AbstractNacosClient implements NacosClient {
     abstract String getBaseServerName();
 
     @Override
-    public NacosNode getOneLivingNode() {
+    public ClusterNode getOneLivingNode() {
         int count = allNodes.size();
         if (count == 0) {
             log.warn("@@@ {}: 没有活着的节点了", getBaseServerName());
             return null;
         }
-        NacosNode nacosNode = allNodes.get(pointer % count);
+        ClusterNode clusterNode = allNodes.get(pointer % count);
         next();
-        return nacosNode;
+        return clusterNode;
     }
 
 
     @Override
-    public NacosNode getOneLivingNode(GrayWhitePub pub) {
+    public ClusterNode getOneLivingNode(GrayWhitePub pub) {
 
         int count = allNodes.size();
         if (count == 0) {
@@ -88,11 +89,11 @@ public abstract class AbstractNacosClient implements NacosClient {
             return null;
         }
 
-        List<NacosNode> nodes = grayWhiteMap.get(pub);
+        List<ClusterNode> nodes = grayWhiteMap.get(pub);
         if (CollectionUtils.isEmpty(nodes)) {
             nodes = new ArrayList<>();
             //从allNodes中挑选出符合 GrayWhitePub 条件的节点来
-            for (NacosNode node : allNodes) {
+            for (ClusterNode node : allNodes) {
                 if (node.getPubValue() == pub.value) {
                     nodes.add(node);
                 }
@@ -106,22 +107,22 @@ public abstract class AbstractNacosClient implements NacosClient {
             return null;
         }
 
-        NacosNode nacosNode = nodes.get(pointer % size);
+        ClusterNode clusterNode = nodes.get(pointer % size);
         next();
-        return nacosNode;
+        return clusterNode;
     }
 
     @Override
-    public List<NacosNode> getAllLivingNode() {
+    public List<ClusterNode> getAllLivingNode() {
         return allNodes;
     }
 
     @Override
-    public List<NacosNode> getAllLivingNode(GrayWhitePub pub) {
+    public List<ClusterNode> getAllLivingNode(GrayWhitePub pub) {
         if (Objects.isNull(pub)) {
             return allNodes;
         }
-        List<NacosNode> nodes = grayWhiteMap.get(pub);
+        List<ClusterNode> nodes = grayWhiteMap.get(pub);
         if (CollectionUtils.isEmpty(nodes)) {
             nodes = new ArrayList<>();
         }
@@ -135,7 +136,7 @@ public abstract class AbstractNacosClient implements NacosClient {
 
     @Override
     public int countNodes(GrayWhitePub pub) {
-        List<NacosNode> nodes = grayWhiteMap.get(pub);
+        List<ClusterNode> nodes = grayWhiteMap.get(pub);
         if (CollectionUtils.isNotEmpty(nodes)) {
             return nodes.size();
         }
@@ -148,15 +149,15 @@ public abstract class AbstractNacosClient implements NacosClient {
     }
 
     @Override
-    public void updateIpPorts(List<NacosNode> nodes) {
+    public void updateIpPorts(List<ClusterNode> nodes) {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("@@@ updateIpPorts, nodes.size = {}", nodes.size());
         }
         allNodes.clear();
         grayWhiteMap.clear();
 
-        allNodes = nodes.stream().filter(NacosNode::getAlive).peek(node -> {
-            if (!NacosNode.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
+        allNodes = nodes.stream().filter(ClusterNode::getAlive).peek(node -> {
+            if (!ClusterNode.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
                 //更新hash路由 final String key = hashFactor .concat("___").concat(value);
                 String key = genTmpKey(node.getHashFactor(), node.getNameEn());
                 hashHandlerMap.put(key, node.getUip());
@@ -165,9 +166,9 @@ public abstract class AbstractNacosClient implements NacosClient {
 
         log.info("hashHandlerMap = {}", JsonUtil.toJson(hashHandlerMap));
         //刷新下灰白分组MAP
-        List<NacosNode> grayNodes = new ArrayList<>();
-        List<NacosNode> whiteNodes = new ArrayList<>();
-        for (NacosNode node : allNodes) {
+        List<ClusterNode> grayNodes = new ArrayList<>();
+        List<ClusterNode> whiteNodes = new ArrayList<>();
+        for (ClusterNode node : allNodes) {
             if (node.getPubValue() == GrayWhitePub.GRAY.value) {
                 grayNodes.add(node);
             } else if (node.getPubValue() == GrayWhitePub.WHITE.value) {
@@ -184,7 +185,7 @@ public abstract class AbstractNacosClient implements NacosClient {
         if (hashHandlerMap.isEmpty()) {
             synchronized (hashHandlerMap) {
                 if (hashHandlerMap.isEmpty()) {
-                    List<NacosNode> newNodes;
+                    List<ClusterNode> newNodes;
                     try {
                         String serverName = getBaseServerName();
                         NamingService namingService = NamingServiceClient.getNamingService();
@@ -192,7 +193,7 @@ public abstract class AbstractNacosClient implements NacosClient {
                         if (CollectionUtils.isEmpty(instances)) {
                             throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
                         }
-                        newNodes = instances.stream().map(NacosNode::convert2Node).collect(Collectors.toList());
+                        newNodes = instances.stream().map(ClusterNode::convert2Node).collect(Collectors.toList());
                         updateIpPorts(newNodes);
                     } catch (Exception e) {
                         log.warn("@@@ retryRead nacos instances, failure.", e);
@@ -276,30 +277,37 @@ public abstract class AbstractNacosClient implements NacosClient {
         }
     }
 
+    /**
+     * 加载当前服务的节点实例信息
+     * @return 发挥节点实例个数
+     */
     protected int loadServerNode() {
+        //获取NamingService
         NamingService namingService = NamingServiceClient.getNamingService();
-        List<NacosNode> newNodes = new ArrayList<>();
-
+        List<ClusterNode> newNodes = new ArrayList<>();
         try {
+            //服务名交给子类注册的时候赋值
             String serverName = getBaseServerName();
+            //根据服务名获取实例列表
             List<Instance> instances = namingService.getAllInstances(serverName);
-            if (CollectionUtils.isEmpty(instances)) {
-                throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
-            }
-            newNodes = instances.stream().map(NacosNode::convert2Node).collect(Collectors.toList());
+            //断言
+            Assert.notEmpty(instances, "@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
+            newNodes = instances.stream().map(ClusterNode::convert2Node).collect(Collectors.toList());
+            //更新节点信息
             updateIpPorts(newNodes);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
             if (observers.size() > 0) {
-                List<NacosNode> uipListGray = this.grayWhiteMap.get(GrayWhitePub.GRAY);
-                List<NacosNode> uipListWhite = this.grayWhiteMap.get(GrayWhitePub.WHITE);
+                List<ClusterNode> uipListGray = this.grayWhiteMap.get(GrayWhitePub.GRAY);
+                List<ClusterNode> uipListWhite = this.grayWhiteMap.get(GrayWhitePub.WHITE);
                 observers.forEach(e -> e.onAction(uipListGray, uipListWhite));
             }
         }
 
         return newNodes.size();
     }
+
 
     /**
      * 轮训指针后移

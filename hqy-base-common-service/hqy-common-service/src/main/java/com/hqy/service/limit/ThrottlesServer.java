@@ -36,7 +36,7 @@ public interface ThrottlesServer {
      * @param remoteAddr
      * @return
      */
-    boolean isBIBlockedIp(String remoteAddr);
+    boolean isBiBlockedIp(String remoteAddr);
 
     /**
      * bi行为分析 添加黑名单 并设置封禁的时间

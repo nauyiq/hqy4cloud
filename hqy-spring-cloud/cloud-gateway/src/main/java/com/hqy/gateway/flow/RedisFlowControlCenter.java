@@ -12,22 +12,34 @@ import java.util.Objects;
 /**
  * 基于Redis的流量控制器;流量控制管理中心；
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-04 14:14
+ * @date 2021-08-04 14:14
  */
 @Slf4j
 public enum RedisFlowControlCenter {
 
+    /**
+     * 单例模式的对象
+     */
     INSTANCE;
 
+    /**
+     * get方法的请求流量控制器
+     */
     private static RedisFlowController getController = null;
+
+    /**
+     * post方法的请求流量控制器
+     */
     private static RedisFlowController postController = null;
 
-    private static final FlowControlConfig DEFAULTFlowConfig = new FlowControlConfig();
+    /**
+     * 默认限流配置
+     */
+    private static final FlowControlConfig DEFAULT_LOW_CONFIG = new FlowControlConfig();
 
     public FlowControlConfig getProjectFlowControlConfig() {
         //TODO 暂时所有项目返回默认配置 后续可以改造成根据项目返回配置
-        return DEFAULTFlowConfig;
+        return DEFAULT_LOW_CONFIG;
     }
 
 
@@ -71,7 +83,6 @@ public enum RedisFlowControlCenter {
 
     /**
      * 根据请求方法和相应的 超限配置策略 获取到流量控制器
-     *
      * @param config
      * @param method
      * @return

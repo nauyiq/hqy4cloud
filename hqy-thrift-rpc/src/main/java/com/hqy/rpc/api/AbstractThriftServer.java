@@ -28,8 +28,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-16 11:05
+ * @date  2021-08-16 11:05
  */
 @Slf4j
 @RefreshScope

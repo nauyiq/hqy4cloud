@@ -78,13 +78,9 @@ public class ThrottlesProcess implements ThrottlesServer {
         return false;
     }
 
-    /**
-     * 是否是bi分析后的拒绝访问的黑名单？
-     * @param remoteAddr
-     * @return
-     */
+
     @Override
-    public boolean isBIBlockedIp(String remoteAddr) {
+    public boolean isBiBlockedIp(String remoteAddr) {
         RedisBiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
         return service.isBlockIp(remoteAddr);
     }

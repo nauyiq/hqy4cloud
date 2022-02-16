@@ -13,6 +13,11 @@ public interface BaseStringConstants {
     String ILLEGAL_REQUEST_MESSAGE = "Illegal Request, Limit a few minutes.";
 
     /**
+     * 默认的hash因子
+     */
+    String DEFAULT_HASH_FACTOR = "default";
+
+    /**
      * 英文符号:?
      */
     String QUESTION_MARK = "?";

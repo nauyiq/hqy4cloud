@@ -1,6 +1,6 @@
 package com.hqy.rpc.nacos.listener;
 
-import com.hqy.rpc.nacos.NacosNode;
+import com.hqy.rpc.regist.ClusterNode;
 
 import java.util.List;
 
@@ -19,6 +19,6 @@ public interface NodeActivityListener {
      * @param grayNodes 最新活着的灰色节点
      * @param whiteNodes 最新活着的白色节点
      */
-    void onAction(List<NacosNode> grayNodes, List<NacosNode> whiteNodes);
+    void onAction(List<ClusterNode> grayNodes, List<ClusterNode> whiteNodes);
 
 }

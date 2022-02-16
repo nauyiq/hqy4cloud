@@ -1,5 +1,6 @@
 package com.hqy.rpc.regist;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,15 +9,16 @@ import java.io.Serializable;
 
 /**
  * 进程服务的ip端口, 进程号信息
- *
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-13 10:02
+ * @date  2021-08-13 10:02
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsingIpPort implements Serializable {
+
+    @JsonIgnore
+    private static final long serialVersionUID = 5671807921455826403L;
 
     /**
      * 服务进程ip
@@ -27,6 +29,16 @@ public class UsingIpPort implements Serializable {
      * 服务端口
      */
     private int port;
+
+    /**
+     * rpc端口 -1表示不是服务的提供者
+     */
+    private int rpcPort = -1;
+
+    /**
+     * socket服务端口 -1表示当前服务没有提供socket服务
+     */
+    private int socketPort = -1;
 
     /**
      * 服务进程编号
@@ -45,11 +57,7 @@ public class UsingIpPort implements Serializable {
         this.index = index;
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -60,28 +68,29 @@ public class UsingIpPort implements Serializable {
         return result;
     }
 
-    /**
-     * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         UsingIpPort other = (UsingIpPort) obj;
-        if (index != other.index)
+        if (index != other.index) {
             return false;
+        }
         if (ip == null) {
-            if (other.ip != null)
+            if (other.ip != null) {
                 return false;
-        } else if (!ip.equals(other.ip))
+            }
+        } else if (!ip.equals(other.ip)) {
             return false;
-        if (port != other.port)
-            return false;
-        return true;
+        }
+
+        return port == other.port;
     }
 }
