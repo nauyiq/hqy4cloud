@@ -3,7 +3,6 @@ package com.hqy.rpc.regist;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -15,6 +14,7 @@ import java.util.Objects;
 @Data
 @Slf4j
 public abstract class Node {
+
 
     /**
      * 节点名称 (中文名)
@@ -30,11 +30,6 @@ public abstract class Node {
      * 使用的ip，端口等信息
      */
     private UsingIpPort uip;
-
-    /**
-     * 节点创建时间
-     */
-    private Date created;
 
     /**
      * 当前节点在注册中心是否是脱机状态... true表示存活

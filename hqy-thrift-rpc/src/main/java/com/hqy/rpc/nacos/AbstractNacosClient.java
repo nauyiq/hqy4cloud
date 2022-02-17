@@ -8,6 +8,7 @@ import com.alibaba.nacos.client.naming.event.InstancesChangeEvent;
 import com.alibaba.nacos.common.notify.Event;
 import com.alibaba.nacos.common.notify.NotifyCenter;
 import com.alibaba.nacos.common.notify.listener.Subscriber;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.listener.NodeActivityListener;
 import com.hqy.rpc.regist.ClusterNode;
@@ -157,8 +158,8 @@ public abstract class AbstractNacosClient implements NacosClient {
         grayWhiteMap.clear();
 
         allNodes = nodes.stream().filter(ClusterNode::getAlive).peek(node -> {
-            if (!ClusterNode.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
-                //更新hash路由 final String key = hashFactor .concat("___").concat(value);
+            if (!BaseStringConstants.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
+                //更新hash路由
                 String key = genTmpKey(node.getHashFactor(), node.getNameEn());
                 hashHandlerMap.put(key, node.getUip());
             }
@@ -193,7 +194,7 @@ public abstract class AbstractNacosClient implements NacosClient {
                         if (CollectionUtils.isEmpty(instances)) {
                             throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
                         }
-                        newNodes = instances.stream().map(ClusterNode::convert2Node).collect(Collectors.toList());
+                        newNodes = instances.stream().map(ClusterNode::copy).collect(Collectors.toList());
                         updateIpPorts(newNodes);
                     } catch (Exception e) {
                         log.warn("@@@ retryRead nacos instances, failure.", e);
@@ -292,7 +293,7 @@ public abstract class AbstractNacosClient implements NacosClient {
             List<Instance> instances = namingService.getAllInstances(serverName);
             //断言
             Assert.notEmpty(instances, "@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
-            newNodes = instances.stream().map(ClusterNode::convert2Node).collect(Collectors.toList());
+            newNodes = instances.stream().map(ClusterNode::copy).collect(Collectors.toList());
             //更新节点信息
             updateIpPorts(newNodes);
         } catch (Exception e) {

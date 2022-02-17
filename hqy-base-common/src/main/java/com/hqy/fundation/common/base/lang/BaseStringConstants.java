@@ -18,10 +18,18 @@ public interface BaseStringConstants {
     String DEFAULT_HASH_FACTOR = "default";
 
     /**
+     * nacos的注册元数据key
+     */
+    String NODE_INFO = "nodeInfo";
+
+    /**
      * 英文符号:?
      */
     String QUESTION_MARK = "?";
 
+    /**
+     * 符号：/
+     */
     String INCLINED_ROD = "/";
 
     /**
