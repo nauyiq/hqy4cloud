@@ -1,6 +1,6 @@
 package com.hqy.rpc.route;
 
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 
 import java.util.List;
 

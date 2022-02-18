@@ -7,10 +7,6 @@ package com.hqy.fundation.common.base.lang;
  */
 public interface BaseStringConstants {
 
-    /**
-     * 异常请求相应消息
-     */
-    String ILLEGAL_REQUEST_MESSAGE = "Illegal Request, Limit a few minutes.";
 
     /**
      * 默认的hash因子
@@ -57,6 +53,6 @@ public interface BaseStringConstants {
      */
     String UNKNOWN = "unknown";
 
-
+    public static final String NACOS_NAMING_SERVICE = "nacos_naming_service";
 
 }

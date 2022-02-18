@@ -1,58 +1,54 @@
 package com.hqy.rpc.nacos;
 
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.client.config.impl.ServerlistChangeEvent;
-import com.alibaba.nacos.client.naming.event.InstancesChangeEvent;
-import com.alibaba.nacos.common.notify.Event;
-import com.alibaba.nacos.common.notify.NotifyCenter;
-import com.alibaba.nacos.common.notify.listener.Subscriber;
+import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.fundation.common.base.project.MicroServiceHelper;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
-import com.hqy.rpc.nacos.listener.NodeActivityListener;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.thread.ParentExecutorService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @author qy
- * @date  2021-09-17 17:22
+ * nacos客户端服务基类
+ * @author qiyuan.hong
+ * @date 2021-09-17 17:22
  */
 public abstract class AbstractNacosClient implements NacosClient {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNacosClient.class);
 
-
-    protected final List<NodeActivityListener> observers = new ArrayList<>();
+    /**
+     * 观察者列表
+     */
+    protected final List<NodeActivityObserver> observers = new ArrayList<>();
 
     /**
-     * 活着的节点一览表
+     * 活着的所有节点一览表
      */
     protected static List<ClusterNode> allNodes = new CopyOnWriteArrayList<>();
 
     /**
      * 活着的节点一览表 ，根据灰白模式 缓存起来的MAP
      */
-    protected Map<GrayWhitePub, List<ClusterNode>> grayWhiteMap = new ConcurrentHashMap<>();
+    protected final Map<GrayWhitePub, List<ClusterNode>> grayWhiteMap = new ConcurrentHashMap<>();
 
     /**
-     * hash因子模式下  。 KEY：hash因子 + “___” +  rpc接口的module name， Value： 对应的目标rpc服务的uip信息
+     * hash因子模式下  。 KEY：hash因子 + “_” +  rpc接口的module name， Value： 对应的目标rpc服务的uip信息
      */
     protected final Map<String, UsingIpPort> hashHandlerMap = new ConcurrentHashMap<>();
 
@@ -63,7 +59,6 @@ public abstract class AbstractNacosClient implements NacosClient {
 
     /**
      * 获取注册到远程服务nacos服务名
-     *
      * @return
      */
     abstract String getBaseServerName();
@@ -145,8 +140,8 @@ public abstract class AbstractNacosClient implements NacosClient {
     }
 
     @Override
-    public void addNodeActivityListener(NodeActivityListener listener) {
-        observers.add(listener);
+    public void addNodeActivityObserver(NodeActivityObserver observer) {
+        observers.add(observer);
     }
 
     @Override
@@ -189,8 +184,7 @@ public abstract class AbstractNacosClient implements NacosClient {
                     List<ClusterNode> newNodes;
                     try {
                         String serverName = getBaseServerName();
-                        NamingService namingService = NamingServiceClient.getNamingService();
-                        List<Instance> instances = namingService.getAllInstances(serverName);
+                        List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serverName, true);
                         if (CollectionUtils.isEmpty(instances)) {
                             throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
                         }
@@ -211,86 +205,32 @@ public abstract class AbstractNacosClient implements NacosClient {
     @Override
     public void close() {
         try {
-            NamingService namingService = NamingServiceClient.getNamingService();
-            if (namingService != null) {
-                namingService.shutDown();
-                NamingServiceClient.close();
+            boolean status = NamingServiceClient.getInstance().status();
+            if (!status) {
+                NamingServiceClient.getInstance().close();
             }
-        } catch (NacosException e) {
-            log.error(e.getErrMsg(), e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
     protected String genTmpKey(String hashFactor, String nameEn) {
-        return hashFactor.concat("___").concat(nameEn);
+        return hashFactor.concat("_").concat(nameEn);
     }
 
-
-    @Component
-    public class ServerListChangeEventListener extends Subscriber<ServerlistChangeEvent> {
-
-        public ServerListChangeEventListener() {
-            log.info("@@@ register ServerListChangeEventListener.");
-        }
-
-        @PostConstruct
-        private void post() {
-            NotifyCenter.registerSubscriber(this);
-        }
-
-        @Override
-        public void onEvent(ServerlistChangeEvent event) {
-            log.info("@@@ received ServerlistChangeEvent start, loadServerNode begin. {}", JsonUtil.toJson(event));
-            int count = loadServerNode();
-            log.info("@@@ loadServerNode end, count :{}", count);
-        }
-
-        @Override
-        public Class<? extends Event> subscribeType() {
-            return ServerlistChangeEvent.class;
-        }
-    }
-
-
-    @Component
-    public class InstancesChangeEventListener extends Subscriber<InstancesChangeEvent> {
-
-        public InstancesChangeEventListener() {
-            log.info("@@@ register InstancesChangeEventListener.");
-        }
-
-        @PostConstruct
-        private void post() {
-            NotifyCenter.registerSubscriber(this);
-        }
-
-
-        @Override
-        public void onEvent(InstancesChangeEvent event) {
-            log.info("@@@ received InstancesChangeEvent, loadServerNode begin. {}", JsonUtil.toJson(event));
-            int count = loadServerNode();
-            log.info("@@@ loadServerNode end, count :{}", count);
-        }
-
-        @Override
-        public Class<? extends Event> subscribeType() {
-            return InstancesChangeEvent.class;
-        }
-    }
 
     /**
      * 加载当前服务的节点实例信息
      * @return 发挥节点实例个数
      */
-    protected int loadServerNode() {
-        //获取NamingService
-        NamingService namingService = NamingServiceClient.getNamingService();
+    @Override
+    public int loadServerNode() {
         List<ClusterNode> newNodes = new ArrayList<>();
         try {
             //服务名交给子类注册的时候赋值
             String serverName = getBaseServerName();
-            //根据服务名获取实例列表
-            List<Instance> instances = namingService.getAllInstances(serverName);
+            //根据服务名获取健康的实例列表
+            List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serverName, true);
             //断言
             Assert.notEmpty(instances, "@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
             newNodes = instances.stream().map(ClusterNode::copy).collect(Collectors.toList());
@@ -310,17 +250,119 @@ public abstract class AbstractNacosClient implements NacosClient {
     }
 
 
+    protected AbstractNacosClient() {
+        synchronized (grayWhiteMap) {
+            log.info("@@@ AbstractNacosClient start.");
+            boolean result = subscribeNacosEventListener();
+            if (result) {
+                //为解决第一次异步通知事件延迟的问题，尝试等待1秒;不踩坑不知道。
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                }
+            } else {
+                log.error("@@@ subscribeNacosEventListener result is false, check config!");
+                throw new RuntimeException("@@@ 订阅nacos事件变化监听器失败...");
+            }
+
+        }
+
+    }
+
+    /**
+     * 订阅每个服务的InstancesChangeEvent和ServerlistChangeEvent
+     * @return 返回结果
+     */
+    private boolean subscribeNacosEventListener() {
+        try {
+            // 初始化的时候加载一次节点数据情况；
+            int count = loadNodesAndNotifyNodeObserver(null);
+            log.info("@@@ 初始化Nacos节点数据情况, 存活节点个数：{}", count);
+            Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
+            //订阅节点变化监听器
+            subscribe(serviceEnNames);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+        return true;
+    }
+
+    private void subscribe(Set<String> serviceEnNames) {
+        ParentExecutorService.getInstance().execute(() -> {
+            for (String serviceEnName : serviceEnNames) {
+                try {
+                    NamingServiceClient.getInstance().subscribe(serviceEnName, event -> {
+                        log.info("@@@ received event, loadNodesAndNotifyNodeObserver begin.");
+                        if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                            log.info("@@@ event : {}", JsonUtil.toJson(event));
+                        }
+                        int eventBeforeNodeCount = loadNodesAndNotifyNodeObserver(event);
+                        log.info("@@@ loadServerNode end, eventBeforeNodeCount :{}", eventBeforeNodeCount);
+                        if (eventBeforeNodeCount == 0) {
+                            //当前服务的实例为0....
+                            log.warn("Begin to notify ,all server nodes down for {}", serviceEnName);
+                        }
+                    });
+                } catch (NacosException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 加载远程服务的所有存活nacos实例到内存中
+     * 如果事件不会空 则说明发生了节点变化事件 则通知每个观察者 刷新内存中的服务列表
+     * @param event nacos事件
+     * @return 所有服务的实例总和
+     */
+    private int loadNodesAndNotifyNodeObserver(Event event) {
+        //加载所有服务在远程服务nacos中的实例
+        List<ClusterNode> nodes = new ArrayList<>();
+        Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
+        for (String serviceEnName : serviceEnNames) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.info("loadNodes, serviceName -> {}", serviceEnName);
+            }
+            try {
+                List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serviceEnName, true);
+                if (CollectionUtils.isEmpty(instances)) {
+                    log.info("{} server instance is empty.", serviceEnName);
+                    continue;
+                }
+                for (Instance instance : instances) {
+                    nodes.add(ClusterNode.copy(instance));
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        this.updateIpPorts(nodes);
+
+        //通知每个观察者 刷新可用节点
+        if (Objects.nonNull(event) && CollectionUtils.isNotEmpty(observers)) {
+            List<ClusterNode> grayNodes = grayWhiteMap.get(GrayWhitePub.GRAY);
+            List<ClusterNode> whiteNodes = grayWhiteMap.get(GrayWhitePub.WHITE);
+            for (NodeActivityObserver observer : observers) {
+                observer.onAction(grayNodes, whiteNodes);
+            }
+        }
+        return nodes.size();
+    }
+
+
     /**
      * 轮训指针后移
      */
     private void next() {
         pointer++;
-        if (pointer == 9999) {
+        if (pointer == BaseIntegerConstants.POINTER) {
             pointer = 0;
         }
     }
-
-
 
 
 }

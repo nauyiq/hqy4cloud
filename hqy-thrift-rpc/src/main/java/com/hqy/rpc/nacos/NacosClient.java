@@ -1,18 +1,15 @@
 package com.hqy.rpc.nacos;
 
-import com.hqy.rpc.nacos.listener.NodeActivityListener;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 
 import java.util.List;
 
 /**
- * RPC调用者视角 内置当前服务注册NamingService客户端。
- * 请务必 先继承 AbstractNacosClient 不要自己实现。
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-17 18:30
+ * nacos服务调用者视角
+ * @author qiyuan.hong
+ * @date 2021-09-17 18:30
  */
 public interface NacosClient {
 
@@ -45,6 +42,7 @@ public interface NacosClient {
 
 
     /**
+     * 获取节点个数
      * @return 节点个数统计（不区分灰度白度）
      */
     int countNodes() ;
@@ -74,10 +72,17 @@ public interface NacosClient {
 
 
     /**
-     * 添加nacos节点变化监听者.
-     * @param listener
+     * 添加nacos节点变化观察者.
+     * @param observer
      */
-    void addNodeActivityListener(NodeActivityListener listener);
+    void addNodeActivityObserver(NodeActivityObserver observer);
+
+    /**
+     * 重新加载当前服务节点信息
+     * @return 返回当前服务节点个数
+     */
+    int loadServerNode();
+
 
     /**
      * 关闭nacos客户端，释放长连接

@@ -1,5 +1,6 @@
 package com.hqy.rpc.regist;
 
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

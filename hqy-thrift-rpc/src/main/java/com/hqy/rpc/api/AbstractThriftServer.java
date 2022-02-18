@@ -6,7 +6,7 @@ import com.facebook.swift.service.ThriftServer;
 import com.hqy.fundation.common.rpc.api.RPCService;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.EnvironmentConfig;
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.IpUtil;
 import com.hqy.util.thread.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;

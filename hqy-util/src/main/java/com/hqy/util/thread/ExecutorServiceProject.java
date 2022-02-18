@@ -9,34 +9,49 @@ import java.util.concurrent.*;
  * ExecutorServiceProject 实现业务级别线程池
  * 建议子类实现时 弄成单例使用
  * @author qy
- * @create 2021/7/22 22:06
+ * @date 2021/7/22 22:06
  */
 @Slf4j
 public abstract class ExecutorServiceProject {
 
-    //线程池拒绝策略执行次数
+    /**
+     * 线程池拒绝策略执行次数
+     */
     private int rejectCounter = 0;
 
-    //核心线程个数
+    /**
+     * 核心线程个数
+     */
     private int coreSize = 2;
 
-    //最大线程个数
+    /**
+     * 最大线程个数
+     */
     private int maxSize = Runtime.getRuntime().availableProcessors() * 2;
 
-    //队列大小
+    /**
+     * 队列大小
+     */
     private int capacity = 512;
 
-    //等待时间 2分钟
+    /**
+     * 等待时间 2分钟
+     */
     private static final long keepAliveTime = 2L;
 
-    //阻塞队列
+    /**
+     * 阻塞队列
+     */
     private BlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(capacity);
 
     private String poolThreadName;
 
     private ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(poolThreadName + "-%d").build();
 
-    //默认使用此构造
+    /**
+     * 默认使用此构造
+     * @param poolThreadName
+     */
     private ExecutorServiceProject(String poolThreadName) {
         this.poolThreadName =  poolThreadName;
     }

@@ -5,9 +5,12 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -28,23 +31,30 @@ import java.util.Map;
  * 2 服务端健康检查。nacos主动探知客户端健康状态，默认间隔为20秒；健康检查失败后实例会被标记为不健康，不会被立即删除。 <br><br>
  * 临时实例通过agent上报模式实现健康检查。nacos 顾客端注册的节点，默认是临时实例。 <br>
  * 临时和持久化的区别主要在健康检查失败后的表现，持久化实例健康检查失败后会被标记成不健康，而临时实例会直接从列表中被删除。<br>
- *
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-18 11:28
+ * @author qiyuan.hong
+ * @date  2021-09-18 11:28
  */
+@Slf4j
 public class NamingServiceClient {
 
     private static NamingService namingService = null;
 
-    private static final NamingServiceClient instance = new NamingServiceClient();
+    private static final NamingServiceClient INSTANCE = new NamingServiceClient();
+
+    /**
+     * 关闭状态标记变量
+     */
+    private static boolean close = false;
 
     private NamingServiceClient() {}
 
-    public NamingServiceClient getInstance() {return instance;}
+    public static NamingServiceClient getInstance() {return INSTANCE;}
 
-    private  static boolean close = false;
 
+    /**
+     * 获取NamingService对象
+     * @return NamingService
+     */
     public static NamingService getNamingService() {
         if (namingService == null && !close) {
             synchronized (NamingServiceClient.class) {
@@ -56,24 +66,42 @@ public class NamingServiceClient {
         return namingService;
     }
 
-    public static void close() {
-        close = true;
-        namingService = null;
+    /**
+     * 客户端是否关闭
+     * @return
+     */
+    public boolean status() {
+        return !close;
     }
 
+    /**
+     * 将状态标记为close
+     */
+    public void close() {
+        close = true;
+        try {
+            namingService.shutDown();
+            namingService = null;
+        } catch (NacosException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取NamingService
+     * @return NamingService
+     */
     private static NamingService buildNamingService() {
         if (CommonSwitcher.ENABLE_SPRING_CONTEXT.isOff()) {
             ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
             Map<String, Object> attributes = info.getAttributes();
-            namingService = (NamingService) attributes.get(ProjectContextInfo.AttributesKey.NACOS_NAMING_SERVICE);
+            namingService = (NamingService) attributes.get(BaseStringConstants.NACOS_NAMING_SERVICE);
         } else {
             NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
             namingService = nacosDiscoveryProperties.namingServiceInstance();
         }
 
-        if (namingService == null) {
-            throw new IllegalArgumentException("Get NamingService failure, check service registration result.");
-        }
+        Assert.isNull(namingService, "Get NamingService failure, check service registration result.");
 
         return namingService;
     }
@@ -135,7 +163,7 @@ public class NamingServiceClient {
      * @throws NacosException
      */
     List<Instance> selectInstances(String serviceName, boolean healthy) throws NacosException{
-        return getNamingService().getAllInstances(serviceName, healthy);
+        return getNamingService().selectInstances(serviceName, healthy);
     }
 
 

@@ -7,7 +7,7 @@ import com.hqy.fundation.common.exception.NoAvailableProvidersException;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.fundation.concurrent.ThreadLocalPool;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;

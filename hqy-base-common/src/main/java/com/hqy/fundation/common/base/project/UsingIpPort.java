@@ -1,4 +1,4 @@
-package com.hqy.rpc.regist;
+package com.hqy.fundation.common.base.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

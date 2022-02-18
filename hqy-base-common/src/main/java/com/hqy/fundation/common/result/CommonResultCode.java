@@ -5,7 +5,7 @@ package com.hqy.fundation.common.result;
  * @author qy
  * @date 2021-08-09 19:33
  */
-public enum CommonResult {
+public enum CommonResultCode {
 
     /**
      * 成功调用
@@ -18,16 +18,27 @@ public enum CommonResult {
     SYSTEM_ERROR(9999, "System internal error, Please try again later."),
 
     /**
+     * 异常请求
+     */
+    ILLEGAL_REQUEST(9001, "Illegal Request, Limit a few minutes."),
+
+    /**
      * 错误参数
      */
     ERROR_PARAM(1001, "invalid parameter, please check parameter again."),
+
+
+
+
+
+
     ;
 
     public int code;
 
     public String message;
 
-    CommonResult(int code, String message) {
+    CommonResultCode(int code, String message) {
         this.code = code;
         this.message = message;
     }
