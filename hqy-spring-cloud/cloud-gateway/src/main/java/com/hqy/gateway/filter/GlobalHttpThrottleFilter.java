@@ -2,6 +2,7 @@ package com.hqy.gateway.filter;
 
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.bind.MessageResponse;
+import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.service.dto.LimitResult;
@@ -80,7 +81,7 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
                 //返回403 表示当前请求被封禁
                 String resultTip = limitResult.getTip();
                 if (StringUtils.isBlank(requestIp)) {
-                    resultTip = BaseStringConstants.ILLEGAL_REQUEST_MESSAGE;
+                    resultTip = CommonResultCode.ILLEGAL_REQUEST.message;
                 }
                 MessageResponse response = new MessageResponse(false, resultTip, 403);
                 return Mono.defer(() -> {

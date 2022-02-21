@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class UsingIpPort implements Serializable {
 
     @JsonIgnore

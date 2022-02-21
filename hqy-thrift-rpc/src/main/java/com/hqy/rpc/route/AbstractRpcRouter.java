@@ -6,13 +6,18 @@ import java.util.List;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-13 11:25
+ * @date 2021-08-13 11:25
  */
-public abstract class AbstractRPCRouter implements RPCRouter {
+public abstract class AbstractRpcRouter implements RpcRouter {
 
+    /**
+     * 灰度可连接节点列表
+     */
     private List<UsingIpPort> addressGray;
 
+    /**
+     * 白度可连接节点列表
+     */
     private List<UsingIpPort> addressWhite;
 
 
@@ -27,13 +32,13 @@ public abstract class AbstractRPCRouter implements RPCRouter {
     }
 
     @Override
-    public void setGrayProviders(List<UsingIpPort> grayProviders) {
-        this.addressGray = grayProviders;
+    public void setGrayProviders(List<UsingIpPort> usingPorts) {
+        this.addressGray = usingPorts;
     }
 
     @Override
-    public void setWhiteProviders(List<UsingIpPort> whiteProviders) {
-       this.addressWhite = whiteProviders;
+    public void setWhiteProviders(List<UsingIpPort> usingPorts) {
+       this.addressWhite = usingPorts;
     }
 
     @Override
