@@ -1,6 +1,6 @@
 package com.hqy.gateway;
 
-import com.hqy.fundation.common.rpc.api.RPCService;
+import com.hqy.fundation.common.rpc.api.RpcService;
 import com.hqy.rpc.api.AbstractThriftServer;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,9 @@ public class GatewayThriftServer extends AbstractThriftServer {
 
 
     @Override
-    public List<RPCService> getServiceList4Register() {
+    public List<RpcService> getServiceList4Register() {
 
-        List<RPCService> rpcServices = new ArrayList<>();
+        List<RpcService> rpcServices = new ArrayList<>();
         if (CollectionUtils.isEmpty(rpcServices)) {
 
         }

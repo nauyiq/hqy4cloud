@@ -24,16 +24,16 @@ public class AssertUtil {
      * @param message 提示消息
      */
     public static void notEmpty(String text, String message) {
-        isTrue(StringUtils.isEmpty(text), message);
+        isTrue(StringUtils.isNotBlank(text), message);
     }
 
     /**
-     * 断言map是否为空
+     * 断言map是否不为空
      * @param map map
      * @param message 提示消息
      */
     public static void notEmpty(Map<?, ?> map, String message) {
-        isTrue(map == null || map.isEmpty(), message);
+        isTrue(map != null && !map.isEmpty(), message);
     }
 
 
@@ -43,7 +43,7 @@ public class AssertUtil {
      * @param message 提示消息
      */
     public static void notEmpty(Collection<?> collection, String message) {
-        isTrue(CollectionUtils.isEmpty(collection), message);
+        isTrue(CollectionUtils.isNotEmpty(collection), message);
     }
 
 
@@ -53,21 +53,21 @@ public class AssertUtil {
      * @param obj obj数组
      */
     public static void notEmpty(Object[] obj, String message) {
-        isTrue(ObjectUtils.isEmpty(obj), message);
+        isFalse(ObjectUtils.isEmpty(obj), message);
     }
 
     /**
-     * 断言对象obj是不是为空对象
+     * 断言对象obj不为空
      * @param obj 断言对象
      * @param message 提示消息
      */
-    public static void isNull(Object obj, String message) {
-        isTrue(Objects.isNull(obj), message);
+    public static void notNull(Object obj, String message) {
+        isTrue(Objects.nonNull(obj), message);
     }
 
 
     /**
-     * 断言 expression 必须为true
+     * 断言 expression 是否为true
      * @param expression 表达式
      * @param message 提示消息
      */
@@ -76,7 +76,7 @@ public class AssertUtil {
     }
 
     /**
-     * 断言 expression 必须为false
+     * 断言 expression 是否为false
      * @param expression 表达式
      * @param message 提示消息
      */

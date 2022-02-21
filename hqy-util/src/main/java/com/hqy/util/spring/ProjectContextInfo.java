@@ -1,6 +1,7 @@
 package com.hqy.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,12 @@ public class ProjectContextInfo implements Serializable {
      */
     private UsingIpPort uip;
 
+
+    /**
+     * 节点类型
+     */
+    private ActuatorNodeEnum nodeType;
+
     /**
      * 全局上下文属性定义
      */
@@ -59,10 +66,12 @@ public class ProjectContextInfo implements Serializable {
     public ProjectContextInfo() {
     }
 
-    public ProjectContextInfo(String appName, String env, Integer pubValue) {
-        this.nameEn = appName;
+    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip, ActuatorNodeEnum nodeType) {
+        this.nameEn = nameEn;
         this.env = env;
         this.pubValue = pubValue;
+        this.uip = uip;
+        this.nodeType = nodeType;
     }
 
     /**

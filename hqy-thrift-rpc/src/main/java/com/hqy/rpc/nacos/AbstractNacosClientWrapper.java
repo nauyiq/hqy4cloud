@@ -3,22 +3,27 @@ package com.hqy.rpc.nacos;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -70,7 +75,10 @@ public abstract class AbstractNacosClientWrapper {
      * @return
      */
     public boolean declareNodeRpcServer(ClusterNode node, ActuatorNodeEnum actuatorNodeEnum) {
+
         String nodeName = node.getNameEn();
+        AssertUtil.notEmpty(nodeName, "@@@ service name can not empty!");
+
         if (EnvironmentConfig.getInstance().isTestEnvironment()) {
             //测试环境 //需要严格区分灰度与白度
             node.setPubValue(GrayWhitePub.WHITE.value);
@@ -91,53 +99,42 @@ public abstract class AbstractNacosClientWrapper {
 
         log.info("@@@ GrayWhitePub:{}, ENABLE_GRAY_MECHANISM:{}", node.getPubValue(), CommonSwitcher.ENABLE_GRAY_MECHANISM.getStatus());
 
-
         //注册projectContextInfo方便Spring获取当前环境信息
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
-        AssertUtil.notEmpty(nodeName, "@@@ service name can not empty!");
-
-        if (StringUtils.isBlank(nodeName) || projectContextInfo.getNameEn())
-
-        NacosNodeUtil.getInstance().buildNodeInfo(pubValue, nameEn, port, usingPort, xxNode);
-
-    }
-
-    private void registryProjectContextInfo() {
-
-    }
-
-
-    public boolean createThriftServer() {
-
-
-        //注册projectContextInfo 上下文对象 方便spring获取当前环境信息
-        ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
-
-
-        if (this.node == null) {
-            throw new IllegalStateException("@@@ ERROR, Parameter node is null.");
+        if (StringUtils.isBlank(projectContextInfo.getNameEn())) {
+            //获取端口信息等
+            projectContextInfo = new ProjectContextInfo(nodeName, node.getEnv(), node.getPubValue(), node.getUip(), actuatorNodeEnum);
+            //注册ProjectContextInfo 方便Spring获取当前环境信息
+            SpringContextHolder.registerContextInfo(projectContextInfo);
         }
 
-
-
-        return false;
-
-
+        return true;
     }
+
 
     /**
      * 加载rpc端口和配置文件中的metadata原数据 并注册到nacos服务
-     * @param properties
-     * @return
+      * @param properties NacosDiscoveryProperties
+     * @return NacosWatch
      */
     @Bean
+    @ConditionalOnMissingBean
     @DependsOn("thriftServer")
     public NacosWatch nacosWatch(NacosDiscoveryProperties properties) {
-        //清除掉所有数据
-        Map<String, String> metaData = nacosMetaDataProperties.getMetaData();
-        metaData.put("created", "" + System.currentTimeMillis());
-        metaData.put("name", getProjectName());
-        properties.setMetadata(metaData);
+        //原来的元数据全部清空
+        properties.setMetadata(new HashMap<>(16));
+        //更改服务详情中的元数据
+        ClusterNode node = new ClusterNode();
+        UsingIpPort uip = SpringContextHolder.getProjectContextInfo().getUip();
+        node.setUip(uip);
+        node.setNameEn(SpringContextHolder.getProjectContextInfo().getNameEn());
+        node.setPubValue(SpringContextHolder.getProjectContextInfo().getPubValue());
+        node.setEnv(SpringContextHolder.getProjectContextInfo().getEnv());
+        node.setName(getProjectName());
+        //TODO HASH因子等设置
+        Map<String, String> metadata = properties.getMetadata();
+        metadata.put(BaseStringConstants.NODE_INFO, JsonUtil.toJson(node));
+        properties.setMetadata(metadata);
         return new NacosWatch(properties);
     }
 

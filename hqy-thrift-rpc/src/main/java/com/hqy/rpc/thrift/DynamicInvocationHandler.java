@@ -15,8 +15,7 @@ import java.util.List;
 /**
  * 每个RPCService 接口对应一个Handler， 可以接受nacos的事件通知
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-13 9:56
+ * @date 2021-08-13 9:56
  */
 @Slf4j
 public class DynamicInvocationHandler<T> extends AbstractRPCRouter

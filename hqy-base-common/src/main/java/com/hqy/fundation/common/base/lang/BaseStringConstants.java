@@ -53,6 +53,9 @@ public interface BaseStringConstants {
      */
     String UNKNOWN = "unknown";
 
-    public static final String NACOS_NAMING_SERVICE = "nacos_naming_service";
+    /**
+     * namingService key
+     */
+    String NACOS_NAMING_SERVICE = "nacos_naming_service";
 
 }

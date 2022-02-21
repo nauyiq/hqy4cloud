@@ -38,25 +38,20 @@ public class UsingIpPort implements Serializable {
     /**
      * socket服务端口 -1表示当前服务没有提供socket服务
      */
-    private int socketPort = -1;
+//    private int socketPort = -1;
 
     /**
      * 服务进程编号
      */
     private int index;
 
-    /**
-     * 环境
-     */
-    private String env;
 
-
-    public UsingIpPort(String ip, int port, int index) {
+    public UsingIpPort(String ip, int port, int rpcPort, int index) {
         this.ip = ip;
         this.port = port;
+        this.rpcPort = rpcPort;
         this.index = index;
     }
-
 
     @Override
     public int hashCode() {
