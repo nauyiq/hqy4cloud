@@ -27,6 +27,11 @@ public enum CommonResultCode {
      */
     ERROR_PARAM(1001, "invalid parameter, please check parameter again."),
 
+    /**
+     * 无效的服务
+     */
+    INVALID_SERVICE(1002, "invalid service"),
+
 
 
 

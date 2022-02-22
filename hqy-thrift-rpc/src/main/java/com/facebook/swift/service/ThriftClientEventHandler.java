@@ -18,6 +18,7 @@ package com.facebook.swift.service;
 import com.facebook.nifty.client.ClientRequestContext;
 
 public abstract class ThriftClientEventHandler {
+
     public Object getContext(String methodName, ClientRequestContext requestContext) {
         return null;
     }

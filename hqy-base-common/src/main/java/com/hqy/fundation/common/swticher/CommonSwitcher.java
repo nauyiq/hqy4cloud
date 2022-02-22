@@ -27,6 +27,12 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_RPC_SAME_IP_HIGH_PRIORITY = new CommonSwitcher(207,"节点-同IP/Env RPC调度优先(非灰度机制才有效)",true);
 
     /**
+     * 节点-是否支持泛型RPC-MSG通道（消息通道）
+     */
+    public static final CommonSwitcher ENABLE_MSG_CHANNEL_4_GENERIC_RPC = new CommonSwitcher(208, "节点-是否支持泛型RPC-MSG通道（消息通道）", false);
+
+
+    /**
      * 节点-使用ThriftServer-Bean, 标志为RPC的提供者
      */
     public static final CommonSwitcher ENABLE_THRIFT_SERVER_BEAN = new CommonSwitcher(210, "节点-使用ThriftServer-Bean, 标志为RPC的提供者", true);

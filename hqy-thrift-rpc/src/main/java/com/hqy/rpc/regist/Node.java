@@ -42,6 +42,7 @@ public abstract class Node {
      */
     private int pubValue;
 
+
     /**
      * 是否是服务的提供者， 服务的提供者是相对而言并不是绝对的
      * 当暴露rpc服务时 则表示当前服务是服务的提供者
@@ -60,14 +61,14 @@ public abstract class Node {
      * 判断当前服务是否提供socket端口
      * @return
      */
-    public Boolean isSocketService() {
+    /*public Boolean isSocketService() {
         if (Objects.isNull(uip)) {
             log.warn("[系统初始化异常] 节点信息未注册.");
             return false;
         }
         int socketPort = uip.getSocketPort();
         return socketPort != -1;
-    }
+    }*/
 
 
 }

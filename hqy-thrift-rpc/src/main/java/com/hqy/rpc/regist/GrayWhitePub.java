@@ -15,7 +15,14 @@ public enum GrayWhitePub {
     /**
      * 白度发布
      */
-    WHITE(100);
+    WHITE(100),
+
+    /**
+     * 同ip同环卡
+     */
+    HIGH(150),
+
+    ;
 
 
     public final int value;

@@ -60,10 +60,11 @@ public abstract class AbstractNacosClientWrapper {
     /**
      * 声明nacos节点的rpc服务
      * @param node nacos服务节点
+     * @param env 项目环境
      * @return
      */
-    public boolean declareNodeRpcServer(ClusterNode node) {
-        return declareNodeRpcServer(node, ActuatorNodeEnum.CONSUMER);
+    public boolean declareNodeRpcServer(ClusterNode node, String env) {
+        return declareNodeRpcServer(node, env, ActuatorNodeEnum.CONSUMER);
     }
 
     /**
@@ -71,13 +72,15 @@ public abstract class AbstractNacosClientWrapper {
      * 对于生产者：用于声明RPC服务节点，向nacos暴露ThriftService<br>
      * 对于消费者：用于调度RPC服务节点，从nacos获取ThriftService
      * @param node
+     * @param env
      * @param actuatorNodeEnum
      * @return
      */
-    public boolean declareNodeRpcServer(ClusterNode node, ActuatorNodeEnum actuatorNodeEnum) {
+    public boolean declareNodeRpcServer(ClusterNode node, String env, ActuatorNodeEnum actuatorNodeEnum) {
 
         String nodeName = node.getNameEn();
-        AssertUtil.notEmpty(nodeName, "@@@ service name can not empty!");
+        AssertUtil.notEmpty(nodeName, "@@@ Service name can not empty!");
+        AssertUtil.notEmpty(env, "@@@ Project running environment can not empty!");
 
         if (EnvironmentConfig.getInstance().isTestEnvironment()) {
             //测试环境 //需要严格区分灰度与白度
@@ -103,7 +106,7 @@ public abstract class AbstractNacosClientWrapper {
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         if (StringUtils.isBlank(projectContextInfo.getNameEn())) {
             //获取端口信息等
-            projectContextInfo = new ProjectContextInfo(nodeName, node.getEnv(), node.getPubValue(), node.getUip(), actuatorNodeEnum);
+            projectContextInfo = new ProjectContextInfo(nodeName, env, node.getPubValue(), node.getUip(), actuatorNodeEnum);
             //注册ProjectContextInfo 方便Spring获取当前环境信息
             SpringContextHolder.registerContextInfo(projectContextInfo);
         }
@@ -129,7 +132,6 @@ public abstract class AbstractNacosClientWrapper {
         node.setUip(uip);
         node.setNameEn(SpringContextHolder.getProjectContextInfo().getNameEn());
         node.setPubValue(SpringContextHolder.getProjectContextInfo().getPubValue());
-        node.setEnv(SpringContextHolder.getProjectContextInfo().getEnv());
         node.setName(getProjectName());
         //TODO HASH因子等设置
         Map<String, String> metadata = properties.getMetadata();

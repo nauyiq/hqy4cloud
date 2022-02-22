@@ -36,9 +36,9 @@ public class UsingIpPort implements Serializable {
     private int rpcPort = -1;
 
     /**
-     * socket服务端口 -1表示当前服务没有提供socket服务
+     * 环境
      */
-//    private int socketPort = -1;
+    private String env;
 
     /**
      * 服务进程编号
