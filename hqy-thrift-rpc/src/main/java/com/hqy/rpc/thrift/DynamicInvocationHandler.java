@@ -1,6 +1,10 @@
 package com.hqy.rpc.thrift;
 
+import com.facebook.swift.service.RuntimeTApplicationException;
+import com.hqy.fundation.common.base.lang.exception.NoAvailableProviderException;
+import com.hqy.fundation.common.base.lang.exception.RpcException;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.rpc.nacos.NamingServiceClient;
 import com.hqy.rpc.nacos.NodeActivityObserver;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
@@ -9,18 +13,19 @@ import com.hqy.rpc.route.AbstractRpcRouter;
 import com.hqy.util.IpUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
+import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.thrift.TApplicationException;
+import org.apache.thrift.transport.TTransportException;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -74,8 +79,11 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
      */
     private static final String LOCAL_IP = IpUtil.getHostAddress();
 
+    private int pubValue = GrayWhitePub.NONE.value;
+
     /**
      * 构造方法 添加对象连接池配置
+     *
      * @param service        RPCService
      * @param addressesGray  灰度ip节点信息
      * @param addressesWhite 白度ip节点信息
@@ -114,6 +122,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 根据ip初始化高优先级的对象池
+     *
      * @param all 所有可用的节点信息
      */
     private void initializeObjPoolHighPriority(List<UsingIpPort> all) {
@@ -168,6 +177,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 根据灰度白度模式 初始化连接池。
+     *
      * @param usingIpPorts 可用连接地址列表
      * @param pub          null 表示不区分灰度百度
      */
@@ -226,6 +236,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 构建对象池
+     *
      * @param usingIpPorts 可用节点列表
      * @param pub          灰度白度
      * @throws Exception
@@ -252,6 +263,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 关闭连接池
+     *
      * @param objectPool 连接池
      * @throws Exception
      */
@@ -266,7 +278,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        Object result;
+        Object result = null;
         boolean rpcResult = false;
         //获取返回值类型 这里不能是数组 返回值只能是一个
         Type returnType = method.getGenericReturnType();
@@ -281,15 +293,14 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
         ObjectPool<T> objectPool = findSuitableObjPool();
         long fromTime = System.currentTimeMillis();
         T target = null;
-        String targetInfo;
-        boolean rpc = false;
+        String targetInfo = null;
         try {
-            if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()){
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.debug("@@@ ObjPool before borrowObject:  numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
             }
             //从对象池中获取一个实例
             target = objectPool.borrowObject();
-            if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()){
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.debug("@@@ ObjPool after borrowObject:  numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
             }
             targetInfo = factory.gerServiceInfo(target);
@@ -298,14 +309,112 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
                 callback.onInvokeResult(result);
             }
             rpcResult = true;
+        } catch (NoAvailableProviderException exception) {
+            String msg = String.format("[DynamicInvocationHandler] method invoke failed for [%s], method:%s, args:%s",
+                    "NoAvailableProviderException", method.getName(), Arrays.toString(args));
+            log.error(msg, exception);
+            needReturnTarget = false;
+            //异步重试
+            ParentExecutorService.getInstance().execute(() -> {
+                try {
+                    retryReadNodeInfo();
+                } catch (Exception e) {
+                    log.warn("retryReadNodeInfo exception, {}, {}", e.getClass().getName(), e.getMessage());
+                }
+            });
+        } catch (ExecutionException e) {
+            //并发异常，极有可能是执行了耗时的非半工的RPC方法
+            String err = String.format("[DynamicInvocationHandler] method invoke failed, target:%s, method:%s, args:%s",
+                    targetInfo, method.getName(), Arrays.toString(args));
+            //TODO 异常采集.
+            throw new RpcException(err + ", ExecutionException:" + e.getMessage(), e);
+        } catch (Exception e) {
+            boolean matchDisconnectedByServer = checkIfDisconnectedByServer(e);
+            if (matchDisconnectedByServer) {
+                log.warn("@@@ RPC-发现了严重的异常, 发起连接请求被服务端NIO通道的长连接拒绝了, 已尝试异步重连.");
+                needReturnTarget = false;
+            }
+            String err = String.format("[DynamicInvocationHandler] method invoke failed, target:%s, method:%s, args:%s",
+                    targetInfo, method.getName(), Arrays.toString(args));
+            if (e instanceof InvocationTargetException && e.getCause() != null
+                    && e.getCause() instanceof RuntimeTApplicationException && e.getCause().getCause() != null
+                    && e.getCause().getCause() instanceof TApplicationException
+                    && ((TApplicationException) e.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
+                // 服务端返回null; 正常返回null 值。兼容thriftRPC 正常返回null值的场景
+                log.warn("#### {} ; rpc service return null.", err);
+            } else if (e instanceof TTransportException) {
+                log.warn("#### invoke RPC method ,[Ignored Coll] Exception happen : {}, {} ", e.getClass().getName(), e.getMessage());
+                needReturnTarget = false;
+                throw new RpcException(err + ", exception:" + e.getClass().getName(), e);
+            } else {
+                log.warn("#### Invoke RPC method, exception happen : {}, {} ", e.getClass().getName(), e.getMessage());
+                needReturnTarget = false;
+                throw new RpcException(err + ", exception:" + e.getClass().getName(), e);
+            }
+        } finally {
+            //记录一次rpc访问...
+            //记录一次rpc访问...
+            try {
+                if (needReturnTarget) {
+                    objectPool.returnObject(target);
+                } else if (target != null) {
+                    objectPool.invalidateObject(target);
+                }
+            } catch (Exception e) {
+                String err = String.format("[DynamicInvocationHandler] return target failed, target:%s, method:%s, args:%s",
+                        targetInfo, method.getName(), Arrays.toString(args));
+                log.warn("WARN:{}, {}, {}", e.getClass().getName(), e.getMessage(), err);
+            }
 
-        } catch () {
+        }
+
+        if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()){
+            long duration = System.currentTimeMillis() - fromTime;
+            log.debug("## invoke method:{}, args:{}, target:{}, costMills:{} , rpc_success={}",
+                    method.getName(), Arrays.toString(args), targetInfo, duration, rpcResult);
+        }
+
+        return result;
+    }
+
+    private boolean checkIfDisconnectedByServer(Exception e) {
+        return false;
+    }
+
+    /**
+     * 发现有没有可用的节点服务 进行重试
+     * 尽量使用异步调用.
+     */
+    private void retryReadNodeInfo() {
+        //检查下灰度模式
+        checkPubValue();
+        if (!NamingServiceClient.getInstance().status()) {
+            log.warn("@@@ NamingServiceClient status is close.");
+            return;
+        } else {
 
         }
     }
 
+    private void checkPubValue() {
+        ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
+        Integer pubValue = projectContextInfo.getPubValue();
+        if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn()) {
+            if (!pubValue.equals(GrayWhitePub.GRAY.value) && !pubValue.equals(GrayWhitePub.WHITE.value)) {
+                log.warn("@@@ checkValue() 内部状态错误, 灰度机制不清晰!");
+                this.pubValue = GrayWhitePub.NONE.value;
+            } else {
+                this.pubValue = pubValue;
+            }
+        } else {
+            this.pubValue = GrayWhitePub.NONE.value;
+        }
+
+    }
+
     /**
      * 根据当前节点灰度值和有无开启灰度策略选择一个合适的对象池
+     *
      * @return 合适的对象池
      */
     private ObjectPool<T> findSuitableObjPool() {

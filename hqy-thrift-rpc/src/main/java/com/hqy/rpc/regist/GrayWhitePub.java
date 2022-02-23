@@ -8,6 +8,11 @@ package com.hqy.rpc.regist;
 public enum GrayWhitePub {
 
     /**
+     * 没有采用灰度模式
+     */
+    NONE(0),
+
+    /**
      * 灰度发布
      */
     GRAY(50),

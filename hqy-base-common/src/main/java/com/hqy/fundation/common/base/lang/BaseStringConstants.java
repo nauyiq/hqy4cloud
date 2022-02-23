@@ -58,4 +58,8 @@ public interface BaseStringConstants {
      */
     String NACOS_NAMING_SERVICE = "nacos_naming_service";
 
+    /**
+     * application/json;charset=UTF-8
+     */
+    String APPLICATION_JSON_UTF_8 = "application/json;charset=UTF-8";
 }
