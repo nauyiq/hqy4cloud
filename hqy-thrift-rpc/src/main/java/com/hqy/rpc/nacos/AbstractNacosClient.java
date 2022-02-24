@@ -15,7 +15,6 @@ import com.hqy.util.thread.ParentExecutorService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,11 +23,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * nacos客户端服务基类
+ * nacos客户端服务基类 维护了服务节点列表信息
+ * 每个服务都会注册一个服务列表到内存里面 用于rpc调度
  * @author qiyuan.hong
  * @date 2021-09-17 17:22
  */
-public abstract class AbstractNacosClient implements NacosClient {
+public abstract class AbstractNacosClient implements RegistryClient {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNacosClient.class);
 
@@ -61,7 +61,7 @@ public abstract class AbstractNacosClient implements NacosClient {
      * 获取注册到远程服务nacos服务名
      * @return
      */
-    abstract String getBaseServerName();
+    public abstract String getBaseServerName();
 
     @Override
     public ClusterNode getOneLivingNode() {
@@ -173,32 +173,26 @@ public abstract class AbstractNacosClient implements NacosClient {
         }
         grayWhiteMap.put(GrayWhitePub.GRAY, grayNodes);
         grayWhiteMap.put(GrayWhitePub.WHITE, whiteNodes);
-
     }
 
     @Override
-    public UsingIpPort pickupHashFactor(String value, String hashFactor) {
+    public UsingIpPort pickupHashFactor(String nameEn, String hashFactor) {
         if (hashHandlerMap.isEmpty()) {
             synchronized (hashHandlerMap) {
                 if (hashHandlerMap.isEmpty()) {
-                    List<ClusterNode> newNodes;
-                    try {
-                        String serverName = getBaseServerName();
-                        List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serverName, true);
-                        if (CollectionUtils.isEmpty(instances)) {
-                            throw new IllegalArgumentException("@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
-                        }
-                        newNodes = instances.stream().map(ClusterNode::copy).collect(Collectors.toList());
-                        updateIpPorts(newNodes);
-                    } catch (Exception e) {
-                        log.warn("@@@ retryRead nacos instances, failure.", e);
+                    List<ClusterNode> newNodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getBaseServerName(),true);
+                    if (CollectionUtils.isEmpty(newNodes)) {
+                        log.warn("@@@ LoadAllProjectNodeInfo is empty, please check nacos service healthy.");
+                        return null;
                     }
+                    //重新更新一下节点列表
+                    updateIpPorts(newNodes);
                 }
             }
         } else {
             log.debug("hashHandlerMap not EMPTY: {}", JsonUtil.toJson(hashHandlerMap));
         }
-        final String key = genTmpKey(hashFactor, value);
+        final String key = genTmpKey(hashFactor, nameEn);
         return hashHandlerMap.get(key);
     }
 
@@ -216,37 +210,6 @@ public abstract class AbstractNacosClient implements NacosClient {
 
     protected String genTmpKey(String hashFactor, String nameEn) {
         return hashFactor.concat("_").concat(nameEn);
-    }
-
-
-    /**
-     * 加载当前服务的节点实例信息
-     * @return 发挥节点实例个数
-     */
-    @Override
-    public int loadServerNode() {
-        List<ClusterNode> newNodes = new ArrayList<>();
-        try {
-            //服务名交给子类注册的时候赋值
-            String serverName = getBaseServerName();
-            //根据服务名获取健康的实例列表
-            List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serverName, true);
-            //断言
-            Assert.notEmpty(instances, "@@@ 远程nacos服务没发现服务名: " + serverName + " 的实例, 请检查配置是否正确");
-            newNodes = instances.stream().map(ClusterNode::copy).collect(Collectors.toList());
-            //更新节点信息
-            updateIpPorts(newNodes);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            if (observers.size() > 0) {
-                List<ClusterNode> uipListGray = this.grayWhiteMap.get(GrayWhitePub.GRAY);
-                List<ClusterNode> uipListWhite = this.grayWhiteMap.get(GrayWhitePub.WHITE);
-                observers.forEach(e -> e.onAction(uipListGray, uipListWhite));
-            }
-        }
-
-        return newNodes.size();
     }
 
 
@@ -289,6 +252,10 @@ public abstract class AbstractNacosClient implements NacosClient {
         return true;
     }
 
+    /**
+     * 订阅节点变化监听器
+     * @param serviceEnNames
+     */
     private void subscribe(Set<String> serviceEnNames) {
         ParentExecutorService.getInstance().execute(() -> {
             for (String serviceEnName : serviceEnNames) {
@@ -321,37 +288,29 @@ public abstract class AbstractNacosClient implements NacosClient {
      */
     private int loadNodesAndNotifyNodeObserver(Event event) {
         //加载所有服务在远程服务nacos中的实例
-        List<ClusterNode> nodes = new ArrayList<>();
-        Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
-        for (String serviceEnName : serviceEnNames) {
-            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.info("loadNodes, serviceName -> {}", serviceEnName);
+        List<ClusterNode> nodes;
+        try {
+            nodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getBaseServerName(),true);
+            if (CollectionUtils.isEmpty(nodes)) {
+                log.warn("@@@ LoadAllProjectNodeInfo is empty, please check nacos service healthy.");
             }
-            try {
-                List<Instance> instances = NamingServiceClient.getInstance().selectInstances(serviceEnName, true);
-                if (CollectionUtils.isEmpty(instances)) {
-                    log.info("{} server instance is empty.", serviceEnName);
-                    continue;
+            //更新节点列表
+            this.updateIpPorts(nodes);
+        } finally {
+            //通知每个观察者 刷新可用节点
+            if (Objects.nonNull(event) && CollectionUtils.isNotEmpty(observers)) {
+                List<ClusterNode> grayNodes = grayWhiteMap.get(GrayWhitePub.GRAY);
+                List<ClusterNode> whiteNodes = grayWhiteMap.get(GrayWhitePub.WHITE);
+                for (NodeActivityObserver observer : observers) {
+                    observer.onAction(grayNodes, whiteNodes);
                 }
-                for (Instance instance : instances) {
-                    nodes.add(ClusterNode.copy(instance));
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        this.updateIpPorts(nodes);
-
-        //通知每个观察者 刷新可用节点
-        if (Objects.nonNull(event) && CollectionUtils.isNotEmpty(observers)) {
-            List<ClusterNode> grayNodes = grayWhiteMap.get(GrayWhitePub.GRAY);
-            List<ClusterNode> whiteNodes = grayWhiteMap.get(GrayWhitePub.WHITE);
-            for (NodeActivityObserver observer : observers) {
-                observer.onAction(grayNodes, whiteNodes);
             }
         }
         return nodes.size();
     }
+
+
+
 
 
     /**

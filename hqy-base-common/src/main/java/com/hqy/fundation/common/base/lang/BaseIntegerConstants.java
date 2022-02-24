@@ -10,6 +10,6 @@ public interface BaseIntegerConstants {
     /**
      * 轮训指针最大数
      */
-    int POINTER = 9999;
+    int POINTER = 999999;
 
 }

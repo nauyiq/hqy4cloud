@@ -11,7 +11,7 @@ import java.util.List;
  * @author qiyuan.hong
  * @date 2021-09-17 18:30
  */
-public interface NacosClient {
+public interface RegistryClient {
 
     /**
      * 轮训获取一个或者的节点， 负载均衡（不区分灰白度）
@@ -60,15 +60,15 @@ public interface NacosClient {
      * 刷新节点信息（通常是由nacos收到变更事件后）
      * @param nodes
      */
-    public void updateIpPorts(List<ClusterNode> nodes);
+    void updateIpPorts(List<ClusterNode> nodes);
 
     /**
      * hash 路由，获取hash节点
-     * @param value 模块名称
+     * @param nameEn 模块名称
      * @param hashFactor hash因子
      * @return
      */
-    public UsingIpPort pickupHashFactor(String value, String hashFactor);
+    UsingIpPort pickupHashFactor(String nameEn, String hashFactor);
 
 
     /**
@@ -76,12 +76,6 @@ public interface NacosClient {
      * @param observer
      */
     void addNodeActivityObserver(NodeActivityObserver observer);
-
-    /**
-     * 重新加载当前服务节点信息
-     * @return 返回当前服务节点个数
-     */
-    int loadServerNode();
 
 
     /**

@@ -1,3 +1,4 @@
+/*
 package com.hqy.rpc.nacos.listener;
 
 import com.alibaba.nacos.client.naming.event.InstancesChangeEvent;
@@ -13,12 +14,14 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+*/
 /**
  * 节点实例改变事件监听器
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/2/18 14:16
- */
+ *//*
+
 @Slf4j
 //@Component
 @Deprecated
@@ -42,7 +45,7 @@ public class InstancesChangeEventListener extends Subscriber<InstancesChangeEven
             log.info("@@@ instancesChangeEvent : {}", JsonUtil.toJson(instancesChangeEvent));
         }
         NacosClient client = SpringContextHolder.getBean(NacosClient.class);
-        int count = client.loadServerNode();
+        int count = client.load();
         log.info("@@@ loadServerNode end, count :{}", count);
     }
 
@@ -51,3 +54,4 @@ public class InstancesChangeEventListener extends Subscriber<InstancesChangeEven
         return InstancesChangeEvent.class;
     }
 }
+*/

@@ -13,7 +13,6 @@ import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
-import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,6 @@ import java.util.Map;
  * @author qiyuan.hong
  * @date 2021/8/23 23:26
  */
-@Data
 @Component
 public abstract class AbstractNacosClientWrapper {
 

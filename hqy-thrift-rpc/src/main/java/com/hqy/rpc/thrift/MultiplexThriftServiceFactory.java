@@ -103,7 +103,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
      * @param addressGray 灰度可连接列表
      * @param addressWhite 白度可连接列表
      */
-    private void updateAddress(List<UsingIpPort> addressGray, List<UsingIpPort> addressWhite) {
+    public void updateAddress(List<UsingIpPort> addressGray, List<UsingIpPort> addressWhite) {
         if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("[ENABLE_GRAY_MECHANISM]updateAddresses: usable addressesGray size={}, addressesWhite size={}",
                     addressGray.size(), addressWhite.size());

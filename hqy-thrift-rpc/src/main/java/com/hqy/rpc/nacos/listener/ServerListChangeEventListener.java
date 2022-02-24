@@ -1,3 +1,4 @@
+/*
 package com.hqy.rpc.nacos.listener;
 
 import com.alibaba.nacos.client.config.impl.ServerlistChangeEvent;
@@ -11,12 +12,14 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+*/
 /**
  * 服务列表变化监听器
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/2/18 14:08
- */
+ *//*
+
 @Slf4j
 //@Component
 @Deprecated
@@ -46,3 +49,4 @@ public class ServerListChangeEventListener extends Subscriber<ServerlistChangeEv
         return ServerlistChangeEvent.class;
     }
 }
+*/

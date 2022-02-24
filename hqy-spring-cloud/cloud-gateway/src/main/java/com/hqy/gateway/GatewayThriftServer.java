@@ -1,3 +1,4 @@
+/*
 package com.hqy.gateway;
 
 import com.hqy.fundation.common.rpc.api.RpcService;
@@ -8,11 +9,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-09-24 17:47
- */
+ *//*
+
 @Component
 public class GatewayThriftServer extends AbstractThriftServer {
 
@@ -28,3 +31,4 @@ public class GatewayThriftServer extends AbstractThriftServer {
         return rpcServices;
     }
 }
+*/

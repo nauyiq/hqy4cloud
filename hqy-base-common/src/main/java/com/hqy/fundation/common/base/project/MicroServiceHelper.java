@@ -1,10 +1,9 @@
 package com.hqy.fundation.common.base.project;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import org.apache.commons.collections4.CollectionUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author qiyuan.hong
@@ -18,8 +17,19 @@ public class MicroServiceHelper {
      */
     private static final Map<String, String> PROJECT_NAME_MAP = new HashMap<>();
 
+    private static final Set<String> NACOS_CLUSTER_SET = new HashSet<>();
+
+
     static {
+        //服务名
         PROJECT_NAME_MAP.put("hqy_gateway", "网关服务");
+
+        //nacos 集群列表
+        NACOS_CLUSTER_SET.add("DEFAULT");
+    }
+
+    public static boolean checkClusterExist(String clusterName) {
+        return NACOS_CLUSTER_SET.contains(clusterName);
     }
 
 

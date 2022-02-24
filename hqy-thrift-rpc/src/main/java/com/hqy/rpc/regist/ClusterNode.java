@@ -1,16 +1,11 @@
 package com.hqy.rpc.regist;
 
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.util.JsonUtil;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -51,21 +46,6 @@ public class ClusterNode extends Node implements Serializable {
         this.nodeId = UUID.randomUUID().toString().replace("-", "");
     }
 
-    public static ClusterNode copy(Instance instance) {
-        if (Objects.isNull(instance)) {
-            throw new IllegalArgumentException("nacos instance is null.");
-        }
-        ClusterNode clusterNode;
-        String ip = instance.getIp();
-        try {
-            //原数据
-            Map<String, String> metadata = instance.getMetadata();
-            String nodeInfo = metadata.get(BaseStringConstants.NODE_INFO);
-            clusterNode = JsonUtil.toBean(nodeInfo, ClusterNode.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("registry nacos instance has error, metadata is null -> ip = " + ip + "nameEn = " + instance.getServiceName());
-        }
-        return clusterNode;
-    }
+
 
 }
