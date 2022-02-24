@@ -1,5 +1,7 @@
 package com.hqy.rpc.nacos;
 
+import com.hqy.fundation.common.base.project.MicroServiceHelper;
+import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,15 +30,13 @@ public class NacosClientManager {
 
 
     public static RegistryClient getNacosClient(String serviceName) {
-        if (StringUtils.isBlank(serviceName)) {
-            return null;
-        }
+        AssertUtil.isTrue(MicroServiceHelper.checkClusterExist(serviceName), "@@@ Registry Nacos client error, invalid serviceName: " + serviceName);
         if (REGISTRY_MAP.containsKey(serviceName)) {
             return REGISTRY_MAP.get(serviceName);
         } else {
             RegistryClient client = new AbstractNacosClient() {
                 @Override
-                public String getBaseServerName() {
+                public String getServiceNameEn() {
                     return serviceName;
                 }
             };

@@ -2,14 +2,13 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.listener.Event;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.project.MicroServiceHelper;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.thread.ParentExecutorService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -61,13 +60,13 @@ public abstract class AbstractNacosClient implements RegistryClient {
      * 获取注册到远程服务nacos服务名
      * @return
      */
-    public abstract String getBaseServerName();
+    public abstract String getServiceNameEn();
 
     @Override
     public ClusterNode getOneLivingNode() {
         int count = allNodes.size();
         if (count == 0) {
-            log.warn("@@@ {}: 没有活着的节点了", getBaseServerName());
+            log.warn("@@@ {}: 没有活着的节点了", getServiceNameEn());
             return null;
         }
         ClusterNode clusterNode = allNodes.get(pointer % count);
@@ -81,7 +80,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
 
         int count = allNodes.size();
         if (count == 0) {
-            log.warn("@@@ {}: 没有活着的节点了. pubValue:{}.", getBaseServerName(), pub.value);
+            log.warn("@@@ {}: 没有活着的节点了. pubValue:{}.", getServiceNameEn(), pub.value);
             return null;
         }
 
@@ -99,7 +98,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
 
         int size = nodes.size();
         if (size == 0) {
-            log.warn("没有活着的[" + pub + "]模式的节点了：{}", this.getBaseServerName());
+            log.warn("没有活着的[" + pub + "]模式的节点了：{}", this.getServiceNameEn());
             return null;
         }
 
@@ -153,7 +152,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
         grayWhiteMap.clear();
 
         allNodes = nodes.stream().filter(ClusterNode::getAlive).peek(node -> {
-            if (!BaseStringConstants.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
+            if (!ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(node.getHashFactor())) {
                 //更新hash路由
                 String key = genTmpKey(node.getHashFactor(), node.getNameEn());
                 hashHandlerMap.put(key, node.getUip());
@@ -180,7 +179,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
         if (hashHandlerMap.isEmpty()) {
             synchronized (hashHandlerMap) {
                 if (hashHandlerMap.isEmpty()) {
-                    List<ClusterNode> newNodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getBaseServerName(),true);
+                    List<ClusterNode> newNodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getServiceNameEn(),true);
                     if (CollectionUtils.isEmpty(newNodes)) {
                         log.warn("@@@ LoadAllProjectNodeInfo is empty, please check nacos service healthy.");
                         return null;
@@ -290,7 +289,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
         //加载所有服务在远程服务nacos中的实例
         List<ClusterNode> nodes;
         try {
-            nodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getBaseServerName(),true);
+            nodes = NamingServiceClient.getInstance().loadProjectNodeInfo(getServiceNameEn(),true);
             if (CollectionUtils.isEmpty(nodes)) {
                 log.warn("@@@ LoadAllProjectNodeInfo is empty, please check nacos service healthy.");
             }

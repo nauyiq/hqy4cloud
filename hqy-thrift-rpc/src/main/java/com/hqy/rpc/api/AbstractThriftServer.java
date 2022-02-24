@@ -3,7 +3,7 @@ package com.hqy.rpc.api;
 import com.facebook.nifty.core.NettyServerConfig;
 import com.facebook.nifty.core.ThriftServerDef;
 import com.facebook.swift.service.ThriftServer;
-import com.hqy.fundation.common.rpc.api.RpcService;
+import com.hqy.fundation.common.rpc.api.RPCService;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.fundation.common.base.project.UsingIpPort;
@@ -78,7 +78,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
             log.warn("### Can Not Get ThriftServer Bean.");
             return null;
         } else {
-            List<Class<? extends AbstractRpcService>> rpcServiceClasses = getRpcServiceClasses();
+            List<Class<? extends AbstractRPCService>> rpcServiceClasses = getRpcServiceClasses();
             if (CollectionUtils.isEmpty(rpcServiceClasses)) {
                 //如果是不对外提供rpc服务的独立的节点 则无需注册ThriftServer
                 log.info("### FLAG_RPC_REDUCED_SERVICE 标记为无对外提供RPC服务的节点 ");
@@ -105,7 +105,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
                 log.info("### 普通rpc-服务准备启动：{} 倍CPU核数的IO线程!!!", MULTIPLE_BASE);
             }
 
-            for (Class<? extends AbstractRpcService> rpcServiceClass : rpcServiceClasses) {
+            for (Class<? extends AbstractRPCService> rpcServiceClass : rpcServiceClasses) {
                 log.info("### 注册rpc实例：{}", rpcServiceClass);
             }
             log.info("AbstractThriftServer[getThriftServer]  bossThreadNum:{}, ioThreadNum:{}, logicThreadNum:{}",
@@ -170,7 +170,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
      * 子类拓展：获取子类提供的RPC服务实例
      * @return
      */
-    public abstract List<RpcService> getServiceList4Register();
+    public abstract List<RPCService> getServiceList4Register();
 
 
     /**
@@ -178,14 +178,14 @@ public abstract class AbstractThriftServer implements InitializingBean {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<Class<? extends AbstractRpcService>> getRpcServiceClasses() {
-        List<Class<? extends AbstractRpcService>> rpcList = new ArrayList<>();
-        List<RpcService> register = getServiceList4Register();
+    public List<Class<? extends AbstractRPCService>> getRpcServiceClasses() {
+        List<Class<? extends AbstractRPCService>> rpcList = new ArrayList<>();
+        List<RPCService> register = getServiceList4Register();
         if (CollectionUtils.isEmpty(register)) {
             return rpcList;
         }
-        for (RpcService rpcService : register) {
-            rpcList.add( (Class<? extends AbstractRpcService>) rpcService.getClass());
+        for (RPCService rpcService : register) {
+            rpcList.add( (Class<? extends AbstractRPCService>) rpcService.getClass());
         }
         return rpcList;
     }

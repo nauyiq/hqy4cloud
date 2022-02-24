@@ -143,4 +143,11 @@ public class EnvironmentConfig implements InitializingBean {
             env = ENV_DEV;
         }
     }
+
+    /**
+     * @return 是否允许RPC直连
+     */
+    public boolean enableRpcDirect() {
+        return true;
+    }
 }

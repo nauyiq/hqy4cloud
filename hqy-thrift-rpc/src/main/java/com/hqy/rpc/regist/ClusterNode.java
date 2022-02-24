@@ -1,7 +1,7 @@
 package com.hqy.rpc.regist;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public class ClusterNode extends Node implements Serializable {
     /**
      * 哈希因子，区分集群中的某个节点时使用
      */
-    private String hashFactor = BaseStringConstants.DEFAULT_HASH_FACTOR;
+    private String hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
 
 
     /**

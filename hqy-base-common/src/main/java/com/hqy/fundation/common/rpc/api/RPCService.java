@@ -6,5 +6,5 @@ package com.hqy.fundation.common.rpc.api;
  * @author qy
  * @date 2021-08-16 11:47
  */
-public interface RpcService {
+public interface RPCService {
 }

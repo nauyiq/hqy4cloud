@@ -3,17 +3,21 @@ package com.hqy.rpc;
 import com.facebook.swift.service.ThriftService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.lang.exception.RpcException;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.base.project.UsingIpPortEx;
+import com.hqy.fundation.common.rpc.api.RPCService;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.NacosClientManager;
 import com.hqy.rpc.nacos.RegistryClient;
 import com.hqy.rpc.regist.ClusterNode;
+import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.thrift.DynamicInvocationHandler;
 import com.hqy.rpc.thrift.InvokeCallback;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
+import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,11 +32,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * RPC服务的客户端, 用于远程调用
  * 本RMIClient对外通过暴露 getRemoteService 来提供RMI服务
- * @author qy
+ * <1>并且内置了灰度模式：灰色节点可以调用灰色和白色节点服务（灰色 -> 灰色, 白色） 白色节点只能调用白色节点服务（白色 -> 白色）
+ * <2>高优先级同IP同环卡策略: rpc节点调用节点时, 优先调用同一ip下的服务
+ * @author qiyuan.honh
  * @date 2021-08-13 9:54
  */
 @Slf4j
-public class RpcClient {
+public class RPCClient {
 
     /**
      *  key: rpc接口的class name
@@ -122,6 +128,88 @@ public class RpcClient {
         return (T) obj;
     }
 
+
+    /**
+     * 不区分灰度白度 节点个数计算
+     * @param serviceClass RPCService
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(Class<? extends RPCService> serviceClass) {
+        String value = checkAnnotation(serviceClass);
+        RegistryClient nacosClient = NacosClientManager.getNacosClient(value);
+        return nacosClient.countNodes();
+    }
+
+
+    /**
+     * 不区分灰度白度 节点个数计算
+     * @param serviceNameEn 服务英文名
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(String serviceNameEn) {
+        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        return client.countNodes();
+    }
+
+    /**
+     * 区分灰度白度 节点个数计算
+     * @param serviceClass RPCService
+     * @param pub 节点颜色
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(Class<? extends RPCService> serviceClass, GrayWhitePub pub) {
+        String serviceNameEn = checkAnnotation(serviceClass);
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        return client.countNodes(pub);
+    }
+
+    /**
+     * 区分灰度白度 节点个数计算
+     * @param serviceNameEn 服务英文名
+     * @param pub 节点颜色
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(String serviceNameEn, GrayWhitePub pub) {
+        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        return client.countNodes(pub);
+    }
+
+
+    /**
+     * 获取远程服务: 适用于RPC接口暴露的所有服务 可以当做本地方法一样调用
+     * 内部支持直连模式 方便开发时debug 直连服务
+     * 内部支持灰度模式 根据上文下和consumer节点信息 判断是否执行灰度策略
+     * @param serviceClass RPCService
+     * @param hashFactor 哈希因子
+     * @param callback 回调方法
+     * @return 远程服务对象
+     */
+    public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvokeCallback callback) {
+        //获取服务名
+        String serviceNameEn = checkAnnotation(serviceClass);
+        //是否开启直连方式
+        boolean isDirectService = false;
+        if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
+            if (EnvironmentConfig.getInstance().enableRpcDirect()) {
+                //TODO 通过当前服务英文名判断是否服务是否配置了直连服务数据
+
+            }
+        } else {
+            //如果哈希因子不是default，需要从节点中根据hash因子选一个来直连
+            UsingIpPort targetProducer = routeByHashFactor(hashFactor, serviceNameEn, serviceClass);
+        }
+        return null;
+    }
+
+    private static <T> UsingIpPort routeByHashFactor(String hashFactor, String serviceNameEn, Class<T> serviceClass) {
+        UsingIpPort targetProducer;
+
+        return null;
+    }
+
+
     protected static String checkAnnotation(Class<?> service) {
         ThriftService thriftService = service.getAnnotation(ThriftService.class);
         if (Objects.isNull(thriftService)) {
@@ -131,7 +219,6 @@ public class RpcClient {
         if (StringUtils.isBlank(value)) {
             throw new RpcException("@@@ @ThriftService Annotation value not specified, class:" + service.getSimpleName());
         }
-
         return value;
     }
 

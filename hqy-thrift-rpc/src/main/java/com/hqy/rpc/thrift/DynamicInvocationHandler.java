@@ -463,7 +463,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             if (log.isDebugEnabled()) {
                 log.debug("@@@ retryReadNodeInfo start, color mode [{}]", pubValue);
             }
-            List<ClusterNode> clusterNodes = NamingServiceClient.getInstance().loadProjectNodeInfo(client.getBaseServerName(), true);
+            List<ClusterNode> clusterNodes = NamingServiceClient.getInstance().loadProjectNodeInfo(client.getServiceNameEn(), true);
             //更新一下
             client.updateIpPorts(clusterNodes);
         }

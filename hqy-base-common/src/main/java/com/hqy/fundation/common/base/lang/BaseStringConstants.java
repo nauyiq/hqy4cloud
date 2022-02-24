@@ -8,10 +8,6 @@ package com.hqy.fundation.common.base.lang;
 public interface BaseStringConstants {
 
 
-    /**
-     * 默认的hash因子
-     */
-    String DEFAULT_HASH_FACTOR = "default";
 
     /**
      * nacos的注册元数据key

@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ThriftRpcHelper {
 
+    /**
+     * 默认的hash因子
+     */
+    public static final String DEFAULT_HASH_FACTOR = "default";
+
 
     public static List<UsingIpPort> convertToUip(List<ClusterNode> nodes) {
         if (CollectionUtils.isEmpty(nodes)) {
