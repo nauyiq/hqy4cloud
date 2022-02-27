@@ -26,7 +26,35 @@ public class ThriftRpcHelper {
      */
     public static final String DEFAULT_HASH_FACTOR = "default";
 
+    /**
+     * 分隔符 :
+     */
+    public static final String SEPARATOR = ":";
 
+
+
+
+    /**
+     * hashFactor  convert UsingIpPort
+     * @param hashFactor 哈希因子 default or ip:rpcPort
+     * @return 节点ip
+     */
+    public static UsingIpPort convertHash(String hashFactor) {
+        try {
+            String[] split = hashFactor.split(SEPARATOR);
+            int port = Integer.parseInt(split[1]);
+            return new UsingIpPort(split[0], port, port, 0);
+        } catch (Exception e) {
+            log.warn("@@@ [{}] 不是ip:rpcPort的格式, 格式化失败", hashFactor);
+            return null;
+        }
+    }
+
+    /**
+     * ClusterNode -> UsingIpPort
+     * @param nodes ClusterNodeList
+     * @return UsingIpPortList
+     */
     public static List<UsingIpPort> convertToUip(List<ClusterNode> nodes) {
         if (CollectionUtils.isEmpty(nodes)) {
             return null;
@@ -35,6 +63,11 @@ public class ThriftRpcHelper {
     }
 
 
+    /**
+     * instance -> ClusterNode
+     * @param instance nacos节点实例
+     * @return ClusterNode
+     */
     public static ClusterNode copy(Instance instance) {
         if (Objects.isNull(instance)) {
             throw new IllegalArgumentException("nacos instance is null.");

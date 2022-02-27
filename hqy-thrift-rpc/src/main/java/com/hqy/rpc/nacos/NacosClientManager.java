@@ -30,7 +30,10 @@ public class NacosClientManager {
 
 
     public static RegistryClient getNacosClient(String serviceName) {
-        AssertUtil.isTrue(MicroServiceHelper.checkClusterExist(serviceName), "@@@ Registry Nacos client error, invalid serviceName: " + serviceName);
+        if (!MicroServiceHelper.checkClusterExist(serviceName)) {
+            log.warn("@@@ Registry Nacos client error, invalid serviceName: {}", serviceName);
+            return null;
+        }
         if (REGISTRY_MAP.containsKey(serviceName)) {
             return REGISTRY_MAP.get(serviceName);
         } else {

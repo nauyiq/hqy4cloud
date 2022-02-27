@@ -1,2 +1,3 @@
-logging:
-  config: classpath:logback.xml
+spring:
+  profiles:
+    active: dev

@@ -119,8 +119,8 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 all.add(usingIpPort);
             }
         }
-        //创建白色的连接列表 客户端连接器
-        createFramedClientConnector(addressWhite, GrayWhitePub.WHITE);
+        //创建所有颜色的连接列表 客户端连接器
+        createFramedClientConnector(addressWhite, GrayWhitePub.NONE);
 
         if (CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn()) {
             List<UsingIpPort> sameIpList = new ArrayList<>();
@@ -157,7 +157,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
             }
             int idx = CREATE_COUNT.incrementAndGet() % connectors.length;
             connector = connectors[idx];
-            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
+//            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
         } finally {
             lock.unlock();
             //防止整形溢出！！
@@ -169,6 +169,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("create new client, connector:{}", connector);
         }
+        //创建Thrift netty长连接客户端
         return MultiplexThriftClientManager.getThriftClientManager().createClient(connector, serviceClass).get();
     }
 
@@ -248,11 +249,11 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         //所有颜色的
         lock.lock();
         try {
-            if (Objects.isNull(pub)) {
+            if (pub.value == GrayWhitePub.NONE.value) {
                 connectorsAll = new FramedClientConnector[usingIpPorts.size()];
                 int i = 0;
                 for (UsingIpPort usingIpPort : usingIpPorts) {
-                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
                     this.connectorsAll[i] = new FramedClientConnector(hostAndPort);
                     i++;
                 }
@@ -267,7 +268,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 connectorsWhite = new FramedClientConnector[usingIpPorts.size()];
                 int i = 0;
                 for (UsingIpPort usingIpPort : usingIpPorts) {
-                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
                     this.connectorsWhite[i] = new FramedClientConnector(hostAndPort);
                 }
             }
@@ -281,7 +282,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 connectorsGray = new FramedClientConnector[usingIpPorts.size()];
                 int i = 0;
                 for (UsingIpPort usingIpPort : usingIpPorts) {
-                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
                     this.connectorsGray[i] = new FramedClientConnector(hostAndPort);
                 }
             }
@@ -295,7 +296,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 connectorsHighPriority = new FramedClientConnector[usingIpPorts.size()];
                 int i = 0;
                 for (UsingIpPort usingIpPort : usingIpPorts) {
-                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
                     this.connectorsHighPriority[i] = new FramedClientConnector(hostAndPort);
                 }
             }

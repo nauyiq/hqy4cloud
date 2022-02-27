@@ -1,19 +1,25 @@
 package com.hqy.rpc.regist;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * 定制化服务节点信息
+ * 即一个服务对应一个节点信息 可以是网关服务、用户服务、日志服务...
  * @author qy
  * @date 2021-08-13 10:21
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ClusterNode extends Node implements Serializable {
 
     @JsonIgnore
@@ -33,6 +39,11 @@ public class ClusterNode extends Node implements Serializable {
      * 哈希因子，区分集群中的某个节点时使用
      */
     private String hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
+
+    /**
+     * 是生产者还是消费者
+     */
+    private ActuatorNodeEnum actuatorNode;
 
 
     /**
