@@ -20,6 +20,7 @@ import com.hqy.rpc.thrift.DynamicInvocationHandler;
 import com.hqy.rpc.thrift.InvokeCallback;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -66,9 +67,179 @@ public class RPCClient {
      * value： 对应的主节点的动态代理handler
      */
     @SuppressWarnings("rawtypes")
-    private static final Cache<String, DynamicInvocationHandler> MASTER_SERVICE_HANDLERMAP =
+    private static final Cache<String, DynamicInvocationHandler> MASTER_SERVICE_HANDLER_MAP =
             CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
+
+
+    /**
+     * 不区分灰度白度 节点个数计算
+     * @param serviceClass RPCService
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(Class<? extends RPCService> serviceClass) {
+        String value = checkAnnotation(serviceClass);
+        RegistryClient nacosClient = NacosClientManager.getNacosClient(value);
+        if (Objects.isNull(nacosClient)) {
+            throw new RpcException("Service not registry. check interface annotation, className =" + serviceClass.getName() + ",moduleName:" + value);
+        }
+        return nacosClient.countNodes();
+    }
+
+
+    /**
+     * 不区分灰度白度 节点个数计算
+     * @param serviceNameEn 服务英文名
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(String serviceNameEn) {
+        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        if (Objects.isNull(client)) {
+            throw new RpcException("Service not registry. check interface annotation, moduleName:" + serviceNameEn);
+        }
+        return client.countNodes();
+    }
+
+    /**
+     * 区分灰度白度 节点个数计算
+     * @param serviceClass RPCService
+     * @param pub 节点颜色
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(Class<? extends RPCService> serviceClass, GrayWhitePub pub) {
+        String serviceNameEn = checkAnnotation(serviceClass);
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        if (Objects.isNull(client)) {
+            throw new RpcException("Service not registry. check interface annotation, className = " + serviceClass.getName() + ", moduleName = " + serviceNameEn);
+        }
+        return client.countNodes(pub);
+    }
+
+    /**
+     * 区分灰度白度 节点个数计算
+     * @param serviceNameEn 服务英文名
+     * @param pub 节点颜色
+     * @return 节点实例个数
+     */
+    public static int countClusterNode(String serviceNameEn, GrayWhitePub pub) {
+        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
+        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
+        if (Objects.isNull(client)) {
+            throw new RpcException("Service not registry. check interface annotation, className = moduleName:" + serviceNameEn);
+        }
+        return client.countNodes(pub);
+    }
+
+
+    public static <T> T getRemoteService(Class<T> serviceClass) {
+        return getRemoteService(serviceClass, ThriftRpcHelper.DEFAULT_HASH_FACTOR);
+    }
+
+    public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor) {
+        return getRemoteService(serviceClass, hashFactor, null);
+    }
+
+    public static <T> T getRemoteService(Class<T> serviceClass, InvokeCallback callback) {
+        return getRemoteService(serviceClass, ThriftRpcHelper.DEFAULT_HASH_FACTOR, callback);
+    }
+
+
+    /**
+     * 获取远程服务: 适用于RPC接口暴露的所有服务 可以当做本地方法一样调用
+     * 内部支持直连模式 方便开发时debug 直连服务
+     * 内部支持灰度模式 根据上文下和consumer节点信息 判断是否执行灰度策略
+     * @param serviceClass RPCService
+     * @param hashFactor 哈希因子
+     * @param callback 回调方法
+     * @return 远程服务对象
+     */
+    public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvokeCallback callback) {
+        //获取服务名
+        String serviceNameEn = checkAnnotation(serviceClass);
+        boolean isDirectService = false;
+        if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
+            //默认的hash因子
+            ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
+            if (EnvironmentConfig.getInstance().enableRpcDirect()) {
+                //判断当前服务是否配置直连服务
+                isDirectService = directServer.isDirect(serviceNameEn);
+            }
+            if (isDirectService) {
+                UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
+                if(Objects.nonNull(directUip)) {
+                    //有直连节点数据
+                    log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
+                    return getDirectedService(null, directUip, serviceClass, callback);
+                }
+            }
+        } else {
+            //如果哈希因子不是default，需要从节点中根据hash因子选一个来直连
+            UsingIpPort targetProducer = routeByHashFactor(hashFactor, serviceNameEn, serviceClass);
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.info("@@@ 根据hash因子调用远程服务, hashFactor = {}, serviceName:{}, serviceClass:{}, uip:{}", hashFactor, serviceNameEn,
+                        serviceClass.getName(), targetProducer);
+            }
+            return getDirectedService(null, targetProducer, serviceClass, callback);
+        }
+
+        //调用注册中心的远程服务.非直连也非hash因子获取的远程服务.
+        T service;
+        boolean grayMode = false;
+        ClusterNode consumer = null;
+        ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
+        if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn() && Objects.nonNull(contextInfo)) {
+            consumer = new ClusterNode();
+            Integer pubValue = contextInfo.getPubValue();
+            if (pubValue.equals(GrayWhitePub.GRAY.value) || pubValue.equals(GrayWhitePub.WHITE.value)) {
+                consumer.setPubValue(pubValue);
+                grayMode = true;
+            } else {
+                log.warn("@@@ Unknown projectContextInfo.pubValue, value = {}", pubValue);
+            }
+        }
+
+        if (grayMode) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("@@@ Gray mode call serviceRpc -> {}", serviceClass);
+            }
+            service = getProxyService(true, consumer, null, serviceClass, callback);
+        } else {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("@@@ Not gray mode call serviceRpc -> {}", serviceClass);
+            }
+            service = getProxyService(false, null, null, serviceClass, callback);
+        }
+
+
+        return service;
+    }
+
+    /**
+     * 根据hash因子路由到相应的节点
+     * @param hashFactor hash因子
+     * @param serviceNameEn 服务名
+     * @param serviceClass RPCService
+     * @return 远程服务节点
+     */
+    private static <T> UsingIpPort routeByHashFactor(String hashFactor, String serviceNameEn, Class<T> serviceClass) {
+        UsingIpPort targetProducer = ThriftRpcHelper.convertHash(hashFactor);
+        if (Objects.nonNull(targetProducer)) {
+            //表示当前hash因子是ip:rpcPort的格式 直接return
+            return targetProducer;
+        }
+        RegistryClient nacosClient = NacosClientManager.getNacosClient(serviceNameEn);
+        if (Objects.isNull(nacosClient)) {
+            throw new RpcException("Service not registry. check interface annotation, className = " + serviceClass.getName() + ", moduleName =" + serviceNameEn);
+        } else {
+            targetProducer = nacosClient.pickupHashFactor(serviceNameEn, hashFactor);
+            if (Objects.isNull(targetProducer)) {
+                log.error("@@@ No hashFactor node for module, {} , {}", hashFactor, serviceNameEn);
+                throw new IllegalStateException("No hashFactor node for module:" + serviceNameEn + ", hashFactor:" + hashFactor);
+            }
+        }
+        return targetProducer;
+    }
 
     /**
      * 获取代理的远程服务对象
@@ -144,144 +315,15 @@ public class RPCClient {
      * @return 远程服务对象
      */
     protected static <T> T getDirectedService( final ClusterNode consumer, final UsingIpPort producer,
-                                                Class<T> serviceClass, InvokeCallback callback) throws RpcException{
+                                               Class<T> serviceClass, InvokeCallback callback) throws RpcException{
         AssertUtil.isTrue(Objects.isNull(producer) || Objects.isNull(serviceClass),
                 "@@@ Direct rpc service failure, pram producer or serviceClass is null");
-
         ClusterNode producerNode = new ClusterNode();
         producerNode.setUip(producer);
         producerNode.setName("直连服务");
         producerNode.setNameEn("direct service");
         producerNode.setActuatorNode(ActuatorNodeEnum.PROVIDER);
-
         return getProxyService(false, consumer, producerNode, serviceClass, callback);
-    }
-
-
-
-    /**
-     * 不区分灰度白度 节点个数计算
-     * @param serviceClass RPCService
-     * @return 节点实例个数
-     */
-    public static int countClusterNode(Class<? extends RPCService> serviceClass) {
-        String value = checkAnnotation(serviceClass);
-        RegistryClient nacosClient = NacosClientManager.getNacosClient(value);
-        if (Objects.isNull(nacosClient)) {
-            throw new RpcException("Service not registry. check interface annotation, className =" + serviceClass.getName() + ",moduleName:" + value);
-        }
-        return nacosClient.countNodes();
-    }
-
-
-    /**
-     * 不区分灰度白度 节点个数计算
-     * @param serviceNameEn 服务英文名
-     * @return 节点实例个数
-     */
-    public static int countClusterNode(String serviceNameEn) {
-        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
-        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
-        if (Objects.isNull(client)) {
-            throw new RpcException("Service not registry. check interface annotation, moduleName:" + serviceNameEn);
-        }
-        return client.countNodes();
-    }
-
-    /**
-     * 区分灰度白度 节点个数计算
-     * @param serviceClass RPCService
-     * @param pub 节点颜色
-     * @return 节点实例个数
-     */
-    public static int countClusterNode(Class<? extends RPCService> serviceClass, GrayWhitePub pub) {
-        String serviceNameEn = checkAnnotation(serviceClass);
-        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
-        if (Objects.isNull(client)) {
-            throw new RpcException("Service not registry. check interface annotation, className = " + serviceClass.getName() + ", moduleName = " + serviceNameEn);
-        }
-        return client.countNodes(pub);
-    }
-
-    /**
-     * 区分灰度白度 节点个数计算
-     * @param serviceNameEn 服务英文名
-     * @param pub 节点颜色
-     * @return 节点实例个数
-     */
-    public static int countClusterNode(String serviceNameEn, GrayWhitePub pub) {
-        AssertUtil.notEmpty(serviceNameEn, "@@@ Service english name can not be null.");
-        RegistryClient client = NacosClientManager.getNacosClient(serviceNameEn);
-        if (Objects.isNull(client)) {
-            throw new RpcException("Service not registry. check interface annotation, className = moduleName:" + serviceNameEn);
-        }
-        return client.countNodes(pub);
-    }
-
-
-    /**
-     * 获取远程服务: 适用于RPC接口暴露的所有服务 可以当做本地方法一样调用
-     * 内部支持直连模式 方便开发时debug 直连服务
-     * 内部支持灰度模式 根据上文下和consumer节点信息 判断是否执行灰度策略
-     * @param serviceClass RPCService
-     * @param hashFactor 哈希因子
-     * @param callback 回调方法
-     * @return 远程服务对象
-     */
-    public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvokeCallback callback) {
-        //获取服务名
-        String serviceNameEn = checkAnnotation(serviceClass);
-        //是否开启直连方式
-        boolean isDirectService = false;
-        if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
-            //hash
-            ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
-            if (EnvironmentConfig.getInstance().enableRpcDirect()) {
-                isDirectService = directServer.isDirect(serviceNameEn);
-            }
-
-            if (isDirectService) {
-                //有直连节点数据
-                UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
-                log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
-                return getDirectedService(null, directUip, serviceClass, callback);
-            }
-        } else {
-            //如果哈希因子不是default，需要从节点中根据hash因子选一个来直连
-            UsingIpPort targetProducer = routeByHashFactor(hashFactor, serviceNameEn, serviceClass);
-            return getDirectedService(null, targetProducer, serviceClass, callback);
-        }
-
-
-
-        return null;
-    }
-
-    /**
-     *
-     * @param hashFactor
-     * @param serviceNameEn
-     * @param serviceClass
-     * @param <T>
-     * @return
-     */
-    private static <T> UsingIpPort routeByHashFactor(String hashFactor, String serviceNameEn, Class<T> serviceClass) {
-        UsingIpPort targetProducer = ThriftRpcHelper.convertHash(hashFactor);
-        if (Objects.nonNull(targetProducer)) {
-            //表示当前hash因子是ip:rpcPort的格式 直接return
-            return targetProducer;
-        }
-        RegistryClient nacosClient = NacosClientManager.getNacosClient(serviceNameEn);
-        if (Objects.isNull(nacosClient)) {
-            throw new RpcException("Service not registry. check interface annotation, className = " + serviceClass.getName() + ", moduleName =" + serviceNameEn);
-        } else {
-            targetProducer = nacosClient.pickupHashFactor(serviceNameEn, hashFactor);
-            if (Objects.isNull(targetProducer)) {
-                log.error("@@@ No hashFactor node for module, {} , {}", hashFactor, serviceNameEn);
-                throw new IllegalStateException("No hashFactor node for module:" + serviceNameEn + ", hashFactor:" + hashFactor);
-            }
-        }
-        return targetProducer;
     }
 
 
