@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,7 +18,6 @@ import java.util.Map;
  * @date 2022-02-25 22:47
  */
 @Component
-@RefreshScope
 public class ConfigCenterDirectServer implements DirectModuleManager {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigCenterDirectServer.class);
@@ -26,8 +26,11 @@ public class ConfigCenterDirectServer implements DirectModuleManager {
      * key:服务名
      * value ip:端口 比如172.0.0.1:8080
      */
-    @Value("#{${direct.nodesMap}}")
-    private Map<String, String> directNodesMap;
+//    @Value("#{${direct.nodesMap}}")
+    private static Map<String, String> directNodesMap = new HashMap<>();
+    static {
+        directNodesMap.put("test", "test");
+    }
 
     private boolean checkNodes() {
         if (directNodesMap == null || directNodesMap.isEmpty()) {

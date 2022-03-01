@@ -1,29 +1,20 @@
 package com.hqy.rpc.nacos;
 
-import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
-import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author qiyuan.hong
@@ -46,10 +37,18 @@ public abstract class AbstractNacosClientWrapper {
     }
 
     /**
+     * 当前节点数据
+     */
+    private ClusterNode node;
+
+
+    /**
      * 获取注册到远程服务nacos服务名
+     *
      * @return
      */
-    public abstract String getProjectName();
+    public abstract ClusterNode setProjectClusterNode();
+
 
     public boolean isRunning() {
         return isRun;
@@ -57,25 +56,26 @@ public abstract class AbstractNacosClientWrapper {
 
     /**
      * 声明nacos节点的rpc服务
-     * @param node nacos服务节点
+     *
      * @param env 项目环境
      * @return
      */
-    public boolean declareNodeRpcServer(ClusterNode node, String env) {
-        return declareNodeRpcServer(node, env, ActuatorNodeEnum.CONSUMER);
+    public boolean declareNodeRpcServer(String env) {
+        return declareNodeRpcServer(env, ActuatorNodeEnum.CONSUMER);
     }
 
     /**
      * 声明nacos节点的rpc服务
      * 对于生产者：用于声明RPC服务节点，向nacos暴露ThriftService<br>
      * 对于消费者：用于调度RPC服务节点，从nacos获取ThriftService
-     * @param node
+     *
      * @param env
      * @param actuatorNodeEnum
      * @return
      */
-    public boolean declareNodeRpcServer(ClusterNode node, String env, ActuatorNodeEnum actuatorNodeEnum) {
+    public boolean declareNodeRpcServer(String env, ActuatorNodeEnum actuatorNodeEnum) {
 
+        ClusterNode node = setProjectClusterNode();
         String nodeName = node.getNameEn();
         AssertUtil.notEmpty(nodeName, "@@@ Service name can not empty!");
         AssertUtil.notEmpty(env, "@@@ Project running environment can not empty!");
@@ -100,44 +100,28 @@ public abstract class AbstractNacosClientWrapper {
 
         log.info("@@@ GrayWhitePub:{}, ENABLE_GRAY_MECHANISM:{}", node.getPubValue(), CommonSwitcher.ENABLE_GRAY_MECHANISM.getStatus());
 
+        UsingIpPort uip = node.getUip();
+        uip.setEnv(env);
+
         //注册projectContextInfo方便Spring获取当前环境信息
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         if (StringUtils.isBlank(projectContextInfo.getNameEn())) {
             //获取端口信息等
-            projectContextInfo = new ProjectContextInfo(nodeName, env, node.getPubValue(), node.getUip(), actuatorNodeEnum);
+            projectContextInfo = new ProjectContextInfo(nodeName, env, node.getPubValue(), uip, actuatorNodeEnum);
             //注册ProjectContextInfo 方便Spring获取当前环境信息
             SpringContextHolder.registerContextInfo(projectContextInfo);
         }
 
+        node.setActuatorNode(actuatorNodeEnum);
+        node.setUip(uip);
+
+        this.node = node;
         return true;
     }
 
 
-    /**
-     * 加载rpc端口和配置文件中的metadata原数据 并注册到nacos服务
-      * @param properties NacosDiscoveryProperties
-     * @return NacosWatch
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    @DependsOn("thriftServer")
-    public NacosWatch nacosWatch(NacosDiscoveryProperties properties) {
-        //原来的元数据全部清空
-        properties.setMetadata(new HashMap<>(16));
-        //更改服务详情中的元数据
-        ClusterNode node = new ClusterNode();
-        UsingIpPort uip = SpringContextHolder.getProjectContextInfo().getUip();
-        node.setUip(uip);
-        node.setNameEn(SpringContextHolder.getProjectContextInfo().getNameEn());
-        node.setPubValue(SpringContextHolder.getProjectContextInfo().getPubValue());
-        node.setName(getProjectName());
-        //TODO HASH因子等设置
-        Map<String, String> metadata = properties.getMetadata();
-        metadata.put(BaseStringConstants.NODE_INFO, JsonUtil.toJson(node));
-        properties.setMetadata(metadata);
-        return new NacosWatch(properties);
+    public ClusterNode getNode() {
+        return node;
     }
-
-
 
 }

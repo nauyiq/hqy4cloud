@@ -16,6 +16,7 @@ import java.util.Random;
  * @date 2021-08-16 14:23
  */
 @Slf4j
+@Component
 public class EnvironmentConfig implements InitializingBean {
 
     /**

@@ -1,5 +1,7 @@
 package com.hqy.fundation.common.base.project;
 
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,14 +17,15 @@ public class MicroServiceHelper {
      * key :消费者节点英文模块名称， value: 服务节点的中文模块名称 <br>
      * 服务提供者需要注册此
      */
-    private static final Map<String, String> PROJECT_NAME_MAP = new HashMap<>();
+    private static final Map<String, ActuatorNodeEnum> PROJECT_NAME_MAP = new HashMap<>();
 
     private static final Set<String> NACOS_CLUSTER_SET = new HashSet<>();
 
 
+
     static {
         //服务名
-        PROJECT_NAME_MAP.put("hqy_gateway", "网关服务");
+        PROJECT_NAME_MAP.put(MicroServiceConstants.GATEWAY, ActuatorNodeEnum.PROVIDER);
 
         //nacos 集群列表
         NACOS_CLUSTER_SET.add("DEFAULT");
@@ -38,7 +41,7 @@ public class MicroServiceHelper {
      * @param nameEn
      * @return
      */
-    public static String getName(String nameEn) {
+    public static ActuatorNodeEnum getNodeType(String nameEn) {
         return PROJECT_NAME_MAP.get(nameEn);
     }
 

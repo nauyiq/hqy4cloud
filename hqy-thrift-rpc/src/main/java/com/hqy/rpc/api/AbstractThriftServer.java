@@ -1,31 +1,42 @@
 package com.hqy.rpc.api;
 
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.facebook.nifty.core.NettyServerConfig;
 import com.facebook.nifty.core.ThriftServerDef;
+import com.facebook.swift.codec.ThriftCodecManager;
+import com.facebook.swift.service.ThriftEventHandler;
 import com.facebook.swift.service.ThriftServer;
+import com.facebook.swift.service.ThriftServiceProcessor;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.rpc.api.RPCService;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
-import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
+import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * thrift服务基础类 交给spring管理
@@ -33,8 +44,7 @@ import java.util.concurrent.Executors;
  * @date  2021-08-16 11:05
  */
 @Slf4j
-@RefreshScope
-@Configuration
+@Component
 public abstract class AbstractThriftServer implements InitializingBean {
 
     private final int MULTIPLE_BASE = 4;
@@ -52,6 +62,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
      */
     @Value("${thrift.listen.port:10001}")
     int rpcPort = 10001;
+
 
     /**
      * netty boos线程池线程个数 默认1
@@ -71,7 +82,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
     @Bean
     public ThriftServer getThriftServer() {
 
-        AssertUtil.isTrue(port == 0, "AbstractThriftServer get service port fail, port == 0.");
+        AssertUtil.isTrue(port != 0, "AbstractThriftServer get service port fail, port == 0.");
 
         if (CommonSwitcher.ENABLE_THRIFT_SERVER_BEAN.isOff()) {
             log.warn("### AbstractThriftServer[getThriftServer] CommonSwitcher ENABLE_THRIFT_SERVER_BEAN = false");
@@ -87,13 +98,14 @@ public abstract class AbstractThriftServer implements InitializingBean {
             } else if (rpcServiceClasses.size() == 1) {
                 //如果是暴露的RPC实例列表较少时, 可以适当减少io线程数
                 log.info("### RPC实例数较低, 适当减少RPC处理线程");
+                int boundary = 6;
                 ioWorkerThreadNum = ioWorkerThreadNum / MULTIPLE_BASE;
-                if (ioWorkerThreadNum > 6) {
-                    ioWorkerThreadNum = 6;
+                if (ioWorkerThreadNum > boundary) {
+                    ioWorkerThreadNum = boundary;
                 }
                 logicThreadNum = logicThreadNum / MULTIPLE_BASE;
-                if (logicThreadNum > 6) {
-                    logicThreadNum = 6;
+                if (logicThreadNum > boundary) {
+                    logicThreadNum = boundary;
                 }
             } else if (EnvironmentConfig.FLAG_IO_INTENSIVE_RPC_SERVICE) {
                 //如果是io密集型的应用...RPC处理线程数再翻倍
@@ -108,15 +120,23 @@ public abstract class AbstractThriftServer implements InitializingBean {
             for (Class<? extends AbstractRPCService> rpcServiceClass : rpcServiceClasses) {
                 log.info("### 注册rpc实例：{}", rpcServiceClass);
             }
+
             log.info("AbstractThriftServer[getThriftServer]  bossThreadNum:{}, ioThreadNum:{}, logicThreadNum:{}",
                     bossThreadNum, ioWorkerThreadNum, logicThreadNum);
             log.info("AbstractThriftServer[getThriftServer]  default configured serverPort:{}", rpcPort);
-
             InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-            ExecutorService boosExecutor = Executors.newFixedThreadPool(this.bossThreadNum, new DefaultThreadFactory("BossWorker"));
-            ExecutorService ioWorkerExecutor = Executors.newFixedThreadPool(this.ioWorkerThreadNum, new DefaultThreadFactory("IoWorker"));
-            ExecutorService logicWorkerExecutor = Executors.newFixedThreadPool(this.ioWorkerThreadNum, new DefaultThreadFactory("LogicWorker"));
+            //TODO 设置服务端事件处理器 ThriftEventHandler
+            List<ThriftEventHandler> eventHandlers = new LinkedList<>();
+            List<RPCService> rpcServices = getServiceList4Register();
+            ThriftServiceProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), eventHandlers, rpcServices);
+
+            ExecutorService boosExecutor = new ThreadPoolExecutor(this.bossThreadNum, this.bossThreadNum, 0L,
+                    TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("BossWorker"));
+            ExecutorService ioWorkerExecutor = new ThreadPoolExecutor(this.ioWorkerThreadNum, this.ioWorkerThreadNum, 0L,
+                    TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("IoWorker"));
+            ExecutorService logicWorkerExecutor = new ThreadPoolExecutor(this.logicThreadNum, this.logicThreadNum, 0L,
+                    TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("LogicWorker"));
 
             final NettyServerConfig serverConfig = NettyServerConfig.newBuilder().setBossThreadExecutor(boosExecutor)
                     .setBossThreadCount(this.bossThreadNum).setWorkerThreadExecutor(ioWorkerExecutor)
@@ -126,6 +146,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
             int pid = Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             log.info("### before starting: ip -> {}, pid -> {}", ip, pid);
 
+            //获取可以使用的端口.
             int tryTime = 0;
             while (isPortUsing(this.rpcPort)) {
                 log.warn("### The server port already bind! retry new port!!! [{}:{}]", ip, rpcPort);
@@ -138,9 +159,10 @@ public abstract class AbstractThriftServer implements InitializingBean {
                     this.rpcPort = this.rpcPort + 4;
                 }
             }
-            ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).using(logicWorkerExecutor).build();
+            ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor).using(logicWorkerExecutor).build();
 
             uip = new UsingIpPort(ip, port, rpcPort, pid);
+
             return new ThriftServer(serverConfig, serverDef);
         }
     }
@@ -191,9 +213,10 @@ public abstract class AbstractThriftServer implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         log.info("afterPropertiesSet ok !");
     }
+
 
     public UsingIpPort getUsingIpPort() {
         return uip;

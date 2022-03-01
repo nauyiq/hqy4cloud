@@ -33,7 +33,6 @@ public class ThriftRpcHelper {
 
 
 
-
     /**
      * hashFactor  convert UsingIpPort
      * @param hashFactor 哈希因子 default or ip:rpcPort
