@@ -1,5 +1,7 @@
 package com.hqy.gateway.server;
 
+import com.hqy.coll.gateway.service.CollPersistService;
+import com.hqy.coll.gateway.struct.ThrottledIpBlockStruct;
 import com.hqy.fundation.common.HttpRequestInfo;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
@@ -7,6 +9,7 @@ import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.coll.gateway.entity.ThrottledIpBlock;
+import com.hqy.rpc.RPCClient;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
 import com.hqy.util.spring.SpringContextHolder;
@@ -24,7 +27,7 @@ import java.util.Objects;
  * Http限流器，内部实现了系统忙或者客户端频繁访问时，判定要否限流的功能。也能识别出基本的hack或者数据采集，继而判定要限制访问。<br>
  * 核心实现 依赖 redis 和 google 的CacheBuilder
  * @author qy
- * @date  2021-07-27 19:58
+ * @date 2021-07-27 19:58
  */
 @Slf4j
 @Component
@@ -258,21 +261,25 @@ public class GatewayHttpThrottles implements HttpThrottles {
      * @param accessParamJson 请求参数json
      */
     public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
+
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
             log.warn("ignore persistThrottleInfo: {},{}, reason:{}", ip, url, createdBy);
             return;
         }
-        final ThrottledIpBlock throttledIpBlock = new ThrottledIpBlock();
-        throttledIpBlock.setIp(ip);
+
+        ThrottledIpBlockStruct struct = new ThrottledIpBlockStruct();
         if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > 1024) {
             //只截取前1024个字符的提示信息,太长了就丢掉
             accessParamJson = accessParamJson.substring(0, 1024);
         }
-        throttledIpBlock.setAccessJson(accessParamJson);
-        throttledIpBlock.setBlockedSeconds(blockSeconds);
-        throttledIpBlock.setUrl(url);
-        throttledIpBlock.setThrottleBy(createdBy);
-        MqPersistDataServer mqPersistDataServer = SpringContextHolder.getBean(MqPersistDataServer.class);
-        ParentExecutorService.getInstance().execute(() -> mqPersistDataServer.persistBlockIpAction(throttledIpBlock));
+        struct.ip = ip;
+        struct.accessJson = accessParamJson;
+        struct.blockedSeconds = blockSeconds;
+        struct.url = url;
+        struct.throttleBy = createdBy;
+
+        CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
+        remoteService.saveThrottledIpBlockHistory(struct);
+
     }
 }

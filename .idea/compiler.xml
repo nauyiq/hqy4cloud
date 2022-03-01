@@ -43,6 +43,8 @@
     <bytecodeTargetLevel>
       <module name="cloud-hystrix-dashboard" target="1.8" />
       <module name="hqy-common-elasticsearch-api" target="1.8" />
+      <module name="hqy-common-mq-collector-api" target="1.8" />
+      <module name="hqy-common-mq-collector-impl" target="1.8" />
       <module name="hqy-mq-collector-api" target="1.8" />
       <module name="hqy-mq-collector-impl" target="1.8" />
       <module name="hqy-rpc-demo" target="1.8" />

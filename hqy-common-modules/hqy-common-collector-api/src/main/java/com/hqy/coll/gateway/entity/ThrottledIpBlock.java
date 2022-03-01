@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -52,5 +50,14 @@ public class ThrottledIpBlock extends BaseEntity<Long> {
      */
     private String env;
 
-
+    public ThrottledIpBlock(String throttleBy, String url, String accessJson, Integer blockedSeconds, String env) {
+        this.throttleBy = throttleBy;
+        this.url = url;
+        this.accessJson = accessJson;
+        this.blockedSeconds = blockedSeconds;
+        this.env = env;
+        Date now = new Date();
+        super.setCreated(now);
+        super.setUpdated(now);
+    }
 }

@@ -31,13 +31,13 @@ public class WebMvcGlobalExceptionHandler {
 
 
 
-    @ResponseBody
+  /*  @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public MessageResponse handler(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         ObjectError objectError = bindingResult.getAllErrors().get(0);
         return new MessageResponse(false, objectError.getDefaultMessage(), CommonResultCode.ERROR_PARAM.code);
-    }
+    }*/
 
 
 }

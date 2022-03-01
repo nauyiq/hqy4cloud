@@ -2,6 +2,8 @@ package com.hqy.coll.gateway.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * @author qiyuan.hong
@@ -9,6 +11,8 @@ import com.facebook.swift.codec.ThriftStruct;
  * @date 2022/3/1 17:57
  */
 @ThriftStruct
+@NoArgsConstructor
+@AllArgsConstructor
 public final class ThrottledIpBlockStruct {
 
     /**

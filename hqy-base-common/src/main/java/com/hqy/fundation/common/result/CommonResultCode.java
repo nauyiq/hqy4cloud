@@ -24,6 +24,12 @@ public enum CommonResultCode {
 
 
     /**
+     * 新增数据异常
+     */
+    SYSTEM_ERROR_INSERT_FAIL(9100, "System internal error, insert data failure, please try again later."),
+
+
+    /**
      * 空对象
      */
     INVALID_DATA(1003, "System internal error, invalid obj."),

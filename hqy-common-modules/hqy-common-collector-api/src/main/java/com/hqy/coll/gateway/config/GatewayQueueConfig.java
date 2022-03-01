@@ -1,3 +1,4 @@
+/*
 package com.hqy.coll.gateway.config;
 
 import com.hqy.fundation.common.base.lang.MqConstants;
@@ -8,27 +9,33 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
+*/
 /**
  * @author qy
  * @create 2021/8/19 23:37
- */
+ *//*
+
 //@Configuration
 @Deprecated
 public class GatewayQueueConfig {
 
-    /**
+    */
+/**
      * 注册采集服务用到的FanoutExchange
      * @return
-     */
+     *//*
+
     @Bean
     public FanoutExchange fanoutExchange() {
         return new FanoutExchange(MqConstants.AMQP_COLL_EXCHANGE, true, false);
     }
 
-    /**
+    */
+/**
      * 注册gateway用到的Queue
      * @return
-     */
+     *//*
+
     @Bean
     public Queue gatewayQueue() {
         if (InternalGeneralSwitcher.ENABLE_COLL_TTL_MESSAGE_QUEUE.isOff()) {
@@ -46,10 +53,12 @@ public class GatewayQueueConfig {
 
     }
 
-    /**
+    */
+/**
      * 将gateway队列绑定到采集服务的exchange中
      * @return
-     */
+     *//*
+
     @Bean
     public Binding gatewayBinding() {
         return BindingBuilder.bind(gatewayQueue()).to(fanoutExchange());
@@ -75,3 +84,4 @@ public class GatewayQueueConfig {
 
 
 }
+*/

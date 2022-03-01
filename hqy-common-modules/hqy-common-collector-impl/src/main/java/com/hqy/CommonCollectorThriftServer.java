@@ -1,7 +1,9 @@
 package com.hqy;
 
+import com.hqy.coll.gateway.service.CollPersistService;
 import com.hqy.fundation.common.rpc.api.RPCService;
 import com.hqy.rpc.api.AbstractThriftServer;
+import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,8 +22,9 @@ public class CommonCollectorThriftServer extends AbstractThriftServer {
     public List<RPCService> getServiceList4Register() {
         List<RPCService> rpcServices = new ArrayList<>();
 
+        CollPersistService collPersistService = SpringContextHolder.getBean(CollPersistService.class);
 
-
+        rpcServices.add(collPersistService);
         return rpcServices;
     }
 }

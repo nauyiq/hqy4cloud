@@ -78,10 +78,10 @@
         </dependency>
 
         <!--引入springboot 整合rabbitmq-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>

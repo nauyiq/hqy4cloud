@@ -17,8 +17,8 @@ import com.hqy.fundation.common.rpc.api.RPCService;
 public interface CollPersistService extends RPCService {
 
     /**
-     * 保存一条网关封禁的ip到数据库
-     * @param struct
+     * 保存一条网关封禁的ip记录到数据库
+     * @param struct thrift rpc struct
      */
     @ThriftMethod
     void saveThrottledIpBlockHistory(@ThriftField(1) ThrottledIpBlockStruct struct);
