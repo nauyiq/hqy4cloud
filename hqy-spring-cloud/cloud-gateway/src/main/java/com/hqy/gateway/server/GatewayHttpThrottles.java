@@ -6,7 +6,7 @@ import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.gateway.util.RequestUtil;
-import com.hqy.mq.collector.entity.ThrottledIpBlock;
+import com.hqy.coll.gateway.entity.ThrottledIpBlock;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
 import com.hqy.util.spring.SpringContextHolder;

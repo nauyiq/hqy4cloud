@@ -10,12 +10,10 @@
         <module name="hqy-public-basic-service-api" />
         <module name="hqy-common-service" />
         <module name="hqy-common-foundation" />
-        <module name="hqy-common-mq-collector-impl" />
         <module name="alibaba-provider-demo" />
         <module name="hqy-thrift-rpc" />
         <module name="alibaba-consumer-demo" />
         <module name="hqy-netty-text-websocket" />
-        <module name="hqy-common-mq-collector-api" />
         <module name="hqy-elasticsearch-demo" />
         <module name="cloud-gateway" />
         <module name="hqy-timer-service" />
@@ -32,11 +30,13 @@
         <module name="hqy-util" />
         <module name="cloud-config" />
         <module name="hqy-netty-core" />
+        <module name="hqy-common-collector-impl" />
         <module name="hqy-public-basic-service-impl" />
         <module name="hqy-mq-collector-impl" />
         <module name="cloud-eureka-server" />
         <module name="hqy-base-multiple-datasource" />
         <module name="hqy-data-structures-and-algorithms" />
+        <module name="hqy-common-collector-api" />
         <module name="hqy-base-common" />
       </profile>
     </annotationProcessing>

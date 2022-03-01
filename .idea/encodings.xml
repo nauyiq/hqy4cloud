@@ -23,12 +23,12 @@
     <file url="file://$PROJECT_DIR$/hqy-base-elasticsearch/hqy-elasticsearch-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-base-elasticsearch/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-base-elasticsearch/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-collector-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-collector-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-collector-impl/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-collector-impl/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-foundation/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-foundation/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-api/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-api/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-impl/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-impl/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-data-structures-and-algorithms/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-data-structures-and-algorithms/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hqy-common-modules/hqy-public-basic-service-api/src/main/java" charset="UTF-8" />

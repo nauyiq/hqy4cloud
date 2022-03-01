@@ -22,6 +22,12 @@ public enum CommonResultCode {
      */
     ILLEGAL_REQUEST(9001, "Illegal Request, Limit a few minutes."),
 
+
+    /**
+     * 空对象
+     */
+    INVALID_DATA(1003, "System internal error, invalid obj."),
+
     /**
      * 错误参数
      */

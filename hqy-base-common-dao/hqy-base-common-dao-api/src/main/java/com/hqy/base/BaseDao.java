@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author qy
  * @date 2021-07-16 11:22
  */
-public interface BaseDao<T, Pk extends Serializable> extends
+public interface BaseDao<T, Pk> extends
         BaseInsertMapper<T>,
         BaseUpdateMapper<T>,
         BaseDeleteMapper<T>,

@@ -1,7 +1,7 @@
 package com.hqy.gateway.server;
 
 import com.hqy.fundation.common.base.lang.MqConstants;
-import com.hqy.mq.collector.entity.ThrottledIpBlock;
+import com.hqy.coll.gateway.entity.ThrottledIpBlock;
 import com.hqy.util.JsonUtil;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

@@ -27,6 +27,8 @@ public class MicroServiceHelper {
         //服务名
         PROJECT_NAME_MAP.put(MicroServiceConstants.GATEWAY, ActuatorNodeEnum.PROVIDER);
 
+        PROJECT_NAME_MAP.put(MicroServiceConstants.COMMON_COLLECTOR, ActuatorNodeEnum.PROVIDER);
+
         //nacos 集群列表
         NACOS_CLUSTER_SET.add("DEFAULT");
     }
