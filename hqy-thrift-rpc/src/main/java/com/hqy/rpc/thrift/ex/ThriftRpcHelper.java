@@ -8,6 +8,7 @@ import com.hqy.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class ThriftRpcHelper {
      */
     public static List<UsingIpPort> convertToUip(List<ClusterNode> nodes) {
         if (CollectionUtils.isEmpty(nodes)) {
-            return null;
+            return new ArrayList<>();
         }
         return nodes.stream().map(ClusterNode::getUip).collect(Collectors.toList());
     }

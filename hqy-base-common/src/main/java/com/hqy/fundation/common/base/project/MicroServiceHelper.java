@@ -2,10 +2,7 @@ package com.hqy.fundation.common.base.project;
 
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author qiyuan.hong
@@ -14,12 +11,11 @@ import java.util.Set;
 public class MicroServiceHelper {
 
     /**
-     * key :消费者节点英文模块名称， value: 服务节点的中文模块名称 <br>
+     * key :消费者节点英文模块名称， value: 节点模式 <br>
      * 服务提供者需要注册此
      */
     private static final Map<String, ActuatorNodeEnum> PROJECT_NAME_MAP = new HashMap<>();
 
-    private static final Set<String> NACOS_CLUSTER_SET = new HashSet<>();
 
 
 
@@ -29,12 +25,11 @@ public class MicroServiceHelper {
 
         PROJECT_NAME_MAP.put(MicroServiceConstants.COMMON_COLLECTOR, ActuatorNodeEnum.PROVIDER);
 
-        //nacos 集群列表
-        NACOS_CLUSTER_SET.add("DEFAULT");
     }
 
     public static boolean checkClusterExist(String clusterName) {
-        return NACOS_CLUSTER_SET.contains(clusterName);
+        ActuatorNodeEnum actuatorNodeEnum = PROJECT_NAME_MAP.get(clusterName);
+        return Objects.nonNull(actuatorNodeEnum);
     }
 
 

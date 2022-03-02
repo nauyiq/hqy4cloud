@@ -2,8 +2,6 @@ package com.hqy.coll.gateway.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 /**
  * @author qiyuan.hong
@@ -11,8 +9,6 @@ import lombok.NoArgsConstructor;
  * @date 2022/3/1 17:57
  */
 @ThriftStruct
-@NoArgsConstructor
-@AllArgsConstructor
 public final class ThrottledIpBlockStruct {
 
     /**
@@ -52,4 +48,54 @@ public final class ThrottledIpBlockStruct {
     public String env;
 
 
+    public ThrottledIpBlockStruct() {
+    }
+
+    public String getThrottleBy() {
+        return throttleBy;
+    }
+
+    public void setThrottleBy(String throttleBy) {
+        this.throttleBy = throttleBy;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getAccessJson() {
+        return accessJson;
+    }
+
+    public void setAccessJson(String accessJson) {
+        this.accessJson = accessJson;
+    }
+
+    public Integer getBlockedSeconds() {
+        return blockedSeconds;
+    }
+
+    public void setBlockedSeconds(Integer blockedSeconds) {
+        this.blockedSeconds = blockedSeconds;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
+    }
 }

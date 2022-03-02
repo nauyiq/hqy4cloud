@@ -38,7 +38,11 @@
             </exclusions>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.2.4.Final</version>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
@@ -46,10 +50,10 @@
         </dependency>
 
         <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
-        <dependency>
-            <groupId>com.alibaba.csp</groupId>
-            <artifactId>sentinel-datasource-nacos</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.csp</groupId>-->
+<!--            <artifactId>sentinel-datasource-nacos</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.hqy</groupId>

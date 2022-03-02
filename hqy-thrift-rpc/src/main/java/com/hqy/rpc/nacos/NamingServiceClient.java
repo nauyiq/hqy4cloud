@@ -11,6 +11,7 @@ import com.hqy.fundation.common.base.project.MicroServiceHelper;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
+import com.hqy.util.AssertUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +116,7 @@ public class NamingServiceClient {
             namingService = nacosDiscoveryProperties.namingServiceInstance();
         }
 
-        Assert.isNull(namingService, "Get NamingService failure, check service registration result.");
+        AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");
 
         return namingService;
     }
@@ -155,7 +156,7 @@ public class NamingServiceClient {
         //根据服务名获取远程服务nacos中的实例
         try {
             List<Instance> instances = NamingServiceClient.getNamingService().selectInstances(serviceName, healthy);
-            if (CollectionUtils.isEmpty(nodes)) {
+            if (CollectionUtils.isEmpty(instances)) {
                 log.warn("@@@ The current [{}] instance list is empty, please checking node status.", serviceName);
             } else {
                 nodes = instances.stream().map(ThriftRpcHelper::copy).collect(Collectors.toList());
