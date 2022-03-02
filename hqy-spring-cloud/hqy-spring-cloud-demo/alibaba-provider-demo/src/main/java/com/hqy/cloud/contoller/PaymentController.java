@@ -38,7 +38,7 @@ public class PaymentController {
 
     @GetMapping("/payment/{id}")
     public MessageResponse getPaymentById(@PathVariable("id") Long id) throws InterruptedException {
-        Payment payment = paymentService.selectById(id);
+        Payment payment = null;
         log.info("*****查询结果:{}", payment);
         if (payment != null) {
             return new DataResponse(true, "查询成功, 端口号:" + serverPort, 200, payment);
