@@ -266,8 +266,11 @@ public class RPCClient {
             throw new IllegalArgumentException("@@@ Parameter consumer and producer can not all be empty with distinguish mode.");
         }
 
+        //rpc接口名
         String interfaceName = serviceClass.getName();
+        //服务代理handler
         DynamicInvocationHandler<T> handler;
+
         //生产者ClusterNode为空, 说明不是直连模式
         if (Objects.isNull(producer)) {
             handler = CLASS_HANDLER_MAP.get(interfaceName);
@@ -278,11 +281,13 @@ public class RPCClient {
                     throw new RpcException(value + "rpc interface not registry, check interface annotation: className:" + interfaceName);
                 } else {
                     //分别获取不同颜色的节点 重新创建target服务的代理handler对象.
-                    List<ClusterNode> grayNodeList = client.getAllLivingNode(GrayWhitePub.GRAY);
-                    List<ClusterNode> whiteNodeList = client.getAllLivingNode(GrayWhitePub.WHITE);
-                    List<UsingIpPort> grayUipList = ThriftRpcHelper.convertToUip(grayNodeList);
-                    List<UsingIpPort> whiteUipList = ThriftRpcHelper.convertToUip(whiteNodeList);
-                    handler = new DynamicInvocationHandler<T>(serviceClass, grayUipList, whiteUipList, callback);
+                    List<UsingIpPort> grayUipList =
+                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.GRAY));
+                    List<UsingIpPort> whiteUipList =
+                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.WHITE));
+                    handler = new DynamicInvocationHandler<>(serviceClass, grayUipList, whiteUipList, callback);
+                    handler.setClient(client);
+
                     //添加观察者 监听nacos节点变化事件
                     client.addNodeActivityObserver(handler);
                     CLASS_HANDLER_MAP.put(interfaceName, handler);

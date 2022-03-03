@@ -9,6 +9,7 @@ import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.AbstractNacosClient;
 import com.hqy.rpc.nacos.NamingServiceClient;
 import com.hqy.rpc.nacos.NodeActivityObserver;
+import com.hqy.rpc.nacos.RegistryClient;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.route.AbstractRpcRouter;
@@ -83,7 +84,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
     /**
      * nacos client。
      */
-    private AbstractNacosClient client;
+    private RegistryClient client;
 
 
     private int pubValue = GrayWhitePub.NONE.value;
@@ -372,10 +373,13 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             log.warn("@@@ RPC-发现了严重的异常, 发起连接请求被服务端NIO通道的长连接拒绝了, 已尝试异步重连.");
             needReturnTarget = false;
         }
+
         String err = String.format("[DynamicInvocationHandler] method invoke failed, target:%s, method:%s, args:%s",
                 targetInfo, method.getName(), Arrays.toString(args));
+
         if (e instanceof InvocationTargetException && e.getCause() != null
-                && e.getCause() instanceof RuntimeTApplicationException && e.getCause().getCause() != null
+                && e.getCause() instanceof RuntimeTApplicationException
+                && e.getCause().getCause() != null
                 && e.getCause().getCause() instanceof TApplicationException
                 && ((TApplicationException) e.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
             // 服务端返回null; 正常返回null 值。兼容thriftRPC 正常返回null值的场景
@@ -429,15 +433,23 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
         return needReturnTarget;
     }
 
+    /**
+     * 检查连接是否断开
+     * @param e 异常
+     * @return boolean
+     */
     private boolean checkIfDisconnectedByServer(Exception e) {
         boolean matchDisconnectedByServer = false;
         if (e instanceof InvocationTargetException) {
             String keyword = "Client was disconnected by server";
             InvocationTargetException ite = (InvocationTargetException) e;
+
             if (Objects.nonNull(ite.getCause())
                     && ite.getCause().getClass().equals(RuntimeTTransportException.class)) {
+                //thrift RuntimeTTransportException 异常
                 RuntimeTTransportException iteCause = (RuntimeTTransportException) ite.getCause();
                 log.warn("@@@ RuntimeTTransportException:{}", iteCause.getMessage());
+                //客户端与服务端断开连接
                 if (keyword.equals(iteCause.getMessage())) {
                     //继续重试一下
                     ParentExecutorService.getInstance().execute(this::retryReadNodeInfo, ParentExecutorService.PRIORITY_DEFAULT);
@@ -602,11 +614,11 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
     }
 
 
-    public AbstractNacosClient getClient() {
+    public RegistryClient getClient() {
         return client;
     }
 
-    public void setClient(AbstractNacosClient client) {
+    public void setClient(RegistryClient client) {
         this.client = client;
     }
 }
