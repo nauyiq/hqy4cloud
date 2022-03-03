@@ -1,16 +1,16 @@
 package com.hqy.gateway.server;
 
-import cn.hutool.core.thread.GlobalThreadPool;
+import com.hqy.coll.gateway.service.CollPersistService;
+import com.hqy.coll.gateway.struct.ThrottledIpBlockStruct;
 import com.hqy.fundation.common.HttpRequestInfo;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
-import com.hqy.mq.collector.entity.ThrottledIpBlock;
+import com.hqy.gateway.util.RequestUtil;
+import com.hqy.rpc.RPCClient;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
-import com.hqy.gateway.util.RequestUtil;
-import com.hqy.util.spring.SpringContextHolder;
-import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +24,7 @@ import java.util.Objects;
  * Http限流器，内部实现了系统忙或者客户端频繁访问时，判定要否限流的功能。也能识别出基本的hack或者数据采集，继而判定要限制访问。<br>
  * 核心实现 依赖 redis 和 google 的CacheBuilder
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 19:58
+ * @date 2021-07-27 19:58
  */
 @Slf4j
 @Component
@@ -94,15 +93,14 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
         //TODO 服务刚启动...根据环境进行放行规则...
 
-        //TODO 服务刚启动...根据环境进行放行规则...
-
+        //请求ip
         String requestIp = request.getRequestIp();
+        //请求url
         String url = request.getRequestUrl();
         if (StringUtils.isBlank(url)) {
             url = request.getUri();
         }
-
-        final String errMsg = "Too many requests from [remoteAddr=" + requestIp + ", url=" + url  + "] ";
+        final String errMsg = "Too many requests from [requestIp=" + requestIp + ", url=" + url  + "] ";
 
         // 是否是人工指定的黑名单阻塞的ip
         if (ThrottlesProcess.getInstance().isManualBlockedIp(requestIp)) {
@@ -110,7 +108,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             return new LimitResult(true, errMsg.concat("[MBK]"), LimitResult.ReasonEnum.MANUAL_BLOCKED_IP_NG);
         }
         // 是否是行为分析的黑名单ip
-        if (ThrottlesProcess.getInstance().isBIBlockedIp(requestIp)) {
+        if (ThrottlesProcess.getInstance().isBiBlockedIp(requestIp)) {
             log.warn("@@@ BI BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
@@ -118,7 +116,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult;
             //聚合浓缩黑客判定方法
-            if (url.contains("?")) { //有?就走正常的url校验
+            if (url.contains(BaseStringConstants.QUESTION_MARK)) {
+                //有?就走正常的url校验
                 hackCheckLimitResult = checkHackAccess(request.getRequestParams(), requestIp, request.getUri(), url);
             } else {
                 //防止双引号脚本的内容攻击....
@@ -132,7 +131,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
         //TODO CHECK DB BUSY?
 
-        //TODO CHECK DB BUSY?
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             //未开启限流器
@@ -182,8 +180,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
     @Override
     public LimitResult checkHackAccess(String requestParams, String requestIp, String uri, String urlOrQueryString) {
 
+        //uri和请求参数的xss攻击校验
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() && Objects.nonNull(requestParams)) {
-            if (!requestParams.isEmpty()) {
+            if (StringUtils.isNotBlank(requestParams)) {
                 boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (param) !!! {} , {} ", requestParams, requestIp);
@@ -248,7 +247,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
     }
 
 
-
+    private static final int MAX_LENGTH = 1024;
 
     /**
      * 记录封禁 行为日志，历史记录，方便将来查看...
@@ -260,20 +259,25 @@ public class GatewayHttpThrottles implements HttpThrottles {
      * @param accessParamJson 请求参数json
      */
     public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
+
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
             log.warn("ignore persistThrottleInfo: {},{}, reason:{}", ip, url, createdBy);
             return;
         }
-        final ThrottledIpBlock throttledIpBlock = new ThrottledIpBlock();
-        throttledIpBlock.setIp(ip);
-        if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > 1024) {
-            accessParamJson = accessParamJson.substring(0, 1024); //只截取前1024个字符的提示信息,太长了就丢掉
+
+        ThrottledIpBlockStruct struct = new ThrottledIpBlockStruct();
+        if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > MAX_LENGTH) {
+            //只截取前1024个字符的提示信息,太长了就丢掉
+            accessParamJson = accessParamJson.substring(0, MAX_LENGTH);
         }
-        throttledIpBlock.setAccessJson(accessParamJson);
-        throttledIpBlock.setBlockedSeconds(blockSeconds);
-        throttledIpBlock.setUrl(url);
-        throttledIpBlock.setThrottleBy(createdBy);
-        MqPersistDataServer mqPersistDataServer = SpringContextHolder.getBean(MqPersistDataServer.class);
-        ParentExecutorService.getInstance().execute(() -> mqPersistDataServer.persistBlockIpAction(throttledIpBlock));
+        struct.ip = ip;
+        struct.accessJson = accessParamJson;
+        struct.blockedSeconds = blockSeconds;
+        struct.url = url;
+        struct.throttleBy = createdBy;
+
+        CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
+        remoteService.saveThrottledIpBlockHistory(struct);
+
     }
 }

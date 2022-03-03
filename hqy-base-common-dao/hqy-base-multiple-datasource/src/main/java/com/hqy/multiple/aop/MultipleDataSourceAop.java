@@ -17,8 +17,7 @@ import java.lang.reflect.Method;
 /**
  * 多数据源自动切换通知类<br>
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-09 18:25
+ * @date  2021-08-09 18:25
  */
 @Aspect
 @Order(0)
@@ -54,7 +53,6 @@ public class MultipleDataSourceAop {
         //检查方法签名，是否有注解
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        Class<?>[] types = method.getParameterTypes();
         Method m = target.getClass().getMethod(method.getName());
 
         if (m.isAnnotationPresent(DataSourceType.class)) {

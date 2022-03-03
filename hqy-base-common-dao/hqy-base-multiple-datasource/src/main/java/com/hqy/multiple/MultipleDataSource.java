@@ -3,14 +3,20 @@ package com.hqy.multiple;
 import javax.sql.DataSource;
 
 /**
+ * 多数据源
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-03 18:18
+ * @date  2021-09-03 18:18
  */
 public class MultipleDataSource {
 
+    /**
+     * 数据源名称
+     */
     private DataSourceName dataSourceName;
 
+    /**
+     * 数据源实例
+     */
     private DataSource dataSource;
 
 

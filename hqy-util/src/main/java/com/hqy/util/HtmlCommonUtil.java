@@ -14,8 +14,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-04 10:56
+ * @date  2021-08-04 10:56
  */
 @Slf4j
 public class HtmlCommonUtil {
@@ -93,31 +92,19 @@ public class HtmlCommonUtil {
             "nslookup", "'||'", "load_file(", "eval(", "{{", "win.ini"
             //add 2020 11 17  https://github.com/heroanswer/XSS_Cheat_Sheet_2020_Edition
             , "onpointer", "alert(", "onfocus", "onkeyup", "onkeypress", "onkeydown", "onmouse", "contenteditable",
-            "onanimation", "ontransition", "onwebkit"   //css3
+            //css3
+            "onanimation", "ontransition", "onwebkit"
             , "onscroll", "onhelp", "onfocus", "<iframe", "srcdoc=",
             "/jkstatus", "/jkmanager", "/Search-Replace-DB-master", "/server-status", "/server-info", "/solr",
             "\"><", "\'><", "<x ", "atob("
     ));
 
 
-    /*public static String getTextFromRemoteHtml(String url) {
-        Assert.hasText(url, "url must be not null or empty");
-        try {
-            Document document = Jsoup.connect(url).get();
-            return document.html();
-//            return replaceHtml(document.html());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }*/
 
     public static String replaceHtml(String html) {
         if (!StringUtils.hasText(html)) {
             return "";
         }
-//        String regEx = "(<script.*?</script>)|(<style.*?</style>)|(<.+?>)";
-
         String regEx = "[^\\u4e00-\\u9fa5]";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(html);
@@ -162,7 +149,9 @@ public class HtmlCommonUtil {
                     case '>':
                         reference = "&gt;";
                         break;
+                    default:
                 }
+
                 if (reference != null) {
                     escaped.append(reference);
                 } else {

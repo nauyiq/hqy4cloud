@@ -8,8 +8,7 @@ import java.util.Set;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-15 10:50
+ * @date 2021-09-15 10:50
  */
 @Data
 @ConfigurationProperties(prefix = "manual")

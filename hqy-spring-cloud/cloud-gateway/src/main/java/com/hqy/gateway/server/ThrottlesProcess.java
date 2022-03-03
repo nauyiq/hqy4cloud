@@ -1,9 +1,9 @@
 package com.hqy.gateway.server;
 
 import com.hqy.service.limit.ThrottlesServer;
-import com.hqy.service.limit.impl.RedisBiBlockedIpService;
-import com.hqy.service.limit.impl.RedisManualBlockedIpService;
-import com.hqy.service.limit.impl.RedisManualWhiteIpService;
+import com.hqy.service.limit.impl.RedisBiBlockedIpServiceImpl;
+import com.hqy.service.limit.impl.RedisManualBlockedIpServiceImpl;
+import com.hqy.service.limit.impl.RedisManualWhiteIpServiceImpl;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 /**
+ * 节流执行器
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-02 10:45
+ * @date 2021-08-02 10:45
  */
 @Slf4j
 public class ThrottlesProcess implements ThrottlesServer {
@@ -50,27 +50,32 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isHackAccess(String paramStringOrUri, int mode) {
-//        final String original = paramStringOrUri;
+
         if (StringUtils.isBlank(paramStringOrUri)) {
             return false;
         } else {
             paramStringOrUri = HtmlCommonUtil.htmlUnescape(paramStringOrUri);
         }
+
         String finalParamStringOrUri = paramStringOrUri;
 
         if (mode == PARAMS_CHECK_MODE) {
-            return HtmlCommonUtil.HACK_WORDS_IN_PARAM.stream().anyMatch(word -> StringUtils.containsIgnoreCase(finalParamStringOrUri, word));
+            //校验param参数
+            return HtmlCommonUtil.HACK_WORDS_IN_PARAM.stream()
+                    .anyMatch(word -> StringUtils.containsIgnoreCase(finalParamStringOrUri, word));
+        }
+        if (mode == URI_CHECK_MODE) {
+            //校验uri
+            return HtmlCommonUtil.HACK_WORDS_IN_URI.stream()
+                    .anyMatch(word -> StringUtils.containsIgnoreCase(finalParamStringOrUri, word));
         }
 
-        if (mode == URI_CHECK_MODE) {
-            return HtmlCommonUtil.HACK_WORDS_IN_URI.stream().anyMatch(word -> StringUtils.containsIgnoreCase(finalParamStringOrUri, word));
-        }
         return false;
     }
 
     @Override
     public boolean isWhiteIp(String remoteAddress) {
-        return RedisManualWhiteIpService.getInstance().isWhiteIp(remoteAddress);
+        return RedisManualWhiteIpServiceImpl.getInstance().isWhiteIp(remoteAddress);
     }
 
     @Override
@@ -78,33 +83,29 @@ public class ThrottlesProcess implements ThrottlesServer {
         return false;
     }
 
-    /**
-     * 是否是bi分析后的拒绝访问的黑名单？
-     * @param remoteAddr
-     * @return
-     */
+
     @Override
-    public boolean isBIBlockedIp(String remoteAddr) {
-        RedisBiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
-        return service.isBlockIp(remoteAddr);
+    public boolean isBiBlockedIp(String ip) {
+        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        return service.isBlockIp(ip);
     }
 
     @Override
-    public boolean isManualBlockedIp(String remoteAddr) {
-        RedisManualBlockedIpService service = SpringContextHolder.getBean(RedisManualBlockedIpService.class);
-        return service.isBlockIp(remoteAddr);
+    public boolean isManualBlockedIp(String ip) {
+        RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
+        return service.isBlockIp(ip);
     }
 
     @Override
-    public void addBiBlockIp(String remoteAddr, Integer blockSeconds) {
-        RedisBiBlockedIpService service = SpringContextHolder.getBean(RedisBiBlockedIpService.class);
-        service.addBlockIp(remoteAddr, blockSeconds);
+    public void addBiBlockIp(String ip, Integer blockSeconds) {
+        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        service.addBlockIp(ip, blockSeconds);
     }
 
     @Override
-    public void addManualBlockIp(String remoteAddr, Integer blockSeconds) {
-        RedisManualBlockedIpService service = SpringContextHolder.getBean(RedisManualBlockedIpService.class);
-        service.addBlockIp(remoteAddr, blockSeconds);
+    public void addManualBlockIp(String ip, Integer blockSeconds) {
+        RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
+        service.addBlockIp(ip, blockSeconds);
     }
 
 

@@ -68,6 +68,7 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${springcloud.version}</version>
+
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -234,12 +235,14 @@
             <scope>provided</scope>
         </dependency>
 
+
+
         <!--slf4j-->
-        <dependency>
+       <!-- <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${org.slf4j.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>log4j</groupId>
@@ -313,6 +316,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>

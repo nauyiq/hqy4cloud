@@ -10,9 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-15 16:15
+ * @author qiyuan.hong
+ * @date  2021-09-15 16:15
  */
 public class CommonDateUtil {
 
@@ -20,18 +19,18 @@ public class CommonDateUtil {
 
     /**
      * 时间 转 HH:mm格式
-     * @param _date
      * @param date
+     * @param dateString
      * @return
      */
-    public static Date getHourAndMinute(Date _date, String date) {
+    public static Date getHourAndMinute(Date date, String dateString) {
         final DateFormat df = new SimpleDateFormat("HH:mm");
         try {
-            final Date time = df.parse(date);
+            final Date time = df.parse(dateString);
             final Calendar cal = Calendar.getInstance();
             cal.setTime(time);
 
-            Date result = _date != null ? _date : new Date();
+            Date result = date != null ? date : new Date();
             result = DateUtils.setMinutes(result, cal.get(Calendar.MINUTE));
             result = DateUtils.setHours(result, cal.get(Calendar.HOUR_OF_DAY));
             return result;

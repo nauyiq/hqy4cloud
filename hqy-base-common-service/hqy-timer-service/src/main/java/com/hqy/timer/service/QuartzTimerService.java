@@ -20,8 +20,7 @@ import java.util.Date;
  * 需要手动startUp ，去掉了spring自动启动；<br>
  * 因为不是每个项目都需要调度器，都配置了xkScheduler<br>
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-15 15:28
+ * @date  2021-09-15 15:28
  */
 @Service
 public class QuartzTimerService implements TimerFoundationService {

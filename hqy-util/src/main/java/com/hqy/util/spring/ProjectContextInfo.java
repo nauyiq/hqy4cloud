@@ -1,6 +1,8 @@
 package com.hqy.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,15 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务上下文信息
- *
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-10 19:16
+ * @date  2021-08-10 19:16
  */
 @Data
 @Slf4j
 public class ProjectContextInfo implements Serializable {
 
+    @JsonIgnore
+    private static final long serialVersionUID = -3512823069773039476L;
     /**
      * 系统启动时间
      */
@@ -32,7 +34,7 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 项目名
      */
-    private String appName;
+    private String nameEn;
 
     /**
      * 环境
@@ -40,40 +42,36 @@ public class ProjectContextInfo implements Serializable {
     private String env = "dev";
 
     /**
-     * 当前服务的主端口号
-     */
-    private Integer port;
-
-    /**
-     * 本机服务的ip地址
-     */
-    private String hostIp;
-
-    /**
-     * 当前服务的辅助端口号，通常是websocket暴露的端口 非必填
-     */
-    private Integer port2;
-
-    /**
      * 灰白度的值
      */
     private Integer pubValue = 0;
+
+    /**
+     * 端口等信息
+     */
+    private UsingIpPort uip;
+
+
+    /**
+     * 节点类型
+     */
+    private ActuatorNodeEnum nodeType;
 
     /**
      * 全局上下文属性定义
      */
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
+
     public ProjectContextInfo() {
     }
 
-    public ProjectContextInfo(String appName, String env, Integer port, String hostIp, Integer port2, Integer pubValue) {
-        this.appName = appName;
+    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip, ActuatorNodeEnum nodeType) {
+        this.nameEn = nameEn;
         this.env = env;
-        this.port = port;
-        this.hostIp = hostIp;
-        this.port2 = port2;
         this.pubValue = pubValue;
+        this.uip = uip;
+        this.nodeType = nodeType;
     }
 
     /**
@@ -109,9 +107,4 @@ public class ProjectContextInfo implements Serializable {
     }
 
 
-    public static class AttributesKey {
-
-        public static final String NACOS_NAMING_SERVICE = "nacos_naming_service";
-
-    }
 }

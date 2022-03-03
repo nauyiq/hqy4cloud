@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
- * @author qy
- * @create 2021-07-22 16:25
+ * spring容器加强类
+ * @author qiyuan.hong
+ * @date 2021-07-22 16:25
  **/
-@Component
 public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
@@ -24,7 +24,7 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        SpringContextHolder.applicationContext = context; // NOSONAR
+        SpringContextHolder.applicationContext = context;
     }
 
 
@@ -55,18 +55,12 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     public static <T> T getBean(Class<T> clazz, T defaultObjWhenException) {
         try {
-            T x = getBean(clazz);
-            if (x == null) {
-                return defaultObjWhenException;
-            } else {
-                return x;
-            }
+            return getBean(clazz);
         } catch (Exception e) {
             return defaultObjWhenException;
         }
 
     }
-
 
     /**
      * 从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.
@@ -86,7 +80,7 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     private static void checkApplicationContext() {
         if (applicationContext == null) {
-            throw new IllegalStateException("applicaitonContext未注入,请在applicationContext.xml中定义SpringContextHolder");
+            throw new IllegalStateException("applicationContext未注入.");
         }
     }
 
@@ -110,20 +104,16 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     /**
      * * 往spring ioc容器动态注入一个bean
-     *
      * @param beanId
      * @param clazz
      */
-    public static void registDynamicBean(String beanId, Class<?> clazz) {
-
+    public static void registryDynamicBean(String beanId, Class<?> clazz) {
         // 获取BeanFactory
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) getApplicationContext()
                 .getAutowireCapableBeanFactory();
         // 创建bean信息.
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-//        beanDefinitionBuilder.addPropertyValue("name", "张三");
         // 动态注册bean.
-//        defaultListableBeanFactory.registerBeanDefinition("testService", beanDefinitionBuilder.getBeanDefinition());
         defaultListableBeanFactory.registerBeanDefinition(beanId, beanDefinitionBuilder.getBeanDefinition());
     }
 
@@ -159,6 +149,5 @@ public class SpringContextHolder implements ApplicationContextAware {
             }
         }
     }
-
 
 }

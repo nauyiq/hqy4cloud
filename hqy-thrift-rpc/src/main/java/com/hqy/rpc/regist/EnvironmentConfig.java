@@ -13,10 +13,10 @@ import java.util.Random;
 /**
  * 系统初始化的时候 记录下当前环境信息<br>
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-16 14:23
+ * @date 2021-08-16 14:23
  */
 @Slf4j
+@Component
 public class EnvironmentConfig implements InitializingBean {
 
     /**
@@ -138,9 +138,16 @@ public class EnvironmentConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if("${env}".equalsIgnoreCase(env) || "dev".equalsIgnoreCase(env) || StringUtils.isEmpty(env)){
+        if("${env}".equalsIgnoreCase(env) || ENV_DEV.equalsIgnoreCase(env) || StringUtils.isEmpty(env)){
             //兼容dev
             env = ENV_DEV;
         }
+    }
+
+    /**
+     * @return 是否允许RPC直连
+     */
+    public boolean enableRpcDirect() {
+        return true;
     }
 }

@@ -47,7 +47,8 @@ public class RedisFlowController {
         try {
             //如果redis目前没有这个key，创建并赋予1，有效时间为expireSeconds
             Boolean result = LettuceRedis.getInstance().setEx(limitRedisKey, "1", expireSeconds);
-            if (result) { //设置成功 则说明当前ip在时间窗口内首次访问
+            if (result) {
+                //设置成功 则说明当前ip在时间窗口内首次访问
                 total = 1L;
             } else {
                 //当前key对应的值加1 并且返回加1后的值

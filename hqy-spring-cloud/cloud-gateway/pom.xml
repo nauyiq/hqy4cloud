@@ -63,7 +63,7 @@
         <!--gateway服务不提供持久化服务-->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-mq-collector-api</artifactId>
+            <artifactId>hqy-common-collector-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
@@ -78,10 +78,10 @@
         </dependency>
 
         <!--引入springboot 整合rabbitmq-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
@@ -141,7 +141,7 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.gateway.GatewayMain</mainClass>
+                            <mainClass>com.hqy.GatewayMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>

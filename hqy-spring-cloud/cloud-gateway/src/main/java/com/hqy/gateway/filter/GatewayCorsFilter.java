@@ -16,12 +16,16 @@ import reactor.core.publisher.Mono;
 
 /**
  * cors网关全局过滤器
- * @author qy
- * @create 2021/7/25 22:42
+ * @author qiyuan.hong
+ * @date  2021/7/25 22:42
  */
 @Component
 @Slf4j
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
+
+    private static final String FAVICON_ICO = "/favicon.ico";
+
+    private static final int ORDER = 77;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -30,19 +34,21 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
         ServerHttpResponse response = exchange.getResponse();
 
-        if ("/favicon.ico".equals(path)) {
+        //如果是/favicon.io的路径允许访问
+        if (FAVICON_ICO.equals(path)) {
             response.setStatusCode(HttpStatus.OK);
             return Mono.empty();
         }
 
+        //如果请求是有效的 CORS，则返回 true
         if (!CorsUtils.isCorsRequest(request)) {
             return chain.filter(exchange);
         }
 
         HttpHeaders requestHeaders = request.getHeaders();
         HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
-
         HttpHeaders headers = response.getHeaders();
+        //设置允许跨域头
         headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
         headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
 
@@ -56,6 +62,6 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 77;
+        return ORDER;
     }
 }

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 单利类 实现一个进程中NIO客户端复用。 提升性能，减少不必要的Netty客户端
+ * 单例类 实现一个进程中NIO客户端复用。 提升性能，减少不必要的Netty客户端
  * @author qy
  * @project: hqy-parent-all
  * @create 2021-08-18 10:44
@@ -20,28 +20,31 @@ import java.util.Set;
 public class MultiplexThriftClientManager {
 
     private final ThriftClientManager clientManager;
-//    private ThriftClientEventHandler eventHandler = null;
-    private static final int workerThreadCount  = Runtime.getRuntime().availableProcessors() * 4;
+
+    /**
+     * 工作线程数
+     */
+    private static final int WORKER_THREAD_COUNT = Runtime.getRuntime().availableProcessors() * 4;
 
     private MultiplexThriftClientManager() {
         Set<ThriftClientEventHandler> eventHandlers = new HashSet<>();
         //NIO线路复用！！！！
         ThriftCodecManager codecManager = new ThriftCodecManager();
-        NettyClientConfig clientConfig = NettyClientConfig.newBuilder().setWorkerThreadCount(workerThreadCount).build();
-        log.info("### workerThreadCount={}", workerThreadCount);
+        NettyClientConfig clientConfig = NettyClientConfig.newBuilder().setWorkerThreadCount(WORKER_THREAD_COUNT).build();
+        log.info("### workerThreadCount={}", WORKER_THREAD_COUNT);
         NiftyClient client = new NiftyClient(clientConfig);
         //NIO线路复用！
         this.clientManager = new ThriftClientManager(codecManager, client, eventHandlers);
     }
 
-    private static final MultiplexThriftClientManager instance = new MultiplexThriftClientManager();
+    private static final MultiplexThriftClientManager INSTANCE = new MultiplexThriftClientManager();
 
     public static MultiplexThriftClientManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public static ThriftClientManager getThriftClientManager() {
-        return instance.clientManager;
+        return INSTANCE.clientManager;
     }
 
 }

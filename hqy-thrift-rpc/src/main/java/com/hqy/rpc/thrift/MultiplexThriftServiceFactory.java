@@ -3,11 +3,13 @@ package com.hqy.rpc.thrift;
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
 import com.google.common.net.HostAndPort;
+import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
 import com.hqy.fundation.common.exception.NoAvailableProvidersException;
+import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.fundation.concurrent.ThreadLocalPool;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.rpc.regist.UsingIpPort;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -34,18 +36,39 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T> {
 
+    /**
+     * RPCService
+     */
     private final Class<T> serviceClass;
 
-    private final static AtomicInteger createCount = new AtomicInteger(0);
+    /**
+     * 计数
+     */
+    private final static AtomicInteger CREATE_COUNT = new AtomicInteger(0);
 
+    /**
+     * thrift netty 客户端连接器 所有颜色
+     */
     private FramedClientConnector[] connectorsAll;
 
+    /**
+     * thrift netty 客户端连接器 灰度
+     */
     private FramedClientConnector[] connectorsGray;
 
+    /**
+     * thrift netty 客户端连接器 白度
+     */
     private FramedClientConnector[] connectorsWhite;
 
+    /**
+     * thrift netty 客户端连接器 同ip同环卡
+     */
     private FramedClientConnector[] connectorsHighPriority;
 
+    /**
+     * 本机ip
+     */
     private final String hostIp;
 
     /**
@@ -65,39 +88,30 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         updateAddress(addressGray, addressWhite);
     }
 
+
+    public String gerServiceInfo(T service) {
+        NiftyClientChannel clientChannel = getClientChannel(service);
+        if (Objects.isNull(clientChannel)) {
+            return CommonResultCode.INVALID_SERVICE.message;
+        }
+        return toChannelString(clientChannel);
+    }
+
+
     /**
      * 设定或者刷新 远程可用链接。
-     * @param addressGray
-     * @param addressWhite
+     * @param addressGray 灰度可连接列表
+     * @param addressWhite 白度可连接列表
      */
-    private void updateAddress(List<UsingIpPort> addressGray, List<UsingIpPort> addressWhite) {
+    public void updateAddress(List<UsingIpPort> addressGray, List<UsingIpPort> addressWhite) {
         if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("[ENABLE_GRAY_MECHANISM]updateAddresses: usable addressesGray size={}, addressesWhite size={}", addressGray.size(), addressWhite.size());
+            log.info("[ENABLE_GRAY_MECHANISM]updateAddresses: usable addressesGray size={}, addressesWhite size={}",
+                    addressGray.size(), addressWhite.size());
         }
-
-        try {
-            lock.lock();
-            connectorsGray = new FramedClientConnector[addressGray.size()];
-            for (int i = 0; i < addressGray.size(); i++) {
-                UsingIpPort usingIpPort = addressGray.get(i);
-                HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
-                this.connectorsGray[i] = new FramedClientConnector(hostAndPort);
-            }
-        } finally {
-            lock.unlock();
-        }
-
-        try {
-            lock.lock();
-            connectorsWhite = new FramedClientConnector[addressWhite.size()];
-            for (int i = 0; i < addressWhite.size(); i++) {
-                UsingIpPort usingIpPort = addressWhite.get(i);
-                HostAndPort hostAndPort =  HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
-                this.connectorsWhite[i] = new FramedClientConnector(hostAndPort);
-            }
-        } finally {
-            lock.unlock();
-        }
+        //创建灰色的连接列表 客户端连接器
+        createFramedClientConnector(addressGray, GrayWhitePub.GRAY);
+        //创建白色的连接列表 客户端连接器
+        createFramedClientConnector(addressWhite, GrayWhitePub.WHITE);
 
         List<UsingIpPort> all = new ArrayList<>(addressGray);
         for (UsingIpPort usingIpPort : addressWhite) {
@@ -105,76 +119,57 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 all.add(usingIpPort);
             }
         }
+        //创建所有颜色的连接列表 客户端连接器
+        createFramedClientConnector(addressWhite, GrayWhitePub.NONE);
 
-        try {
-            lock.lock();
-            connectorsAll = new FramedClientConnector[all.size()];
-            for (int i = 0; i < all.size(); i++) {
-                UsingIpPort usingIpPort = all.get(i);
-                HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
-                this.connectorsAll[i] = new FramedClientConnector(hostAndPort);
+        if (CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn()) {
+            List<UsingIpPort> sameIpList = new ArrayList<>();
+            for (UsingIpPort usingIpPort : all) {
+                if (usingIpPort.getIp().equals(hostIp)) {
+                    sameIpList.add(usingIpPort);
+                }
             }
-        } catch (Exception e) {
-            lock.unlock();
-        }
-
-        try {
-            lock.lock();
-            if (CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn()) {
-                List<UsingIpPort> sameIpAddrList = new ArrayList<>();
-                for (UsingIpPort usingIpPort : all) {
-                    if (usingIpPort.getIp().equals(hostIp)) {
-                        sameIpAddrList.add(usingIpPort);
-                    }
-                }
-
-                if (CollectionUtils.isNotEmpty(sameIpAddrList)) {
-                    this.connectorsHighPriority = new FramedClientConnector[sameIpAddrList.size()];
-                    for (int i = 0; i < sameIpAddrList.size(); i++) {
-                        UsingIpPort usingIpPort = sameIpAddrList.get(i);
-                        HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getPort());
-                        this.connectorsHighPriority[i] = new FramedClientConnector(hostAndPort);
-                    }
-                } else {
-                    log.info("Not find sameIpAddrList , oops ~");
-                    this.connectorsHighPriority = new FramedClientConnector[0];
-                }
-
+            if (CollectionUtils.isNotEmpty(sameIpList)) {
+                //创建同ip同环卡的连接列表 客户端连接器
+                createFramedClientConnector(sameIpList, GrayWhitePub.HIGH);
             } else {
-                if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                    log.info("CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOff !");
-                }
+                log.info("@@@ Not find sameIpList , oops ~");
+                this.connectorsHighPriority = new FramedClientConnector[0];
             }
-        } finally {
-            lock.unlock();
-        }
-    }
 
+        } else {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.info("@@@ CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOff !");
+            }
+        }
+
+    }
 
     @Override
     public T create() throws Exception {
         FramedClientConnector connector;
-        //根据当前节点颜色 和有无启用灰度策略 找出合适的连接数组
+        //根据当前节点颜色 和有无启用灰度策略 找出合适地连接数组
         FramedClientConnector[] connectors = findSuitableConnectors();
+        lock.lock();
         try {
-            lock.lock();
             if (connectors.length == 0) {
                 throw new NoAvailableProvidersException("No available connectors for create pool object.");
             }
-            int idx = createCount.incrementAndGet() % connectors.length;
+            int idx = CREATE_COUNT.incrementAndGet() % connectors.length;
             connector = connectors[idx];
-            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
+//            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
         } finally {
             lock.unlock();
             //防止整形溢出！！
-            if(createCount.get() == 1000000000){
-                createCount.set(0);
+            if(CREATE_COUNT.get() == BaseIntegerConstants.POINTER){
+                CREATE_COUNT.set(0);
             }
         }
 
         if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("create new client, connector:{}", connector);
         }
+        //创建Thrift netty长连接客户端
         return MultiplexThriftClientManager.getThriftClientManager().createClient(connector, serviceClass).get();
     }
 
@@ -184,9 +179,11 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
     }
 
     @Override
-    public void destroyObject(PooledObject<T> p) throws Exception {
+    public void destroyObject(PooledObject<T> p) {
         NiftyClientChannel clientChannel = getClientChannel(p.getObject());
-        if (Objects.isNull(clientChannel)) return;
+        if (Objects.isNull(clientChannel)) {
+            return;
+        }
         if (clientChannel.getNettyChannel().isConnected()) {
             clientChannel.close();
         }
@@ -194,11 +191,17 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         log.info("[destroyObject] channel:{}", toChannelString(clientChannel));
     }
 
+
     private String toChannelString(NiftyClientChannel clientChannel) {
         Channel channel = clientChannel.getNettyChannel();
         return String.format("(%s - > %s)", channel.getLocalAddress(), channel.getRemoteAddress());
     }
 
+    /**
+     * 获取netty客户端通道
+     * @param object
+     * @return
+     */
     private NiftyClientChannel getClientChannel(T object) {
         try {
             return (NiftyClientChannel)MultiplexThriftClientManager.getThriftClientManager().getRequestChannel(object);
@@ -208,9 +211,14 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         return null;
     }
 
+    /**
+     * 根据当前节点颜色 和有无启用灰度策略 找出合适地连接数组
+     * @return
+     */
     private FramedClientConnector[] findSuitableConnectors() {
         ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
-        if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn()) { //是否启用灰度机制
+        if (CommonSwitcher.ENABLE_GRAY_MECHANISM.isOn()) {
+            //是否启用灰度机制
             if (contextInfo.getPubValue().equals(GrayWhitePub.GRAY.value)) {
                 return connectorsGray;
             }
@@ -218,7 +226,8 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
                 return connectorsWhite;
             }
         } else {
-            if (CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn() || (connectorsHighPriority != null && connectorsHighPriority.length > 0)) {
+            boolean flag = CommonSwitcher.ENABLE_RPC_SAME_IP_HIGH_PRIORITY.isOn() || (connectorsHighPriority != null && connectorsHighPriority.length > 0);
+            if (flag) {
                 if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                     log.info("### 非灰度模式下优先使用 同IP的服务节点:YES ! {} ", hostIp);
                 }
@@ -229,4 +238,71 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
 
         throw new IllegalStateException("内部状态错误，灰度机制不清晰！Internal error ！");
     }
+
+
+    /**
+     * 创建thrift netty 客户端连接器
+     * @param usingIpPorts 节点ip列表
+     * @param pub 颜色
+     */
+    private void createFramedClientConnector(List<UsingIpPort> usingIpPorts, GrayWhitePub pub) {
+        //所有颜色的
+        lock.lock();
+        try {
+            if (pub.value == GrayWhitePub.NONE.value) {
+                connectorsAll = new FramedClientConnector[usingIpPorts.size()];
+                int i = 0;
+                for (UsingIpPort usingIpPort : usingIpPorts) {
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
+                    this.connectorsAll[i] = new FramedClientConnector(hostAndPort);
+                    i++;
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        //白色的
+        lock.lock();
+        try {
+            if (pub.value == GrayWhitePub.WHITE.value) {
+                connectorsWhite = new FramedClientConnector[usingIpPorts.size()];
+                int i = 0;
+                for (UsingIpPort usingIpPort : usingIpPorts) {
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
+                    this.connectorsWhite[i] = new FramedClientConnector(hostAndPort);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        //灰色的
+        lock.lock();
+        try {
+            if (pub.value == GrayWhitePub.GRAY.value) {
+                connectorsGray = new FramedClientConnector[usingIpPorts.size()];
+                int i = 0;
+                for (UsingIpPort usingIpPort : usingIpPorts) {
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
+                    this.connectorsGray[i] = new FramedClientConnector(hostAndPort);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        //同环卡
+        lock.lock();
+        try {
+            if (pub.value == GrayWhitePub.HIGH.value) {
+                connectorsHighPriority = new FramedClientConnector[usingIpPorts.size()];
+                int i = 0;
+                for (UsingIpPort usingIpPort : usingIpPorts) {
+                    HostAndPort hostAndPort = HostAndPort.fromParts(usingIpPort.getIp(), usingIpPort.getRpcPort());
+                    this.connectorsHighPriority[i] = new FramedClientConnector(hostAndPort);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }

@@ -1,52 +1,74 @@
 package com.hqy.rpc.regist;
 
-import lombok.AllArgsConstructor;
+import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-13 10:11
+ * 节点信息
+ * @author qiyuan.hong
+ * @version 1.0
+ * @date 2022/2/16 17:03
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Slf4j
 public abstract class Node {
 
-    /**
-     * 默认的hash因子
-     */
-    public static final String DEFAULT_HASH_FACTOR = "default";
-
-    /**
-     * 当前节点在注册中心是否是脱机状态... true表示存活
-     */
-    protected Boolean alive = true;
-
-    /**
-     * 当前服务所属环境
-     */
-    protected String env;
 
     /**
      * 节点名称 (中文名)
      */
-    protected String name;
+    private String name;
 
     /**
      * 节点名称 (英文名)
      */
-    protected String nameEn;
-
-    /**
-     * 哈希因子，区分集群中的某个节点时使用
-     */
-    protected String hashFactor = DEFAULT_HASH_FACTOR;
+    private String nameEn;
 
     /**
      * 使用的ip，端口等信息
      */
-    protected UsingIpPort uip;
+    private UsingIpPort uip;
+
+    /**
+     * 当前节点在注册中心是否是脱机状态... true表示存活
+     */
+    private Boolean alive = true;
+
+    /**
+     * 灰白度 默认灰度发布
+     */
+    private int pubValue;
+
+
+    /**
+     * 是否是服务的提供者， 服务的提供者是相对而言并不是绝对的
+     * 当暴露rpc服务时 则表示当前服务是服务的提供者
+     * @return
+     */
+    public Boolean isProviderService() {
+        if (Objects.isNull(uip)) {
+            log.warn("[系统初始化异常] 节点信息未注册.");
+            return false;
+        }
+        int rpcPort = uip.getRpcPort();
+        return rpcPort != -1;
+    }
+
+    /**
+     * 判断当前服务是否提供socket端口
+     * @return
+     */
+    /*public Boolean isSocketService() {
+        if (Objects.isNull(uip)) {
+            log.warn("[系统初始化异常] 节点信息未注册.");
+            return false;
+        }
+        int socketPort = uip.getSocketPort();
+        return socketPort != -1;
+    }*/
+
 
 }

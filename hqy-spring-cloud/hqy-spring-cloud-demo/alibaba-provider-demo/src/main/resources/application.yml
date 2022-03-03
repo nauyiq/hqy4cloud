@@ -1,8 +1,5 @@
 env:
   dev
-spring:
-  application:
-    name: public-basic-service
 mybatis:
   mapperLocations: classpath:mapper/*.xml
   type-aliases-package: com.hqy.basic.entity    # 所有Entity别名类所在包

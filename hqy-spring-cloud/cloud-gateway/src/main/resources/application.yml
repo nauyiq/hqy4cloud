@@ -1,2 +1,5 @@
-logging:
-  config: classpath:logback.xml
+env:
+  dev
+#RPC注册直连服务配置key
+direct:
+  nodesMap: "{cloud-gateway: '172.0.0.1:8080'}"

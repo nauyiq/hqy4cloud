@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class PageResult<T> implements Serializable {
 
+    private static final long serialVersionUID = 4206093235632254490L;
+
     /**
      * 当前页
      */

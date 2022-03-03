@@ -6,13 +6,13 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-03 17:41
+ * 动态数据源
+ * @author qiyuan.hong
+ * @date 2021-09-03 17:41
  */
 public class DynamicMultipleDataSource extends AbstractRoutingDataSource {
 
-    private static final ThreadLocal<String> dataSourceKey = new InheritableThreadLocal<>();
+    private static final ThreadLocal<String> DATASOURCE_KEY = new InheritableThreadLocal<>();
 
     public DynamicMultipleDataSource(DataSource defaultTargetDataSource, Map<Object, Object> targetDataSource) {
         super.setDefaultTargetDataSource(defaultTargetDataSource);
@@ -25,15 +25,15 @@ public class DynamicMultipleDataSource extends AbstractRoutingDataSource {
      * @param dataSource
      */
     public static void setDataSourceKey(String dataSource) {
-        dataSourceKey.set(dataSource);
+        DATASOURCE_KEY.set(dataSource);
     }
 
     public static void clearDataSource() {
-        dataSourceKey.remove();
+        DATASOURCE_KEY.remove();
     }
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return dataSourceKey.get();
+        return DATASOURCE_KEY.get();
     }
 }

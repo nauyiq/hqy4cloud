@@ -7,42 +7,44 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="cloud-consul-demo" />
-        <module name="cloud-gateway" />
-        <module name="hqy-netty-text-websocket" />
+        <module name="hqy-public-basic-service-api" />
         <module name="hqy-common-service" />
-        <module name="hqy-data-structures-and-algorithms" />
-        <module name="hqy-elasticsearch-service" />
-        <module name="hqy-elasticsearch-demo" />
-        <module name="cloud-zookeeper-demo" />
-        <module name="hqy-base-common" />
-        <module name="cloud-eureka-client" />
-        <module name="hqy-util" />
-        <module name="hqy-netty-test" />
-        <module name="cloud-eureka-server" />
-        <module name="cloud-provider-demo" />
-        <module name="hqy-elasticsearch-api" />
-        <module name="cloud-config" />
-        <module name="cloud-consumer-demo" />
-        <module name="hqy-base-common-dao-api" />
         <module name="hqy-common-foundation" />
-        <module name="hqy-common-mq-collector-api" />
-        <module name="hqy-common-mq-collector-impl" />
-        <module name="hqy-timer-service" />
         <module name="alibaba-provider-demo" />
         <module name="hqy-thrift-rpc" />
-        <module name="hqy-mq-collector-impl" />
-        <module name="hqy-public-basic-service-impl" />
-        <module name="hqy-base-multiple-datasource" />
-        <module name="cloud-common-data" />
         <module name="alibaba-consumer-demo" />
+        <module name="hqy-netty-text-websocket" />
+        <module name="hqy-elasticsearch-demo" />
+        <module name="cloud-gateway" />
+        <module name="hqy-timer-service" />
+        <module name="hqy-elasticsearch-service" />
+        <module name="hqy-base-common-dao-api" />
+        <module name="hqy-netty-test" />
+        <module name="cloud-provider-demo" />
+        <module name="cloud-common-data" />
+        <module name="cloud-zookeeper-demo" />
+        <module name="cloud-consumer-demo" />
+        <module name="cloud-consul-demo" />
+        <module name="hqy-elasticsearch-api" />
+        <module name="cloud-eureka-client" />
+        <module name="hqy-util" />
+        <module name="cloud-config" />
         <module name="hqy-netty-core" />
-        <module name="hqy-public-basic-service-api" />
+        <module name="hqy-common-collector-impl" />
+        <module name="hqy-public-basic-service-impl" />
+        <module name="hqy-mq-collector-impl" />
+        <module name="cloud-eureka-server" />
+        <module name="hqy-base-multiple-datasource" />
+        <module name="hqy-data-structures-and-algorithms" />
+        <module name="hqy-common-collector-api" />
+        <module name="hqy-base-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="cloud-hystrix-dashboard" target="1.8" />
       <module name="hqy-common-elasticsearch-api" target="1.8" />
+      <module name="hqy-common-mq-collector-api" target="1.8" />
+      <module name="hqy-common-mq-collector-impl" target="1.8" />
       <module name="hqy-mq-collector-api" target="1.8" />
       <module name="hqy-mq-collector-impl" target="1.8" />
       <module name="hqy-rpc-demo" target="1.8" />
