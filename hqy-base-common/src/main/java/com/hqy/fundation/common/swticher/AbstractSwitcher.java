@@ -10,10 +10,8 @@ import java.util.*;
 
 /**
  * 升降级开关<br>
- *
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 16:30
+ * @date 2021-07-27 16:30
  */
 public class AbstractSwitcher extends IdSwitcher {
 

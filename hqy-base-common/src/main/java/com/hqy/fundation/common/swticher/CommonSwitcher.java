@@ -1,11 +1,13 @@
 package com.hqy.fundation.common.swticher;
 
 /**
+ * 通用的节点开关
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-28 9:35
+ * @date 2021-07-28 9:35
  */
 public class CommonSwitcher extends AbstractSwitcher {
+
+    private static final long serialVersionUID = -5097824901579636026L;
 
     protected CommonSwitcher(int id, String name, boolean status) {
         super(id, name, status);
@@ -20,6 +22,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否启用共享的BIBlockIP清单（Redis）;如果false 各个项目自行维护本地缓存的BI的ip禁止名单。
      */
     public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(201,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
+
+    /**
+     * 节点-是否采用基于Lettuce的RedisTemplate （默认true）
+     */
+    public static final CommonSwitcher ENABLE_LETTUCE_REDIS_TEMPLATE = new CommonSwitcher(202, "节点-是否采用基于Lettuce的RedisTemplate", true);
 
     /**
      * 节点-同IP/Env RPC调度优先(非灰度机制才有效)

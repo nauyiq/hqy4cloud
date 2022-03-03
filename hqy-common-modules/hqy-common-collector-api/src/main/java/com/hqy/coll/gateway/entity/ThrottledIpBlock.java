@@ -13,7 +13,7 @@ import java.util.Date;
  * @author qy
  * @date 2021-08-10 11:43
  */
-@Table(name = "throttle_ip_block_history")
+@Table(name = "t_throttle_ip_block_history")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -50,12 +50,13 @@ public class ThrottledIpBlock extends BaseEntity<Long> {
      */
     private String env;
 
-    public ThrottledIpBlock(String throttleBy, String url, String accessJson, Integer blockedSeconds, String env) {
+    public ThrottledIpBlock(String throttleBy, String url, String accessJson, Integer blockedSeconds, String env, String ip) {
         this.throttleBy = throttleBy;
         this.url = url;
         this.accessJson = accessJson;
         this.blockedSeconds = blockedSeconds;
         this.env = env;
+        this.ip = ip;
         Date now = new Date();
         super.setCreated(now);
         super.setUpdated(now);

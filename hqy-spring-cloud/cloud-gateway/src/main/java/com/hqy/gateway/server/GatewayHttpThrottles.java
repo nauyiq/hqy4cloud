@@ -8,12 +8,9 @@ import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.gateway.util.RequestUtil;
-import com.hqy.coll.gateway.entity.ThrottledIpBlock;
 import com.hqy.rpc.RPCClient;
 import com.hqy.service.dto.LimitResult;
 import com.hqy.service.limit.HttpThrottles;
-import com.hqy.util.spring.SpringContextHolder;
-import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -183,8 +180,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
     @Override
     public LimitResult checkHackAccess(String requestParams, String requestIp, String uri, String urlOrQueryString) {
 
+        //uri和请求参数的xss攻击校验
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() && Objects.nonNull(requestParams)) {
-            if (!requestParams.isEmpty()) {
+            if (StringUtils.isNotBlank(requestParams)) {
                 boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (param) !!! {} , {} ", requestParams, requestIp);
@@ -249,7 +247,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
     }
 
 
-
+    private static final int MAX_LENGTH = 1024;
 
     /**
      * 记录封禁 行为日志，历史记录，方便将来查看...
@@ -268,9 +266,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
         }
 
         ThrottledIpBlockStruct struct = new ThrottledIpBlockStruct();
-        if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > 1024) {
+        if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > MAX_LENGTH) {
             //只截取前1024个字符的提示信息,太长了就丢掉
-            accessParamJson = accessParamJson.substring(0, 1024);
+            accessParamJson = accessParamJson.substring(0, MAX_LENGTH);
         }
         struct.ip = ip;
         struct.accessJson = accessParamJson;

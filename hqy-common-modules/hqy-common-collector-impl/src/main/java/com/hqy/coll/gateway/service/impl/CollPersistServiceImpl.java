@@ -29,7 +29,7 @@ public class CollPersistServiceImpl extends AbstractRPCService implements CollPe
     @Override
     public void saveThrottledIpBlockHistory(ThrottledIpBlockStruct struct) {
         AssertUtil.notNull(struct, CommonResultCode.INVALID_DATA.message);
-        ThrottledIpBlock ipBlock = new ThrottledIpBlock(struct.throttleBy, struct.url, struct.accessJson, struct.blockedSeconds, struct.env);
+        ThrottledIpBlock ipBlock = new ThrottledIpBlock(struct.throttleBy, struct.url, struct.accessJson, struct.blockedSeconds, struct.env, struct.ip);
         boolean insert = throttledIpBlockService.insert(ipBlock);
         if (!insert) {
             log.error("@@@ Insert throttledIpBlock data failure, struct:{}", JsonUtil.toJson(struct));

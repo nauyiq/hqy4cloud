@@ -16,11 +16,9 @@ import java.util.concurrent.TimeUnit;
  * 基于redisTemplate的缓存工具类
  * 父类构造需要传入对应的redisTemplate模板
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-23 11:26
+ * @date  2021-07-23 11:26
  */
 @Slf4j
-@SuppressWarnings("all")
 public abstract class AbstractRedisTemplateUtil {
 
     protected AbstractRedisTemplateUtil(RedisTemplate<String, Object>  redisTemplate) {
@@ -35,12 +33,15 @@ public abstract class AbstractRedisTemplateUtil {
     /**
      * StringRedisTemplate
      */
-    private static final StringRedisTemplate stringRedisTemplate = SpringContextHolder.getBean(StringRedisTemplate.class);
+    private static final StringRedisTemplate stringRedisTemplate =
+            SpringContextHolder.getBean(StringRedisTemplate.class);
 
-    /** 默认缓存时间 */ // 单位秒 设置成1天
+    /**
+     * 默认缓存时间 单位秒 设置成1天
+     * */
     private static final long DEFAULT_CACHE_SECONDS = 60 * 60 * 24;
 
-   // ==============================================================================================================
+
 
     /**
      * 删除RedisTemplate中配置的db的所有key
@@ -74,7 +75,7 @@ public abstract class AbstractRedisTemplateUtil {
     /**
      * 根据key 获取过期时间
      * @param key 键 不能为null
-     * @return 时间(秒) 返回0代表为永久有效
+     * @return 时间(秒) 返回0 代表为永久有效
      */
     public Long getExpire(String key) {
         try {
@@ -260,7 +261,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public Boolean setEx(String key, String value, Long second) {
         try {
-            return !stringRedisTemplate.opsForValue().setIfPresent(key, value, second, TimeUnit.SECONDS);
+            return Boolean.FALSE.equals(stringRedisTemplate.opsForValue().setIfPresent(key, value, second, TimeUnit.SECONDS));
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return false;
@@ -287,7 +288,6 @@ public abstract class AbstractRedisTemplateUtil {
 
 
 
-    // ==================================================== Map ==============================================
 
     /**
      * hget
@@ -448,7 +448,7 @@ public abstract class AbstractRedisTemplateUtil {
     }
 
 
-    // ==================================================== Set ==============================================
+
 
     /**
      * 根据key获取Set中的所有值
@@ -516,7 +516,9 @@ public abstract class AbstractRedisTemplateUtil {
     public void strSAdd(String key, long time, String... values) {
         try {
             stringRedisTemplate.opsForSet().add(key, values);
-            if (time > 0) expire(key, time);
+            if (time > 0) {
+                expire(key, time);
+            }
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
@@ -532,8 +534,9 @@ public abstract class AbstractRedisTemplateUtil {
     public Long sAdd(String key, long time, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().add(key, values);
-            if (time > 0)
+            if (time > 0) {
                 expire(key, time);
+            }
             return count;
         } catch (Exception e) {
             log.error("操作失败: ", e);
@@ -581,7 +584,6 @@ public abstract class AbstractRedisTemplateUtil {
     }
 
 
-    // ==================================================== ZSET ==============================================
 
 
     /**
@@ -601,7 +603,6 @@ public abstract class AbstractRedisTemplateUtil {
     }
 
 
-    // ==================================================== ZSET ==============================================
 
     /**
      * 获取list缓存的内容
@@ -675,7 +676,9 @@ public abstract class AbstractRedisTemplateUtil {
     public boolean rpush(String key, Object value, long time) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
-            if (time > 0) expire(key, time);
+            if (time > 0) {
+                expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             log.error("操作失败: ", e);
@@ -709,8 +712,9 @@ public abstract class AbstractRedisTemplateUtil {
     public boolean rpush(String key, List<Object> value, long time) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
-            if (time > 0)
+            if (time > 0) {
                 expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             log.error("操作失败: ", e);

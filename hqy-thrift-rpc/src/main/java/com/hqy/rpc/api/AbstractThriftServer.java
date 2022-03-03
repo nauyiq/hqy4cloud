@@ -153,10 +153,10 @@ public abstract class AbstractThriftServer implements InitializingBean {
                     this.rpcPort = this.rpcPort + 4;
                 }
             }
-            ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor).using(logicWorkerExecutor).build();
-
             uip = new UsingIpPort(ip, port, rpcPort, pid);
 
+            ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor)
+                    .using(logicWorkerExecutor).build();
             return new ThriftServer(serverConfig, serverDef);
         }
     }

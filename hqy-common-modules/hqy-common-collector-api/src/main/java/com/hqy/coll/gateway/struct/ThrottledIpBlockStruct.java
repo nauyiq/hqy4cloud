@@ -1,5 +1,6 @@
 package com.hqy.coll.gateway.struct;
 
+import com.facebook.swift.codec.ThriftConstructor;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
 
@@ -51,51 +52,4 @@ public final class ThrottledIpBlockStruct {
     public ThrottledIpBlockStruct() {
     }
 
-    public String getThrottleBy() {
-        return throttleBy;
-    }
-
-    public void setThrottleBy(String throttleBy) {
-        this.throttleBy = throttleBy;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getAccessJson() {
-        return accessJson;
-    }
-
-    public void setAccessJson(String accessJson) {
-        this.accessJson = accessJson;
-    }
-
-    public Integer getBlockedSeconds() {
-        return blockedSeconds;
-    }
-
-    public void setBlockedSeconds(Integer blockedSeconds) {
-        this.blockedSeconds = blockedSeconds;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
 }

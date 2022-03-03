@@ -8,43 +8,48 @@ import com.hqy.service.limit.config.ManualLimitListProperties;
 import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 基于redis ip人工白名单 服务
+ * 单例模式
  * @author qy
- * @create 2021/9/14 23:30
+ * @date  2021/9/14 23:30
  */
 @Lazy
 @Component
 @EnableConfigurationProperties(ManualLimitListProperties.class)
-public class RedisManualWhiteIpService implements ManualWhiteIpService, InitializingBean {
+public class RedisManualWhiteIpServiceImpl implements ManualWhiteIpService, InitializingBean {
 
-    @Autowired
+    @Resource
     private ManualLimitListProperties manualLimitListProperties;
 
     private static final String KEY_WHITE = "MANUAL_WHITE_IP";
 
+    /**
+     * 内存缓存的 白名单
+     */
     private static final Cache<String, Long> CACHE_WHITE = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS)
             .initialCapacity(2048).maximumSize(1024 * 64).build();
 
-    private static ManualWhiteIpService instance = null;
+    private static volatile ManualWhiteIpService instance = null;
 
     public static ManualWhiteIpService getInstance() {
         if (instance == null) {
-            synchronized (RedisManualWhiteIpService.class) {
+            synchronized (RedisManualWhiteIpServiceImpl.class) {
                 if (instance == null) {
                     try {
-                        instance = SpringContextHolder.getBean(RedisManualWhiteIpService.class);
+                        instance = SpringContextHolder.getBean(RedisManualWhiteIpServiceImpl.class);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        instance = new RedisManualWhiteIpService();
+                        instance = new RedisManualWhiteIpServiceImpl();
                     }
                 }
             }
