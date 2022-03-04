@@ -25,6 +25,12 @@ public interface BaseStringConstants {
     String INCLINED_ROD = "/";
 
     /**
+     * 符号：.
+     */
+    String POINT = ".";
+
+
+    /**
      * 请求头Content-Type字符串
      */
     String CONTENT_TYPE = "Content-Type";

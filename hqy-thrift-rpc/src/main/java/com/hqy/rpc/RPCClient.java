@@ -160,18 +160,22 @@ public class RPCClient {
         boolean isDirectService = false;
         if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
             //默认的hash因子
-            ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
-            if (EnvironmentConfig.getInstance().enableRpcDirect()) {
-                //判断当前服务是否配置直连服务
-                isDirectService = directServer.isDirect(serviceNameEn);
-            }
-            if (isDirectService) {
-                UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
-                if(Objects.nonNull(directUip)) {
-                    //有直连节点数据
-                    log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
-                    return getDirectedService(null, directUip, serviceClass, callback);
+            try {
+                ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
+                if (EnvironmentConfig.getInstance().enableRpcDirect()) {
+                    //判断当前服务是否配置直连服务
+                    isDirectService = directServer.isDirect(serviceNameEn);
                 }
+                if (isDirectService) {
+                    UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
+                    if(Objects.nonNull(directUip)) {
+                        //有直连节点数据
+                        log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
+                        return getDirectedService(null, directUip, serviceClass, callback);
+                    }
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
         } else {
             //如果哈希因子不是default，需要从节点中根据hash因子选一个来直连

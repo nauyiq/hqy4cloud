@@ -26,6 +26,11 @@ public interface RegistryClient {
      */
     ClusterNode getOneLivingNode(GrayWhitePub pub);
 
+    /**
+     * 返回当前节点注册到注册中心的名称
+     * @return
+     */
+    String getServiceNameEn();
 
     /**
      * 轮询获取所有活着的节点，负载均衡（不区分灰度 白度）

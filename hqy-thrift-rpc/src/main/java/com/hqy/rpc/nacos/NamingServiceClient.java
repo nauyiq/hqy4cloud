@@ -2,6 +2,7 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Cluster;
@@ -12,16 +13,16 @@ import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.config.ConfigurationContext;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -107,17 +108,31 @@ public class NamingServiceClient {
      * @return NamingService
      */
     private static NamingService buildNamingService() {
-        if (CommonSwitcher.ENABLE_SPRING_CONTEXT.isOff()) {
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
-            Map<String, Object> attributes = info.getAttributes();
-            namingService = (NamingService) attributes.get(BaseStringConstants.NACOS_NAMING_SERVICE);
-        } else {
+
+        try {
             NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
             namingService = nacosDiscoveryProperties.namingServiceInstance();
+        } catch (Exception e) {
+            log.warn("@@@ Spring容器获取NamingService失败, 可以尝试通过非Spring容器手动加载NamingService");
+        }
+
+        if (namingService == null) {
+            //尝试通过Nacos提供的SDK获取NamingService
+            String serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, "spring.cloud.nacos.config.server-addr");
+            if (StringUtils.isBlank(serverAddress)) {
+                log.warn("@@@ 从配置文件中:{} 获取nacos连接地址失败, 请检查配置文件等数据.", ConfigurationContext.YamlEnum.BOOTSTRAP_YAML);
+            } else {
+                Properties properties = new Properties();
+                properties.setProperty("serveAddr", serverAddress);
+                try {
+                    namingService = NamingFactory.createNamingService(properties);
+                } catch (NacosException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
         }
 
         AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");
-
         return namingService;
     }
 

@@ -1,6 +1,8 @@
 package com.hqy;
 
 import com.hqy.util.JsonUtil;
+import com.hqy.util.config.ConfigurationContext;
+import com.hqy.util.config.YamlStrategy;
 import com.hqy.util.spring.EnableOrderContext;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
@@ -9,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import tk.mybatis.spring.annotation.MapperScan;
+
+import java.util.Map;
 
 /**
  * 启动类必须放在包com.hqy下 不然很多bean会扫描不到 导致程序启动抛出not found bean
@@ -38,6 +42,10 @@ public class CommonCollectorMain {
          */
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(CommonCollectorMain.class, args);
+
+        String address = ConfigurationContext.getYaml(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML).get("spring.cloud.nacos.config.server-addr");
+        System.out.println(address);
+
 
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");

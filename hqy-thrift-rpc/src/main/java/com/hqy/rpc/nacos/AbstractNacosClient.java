@@ -60,6 +60,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
      * 获取注册到远程服务nacos服务名
      * @return
      */
+    @Override
     public abstract String getServiceNameEn();
 
     @Override
