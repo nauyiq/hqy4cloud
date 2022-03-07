@@ -1,6 +1,8 @@
 package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.nacos.api.config.ConfigFactory;
+import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -26,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * NamingService nacos客户端工具类，
+ * NamingService nacos服务注册工具类，
  * 当前服务注册进nacos 会初始化此类.
  *
  * https://nacos.io/zh-cn/docs/sdk.html SDK地址...<br>
@@ -122,14 +124,13 @@ public class NamingServiceClient {
             if (StringUtils.isBlank(serverAddress)) {
                 log.warn("@@@ 从配置文件中:{} 获取nacos连接地址失败, 请检查配置文件等数据.", ConfigurationContext.YamlEnum.BOOTSTRAP_YAML);
             } else {
-                Properties properties = new Properties();
-                properties.setProperty("serveAddr", serverAddress);
                 try {
-                    namingService = NamingFactory.createNamingService(properties);
+                    namingService = NamingFactory.createNamingService(serverAddress);
                 } catch (NacosException e) {
                     log.error(e.getMessage(), e);
                 }
             }
+
         }
 
         AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");

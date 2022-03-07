@@ -6,11 +6,11 @@ import com.hqy.fundation.common.base.lang.exception.NoAvailableProviderException
 import com.hqy.fundation.common.base.lang.exception.RpcException;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
-import com.hqy.rpc.nacos.AbstractNacosClient;
 import com.hqy.rpc.nacos.NamingServiceClient;
 import com.hqy.rpc.nacos.NodeActivityObserver;
 import com.hqy.rpc.nacos.RegistryClient;
 import com.hqy.rpc.regist.ClusterNode;
+import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.route.AbstractRpcRouter;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
@@ -153,18 +153,21 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             }
             //关闭对象池
             closePool(objPoolHighPriority);
-            this.objPoolHighPriority = null;
+            if (this.objPoolHighPriority != null) {
+                this.objPoolHighPriority = null;
+            }
 
             //如果没找到同IP的，尝试加载同环境的服务节点优先;
             if (CollectionUtils.isEmpty(highPriorityIpList)) {
                 String env = SpringContextHolder.getProjectContextInfo().getEnv();
-                if (StringUtils.isNotBlank(env)) {
-                    log.error("@@@ ProjectContextInfo.env is null!");
-                } else {
-                    for (UsingIpPort usingIpPort : all) {
-                        if (env.equals(usingIpPort.getEnv())) {
-                            highPriorityIpList.add(usingIpPort);
-                        }
+                if (StringUtils.isBlank(env)) {
+                    //上下文中的env为空 说明上下文没有被初始化 env默认使用dev
+                    log.warn("@@@ ProjectContextInfo not registry.");
+                    env = EnvironmentConfig.ENV_DEV;
+                }
+                for (UsingIpPort usingIpPort : all) {
+                    if (env.equals(usingIpPort.getEnv())) {
+                        highPriorityIpList.add(usingIpPort);
                     }
                 }
             }
@@ -175,10 +178,9 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             } else {
                 //构建对象池
                 generateObjectPool(highPriorityIpList, GrayWhitePub.HIGH);
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("@@@ initializeObjPool objPoolHighPriority. numIdle = {}", objPoolHighPriority.getNumIdle());
+                if (log.isDebugEnabled()) {
+                    log.debug("@@@ initializeObjPool objPoolHighPriority. numIdle = {}", objPoolHighPriority.getNumIdle());
+                }
             }
 
         } catch (Exception e) {
