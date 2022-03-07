@@ -1,7 +1,7 @@
-package com.hqy.coll.gateway.service;
+package com.hqy.coll.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.coll.gateway.entity.ThrottledIpBlock;
+import com.hqy.coll.entity.ThrottledIpBlock;
 
 /**
  * @author qiyuan.hong

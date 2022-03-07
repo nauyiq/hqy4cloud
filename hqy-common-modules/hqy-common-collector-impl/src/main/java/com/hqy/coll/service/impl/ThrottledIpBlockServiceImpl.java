@@ -1,10 +1,10 @@
-package com.hqy.coll.gateway.service.impl;
+package com.hqy.coll.service.impl;
 
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
-import com.hqy.coll.gateway.dao.ThrottledIpBlockDao;
-import com.hqy.coll.gateway.entity.ThrottledIpBlock;
-import com.hqy.coll.gateway.service.ThrottledIpBlockService;
+import com.hqy.coll.dao.ThrottledIpBlockDao;
+import com.hqy.coll.entity.ThrottledIpBlock;
+import com.hqy.coll.service.ThrottledIpBlockService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

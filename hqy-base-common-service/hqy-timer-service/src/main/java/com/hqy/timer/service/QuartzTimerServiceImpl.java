@@ -20,12 +20,12 @@ import java.util.Date;
  * 需要手动startUp ，去掉了spring自动启动；<br>
  * 因为不是每个项目都需要调度器，都配置了xkScheduler<br>
  * @author qy
- * @date  2021-09-15 15:28
+ * @date 2021-09-15 15:28
  */
 @Service
-public class QuartzTimerService implements TimerFoundationService {
+public class QuartzTimerServiceImpl implements TimerFoundationService {
 
-    private static final Logger log = LoggerFactory.getLogger(QuartzTimerService.class);
+    private static final Logger log = LoggerFactory.getLogger(QuartzTimerServiceImpl.class);
 
     /**
      * 最小6个或者cpu核数  两者之间的大值
@@ -38,7 +38,7 @@ public class QuartzTimerService implements TimerFoundationService {
     /**
      * 是否已启动？ 防止多次...
      */
-    private static boolean started = false;
+    private static final boolean STARTED = false;
 
     /**
      * 手动启动quartz调度器
@@ -47,7 +47,7 @@ public class QuartzTimerService implements TimerFoundationService {
     public void startUp() {
         String host = IpUtil.getHostAddress();
         log.info("### QuartzTimerService ready to startUp -> {}", host);
-        if (started) {
+        if (STARTED) {
             log.warn("### Start QuartzTimerService error, timerService already start up.");
             return;
         }
@@ -62,6 +62,7 @@ public class QuartzTimerService implements TimerFoundationService {
                 DirectSchedulerFactory.getInstance().createVolatileScheduler(coreSize);
                 // 启动调度程序
                 DirectSchedulerFactory.getInstance().getScheduler().start();
+                //quartz scheduler
                 scheduler = DirectSchedulerFactory.getInstance().getScheduler();
             } else {
                 log.info("### use @Autowired Scheduler");

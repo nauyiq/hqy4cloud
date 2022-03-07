@@ -1,7 +1,9 @@
 logging:
   config: classpath:logback.xml
+
 server:
   port: 8888
+
 spring:
   application:
     name: common_collector
@@ -22,6 +24,12 @@ spring:
           refresh: true
       discovery:
         server-addr: 120.76.65.160:8848
+
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
 management: #暴露所有
   endpoints:
     web:

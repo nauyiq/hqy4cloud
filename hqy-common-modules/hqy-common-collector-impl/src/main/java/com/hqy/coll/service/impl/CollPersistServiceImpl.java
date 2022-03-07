@@ -1,10 +1,10 @@
-package com.hqy.coll.gateway.service.impl;
+package com.hqy.coll.service.impl;
 
 
-import com.hqy.coll.gateway.entity.ThrottledIpBlock;
-import com.hqy.coll.gateway.service.CollPersistService;
-import com.hqy.coll.gateway.service.ThrottledIpBlockService;
-import com.hqy.coll.gateway.struct.ThrottledIpBlockStruct;
+import com.hqy.coll.entity.ThrottledIpBlock;
+import com.hqy.coll.service.CollPersistService;
+import com.hqy.coll.service.ThrottledIpBlockService;
+import com.hqy.coll.struct.ThrottledIpBlockStruct;
 import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.AssertUtil;

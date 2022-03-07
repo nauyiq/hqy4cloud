@@ -18,6 +18,12 @@ public enum CommonResultCode {
     SYSTEM_ERROR(9999, "System internal error, Please try again later."),
 
     /**
+     * 系统繁忙
+     */
+    SYSTEM_BUSY(9000, "System is busy, Please try again later."),
+
+
+    /**
      * 异常请求
      */
     ILLEGAL_REQUEST(9001, "Illegal Request, Limit a few minutes."),

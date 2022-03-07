@@ -1,4 +1,4 @@
-package com.hqy.coll.gateway.struct;
+package com.hqy.coll.struct;
 
 import com.facebook.swift.codec.ThriftConstructor;
 import com.facebook.swift.codec.ThriftField;

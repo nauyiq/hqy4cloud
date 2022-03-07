@@ -6,8 +6,7 @@ import org.quartz.Job;
  * 全局的周期性定时任务 service
  * 基于Quartz Scheduler中 在一个Scheduler中这二者的组合必须是唯一的。
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-13 19:16
+ * @date 2021-09-13 19:16
  */
 public interface TimerFoundationService {
 
@@ -102,6 +101,7 @@ public interface TimerFoundationService {
      * 添加一个每隔minutes分钟定期运行一次的job
      * @param id
      * @param group
+     * @param minutes
      * @param job
      */
     void addMinutesJob(String id, String group, int minutes, Job job);

@@ -43,9 +43,6 @@ public class CommonCollectorMain {
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(CommonCollectorMain.class, args);
 
-        String address = ConfigurationContext.getYaml(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML).get("spring.cloud.nacos.config.server-addr");
-        System.out.println(address);
-
 
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");

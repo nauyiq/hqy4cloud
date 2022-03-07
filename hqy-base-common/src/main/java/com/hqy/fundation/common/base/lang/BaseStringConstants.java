@@ -9,10 +9,7 @@ public interface BaseStringConstants {
 
 
 
-    /**
-     * nacos的注册元数据key
-     */
-    String NODE_INFO = "nodeInfo";
+
 
     /**
      * 英文符号:?
@@ -28,6 +25,17 @@ public interface BaseStringConstants {
      * 符号：.
      */
     String POINT = ".";
+
+    /**
+     * @
+     */
+    String AT = "@";
+
+
+    /**
+     * :
+     */
+    String COLON = ":";
 
 
     /**

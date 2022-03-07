@@ -1,13 +1,12 @@
-package com.hqy.coll.gateway.dao;
+package com.hqy.coll.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.coll.gateway.entity.ThrottledIpBlock;
+import com.hqy.coll.entity.ThrottledIpBlock;
 import org.springframework.stereotype.Repository;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-10 14:03
+ * @date 2021-08-10 14:03
  */
 @Repository
 public interface ThrottledIpBlockDao extends BaseDao<ThrottledIpBlock, Long> {
