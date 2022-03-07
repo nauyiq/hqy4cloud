@@ -2,6 +2,7 @@ package com.hqy.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,13 @@ public class ProjectContextInfo implements Serializable {
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
 
+    /**
+     * nacos的注册元数据key
+     */
+    @JsonIgnore
+    public static final transient String NODE_INFO = "nodeInfo";
+
+
     public ProjectContextInfo() {
     }
 
@@ -104,6 +112,14 @@ public class ProjectContextInfo implements Serializable {
     @JsonIgnore
     public Map<String, Object> getAttributes() {
         return attributes;
+    }
+
+
+    public String getNameWithIpPort() {
+        return nameEn.concat(BaseStringConstants.AT)
+                .concat(this.getUip().getIp())
+                .concat(BaseStringConstants.COLON)
+                .concat(this.getUip().getPort() + "");
     }
 
 

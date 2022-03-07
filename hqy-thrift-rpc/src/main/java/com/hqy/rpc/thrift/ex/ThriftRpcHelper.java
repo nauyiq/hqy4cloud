@@ -5,6 +5,7 @@ import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -77,7 +78,7 @@ public class ThriftRpcHelper {
         try {
             //原数据
             Map<String, String> metadata = instance.getMetadata();
-            String nodeInfo = metadata.get(BaseStringConstants.NODE_INFO);
+            String nodeInfo = metadata.get(ProjectContextInfo.NODE_INFO);
             clusterNode = JsonUtil.toBean(nodeInfo, ClusterNode.class);
         } catch (Exception e) {
             throw new IllegalArgumentException("registry nacos instance has error, metadata is null -> ip = " + ip + "nameEn = " + instance.getServiceName());

@@ -1,7 +1,7 @@
 package com.hqy.gateway.server;
 
-import com.hqy.coll.gateway.service.CollPersistService;
-import com.hqy.coll.gateway.struct.ThrottledIpBlockStruct;
+import com.hqy.coll.service.CollPersistService;
+import com.hqy.coll.struct.ThrottledIpBlockStruct;
 import com.hqy.fundation.common.HttpRequestInfo;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;

@@ -121,6 +121,16 @@ public abstract class ExecutorServiceProject {
         return capacity;
     }
 
+
+    /**
+     * 队列长度是否超过百分一
+     * @return
+     */
+    public boolean isQueueHundredthFull() {
+        float using = (float) getWorkingQueueSize() / getWorkingQueueCapacity();
+        return using > 0.01F;
+    }
+
     /**
      * 线程池是否快满了？ (使用率超过75%)
      * @return

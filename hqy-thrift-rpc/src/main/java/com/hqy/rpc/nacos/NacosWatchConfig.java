@@ -8,6 +8,7 @@ import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,7 +59,7 @@ public class NacosWatchConfig {
 
         //更改服务详情中的元数据
         Map<String, String> metadata = properties.getMetadata();
-        metadata.put(BaseStringConstants.NODE_INFO, JsonUtil.toJson(clusterNode));
+        metadata.put(ProjectContextInfo.NODE_INFO, JsonUtil.toJson(clusterNode));
         properties.setMetadata(metadata);
         return new NacosWatch(properties);
     }

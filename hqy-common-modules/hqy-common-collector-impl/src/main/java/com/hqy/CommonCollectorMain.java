@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @EnableOrderContext
-@MapperScan(basePackages = "com.hqy.coll.*.dao")
+@MapperScan(basePackages = "com.hqy.coll.dao")
 @SpringBootApplication
 @EnableDiscoveryClient
 public class CommonCollectorMain {

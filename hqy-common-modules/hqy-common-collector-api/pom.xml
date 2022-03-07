@@ -18,12 +18,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!--springboot-rabbitmq支持-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-amqp</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-thrift-rpc</artifactId>
