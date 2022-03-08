@@ -88,9 +88,9 @@ public abstract class NettyWebsocketServer {
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(channelClass)
                     /*
-                        如果backlog过小，可能会出现accept速度跟不上，A.B 队列满了，导致新客户端无法连接，
+                        1.如果backlog过小，可能会出现accept速度跟不上，A.B 队列满了，导致新客户端无法连接，
                         要注意的是，backlog对程序支持的连接数并无影响，backlog影响的只是还没有被accept 取出的连接
-                        websocket 服务器时不要打开SO_KEEPALIVE，更快些；
+                        2.websocket 服务器时不要打开SO_KEEPALIVE，更快些；
                         SO_KEEPALIVE连接会测试链接的状态，这个选项用于可能长时间没有数据交流的连接。
                      */
                     .option(ChannelOption.SO_BACKLOG, 1024 * 8)
