@@ -122,6 +122,7 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
+                            <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
                 </executions>

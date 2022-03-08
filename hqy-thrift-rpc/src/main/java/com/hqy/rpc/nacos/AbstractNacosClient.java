@@ -2,7 +2,7 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.listener.Event;
-import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
+import com.hqy.fundation.common.base.lang.BaseMathConstants;
 import com.hqy.fundation.common.base.project.MicroServiceHelper;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
@@ -318,7 +318,7 @@ public abstract class AbstractNacosClient implements RegistryClient {
      */
     private void next() {
         pointer++;
-        if (pointer == BaseIntegerConstants.POINTER) {
+        if (pointer == BaseMathConstants.POINTER) {
             pointer = 0;
         }
     }

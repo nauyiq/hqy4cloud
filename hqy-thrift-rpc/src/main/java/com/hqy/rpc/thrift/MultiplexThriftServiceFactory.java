@@ -3,11 +3,10 @@ package com.hqy.rpc.thrift;
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
 import com.google.common.net.HostAndPort;
-import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
+import com.hqy.fundation.common.base.lang.BaseMathConstants;
 import com.hqy.fundation.common.exception.NoAvailableProvidersException;
 import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
-import com.hqy.fundation.concurrent.ThreadLocalPool;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -161,7 +160,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         } finally {
             lock.unlock();
             //防止整形溢出！！
-            if(CREATE_COUNT.get() == BaseIntegerConstants.POINTER){
+            if(CREATE_COUNT.get() == BaseMathConstants.POINTER){
                 CREATE_COUNT.set(0);
             }
         }

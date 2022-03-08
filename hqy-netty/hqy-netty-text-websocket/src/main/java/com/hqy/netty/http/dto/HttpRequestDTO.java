@@ -1,4 +1,4 @@
-package com.hqy.http.dto;
+package com.hqy.netty.http.dto;
 
 /**
  * @author qy

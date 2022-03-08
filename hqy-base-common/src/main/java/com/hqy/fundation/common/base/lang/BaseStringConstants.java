@@ -7,7 +7,10 @@ package com.hqy.fundation.common.base.lang;
  */
 public interface BaseStringConstants {
 
-
+    /**
+     * 表示websocket 连接的id
+     */
+    String UID = "uid";
 
     /**
      * 英文符号:?

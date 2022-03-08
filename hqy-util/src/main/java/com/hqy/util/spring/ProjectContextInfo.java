@@ -2,6 +2,7 @@ package com.hqy.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.fundation.common.base.lang.BaseMathConstants;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -102,11 +104,31 @@ public class ProjectContextInfo implements Serializable {
                 ignoreMinutes = 3;
             }
             long x = System.currentTimeMillis() - startupTimeMillis;
-            if (x > ignoreMinutes * 60 * 1000) {
+            if (x > ignoreMinutes * BaseMathConstants.ONE_MINUTES_4MILLISECONDS) {
                 justStarted = false;
             }
         }
         return justStarted;
+    }
+
+    /**
+     * 是否使用Linux服务器支持的Epoll机制
+     */
+    private static Boolean isUseLinuxNativeEpoll;
+
+    public static boolean isUseLinuxNativeEpoll() {
+        if (Objects.nonNull(isUseLinuxNativeEpoll)) {
+            return isUseLinuxNativeEpoll;
+        }
+        String osName = System.getProperty("os.name");
+        String osArch = System.getProperty("os.arch");
+        //windows系统或者是arm系统
+        //使用标准的linux epoll机制
+        isUseLinuxNativeEpoll = !osName.startsWith("Windows") && !osArch.startsWith("aarch64");
+
+        log.info("\r\n##### initialize: isUseLinuxNativeEpoll ={}  \t ### ### ", isUseLinuxNativeEpoll);
+
+        return isUseLinuxNativeEpoll;
     }
 
     @JsonIgnore
