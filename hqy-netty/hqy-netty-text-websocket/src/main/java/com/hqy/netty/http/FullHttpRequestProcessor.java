@@ -50,7 +50,12 @@ public class FullHttpRequestProcessor {
             String uri = request.uri();
             parseQueryString(uri);
         }
-        this.remoteIp = getRemoteIp(request);
+
+        String requestIp = getRequestIp(request);
+        if (StringUtils.isBlank(requestIp)) {
+            requestIp = getRemoteIp();
+        }
+        this.remoteIp = requestIp;
     }
 
 

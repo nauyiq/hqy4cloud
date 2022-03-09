@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-api/hqy-common-mq-collector-api.iml" filepath="$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-api/hqy-common-mq-collector-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-impl/hqy-common-mq-collector-impl.iml" filepath="$PROJECT_DIR$/hqy-common-modules/hqy-common-mq-collector-impl/hqy-common-mq-collector-impl.iml" />
+    </modules>
+  </component>
+</project>

@@ -73,4 +73,14 @@ public interface BaseStringConstants {
      * application/json;charset=UTF-8
      */
     String APPLICATION_JSON_UTF_8 = "application/json;charset=UTF-8";
+
+    /**
+     * websocket
+     */
+    String WEBSOCKET = "websocket";
+
+    /**
+     * Upgrade
+     */
+    String UPGRADE = "Upgrade";
 }
