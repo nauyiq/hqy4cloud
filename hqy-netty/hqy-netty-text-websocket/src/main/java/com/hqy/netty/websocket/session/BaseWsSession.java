@@ -74,6 +74,7 @@ public abstract class BaseWsSession implements WsSession {
                 }
             }
 
+            handshakeData = new HandshakeData();
             handshakeData.setRemoteIp(remoteIp);
             handshakeData.setParams(processor.getParams());
 

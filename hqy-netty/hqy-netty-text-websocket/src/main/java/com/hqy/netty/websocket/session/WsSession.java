@@ -20,7 +20,7 @@ public interface WsSession {
 
     /**
      * 初始化session
-     * @param context 上下文
+     * @param context 上下文l
      */
     void initialize(ChannelHandlerContext context);
 

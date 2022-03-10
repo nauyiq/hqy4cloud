@@ -11,15 +11,15 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>hqy-common-foundation</module>
-        <module>hqy-common-collector-api</module>
-        <module>hqy-common-collector-impl</module>
-        <module>hqy-basic-message-service-api</module>
-        <module>hqy-basic-message-service-impl</module>
-        <module>hqy-data-structures-and-algorithms</module>
+        <module>hqy-account-service-impl</module>
+        <module>hqy-account-service-api</module>
     </modules>
 
-    <artifactId>hqy-common-modules</artifactId>
+    <artifactId>hqy-base-security</artifactId>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
 </project>
