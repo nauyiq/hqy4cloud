@@ -10,6 +10,8 @@
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>通用化的基础模块, 比如提供全局的redis操作、公共的service等</description>
+
     <artifactId>hqy-common-foundation</artifactId>
 
     <dependencies>

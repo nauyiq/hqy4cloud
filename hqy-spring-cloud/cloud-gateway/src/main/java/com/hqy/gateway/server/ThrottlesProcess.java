@@ -1,9 +1,9 @@
 package com.hqy.gateway.server;
 
-import com.hqy.service.limit.ThrottlesServer;
-import com.hqy.service.limit.impl.RedisBiBlockedIpServiceImpl;
-import com.hqy.service.limit.impl.RedisManualBlockedIpServiceImpl;
-import com.hqy.service.limit.impl.RedisManualWhiteIpServiceImpl;
+import com.hqy.fundation.limit.service.ThrottlesServer;
+import com.hqy.security.access.service.RedisBiBlockedIpServiceImpl;
+import com.hqy.security.access.service.RedisManualBlockedIpServiceImpl;
+import com.hqy.security.access.service.RedisManualWhiteIpServiceImpl;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;

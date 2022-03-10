@@ -2,7 +2,7 @@ package com.hqy.coll.spring.event;
 
 import com.hqy.coll.service.ExceptionCollectionService;
 import com.hqy.fundation.common.result.CommonResultCode;
-import com.hqy.fundation.enums.ExceptionLevel;
+import com.hqy.fundation.common.enums.ExceptionLevel;
 import com.hqy.rpc.RPCClient;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.spring.SpringContextHolder;

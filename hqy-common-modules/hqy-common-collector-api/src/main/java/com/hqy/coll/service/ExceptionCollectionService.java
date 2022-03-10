@@ -5,7 +5,7 @@ import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.common.rpc.api.RPCService;
-import com.hqy.fundation.enums.ExceptionLevel;
+import com.hqy.fundation.common.enums.ExceptionLevel;
 
 /**
  * @author qiyuan.hong

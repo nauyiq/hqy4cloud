@@ -1,6 +1,7 @@
 package com.hqy;
 
 import com.facebook.swift.service.ThriftServer;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.rpc.nacos.AbstractNacosClientWrapper;
@@ -23,15 +24,6 @@ public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
     @Override
     public ClusterNode setProjectClusterNode() {
 
-        //判断RPC服务是否启动
-        ThriftServer tServer = SpringContextHolder.getBean(ThriftServer.class);
-        boolean running = tServer.isRunning();
-        if (!running) {
-            //如果没有扫描到server 手动启动一下
-            tServer.start();
-        }
-
-        log.info("@@@ Get ThriftServer success, running:{}", running);
         GatewayThriftServer gatewayThriftServer = SpringContextHolder.getBean(GatewayThriftServer.class);
 
         //获取AbstractThriftServer中的节点uip信息
@@ -43,6 +35,7 @@ public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
         node.setNameEn(MicroServiceConstants.GATEWAY);
         node.setName("全局网关服务");
         node.setUip(usingIpPort);
+        node.setActuatorNode(ActuatorNodeEnum.CONSUMER);
 
         return node;
     }

@@ -1,6 +1,7 @@
 package com.hqy;
 
 import com.facebook.swift.service.ThriftServer;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.rpc.nacos.AbstractNacosClientWrapper;
@@ -42,6 +43,7 @@ public class CommonCollectorRegistryClient extends AbstractNacosClientWrapper {
         node.setNameEn(MicroServiceConstants.COMMON_COLLECTOR);
         node.setName("通用采集服务");
         node.setUip(usingIpPort);
+        node.setActuatorNode(ActuatorNodeEnum.PROVIDER);
 
         return node;
     }

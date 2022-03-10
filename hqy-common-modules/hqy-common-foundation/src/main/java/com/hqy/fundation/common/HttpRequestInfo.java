@@ -2,8 +2,7 @@ package com.hqy.fundation.common;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-03 10:08
+ * @date  2021-08-03 10:08
  */
 public interface HttpRequestInfo {
 

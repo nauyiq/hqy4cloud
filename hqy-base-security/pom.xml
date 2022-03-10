@@ -13,6 +13,7 @@
     <modules>
         <module>hqy-account-service-impl</module>
         <module>hqy-account-service-api</module>
+        <module>hqy-public-common-serutiy</module>
     </modules>
 
     <artifactId>hqy-base-security</artifactId>
