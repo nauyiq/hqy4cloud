@@ -4,9 +4,12 @@ import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.netty.http.FullHttpRequestProcessor;
 import com.hqy.netty.websocket.base.HandshakeData;
 import com.hqy.netty.websocket.base.enums.WsMessageType;
+import com.hqy.netty.websocket.handler.WebsocketHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -18,6 +21,8 @@ import java.net.SocketAddress;
  * @date 2022/3/8 16:49
  */
 public abstract class BaseWsSession implements WsSession {
+
+    private static final Logger log = LoggerFactory.getLogger(BaseWsSession.class);
 
     /**
      * 握手数据
@@ -69,13 +74,32 @@ public abstract class BaseWsSession implements WsSession {
                 }
             }
 
+            handshakeData.setRemoteIp(remoteIp);
+            handshakeData.setParams(processor.getParams());
 
+            if(handshakeData.getUid() == null ) {
+                WebsocketHandler.debugPrint("initHandShakeData Error, 无法获得uid");
+                return false;
+            }
+            if(StringUtils.isBlank(handshakeData.getRemoteIp())) {
+                WebsocketHandler.debugPrint("initHandShakeData Error, 无法获得ip");
+                return false;
+            }
 
         } catch (Exception e) {
-
+            log.error(e.getMessage(), e);
         }
         return false;
     }
+
+
+    /**
+     * 子类实现握手检查..
+     * 检查 handShakeData 中的数据是否ok
+     * @return
+     */
+    protected abstract boolean checkHandShake();
+
 
     /**
      * 是否连接

@@ -1,6 +1,8 @@
 package com.hqy.netty.websocket.server;
 
 import com.hqy.netty.websocket.dto.SslKeystoreDTO;
+import com.hqy.netty.websocket.handler.WebsocketHandler;
+import com.hqy.netty.websocket.session.BaseWsSession;
 import com.hqy.netty.websocket.util.SslUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.thread.DefaultThreadFactory;
@@ -117,6 +119,8 @@ public abstract class NettyWebsocketServer {
                                 channel.pipeline().addLast(new HttpObjectAggregator(1024 * 1024));
                                 //ChunkedWriteHandler来解决大文件或者码流传输过程中可能发生的内存溢出问题。
                                 channel.pipeline().addLast(new ChunkedWriteHandler());
+                                //自定义业务handler
+                                channel.pipeline().addLast(new WebsocketHandler(getWsSessionClass()));
                             }
                         }
                     });
@@ -136,6 +140,12 @@ public abstract class NettyWebsocketServer {
      * @param sslKeystore SslKeystoreDTO
      */
     abstract void setSslKeystore(SslKeystoreDTO sslKeystore);
+
+    /**
+     * 又子类构造
+     * @return
+     */
+    abstract Class<? extends BaseWsSession> getWsSessionClass();
 
 
 }

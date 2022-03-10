@@ -16,4 +16,8 @@ public class PublishedException extends RuntimeException{
     public PublishedException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public PublishedException(Throwable cause) {
+        super(cause);
+    }
 }

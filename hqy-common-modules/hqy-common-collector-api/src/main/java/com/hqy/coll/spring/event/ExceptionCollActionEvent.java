@@ -26,10 +26,18 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         this.param = param;
     }
 
+
+
     public ExceptionCollActionEvent(Object source, Throwable exception, String param, int step) {
         super(source);
         this.exception = exception;
         this.param = param;
+        this.step = step;
+    }
+
+    public ExceptionCollActionEvent(Object source, Throwable exception, int step) {
+        super(source);
+        this.exception = exception;
         this.step = step;
     }
 
