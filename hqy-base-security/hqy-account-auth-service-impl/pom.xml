@@ -3,22 +3,30 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-spring-cloud</artifactId>
+        <artifactId>hqy-base-security</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cloud-gateway</artifactId>
+    <artifactId>hqy-account-auth-service-impl</artifactId>
+
+    <description>账号-认证服务</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
-        <!--spring-cloud-gateway-->
+
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-account-auth-service-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!--spring-cloud-alibaba-nacos-client-->
+        <!--SpringCloud ailibaba nacos 移除原本的1.0使用http通讯的nacos客户端 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -30,7 +38,7 @@
             </exclusions>
         </dependency>
 
-        <!--spring-cloud-alibaba-nacos-config-->
+        <!-- spring-cloud-nacos-config 移除原本的1.0使用http通讯的nacos客户端 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -42,87 +50,43 @@
             </exclusions>
         </dependency>
 
+        <!-- hibenate-validator -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <!-- nacos-client 2.3 -->
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
         </dependency>
 
-
-        <!--spring-boot-starter-actuator-->
+        <!-- spring-security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!--dubbo rpc 接入-->
-        <!--<dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-dubbo</artifactId>
-        </dependency>-->
-
-        <!--gateway服务不提供持久化服务-->
+        <!-- spring-cloud-security-oauth2 -->
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-collector-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-common-dao-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-multiple-datasource</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!--引入springboot 整合rabbitmq-->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>-->
-
-        <!--不去除web依赖 将会和gateway中的web flux冲突-->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-util</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!--不去除web依赖 将会和gateway中的web flux冲突-->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-public-common-security</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-thrift-rpc</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
+
 
     </dependencies>
 
 
     <build>
-        <finalName>hqy-gateway-service</finalName>
+        <finalName>hqy-account-service-impl</finalName>
         <resources>
             <resource>
-                <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <includes>
@@ -132,6 +96,7 @@
                 </includes>
             </resource>
         </resources>
+
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
@@ -141,15 +106,15 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.GatewayMain</mainClass>
+                            <mainClass>com.hqy.AccountServiceMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
-                       <!-- <manifestEntries>
-                            <Class-Path>. lib/tools-1.8.jar</Class-Path>
-                        </manifestEntries>-->
+                        <!-- <manifestEntries>
+                             <Class-Path>. lib/tools-1.8.jar</Class-Path>
+                         </manifestEntries>-->
                     </archive>
                 </configuration>
             </plugin>
@@ -169,6 +134,7 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
+                            <!-- lib打包后带组织名的结构 -->
                             <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
@@ -176,7 +142,5 @@
             </plugin>
         </plugins>
     </build>
-
-
 
 </project>

@@ -19,9 +19,9 @@ public class MicroServiceConstants {
     public static final String COMMON_COLLECTOR = "common_collector";
 
     /**
-     * 账号服务
+     * 账号 授权服务
      */
-    public static final String ACCOUNT_SERVICE = "account_service";
+    public static final String ACCOUNT_SERVICE = "account_auth_service";
 
 
 }

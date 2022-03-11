@@ -51,6 +51,16 @@ public enum CommonResultCode {
     INVALID_SERVICE(1002, "invalid service"),
 
 
+    /**
+     * 找不到该用户
+     */
+    USER_NOT_FOUND(2000, "User not found."),
+
+    /**
+     * 当前用户是禁用状态
+     */
+    USER_DISABLED(2001, "The user disabled.")
+
 
 
 
