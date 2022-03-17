@@ -68,7 +68,7 @@ public class YamlStrategy extends AbstractConfigStrategy {
             Object val = entry.getValue();
             String newStr;
             if (StringUtils.isNotEmpty(keyStr)) {
-                newStr = keyStr + BaseStringConstants.POINT + key;
+                newStr = keyStr + BaseStringConstants.Symbol.POINT + key;
             } else {
                 newStr = key;
             }

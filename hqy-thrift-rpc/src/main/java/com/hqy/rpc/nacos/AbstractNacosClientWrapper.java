@@ -44,7 +44,6 @@ public abstract class AbstractNacosClientWrapper {
 
     /**
      * 获取注册到远程服务nacos服务名
-     *
      * @return
      */
     public abstract ClusterNode setProjectClusterNode();
@@ -52,16 +51,6 @@ public abstract class AbstractNacosClientWrapper {
 
     public boolean isRunning() {
         return isRun;
-    }
-
-    /**
-     * 声明nacos节点的rpc服务
-     *
-     * @param env 项目环境
-     * @return
-     */
-    public boolean declareNodeRpcServer(String env) {
-        return declareNodeRpcServer(env, ActuatorNodeEnum.CONSUMER);
     }
 
     /**

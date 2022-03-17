@@ -10,7 +10,7 @@ import com.hqy.fundation.common.swticher.CommonSwitcher;
  */
 public class RedisUtil {
 
-    public static AbstractRedisTemplateUtil redisTemplate() {
+    public static AbstractRedisTemplateUtil instance() {
         if (CommonSwitcher.ENABLE_LETTUCE_REDIS_TEMPLATE.isOn()) {
             return LettuceRedis.getInstance();
         } else {

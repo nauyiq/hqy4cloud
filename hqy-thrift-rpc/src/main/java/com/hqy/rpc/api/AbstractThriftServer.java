@@ -28,6 +28,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -88,12 +89,12 @@ public abstract class AbstractThriftServer implements InitializingBean {
         } else {
             //获取当前服务暴露的rpc接口列表
             List<Class<? extends AbstractRPCService>> rpcServiceClasses = getRpcServiceClasses();
-            if (CollectionUtils.isEmpty(rpcServiceClasses)) {
+            if (rpcServiceClasses == null) {
                 //如果是不对外提供rpc服务的独立的节点 则无需注册ThriftServer
                 log.info("### FLAG_RPC_REDUCED_SERVICE 标记为无对外提供RPC服务的节点 ");
                 EnvironmentConfig.FLAG_RPC_REDUCED_SERVICE = true;
                 registryThriftServer = false;
-            } else if (rpcServiceClasses.size() == 1) {
+            } else if (rpcServiceClasses.size() <= 1) {
                 //如果是暴露的RPC实例列表较少时, 可以适当减少io线程数
                 log.info("### RPC实例数较低, 适当减少RPC处理线程");
                 int boundary = 6;
@@ -207,11 +208,11 @@ public abstract class AbstractThriftServer implements InitializingBean {
      */
     @SuppressWarnings("unchecked")
     public List<Class<? extends AbstractRPCService>> getRpcServiceClasses() {
-        List<Class<? extends AbstractRPCService>> rpcList = new ArrayList<>();
         List<RPCService> register = getServiceList4Register();
-        if (CollectionUtils.isEmpty(register)) {
-            return rpcList;
+        if (Objects.isNull(register)) {
+            return null;
         }
+        List<Class<? extends AbstractRPCService>> rpcList = new ArrayList<>();
         for (RPCService rpcService : register) {
             rpcList.add( (Class<? extends AbstractRPCService>) rpcService.getClass());
         }

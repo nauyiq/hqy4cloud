@@ -1,28 +1,21 @@
 package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
-import com.alibaba.nacos.api.config.ConfigFactory;
-import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
-import com.alibaba.nacos.api.naming.pojo.Cluster;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.MicroServiceHelper;
+import com.hqy.fundation.common.base.project.MicroServiceManager;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.config.ConfigurationContext;
-import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -143,10 +136,11 @@ public class NamingServiceClient {
      * @param healthy true表示健康的实例
      * @return
      */
+    @Deprecated
     public List<ClusterNode> loadAllProjectNodeInfo(boolean healthy) {
         //加载所有服务在远程服务nacos中的实例
         List<ClusterNode> nodes = new ArrayList<>();
-        Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
+        Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(null);
         for (String serviceEnName : serviceEnNames) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.info("@@@ LoadAllProjectNodeInfo, serviceName -> {}", serviceEnName);
@@ -167,6 +161,12 @@ public class NamingServiceClient {
         return nodes;
     }
 
+    /**
+     * 根据服务名加载所有的节点信息
+     * @param serviceName 服务名
+     * @param healthy 健康的
+     * @return 节点列表
+     */
     public List<ClusterNode> loadProjectNodeInfo(String serviceName, boolean healthy) {
         List<ClusterNode> nodes = new ArrayList<>();
         //根据服务名获取远程服务nacos中的实例

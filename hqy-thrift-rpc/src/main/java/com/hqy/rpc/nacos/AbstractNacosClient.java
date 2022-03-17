@@ -2,8 +2,9 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.listener.Event;
+import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.fundation.common.base.lang.BaseMathConstants;
-import com.hqy.fundation.common.base.project.MicroServiceHelper;
+import com.hqy.fundation.common.base.project.MicroServiceManager;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
@@ -23,7 +24,9 @@ import java.util.stream.Collectors;
 
 /**
  * nacos客户端服务基类 维护了服务节点列表信息
- * 每个服务都会注册一个服务列表到内存里面 用于rpc调度
+ * 每个服务都会注册一个服务列表到内存里面 用于rpc调度 <br/>
+ * 其中一个生产者节点 对应当前AbstractNacosClient一个实例 具体看MicroServiceManager <br/>
+ * 只有在RPC调度时会首次初始化对应生产者节点的客户端视角 并且缓存起来.
  * @author qiyuan.hong
  * @date 2021-09-17 17:22
  */
@@ -102,7 +105,6 @@ public abstract class AbstractNacosClient implements RegistryClient {
             log.warn("没有活着的[" + pub + "]模式的节点了：{}", this.getServiceNameEn());
             return null;
         }
-
         ClusterNode clusterNode = nodes.get(pointer % size);
         next();
         return clusterNode;
@@ -242,9 +244,10 @@ public abstract class AbstractNacosClient implements RegistryClient {
             // 初始化的时候加载一次节点数据情况；
             int count = loadNodesAndNotifyNodeObserver(null);
             log.info("@@@ 初始化Nacos节点数据情况, 存活节点个数：{}", count);
-            Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
+            //获取服务列表 并且是生产者节点的列表
+            Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(ActuatorNodeEnum.PROVIDER);
             //订阅节点变化监听器
-            subscribe(serviceEnNames);
+            subscribe(serviceEnNames.toArray(new String[0]));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return false;
@@ -254,18 +257,18 @@ public abstract class AbstractNacosClient implements RegistryClient {
 
     /**
      * 订阅节点变化监听器
-     * @param serviceEnNames
+     * @param serviceEnNames 服务列表名
      */
-    private void subscribe(Set<String> serviceEnNames) {
+    private void subscribe(String... serviceEnNames) {
         ParentExecutorService.getInstance().execute(() -> {
             for (String serviceEnName : serviceEnNames) {
                 try {
-                    NamingServiceClient.getInstance().subscribe(serviceEnName, event -> {
-                        log.info("@@@ received event, loadNodesAndNotifyNodeObserver begin.");
+                    NamingServiceClient.getInstance().subscribe(serviceEnName, eventListener -> {
+                        log.info("@@@ received eventListener, loadNodesAndNotifyNodeObserver begin.");
                         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                            log.info("@@@ event : {}", JsonUtil.toJson(event));
+                            log.info("@@@ eventListener : {}", JsonUtil.toJson(eventListener));
                         }
-                        int eventBeforeNodeCount = loadNodesAndNotifyNodeObserver(event);
+                        int eventBeforeNodeCount = loadNodesAndNotifyNodeObserver(eventListener);
                         log.info("@@@ loadServerNode end, eventBeforeNodeCount :{}", eventBeforeNodeCount);
                         if (eventBeforeNodeCount == 0) {
                             //当前服务的实例为0....

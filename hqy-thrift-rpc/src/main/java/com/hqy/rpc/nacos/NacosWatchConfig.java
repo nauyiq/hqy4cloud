@@ -2,8 +2,7 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.MicroServiceHelper;
+import com.hqy.fundation.common.base.project.MicroServiceManager;
 import com.hqy.fundation.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
@@ -45,9 +44,11 @@ public class NacosWatchConfig {
         String environment = EnvironmentConfig.getInstance().getEnvironment();
 
         //声明nacos节点 并且注册上下文到springContextHolder中.
-        boolean result = clientWrapper.declareNodeRpcServer(environment, MicroServiceHelper.getNodeType(nameEn));
+        boolean result = clientWrapper.declareNodeRpcServer(environment, MicroServiceManager.getNodeType(nameEn));
 
-        log.info("@@@ DeclareNodeRpcServer end. result:{}", result);
+        if (!result) {
+            log.warn("@@@ 声明当前nacos节点node信息 注册ProjectContext失败. nameEn:{}, env:{}", nameEn, environment);
+        }
 
         //获取节点信息.
         ClusterNode clusterNode = clientWrapper.getNode();

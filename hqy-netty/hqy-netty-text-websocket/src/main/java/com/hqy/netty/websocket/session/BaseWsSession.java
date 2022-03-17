@@ -68,7 +68,7 @@ public abstract class BaseWsSession implements WsSession {
                 } else {
                     remoteIp = address.toString();
                 }
-                if (remoteIp.startsWith(BaseStringConstants.INCLINED_ROD)) {
+                if (remoteIp.startsWith(BaseStringConstants.Symbol.INCLINED_ROD)) {
                     //去掉开头的 ‘/'
                     remoteIp = remoteIp.substring(1);
                 }

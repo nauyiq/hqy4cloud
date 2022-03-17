@@ -1,2 +1,8 @@
 env:
   dev
+encrypt:
+  key-store:
+    password: hongqy@2021
+    alias: jwt
+    secret: XX#$%()(#*!()!KL<>759428167@qq.com
+    location: classpath:jwt.jks

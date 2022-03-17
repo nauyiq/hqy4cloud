@@ -6,7 +6,7 @@ server:
 
 spring:
   application:
-    name: common_collector
+    name: common-collector
   cloud:
     nacos:
       config:

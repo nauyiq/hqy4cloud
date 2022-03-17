@@ -34,6 +34,16 @@ public enum CommonResultCode {
      */
     SYSTEM_ERROR_INSERT_FAIL(9100, "System internal error, insert data failure, please try again later."),
 
+    /**
+     * 无效的token
+     */
+    INVALID_ACCESS_TOKEN(9200, "Invalid token, token expired or invalid."),
+
+    /**
+     * 权限不够
+     */
+    LIMITED_AUTHORITY(9300, "Access authority Limit."),
+
 
     /**
      * 空对象

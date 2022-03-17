@@ -22,7 +22,7 @@ public class GatewayThriftServer extends AbstractThriftServer {
     @Override
     public List<RPCService> getServiceList4Register() {
         log.info("@@@ 当前服务为RPC的消费者, 无需注册ThriftServer");
-        return new ArrayList<>();
+        return null;
     }
 }
 

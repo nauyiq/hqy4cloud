@@ -261,7 +261,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public Boolean setEx(String key, String value, Long second) {
         try {
-            return Boolean.FALSE.equals(stringRedisTemplate.opsForValue().setIfPresent(key, value, second, TimeUnit.SECONDS));
+            return stringRedisTemplate.opsForValue().setIfAbsent(key, value, second, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return false;

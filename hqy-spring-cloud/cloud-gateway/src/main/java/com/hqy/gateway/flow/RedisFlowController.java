@@ -1,6 +1,8 @@
 package com.hqy.gateway.flow;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.fundation.cache.redis.RedisUtil;
+import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,8 +14,7 @@ import java.util.Objects;
  * 基于Redis的流量控制器
  * redis基于spring data redis的redisTemplate
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-04 16:43
+ * @date 2021-08-04 16:43
  */
 @Data
 @Slf4j
@@ -32,7 +33,7 @@ public class RedisFlowController {
     private long expireSeconds = 5 * 60;
 
 
-    private static final String KEY_PREFIX_STRING  = RedisFlowController.class.getSimpleName().concat(":");
+    private static final String KEY_PREFIX_STRING  = RedisFlowController.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON);
 
     /**
      * 是否访问超限?
@@ -46,7 +47,7 @@ public class RedisFlowController {
         long total = 0L;
         try {
             //如果redis目前没有这个key，创建并赋予1，有效时间为expireSeconds
-            Boolean result = LettuceRedis.getInstance().setEx(limitRedisKey, "1", expireSeconds);
+            Boolean result = RedisUtil.instance().setEx(limitRedisKey, "1", expireSeconds);
             if (result) {
                 //设置成功 则说明当前ip在时间窗口内首次访问
                 total = 1L;
@@ -61,7 +62,7 @@ public class RedisFlowController {
                 }
             }
         } catch (Exception e) {
-            //如果redis 有异常，catch住，当做未超限来处理..................
+            //如果redis 有异常，catch住，当做未超限来处理.
             log.error("流量控制组件:执行计数操作失败,无法执行计数", e);
         }
         //判断是否大于阈值, 超过返回false

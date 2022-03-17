@@ -89,17 +89,6 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
 
-    /**
-     * 注册上下文 Context信息，方便全局使用
-     * @param name
-     * @param envriment
-     * @param createTime
-     */
-//	public static void registContextInfo(GfwContextInfo info) {
-//		if(info != null){
-//			congtextInfo = info;
-//		}
-//	}
 
 
     /**

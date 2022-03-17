@@ -6,6 +6,7 @@ import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
 import com.hqy.fundation.limit.LimitResult;
 import com.hqy.gateway.server.GatewayHttpThrottles;
+import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.gateway.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -85,14 +86,9 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
                 }
                 MessageResponse response = new MessageResponse(false, resultTip, 403);
                 return Mono.defer(() -> {
-                    byte[] bytes = JsonUtil.toJson(response).getBytes(StandardCharsets.UTF_8);
-                    httpResponse.getHeaders().add(BaseStringConstants.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                    httpResponse.setStatusCode(HttpStatus.FORBIDDEN);
-                    DataBuffer buffer = httpResponse.bufferFactory().wrap(bytes);
+                    DataBuffer buffer = ResponseUtil.outputBuffer(response, httpResponse, HttpStatus.FORBIDDEN);
                     return httpResponse.writeWith(Flux.just(buffer));
                 });
-            } else {
-                //TODO 可以异步对请求进行采集分析？？？ 采集责任链？
             }
         }
         //继续执行责任链

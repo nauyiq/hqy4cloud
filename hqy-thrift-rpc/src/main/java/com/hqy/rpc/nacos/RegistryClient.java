@@ -7,7 +7,7 @@ import com.hqy.fundation.common.base.project.UsingIpPort;
 import java.util.List;
 
 /**
- * nacos服务调用者视角
+ * 注册中心 服务调用者视角
  * @author qiyuan.hong
  * @date 2021-09-17 18:30
  */

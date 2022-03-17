@@ -55,9 +55,16 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher JUST_4_TEST_DEBUG = new CommonSwitcher(250,"节点-DEBUG开关（默认关）",false);
 
     /**
+     * 节点-是否采用上下文里的白名单
+     */
+    public static final CommonSwitcher ENABLE_PROJECT_CONTEXT_WHITE = new CommonSwitcher(251, "节点-是否采用上下文里的白名单", true);
+
+    /**
      * 节点-是否启用spring容器 (是否是Spring项目)
      */
     public static final CommonSwitcher ENABLE_SPRING_CONTEXT = new CommonSwitcher(300, "节点-是否启用spring容器 (是否是Spring项目)", true);
+
+
 
 
 

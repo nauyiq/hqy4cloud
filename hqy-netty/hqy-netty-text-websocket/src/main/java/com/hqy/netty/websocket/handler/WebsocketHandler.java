@@ -240,10 +240,10 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
      * @param ctx     ChannelHandlerContext
      * @param request FullHttpRequest
      */
-    private void    handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         // 如果HTTP解码失败，返回HTTP异常
         if (request.decoderResult().isFailure() ||
-                (!BaseStringConstants.WEBSOCKET.equals(request.headers().get(BaseStringConstants.UPGRADE)))) {
+                (!BaseStringConstants.WEBSOCKET.equals(request.headers().get(BaseStringConstants.Headers.UPGRADE)))) {
             debugPrint("handleHttpRequest", "HTTP解码失败");
             sendHttpResponse(ctx, request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;

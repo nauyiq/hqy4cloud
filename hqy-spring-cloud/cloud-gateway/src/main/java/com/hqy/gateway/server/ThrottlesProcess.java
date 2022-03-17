@@ -1,9 +1,9 @@
 package com.hqy.gateway.server;
 
-import com.hqy.fundation.limit.service.ThrottlesServer;
+import com.hqy.auth.access.service.ManualWhiteIpServiceImpl;
 import com.hqy.auth.access.service.RedisBiBlockedIpServiceImpl;
 import com.hqy.auth.access.service.RedisManualBlockedIpServiceImpl;
-import com.hqy.auth.access.service.RedisManualWhiteIpServiceImpl;
+import com.hqy.fundation.limit.service.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +75,8 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isWhiteIp(String remoteAddress) {
-        return RedisManualWhiteIpServiceImpl.getInstance().isWhiteIp(remoteAddress);
+        ManualWhiteIpServiceImpl whiteIpService = SpringContextHolder.getBean(ManualWhiteIpServiceImpl.class);
+        return whiteIpService.isWhiteIp(remoteAddress);
     }
 
     @Override
@@ -107,8 +108,5 @@ public class ThrottlesProcess implements ThrottlesServer {
         RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
         service.addBlockIp(ip, blockSeconds);
     }
-
-
-
 
 }

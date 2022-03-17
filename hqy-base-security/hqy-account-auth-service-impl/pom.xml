@@ -11,7 +11,7 @@
 
     <artifactId>hqy-account-auth-service-impl</artifactId>
 
-    <description>账号-认证服务</description>
+    <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -74,6 +74,7 @@
             <artifactId>spring-cloud-starter-oauth2</artifactId>
         </dependency>
 
+        <!-- spring-cloud-security-oauth2 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
@@ -93,6 +94,7 @@
                     <include>**/*.xml</include>
                     <include>*.properties</include>
                     <include>*.yml</include>
+                    <include>*.jks</include>
                 </includes>
             </resource>
         </resources>

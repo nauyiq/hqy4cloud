@@ -18,7 +18,7 @@
         SELECT a.id,a.username,a.password,a.status,a.email,r.role
         FROM t_account a
         LEFT JOIN t_account_role r on a.id = r.account_id
-        WHERE u.username = #{usernameOrEmail} or u.email = #{usernameOrEmail}
+        WHERE a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail}
     </select>
     
 </mapper>

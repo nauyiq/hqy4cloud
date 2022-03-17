@@ -11,6 +11,8 @@
 
     <artifactId>cloud-gateway</artifactId>
 
+    <description>全局网关-采用oauth2,统一校验认证和鉴权,RPC的调用者视角</description>
+
     <dependencies>
         <!--spring-cloud-gateway-->
         <dependency>
@@ -109,10 +111,45 @@
             </exclusions>
         </dependency>
 
+        <!-- OAuth2资源服务器-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>8.16</version>
+        </dependency>
+
+        <!-- hibenate-validator -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-thrift-rpc</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
@@ -129,6 +166,7 @@
                     <include>**/*.xml</include>
                     <include>*.properties</include>
                     <include>*.yml</include>
+                    <include>*.key</include>
                 </includes>
             </resource>
         </resources>

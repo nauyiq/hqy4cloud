@@ -6,7 +6,7 @@ server:
 
 spring:
   application:
-    name: account_auth_service
+    name: account-auth-service
   cloud:
     nacos:
       config:

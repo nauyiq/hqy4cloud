@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * 笼统的针对每个ip的 get/post/put/delete 请求总数的超限判断
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-04 14:25
+ * @date 2021-08-04 14:25
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +24,6 @@ public class FlowControlConfig {
      * 计量时间窗口内 post最大访问次数限制
      */
     private int maxPost = 60;
-
 
     /**
      * 计数缓存有效期 (默认2分钟), 请注意不能小于window对应的分钟数

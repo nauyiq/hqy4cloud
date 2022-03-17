@@ -85,7 +85,7 @@ public class FullHttpRequestProcessor {
      * @param uri 请求uri
      */
     private void parseQueryString(String uri) {
-        if (!uri.contains(BaseStringConstants.QUESTION_MARK)) {
+        if (!uri.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
             log.info("@@@ FullHttpRequestProcessor.parseQueryString, uri not contain '?'. uri:{}", uri);
             return;
         }

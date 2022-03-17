@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 /**
  * redis流量限流器的检测结果
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-04 15:04
+ * @date 2021-08-04 15:04
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class RedisFlowDTO {
 
@@ -23,7 +21,7 @@ public class RedisFlowDTO {
     /**
      * 是否超限
      */
-    private Boolean overLimit = false;
+    private Boolean overLimit;
 
     /**
      * 当前计数值

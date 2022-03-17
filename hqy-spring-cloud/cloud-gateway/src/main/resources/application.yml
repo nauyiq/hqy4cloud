@@ -1,5 +1,10 @@
 env:
   dev
 #RPC注册直连服务配置key
-direct:
-  nodesMap: "{cloud-gateway: '172.0.0.1:8080'}"
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8010/rsa/publicKey #配置RSA的公钥访问地址

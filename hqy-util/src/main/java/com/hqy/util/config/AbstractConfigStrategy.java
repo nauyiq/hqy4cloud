@@ -55,7 +55,7 @@ public abstract class AbstractConfigStrategy implements AbstractStrategyProcesso
     public void loadConfigFile() {
         InputStream inputStream = null;
         try {
-            File externalFile = new File(configPath + BaseStringConstants.INCLINED_ROD + propertyName);
+            File externalFile = new File(configPath + BaseStringConstants.Symbol.INCLINED_ROD + propertyName);
             if (externalFile.exists()) {
                 log.info("@@@ 加载外部配置文件:{}", externalFile.getAbsolutePath());
                 inputStream = new FileInputStream(externalFile);

@@ -1,5 +1,6 @@
 package com.hqy;
 
+import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.EnableOrderContext;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -43,7 +44,7 @@ public class AccountServiceMain {
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");
         log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));
-        log.info("##### Server Started OK.");
+        log.info("##### Server Started OK. serviceName = {}", MicroServiceConstants.ACCOUNT_SERVICE);
         log.info("############################## ############### ############### ###############");
 
     }

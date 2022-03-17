@@ -45,6 +45,12 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
      */
     public static final HttpGeneralSwitcher ENABLE_HTTP_THROTTLE_PERSISTENCE = new HttpGeneralSwitcher(153,"节点-是否启用HTTP限流结果持久化",true);
 
+    /**
+     * 节点-在spring security 中是否对密码进行encode（由前端进行encode）
+     */
+    public static final HttpGeneralSwitcher ENABLE_ACCOUNT_PASSWORD_ENCODER_ENCODE = new HttpGeneralSwitcher(154, "节点-是否启用MD5的PasswordEncoder的encode", true);
+
+
     protected HttpGeneralSwitcher(int id, String name, boolean status) {
         super(id, name, status);
     }

@@ -4,7 +4,7 @@ server:
   port: 9527
 spring:
   application:
-    name: gateway_service
+    name: gateway-service
   cloud:
     gateway:
       discovery:
@@ -12,6 +12,12 @@ spring:
           enabled: true #开启从注册中心动态创建路由的功能，利用微服务名进行路由
 #          route-id-prefix:
       routes:
+        - id: account-auth-service
+          uri: lb://account-auth-service
+          predicates:
+            - Path=/auth/oauth/**
+          filters:
+            - StripPrefix=1
         - id: payment_get_routh             #路由的ID，没有固定规则但要求唯一，建议配合服务名
           uri: lb://alibaba-provider-demo      #根据服务名进行动态路由，匹配后提供服务的路由地址 #匹配后提供服务的路由地址
           predicates: #predicates就是为了实现一组匹配规则， 让请求过来找到对应的route进行处理
@@ -24,6 +30,7 @@ spring:
               # - Host=**.nauyiq.com #请求的host路径匹配
               #            - Method=GET #请求方法必须是GET
               # - Query=id, \d+  # 要有参数名id并且值还要是整数才能路由
+
     nacos:
       config:
         server-addr: 120.76.65.160:8848
