@@ -130,7 +130,7 @@ public class NamespaceClient implements SocketIOClient {
     }
 
     @Override
-    public SocketAddress getRemoteAddress() {
+    public String getRemoteAddress() {
         return baseClient.getRemoteAddress();
     }
 

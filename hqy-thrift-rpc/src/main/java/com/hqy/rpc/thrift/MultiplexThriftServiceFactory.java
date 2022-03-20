@@ -91,7 +91,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
     public String gerServiceInfo(T service) {
         NiftyClientChannel clientChannel = getClientChannel(service);
         if (Objects.isNull(clientChannel)) {
-            return CommonResultCode.INVALID_SERVICE.message;
+            return String.format("Invalid service: [%s], NiftyClientChannel is null", service.getClass().getSimpleName());
         }
         return toChannelString(clientChannel);
     }
@@ -156,7 +156,6 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
             }
             int idx = CREATE_COUNT.incrementAndGet() % connectors.length;
             connector = connectors[idx];
-//            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
         } finally {
             lock.unlock();
             //防止整形溢出！！
@@ -192,6 +191,9 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
 
 
     private String toChannelString(NiftyClientChannel clientChannel) {
+        if (Objects.isNull(clientChannel)) {
+            return "";
+        }
         Channel channel = clientChannel.getNettyChannel();
         return String.format("(%s - > %s)", channel.getLocalAddress(), channel.getRemoteAddress());
     }

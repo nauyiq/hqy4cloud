@@ -2,9 +2,11 @@ package com.hqy.rpc.thrift;
 
 import com.facebook.swift.service.RuntimeTApplicationException;
 import com.facebook.swift.service.RuntimeTTransportException;
+import com.hqy.coll.spring.event.ExceptionCollActionEvent;
 import com.hqy.fundation.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.fundation.common.base.lang.exception.RpcException;
 import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.fundation.common.result.CommonResultCode;
 import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.NamingServiceClient;
 import com.hqy.rpc.nacos.NodeActivityObserver;
@@ -15,6 +17,7 @@ import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.route.AbstractRpcRouter;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.IpUtil;
+import com.hqy.util.MathUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.ParentExecutorService;
@@ -33,7 +36,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * 每个RPCService 接口对应一个Handler， 可以接受nacos的事件通知
+ * 每个RPCService 接口对应一个Handler，
+ * 同时也是nacos节点变化事件的观察者 可以观察到nacos节点变化事件
  * @author qy
  * @date 2021-08-13 9:56
  */
@@ -272,8 +276,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
     }
 
     /**
-     * 关闭连接池
-     *
+     * 清除内存并关闭对象连接池
      * @param objectPool 连接池
      */
     private void closePool(ObjectPool<T> objectPool) {
@@ -288,7 +291,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         //反射执行返回结果
         Object result = null;
         //rpc执行结果
@@ -309,46 +312,44 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
         //RpcService
         T target = null;
         //netty通道信息
-        String targetInfo = null;
+        String targetInfo = "";
 
         try {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.debug("@@@ ObjPool before borrowObject:  numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
+                log.debug("@@@ ObjPool before borrowObject: numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
             }
             //从对象池中获取一个实例
             target = objectPool.borrowObject();
             targetInfo = factory.gerServiceInfo(target);
             result = method.invoke(target, args);
             if (Objects.nonNull(callback)) {
-                //执行回调
                 callback.onInvokeResult(result);
             }
             rpcResult = true;
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.debug("@@@ ObjPool after borrowObject:  numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
+                log.debug("@@@ ObjPool after borrowObject: numActive={}, numIdle={}", objectPool.getNumActive(), objectPool.getNumIdle());
             }
         } catch (NoAvailableProviderException exception) {
-            //NoAvailableProviderException 异常处理
             needReturnTarget = doNoAvailableProviderException(method, args, exception);
         } catch (ExecutionException e) {
-            //ExecutionException 异常处理
             doExecutionException(method, args, targetInfo, e);
+            needReturnTarget = false;
         } catch (Exception e) {
             needReturnTarget = doRpcException(method, args, targetInfo, e);
         } finally {
-            //TODO 记录一次rpc访问...
             try {
                 if (needReturnTarget) {
                     objectPool.returnObject(target);
                 } else if (target != null) {
                     objectPool.invalidateObject(target);
                 }
+                //记录一次rpc访问...
+                RPCFlowController.getInstance().count(method.getName(), method.getDeclaringClass(), rpcResult);
             } catch (Exception e) {
                 String err = String.format("[DynamicInvocationHandler] return target failed, target:%s, method:%s, args:%s",
                         targetInfo, method.getName(), Arrays.toString(args));
                 log.warn("WARN:{}, {}, {}", e.getClass().getName(), e.getMessage(), err);
             }
-
         }
 
         if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()){
@@ -368,7 +369,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
      * @param e
      * @return
      */
-    private boolean doRpcException(Method method, Object[] args , String targetInfo, Exception e) {
+    private boolean doRpcException(Method method, Object[] args, String targetInfo, Exception e) {
         boolean matchDisconnectedByServer = checkIfDisconnectedByServer(e);
         boolean needReturnTarget = true;
         if (matchDisconnectedByServer) {
@@ -390,6 +391,10 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             log.warn("#### invoke RPC method ,[Ignored Coll] Exception happen : {}, {} ", e.getClass().getName(), e.getMessage());
             throw new RpcException(err + ", exception:" + e.getClass().getName(), e);
         } else {
+            if (MathUtil.mathIf(10, 10000)) {
+                ExceptionCollActionEvent event = new ExceptionCollActionEvent(DynamicInvocationHandler.class, e, 500);
+                SpringContextHolder.publishEvent(event);
+            }
             log.warn("#### Invoke RPC method, exception happen : {}, {} ", e.getClass().getName(), e.getMessage());
             throw new RpcException(err + ", exception:" + e.getClass().getName(), e);
         }
@@ -398,16 +403,22 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 并发异常处理
-     * @param method
-     * @param args
-     * @param targetInfo
-     * @param e
+     * @param method 方法
+     * @param args 方法参数
+     * @param targetInfo rpc service netty channel 信息
+     * @param e 异常
      */
     private void doExecutionException(Method method, Object[] args, String targetInfo, ExecutionException e) {
         //并发异常，极有可能是执行了耗时的非半工的RPC方法
         String err = String.format("[DynamicInvocationHandler] method invoke failed, target:%s, method:%s, args:%s",
                 targetInfo, method.getName(), Arrays.toString(args));
-        //TODO 异常采集.
+
+        if (MathUtil.mathIf(5, 10000)) {
+            //发送异常事件
+            ExceptionCollActionEvent event = new ExceptionCollActionEvent(DynamicInvocationHandler.class, e, 2000, CommonResultCode.CONSUMING_TIME_RPC);
+            SpringContextHolder.publishEvent(event);
+        }
+
         throw new RpcException(err + ", ExecutionException:" + e.getMessage(), e);
     }
 
@@ -422,8 +433,6 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
         String msg = String.format("[DynamicInvocationHandler] method invoke failed for [%s], method:%s, args:%s",
                 "NoAvailableProviderException", method.getName(), Arrays.toString(args));
         log.error(msg, exception);
-        boolean needReturnTarget = false;
-
         ParentExecutorService.getInstance().execute(() -> {
             try {
                 //异步重试
@@ -432,7 +441,7 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
                 log.warn("retryReadNodeInfo exception, {}, {}", e.getClass().getName(), e.getMessage());
             }
         });
-        return needReturnTarget;
+        return false;
     }
 
     /**
@@ -534,7 +543,6 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
     /**
      * 根据当前节点灰度值和有无开启灰度策略选择一个合适的对象池
-     *
      * @return 合适的对象池
      */
     private ObjectPool<T> findSuitableObjPool() {

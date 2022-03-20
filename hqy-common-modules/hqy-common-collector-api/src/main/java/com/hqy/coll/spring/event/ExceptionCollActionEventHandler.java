@@ -96,10 +96,10 @@ public class ExceptionCollActionEventHandler {
 
         int hashCode = event.hashCode();
         int sign = Math.abs(hashCode) % MAX_CONCURRENT;
-        Lock lock = locks[sign];
         Long count = counter.get(hashCode);
         count = count == null ? 0 : count;
 
+        Lock lock = locks[sign];
         lock.lock();
         try {
             doCollection(event, count);

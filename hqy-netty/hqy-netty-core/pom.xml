@@ -108,6 +108,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <artifactId>hqy-netty-core</artifactId>

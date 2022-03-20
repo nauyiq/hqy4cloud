@@ -353,6 +353,15 @@ public class Namespace implements SocketIONamespace {
         return result;
     }
 
+    /**
+     * 移除allClient中的socket.io客户端. 业务层切忌调用
+     * 框架层-开关ENABLE_NAMESPACE_CLIENTS_LEAK_PROTECTION.isOn 是调用
+     * @param uuid uuid
+     */
+    public void removeSocketIoClients(UUID uuid) {
+        allClients.remove(uuid);
+    }
+
     @Override
     public Collection<SocketIOClient> getAllClients() {
         return Collections.unmodifiableCollection(allClients.values());

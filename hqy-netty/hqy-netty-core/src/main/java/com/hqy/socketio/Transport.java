@@ -19,9 +19,19 @@ package com.hqy.socketio;
 import com.hqy.socketio.transport.PollingTransport;
 import com.hqy.socketio.transport.WebSocketTransport;
 
+/**
+ * 请求方式
+ */
 public enum Transport {
 
+    /**
+     * WEBSOCKET请求
+     */
     WEBSOCKET(WebSocketTransport.NAME),
+
+    /**
+     * POLING请求
+     */
     POLLING(PollingTransport.NAME);
 
     private final String value;
@@ -33,6 +43,7 @@ public enum Transport {
     public String getValue() {
         return value;
     }
+
 
     public static Transport byName(String value) {
         for (Transport t : Transport.values()) {

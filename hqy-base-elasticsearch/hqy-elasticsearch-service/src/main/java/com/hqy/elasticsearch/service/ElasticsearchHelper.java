@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
  */
 public enum ElasticsearchHelper {
 
+    /**
+     * 对象
+     */
     instance;
 
     /**

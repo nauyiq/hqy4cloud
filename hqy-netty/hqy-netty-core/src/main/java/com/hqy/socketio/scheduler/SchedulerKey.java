@@ -18,7 +18,7 @@ package com.hqy.socketio.scheduler;
 
 public class SchedulerKey {
 
-    public enum Type {PING_TIMEOUT, ACK_TIMEOUT, UPGRADE_TIMEOUT};
+    public enum Type {PING_TIMEOUT, ACK_TIMEOUT, UPGRADE_TIMEOUT, POLLING_AUTH_WEBSOCKET_TIMEOUT};
 
     private final Type type;
     private final Object sessionId;

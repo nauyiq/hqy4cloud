@@ -50,6 +50,26 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_EXCEPTION_COLL_ACTION_EVENT_HANDLER = new CommonSwitcher(210, "节点-是否采用ExceptionCollActionEventHandler", true);
 
     /**
+     * 节点-框架socket-polling环节泄漏HandshakeData兼容，默认测试环境开启.
+     * 场景一： 网络原因，没升级到websocket
+     * 场景二：恶意的polling的操作 导致的 addClient的uuidMap 泄漏
+     */
+    public static final CommonSwitcher SOCKET_POLLING_HANDSHAKE_DATA_LEAK = new CommonSwitcher(211, "节点-框架socket-polling环节泄漏HandshakeData监听，默认开启", true);
+
+    /**
+     * 节点-是否启用--框架 检测 allClients的内存泄漏
+     */
+    public static final CommonSwitcher ENABLE_NAMESPACE_CLIENTS_LEAK_PROTECTION = new CommonSwitcher(212, "节点-是否启用Namespace Clients内存泄露保护开关", true);
+
+    /**
+     * 与sid有关（重联场景是生成新的sid)
+     * 无用http长连接释放（短时间泄漏）
+     * 场景：业务： 兼容忽略js前端框架层面的socketIO层面 多发一次无意义请求的返回开关   <br>
+     * 场景：技术：因js和netty均是异步线程，状态不一致性的情况。即潜在逻辑：建立完101、以及收到 NOOP(6)之后，多发的一次Polling长连接<br>
+     */
+    public static final CommonSwitcher SOCKET_POLLING_HTTP_LEAK = new CommonSwitcher(244, "节点-框架 前端多发无用http长连接释放，默认[关]", false);
+
+    /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）
      */
     public static final CommonSwitcher JUST_4_TEST_DEBUG = new CommonSwitcher(250,"节点-DEBUG开关（默认关）",false);
@@ -58,6 +78,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否采用上下文里的白名单
      */
     public static final CommonSwitcher ENABLE_PROJECT_CONTEXT_WHITE = new CommonSwitcher(251, "节点-是否采用上下文里的白名单", true);
+
+    /**
+     * 节点-是否启用RPC采集（Thrift RPC过程采集）
+     */
+    public static final CommonSwitcher ENABLE_THRIFT_RPC_COLLECT = new CommonSwitcher(252, "节点-是否启用RPC采集", true);
 
     /**
      * 节点-是否启用spring容器 (是否是Spring项目)

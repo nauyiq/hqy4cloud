@@ -23,6 +23,11 @@ public interface BaseStringConstants {
     String APPLICATION_JSON_UTF_8 = "application/json;charset=UTF-8";
 
     /**
+     * 本地ip
+     */
+    String INNER_IP = "127.0.0.1";
+
+    /**
      * websocket
      */
     String WEBSOCKET = "websocket";
@@ -32,6 +37,16 @@ public interface BaseStringConstants {
          * 认证请求头key
          */
         String AUTHORIZATION_KEY = "Authorization";
+
+        /**
+         * token
+         */
+        String AUTH_TOKEN = "token";
+
+        /**
+         * socket.io 通道id,会话id
+         */
+        String BIZ_ID = "bizId";
 
         /**
          * JWT令牌前缀

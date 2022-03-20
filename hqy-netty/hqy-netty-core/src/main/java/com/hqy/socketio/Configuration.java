@@ -32,19 +32,46 @@ public class Configuration {
 
     private ExceptionListener exceptionListener = new DefaultExceptionListener();
 
-    private String context = "/socket.io";
+    /**
+     * context path
+     */
+    private String context = "/websocket";
 
     private List<Transport> transports = Arrays.asList(Transport.WEBSOCKET, Transport.POLLING);
 
-    private int bossThreads = 0; // 0 = current_processors_amount * 2
-    private int workerThreads = 0; // 0 = current_processors_amount * 2
+    /**
+     * boss线程组线程个数 源码默认为 current_processors_amount * 2
+     */
+    private int bossThreads = 4;
+
+    /**
+     * 工作线程组线程个数 0 = current_processors_amount * 2
+     */
+    private int workerThreads = Runtime.getRuntime().availableProcessors() * 4;
+
+    /**
+     * 是否使用Linux服务器支持的Epoll机制,提升性能
+     */
     private boolean useLinuxNativeEpoll;
 
     private boolean allowCustomRequests = false;
 
-    private int upgradeTimeout = 10000;
+    /**
+     * upgrade超时时间 默认10秒 改为20秒
+     * 兼容弱网络升级为websocket，否则触发超时
+     */
+    private int upgradeTimeout = 20000;
+
+    /**
+     * ping协议帧的超时见识
+     */
     private int pingTimeout = 60000;
+
+    /**
+     * 多少秒发一次ping
+     */
     private int pingInterval = 25000;
+
     private int firstDataTimeout = 5000;
 
     private int maxHttpContentLength = 64 * 1024;

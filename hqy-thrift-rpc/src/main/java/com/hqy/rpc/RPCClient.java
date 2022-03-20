@@ -215,7 +215,6 @@ public class RPCClient {
             service = getProxyService(false, null, null, serviceClass, callback);
         }
 
-
         return service;
     }
 

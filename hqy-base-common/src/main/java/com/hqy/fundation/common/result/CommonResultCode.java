@@ -24,9 +24,9 @@ public enum CommonResultCode {
 
 
     /**
-     * 异常请求
+     * 异常请求 封禁几分钟
      */
-    ILLEGAL_REQUEST(9001, "Illegal Request, Limit a few minutes."),
+    ILLEGAL_REQUEST_LIMITED(9001, "Illegal Request, Limit a few minutes."),
 
 
     /**
@@ -44,21 +44,20 @@ public enum CommonResultCode {
      */
     LIMITED_AUTHORITY(9300, "Access authority Limit."),
 
+    /**
+     * 耗时的rpc方法
+     */
+    CONSUMING_TIME_RPC(9400, "Consuming time RPC method"),
 
     /**
-     * 空对象
+     * 无效的数据
      */
-    INVALID_DATA(1003, "System internal error, invalid obj."),
+    INVALID_DATA(1003, "System internal error, invalid data, please check inputData again"),
 
     /**
      * 错误参数
      */
     ERROR_PARAM(1001, "invalid parameter, please check parameter again."),
-
-    /**
-     * 无效的服务
-     */
-    INVALID_SERVICE(1002, "invalid service"),
 
 
     /**
@@ -70,10 +69,6 @@ public enum CommonResultCode {
      * 当前用户是禁用状态
      */
     USER_DISABLED(2001, "The user disabled.")
-
-
-
-
 
     ;
 

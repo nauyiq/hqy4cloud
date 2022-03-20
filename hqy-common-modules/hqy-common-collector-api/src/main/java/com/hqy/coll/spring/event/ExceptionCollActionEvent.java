@@ -26,13 +26,18 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         this.param = param;
     }
 
-
-
     public ExceptionCollActionEvent(Object source, Throwable exception, String param, int step) {
         super(source);
         this.exception = exception;
         this.param = param;
         this.step = step;
+    }
+
+    public ExceptionCollActionEvent(Object source, Throwable exception, int step, CommonResultCode resultCode) {
+        super(source);
+        this.exception = exception;
+        this.step = step;
+        this.resultCode = resultCode;
     }
 
     public ExceptionCollActionEvent(Object source, Throwable exception, int step) {
@@ -97,7 +102,8 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((resultCode == null) ? 0 : resultCode.hashCode());
-        result = prime * result + ((exception == null) ? 0 : exception.getClass().getName().hashCode() + (exception.getMessage() == null? 0: exception.getMessage().hashCode()));
+        result = prime * result + ((exception == null) ? 0 : exception.getClass().getName().hashCode() +
+                (exception.getMessage() == null? 0: exception.getMessage().hashCode()));
         result = prime * result + step;
         result = prime * result + ((super.getSource() == null) ? 0 : super.getSource().toString().hashCode());
         return result;

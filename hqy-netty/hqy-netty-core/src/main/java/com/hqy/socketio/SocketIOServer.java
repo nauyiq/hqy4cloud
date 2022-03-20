@@ -18,6 +18,8 @@ package com.hqy.socketio;
 import com.hqy.socketio.listener.*;
 import com.hqy.socketio.namespace.Namespace;
 import com.hqy.socketio.namespace.NamespacesHub;
+import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.thread.DefaultThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -37,10 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Fully thread-safe.
- *
+ * socket.io服务端
  */
 public class SocketIOServer implements ClientListeners {
 
@@ -48,7 +51,6 @@ public class SocketIOServer implements ClientListeners {
 
     private final Configuration configCopy;
     private final Configuration configuration;
-
     private final NamespacesHub namespacesHub;
     private final SocketIONamespace mainNamespace;
 
@@ -192,7 +194,16 @@ public class SocketIOServer implements ClientListeners {
         bootstrap.option(ChannelOption.SO_BACKLOG, config.getAcceptBackLog());
     }
 
+    /**
+     * 初始化线程组
+     */
     protected void initGroups() {
+        //优化服务器环境，优先使用Linux服务器支持的Epoll机制,提升性能
+        configCopy.setUseLinuxNativeEpoll(ProjectContextInfo.isUseLinuxNativeEpoll());
+        //threadFactory
+        ThreadFactory sioBossGroupFactory = new DefaultThreadFactory("sioBossGroupFactory") ;
+        ThreadFactory sioWorkerGroupFactory = new DefaultThreadFactory("sioWorkerGroupFactory");
+
         if (configCopy.isUseLinuxNativeEpoll()) {
             bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads());
             workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads());

@@ -26,7 +26,7 @@ import java.util.UUID;
 
 /**
  * Fully thread-safe.
- *
+ * socket.io 客户端视角
  */
 public interface SocketIOClient extends ClientOperations, Store {
 
@@ -80,7 +80,14 @@ public interface SocketIOClient extends ClientOperations, Store {
      *
      * @return remote address
      */
-    SocketAddress getRemoteAddress();
+//    SocketAddress getRemoteAddress();
+
+    /**
+     * Get client remote address
+     *
+     * @return remote address
+     */
+    String  getRemoteAddress();
 
     /**
      * Check is underlying channel open

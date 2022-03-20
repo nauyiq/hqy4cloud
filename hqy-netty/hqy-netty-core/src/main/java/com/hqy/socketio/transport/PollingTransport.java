@@ -15,6 +15,7 @@
  */
 package com.hqy.socketio.transport;
 
+import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.socketio.Transport;
 import com.hqy.socketio.handler.AuthorizeHandler;
 import com.hqy.socketio.handler.ClientHead;
@@ -23,7 +24,9 @@ import com.hqy.socketio.handler.EncoderHandler;
 import com.hqy.socketio.messages.PacketsMessage;
 import com.hqy.socketio.messages.XHROptionsMessage;
 import com.hqy.socketio.messages.XHRPostMessage;
+import com.hqy.socketio.protocol.Packet;
 import com.hqy.socketio.protocol.PacketDecoder;
+import com.hqy.socketio.protocol.PacketType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -36,6 +39,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.UUID;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -169,9 +174,20 @@ public class PollingTransport extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        if (CommonSwitcher.SOCKET_POLLING_HTTP_LEAK.isOn()) {
+            Queue<Packet> pollingPacketsQueue = client.getPacketsQueue(Transport.POLLING);
+            Queue<Packet> websocketPacketsQueue = client.getPacketsQueue(Transport.WEBSOCKET);
+            if (Objects.nonNull(pollingPacketsQueue) && Objects.nonNull(websocketPacketsQueue) && pollingPacketsQueue == websocketPacketsQueue) {
+                client.send(new Packet(PacketType.NOOP), Transport.POLLING);
+                client.bindChannel(ctx.channel(), Transport.POLLING);
+                return;
+            }
+        }
+        //场景一：第一次已经完整的将数据即包括sid并closed(http)
+        //场景二：第二次是拿到上一次40可通道-即后续可发送websocket这种
         client.bindChannel(ctx.channel(), Transport.POLLING);
-
-        authorizeHandler.connect(client);
+        //场景二：即第二次polling忽略
+        authorizeHandler.connect(client, true);
     }
 
     private void sendError(ChannelHandlerContext ctx) {

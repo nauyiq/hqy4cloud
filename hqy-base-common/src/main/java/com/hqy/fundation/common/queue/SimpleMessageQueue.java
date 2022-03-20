@@ -3,6 +3,7 @@ package com.hqy.fundation.common.queue;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -69,6 +70,10 @@ public class SimpleMessageQueue<T> {
             log.error(e.getMessage(), e);
             return false;
         }
+    }
+
+    public Queue<T> getQueue() {
+        return msgQueue;
     }
 
 

@@ -8,13 +8,11 @@ import java.util.Map;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-14 17:28
+ * @date 2021-09-14 17:28
  */
 public class CommonBeanUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CommonBeanUtil.class);
-
 
     public static <T> T map2Bean(Map<String, Object> map, Class<T> tClass) {
         try {

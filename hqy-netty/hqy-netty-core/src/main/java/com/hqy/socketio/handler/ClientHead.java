@@ -16,6 +16,7 @@
 package com.hqy.socketio.handler;
 
 
+import com.hqy.fundation.common.swticher.CommonSwitcher;
 import com.hqy.socketio.Configuration;
 import com.hqy.socketio.DisconnectableHub;
 import com.hqy.socketio.HandshakeData;
@@ -36,6 +37,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.AttributeKey;
 import io.netty.util.internal.PlatformDependent;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,18 +62,24 @@ public class ClientHead {
     private final Store store;
     private final DisconnectableHub disconnectableHub;
     private final AckManager ackManager;
-    private ClientsBox clientsBox;
+    private final ClientsBox clientsBox;
     private final CancelableScheduler disconnectScheduler;
     private final Configuration configuration;
 
     private Packet lastBinaryPacket;
+    private final String address;
 
     // TODO use lazy set
     private volatile Transport currentTransport;
 
+    /**
+     * 标识是否已经走到upgrade通道完整径
+     */
+    private boolean upgraded = false;
+
     public ClientHead(UUID sessionId, AckManager ackManager, DisconnectableHub disconnectable,
                       StoreFactory storeFactory, HandshakeData handshakeData, ClientsBox clientsBox, Transport transport, CancelableScheduler disconnectScheduler,
-                      Configuration configuration) {
+                      Configuration configuration, String address) {
         this.sessionId = sessionId;
         this.ackManager = ackManager;
         this.disconnectableHub = disconnectable;
@@ -81,6 +89,8 @@ public class ClientHead {
         this.currentTransport = transport;
         this.disconnectScheduler = disconnectScheduler;
         this.configuration = configuration;
+        //新增源码字段
+        this.address = StringUtils.isBlank(address) ? "" : address;
 
         channels.put(Transport.POLLING, new TransportState());
         channels.put(Transport.WEBSOCKET, new TransportState());
@@ -108,7 +118,8 @@ public class ClientHead {
     }
 
     public String getOrigin() {
-        return handshakeData.getHttpHeaders().get(HttpHeaderNames.ORIGIN);
+//        return handshakeData.getHttpHeaders().get(HttpHeaderNames.ORIGIN);
+        return handshakeData.getOrigin();
     }
 
     public ChannelFuture send(Packet packet) {
@@ -201,8 +212,8 @@ public class ClientHead {
         return sessionId;
     }
 
-    public SocketAddress getRemoteAddress() {
-        return handshakeData.getAddress();
+    public String getRemoteAddress() {
+        return this.address;
     }
 
     public void disconnect() {
@@ -253,6 +264,44 @@ public class ClientHead {
         }
     }
 
+    /**
+     * 兼容websocket协议的直连方式
+     * @param namespace Namespace
+     */
+    public void upgrade(Namespace namespace) {
+        if (!upgraded) {
+            this.upgraded = true;
+            ClientsBoxEx.getInstance().addClient(this.getSessionId(),  handshakeData);
+            log.info("@@@ Upgraded通道ok, 即将绑定和通知业务触发: {} for: {}", handshakeData.getBizId(), sessionId);
+
+            NamespaceClient childClient = namespaceClients.get(namespace);
+            namespace.onConnect(childClient);
+
+            //场景：容恶意的非法的polling的addClient。如果进行到此“周期”来到，说明websocket成功 。
+            if (disconnectScheduler != null && CommonSwitcher.SOCKET_POLLING_HANDSHAKE_DATA_LEAK.isOn()) {
+                SchedulerKey key = new SchedulerKey(SchedulerKey.Type.POLLING_AUTH_WEBSOCKET_TIMEOUT, this.getSessionId());
+                disconnectScheduler.cancel(key);
+            }
+        }
+    }
+
+    /**
+     * 获取业务通道id
+     * @return String
+     */
+    public String getBizId() {
+        return handshakeData != null ? handshakeData.getBizId() : "";
+    }
+
+    /**
+     * 获取客户端真实ip
+     * @return String
+     */
+    public String getClientRealIp() {
+        return handshakeData !=null ? handshakeData.getRealIp() : "";
+    }
+
+
     public Transport getCurrentTransport() {
         return currentTransport;
     }
@@ -264,8 +313,10 @@ public class ClientHead {
     public void setLastBinaryPacket(Packet lastBinaryPacket) {
         this.lastBinaryPacket = lastBinaryPacket;
     }
+
     public Packet getLastBinaryPacket() {
         return lastBinaryPacket;
     }
+
 
 }

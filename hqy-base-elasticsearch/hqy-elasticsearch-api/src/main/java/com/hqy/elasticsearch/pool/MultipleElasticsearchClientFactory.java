@@ -2,7 +2,7 @@
 package com.hqy.elasticsearch.pool;
 
 import com.google.common.net.HostAndPort;
-import com.hqy.common.swticher.CommonSwitcher;
+import com.hqy.socketio.common.swticher.CommonSwitcher;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
