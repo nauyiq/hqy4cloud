@@ -22,11 +22,16 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
+ * socketio中的namespace的概念。如果希望服务端发送的信息在所有客户端都能收到，那么使用默认的namespace / 就好了。
+ * 但是如果想把发送信息的服务器作为第三方应用给不同客户端使用，就需要为每一个客户端定义一个namespace
  * Fully thread-safe.
- *
  */
 public interface SocketIONamespace extends ClientListeners {
 
+    /**
+     * 获取名称空间name
+     * @return String
+     */
     String getName();
 
     BroadcastOperations getBroadcastOperations();

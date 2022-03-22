@@ -18,8 +18,15 @@ package com.hqy.socketio.listener;
 
 import com.hqy.socketio.SocketIOClient;
 
+/**
+ * 断开事件监听器
+ */
 public interface DisconnectListener {
 
+    /**
+     * 断开事件处理逻辑
+     * @param client socket.io 客户端
+     */
     void onDisconnect(SocketIOClient client);
 
 }

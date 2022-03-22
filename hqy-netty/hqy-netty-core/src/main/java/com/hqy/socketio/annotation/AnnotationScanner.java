@@ -21,12 +21,32 @@ import com.hqy.socketio.namespace.Namespace;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+/**
+ * 注解扫描器
+ * 三个注解 @OnConnect, @OnDisconnect, @OnEvent
+ */
 public interface AnnotationScanner {
 
+    /**
+     * 获取注解扫描器
+     * @return Class<? extends Annotation>
+     */
     Class<? extends Annotation> getScanAnnotation();
 
+    /**
+     * 添加到Namespace 队列监听器
+     * @param namespace 名称空间
+     * @param object 数据
+     * @param method 反射方法
+     * @param annotation 注解
+     */
     void addListener(Namespace namespace, Object object, Method method, Annotation annotation);
 
+    /**
+     * 注解校验 需要参数里面存在SocketIOClient
+     * @param method 反射方法
+     * @param clazz class
+     */
     void validate(Method method, Class<?> clazz);
 
 }

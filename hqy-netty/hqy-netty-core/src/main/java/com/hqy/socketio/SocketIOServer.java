@@ -49,14 +49,39 @@ public class SocketIOServer implements ClientListeners {
 
     private static final Logger log = LoggerFactory.getLogger(SocketIOServer.class);
 
+    /**
+     * socket.io配置类 业务增强配置也在此源码中增加...
+     */
     private final Configuration configCopy;
+
+    /**
+     * socket.io配置类 业务增强配置也在此源码中增加...
+     */
     private final Configuration configuration;
+
+    /**
+     * 名称空间中心, 默认的为Namespace.DEFAULT_NAME
+     */
     private final NamespacesHub namespacesHub;
+
+    /**
+     * socketio中的namespace的概念。 默认的为Namespace.DEFAULT_NAME
+     */
     private final SocketIONamespace mainNamespace;
 
+    /**
+     * socket.io注册一系列的handler
+     */
     private SocketIOChannelInitializer pipelineFactory = new SocketIOChannelInitializer();
 
+    /**
+     * boss线程组
+     */
     private EventLoopGroup bossGroup;
+
+    /**
+     * 工作线程组
+     */
     private EventLoopGroup workerGroup;
 
     public SocketIOServer(Configuration configuration) {
@@ -204,13 +229,26 @@ public class SocketIOServer implements ClientListeners {
         ThreadFactory sioBossGroupFactory = new DefaultThreadFactory("sioBossGroupFactory") ;
         ThreadFactory sioWorkerGroupFactory = new DefaultThreadFactory("sioWorkerGroupFactory");
 
-        if (configCopy.isUseLinuxNativeEpoll()) {
-            bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads());
-            workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads());
+        if (configCopy.isIntensiveSocketIoService()) {
+            //如果是io密集型的socket服务 则线程数翻倍...
+            if (configCopy.isUseLinuxNativeEpoll()) {
+                bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads() * 2, sioBossGroupFactory);
+                workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads() * 2, sioWorkerGroupFactory);
+            } else {
+                bossGroup = new NioEventLoopGroup(configCopy.getBossThreads() * 2, sioBossGroupFactory);
+                workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            }
         } else {
-            bossGroup = new NioEventLoopGroup(configCopy.getBossThreads());
-            workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads());
+            if (configCopy.isUseLinuxNativeEpoll()) {
+                bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads(), sioBossGroupFactory);
+                workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            } else {
+                bossGroup = new NioEventLoopGroup(configCopy.getBossThreads(), sioBossGroupFactory);
+                workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            }
         }
+
+
     }
 
     /**
@@ -262,7 +300,6 @@ public class SocketIOServer implements ClientListeners {
         mainNamespace.addEventInterceptor(eventInterceptor);
 
     }
-
 
     @Override
     public void removeAllListeners(String eventName) {

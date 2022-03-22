@@ -29,6 +29,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 注解@OnEvent扫描器
+ */
 public class OnEventScanner implements AnnotationScanner {
 
     @Override
@@ -37,13 +40,15 @@ public class OnEventScanner implements AnnotationScanner {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void addListener(Namespace namespace, final Object object, final Method method, Annotation annot) {
         OnEvent annotation = (OnEvent) annot;
         if (annotation.value() == null || annotation.value().trim().length() == 0) {
             throw new IllegalArgumentException("OnEvent \"value\" parameter is required");
         }
+        //SocketIOClient参数下标
         final int socketIOClientIndex = paramIndex(method, SocketIOClient.class);
+        //AckRequest参数下标
         final int ackRequestIndex = paramIndex(method, AckRequest.class);
         final List<Integer> dataIndexes = dataIndexes(method);
 
@@ -77,7 +82,7 @@ public class OnEventScanner implements AnnotationScanner {
                         throw new SocketIOException(e);
                     }
                 }
-            }, classes.toArray(new Class[classes.size()]));
+            }, classes.toArray(new Class[0]));
         } else {
             Class objectType = Void.class;
             if (!dataIndexes.isEmpty()) {
@@ -122,6 +127,12 @@ public class OnEventScanner implements AnnotationScanner {
         return result;
     }
 
+    /**
+     * 获取方法参数中的下标
+     * @param method 反射方法对象
+     * @param clazz 参数类型
+     * @return 下标
+     */
     private int paramIndex(Method method, Class<?> clazz) {
         int index = 0;
         for (Class<?> type : method.getParameterTypes()) {

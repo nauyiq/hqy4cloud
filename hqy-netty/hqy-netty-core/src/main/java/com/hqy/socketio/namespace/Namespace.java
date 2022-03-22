@@ -38,17 +38,55 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class Namespace implements SocketIONamespace {
 
+    /**
+     * 默认的名称空间
+     */
     public static final String DEFAULT_NAME = "";
 
+    /**
+     * 注解扫描引擎
+     */
     private final ScannerEngine engine = new ScannerEngine();
-    private final ConcurrentMap<String, EventEntry<?>> eventListeners = PlatformDependent.newConcurrentHashMap();
-    private final Queue<ConnectListener> connectListeners = new ConcurrentLinkedQueue<ConnectListener>();
-    private final Queue<DisconnectListener> disconnectListeners = new ConcurrentLinkedQueue<DisconnectListener>();
-    private final Queue<PingListener> pingListeners = new ConcurrentLinkedQueue<PingListener>();
-    private final Queue<EventInterceptor> eventInterceptors = new ConcurrentLinkedQueue<EventInterceptor>();
 
+    /**
+     * key:事件名 value:EventEntry 存储的对应时间监听器, 监听器队列等
+     */
+    private final ConcurrentMap<String, EventEntry<?>> eventListeners = PlatformDependent.newConcurrentHashMap();
+
+    /**
+     * 连接事件监听器队列
+     */
+    private final Queue<ConnectListener> connectListeners = new ConcurrentLinkedQueue<>();
+
+    /**
+     * 断开事件监听器队列
+     */
+    private final Queue<DisconnectListener> disconnectListeners = new ConcurrentLinkedQueue<>();
+
+    /**
+     * ping事件监听器队列
+     */
+    private final Queue<PingListener> pingListeners = new ConcurrentLinkedQueue<>();
+
+    /**
+     * 事件拦截器队列
+     */
+    private final Queue<EventInterceptor> eventInterceptors = new ConcurrentLinkedQueue<>();
+
+    /**
+     * 所有的客户端连接对象
+     * key: channel的UUID, value: SocketIOClient
+     */
     private final Map<UUID, SocketIOClient> allClients = PlatformDependent.newConcurrentHashMap();
+
+    /**
+     * 不同namespace下的客户端UUID集合
+     */
     private final ConcurrentMap<String, Set<UUID>> roomClients = PlatformDependent.newConcurrentHashMap();
+
+    /**
+     *
+     */
     private final ConcurrentMap<UUID, Set<String>> clientRooms = PlatformDependent.newConcurrentHashMap();
 
     private final String name;
@@ -76,6 +114,7 @@ public class Namespace implements SocketIONamespace {
     }
 
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void addMultiTypeEventListener(String eventName, MultiTypeEventListener listener,
             Class<?>... eventClass) {
         EventEntry entry = eventListeners.get(eventName);

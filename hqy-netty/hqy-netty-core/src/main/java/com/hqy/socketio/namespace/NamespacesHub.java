@@ -26,8 +26,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 名称空间中心
+ */
 public class NamespacesHub {
 
+    /**
+     * key:名称空间
+     * value: 名称空间持有的socketIONameSpace
+     * key默认是Namespace.DEFAULT_NAME 即 ""
+     */
     private final ConcurrentMap<String, SocketIONamespace> namespaces = PlatformDependent.newConcurrentHashMap();
     private final Configuration configuration;
 

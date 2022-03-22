@@ -25,11 +25,14 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 扫描器引擎
+ */
 public class ScannerEngine {
 
     private static final Logger log = LoggerFactory.getLogger(ScannerEngine.class);
 
-    private static final List<? extends AnnotationScanner> annotations =
+    private static final List<? extends AnnotationScanner> ANNOTATIONS =
                     Arrays.asList(new OnConnectScanner(), new OnDisconnectScanner(), new OnEventScanner());
 
     private Method findSimilarMethod(Class<?> objectClazz, Method method) {
@@ -42,19 +45,29 @@ public class ScannerEngine {
         return null;
     }
 
+    /**
+     * 扫描事件监听器 并且添加到对应监听器队列中
+     * @param namespace 名称空间
+     * @param object 监听器
+     * @param clazz 监听器的class
+     * @throws IllegalArgumentException 异常抛出
+     */
     public void scan(Namespace namespace, Object object, Class<?> clazz)
             throws IllegalArgumentException {
         Method[] methods = clazz.getDeclaredMethods();
-
+        //确定一个类(B)是不是继承来自于另一个父类(A)，一个接口(A)是不是实现了另外一个接口(B)，或者两个类相同
         if (!clazz.isAssignableFrom(object.getClass())) {
+            //如果不是类或者接口 说明是注解 AnnotationScanner
             for (Method method : methods) {
-                for (AnnotationScanner annotationScanner : annotations) {
+                for (AnnotationScanner annotationScanner : ANNOTATIONS) {
                     Annotation ann = method.getAnnotation(annotationScanner.getScanAnnotation());
                     if (ann != null) {
+                        //校验注解
                         annotationScanner.validate(method, clazz);
-
+                        //遍历匹配方法
                         Method m = findSimilarMethod(object.getClass(), method);
                         if (m != null) {
+                            //添加到队列
                             annotationScanner.addListener(namespace, object, m, ann);
                         } else {
                             log.warn("Method similar to " + method.getName() + " can't be found in " + object.getClass());
@@ -64,20 +77,26 @@ public class ScannerEngine {
             }
         } else {
             for (Method method : methods) {
-                for (AnnotationScanner annotationScanner : annotations) {
+                //尝试遍历注解. 是否可以拿到注解
+                for (AnnotationScanner annotationScanner : ANNOTATIONS) {
                     Annotation ann = method.getAnnotation(annotationScanner.getScanAnnotation());
                     if (ann != null) {
+                        //校验注解
                         annotationScanner.validate(method, clazz);
+                        //讲方法设置为可以访问
                         makeAccessible(method);
+                        //添加到队列
                         annotationScanner.addListener(namespace, object, method, ann);
                     }
                 }
             }
 
             if (clazz.getSuperclass() != null) {
+                //递归
                 scan(namespace, object, clazz.getSuperclass());
             } else if (clazz.isInterface()) {
                 for (Class<?> superIfc : clazz.getInterfaces()) {
+                    //递归
                     scan(namespace, object, superIfc);
                 }
             }

@@ -54,6 +54,11 @@ public class Configuration {
      */
     private boolean useLinuxNativeEpoll;
 
+    /**
+     * 是否是IO密集型socket服务， 如果是则socket.io线程翻倍... 默认为false
+     */
+    private boolean intensiveSocketIoService = false;
+
     private boolean allowCustomRequests = false;
 
     /**
@@ -138,7 +143,7 @@ public class Configuration {
             try {
                 getClass().getClassLoader().loadClass("com.fasterxml.jackson.databind.ObjectMapper");
                 try {
-                    Class<?> jjs = getClass().getClassLoader().loadClass("com.corundumstudio.socketio.protocol.JacksonJsonSupport");
+                    Class<?> jjs = getClass().getClassLoader().loadClass("com.hqy.socketio.protocol.JacksonJsonSupport");
                     JsonSupport js = (JsonSupport) jjs.getConstructor().newInstance();
                     conf.setJsonSupport(js);
                 } catch (Exception e) {
@@ -610,5 +615,13 @@ public class Configuration {
 
     public void setRandomSession(boolean randomSession) {
         this.randomSession = randomSession;
+    }
+
+    public boolean isIntensiveSocketIoService() {
+        return intensiveSocketIoService;
+    }
+
+    public void setIntensiveSocketIoService(boolean intensiveSocketIoService) {
+        this.intensiveSocketIoService = intensiveSocketIoService;
     }
 }

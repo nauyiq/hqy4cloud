@@ -20,6 +20,10 @@ import com.hqy.socketio.SocketIOClient;
 
 public interface ConnectListener {
 
+    /**
+     * 客户端连接事件 处理逻辑
+     * @param client SocketIOClient
+     */
     void onConnect(SocketIOClient client);
 
 }

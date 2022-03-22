@@ -1,6 +1,5 @@
 package com.hqy;
 
-import com.facebook.swift.service.ThriftServer;
 import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
 import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.common.base.project.UsingIpPort;
