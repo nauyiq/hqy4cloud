@@ -8,6 +8,8 @@
     <artifactId>hqy-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <description>各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务</description>
+
     <modules>
         <module>hqy-netty</module>
         <module>hqy-util</module>

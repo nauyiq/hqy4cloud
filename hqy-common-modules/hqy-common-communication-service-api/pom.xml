@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-basic-message-service-api</artifactId>
+    <artifactId>hqy-common-communication-service-api</artifactId>
 
 
     <dependencies>
