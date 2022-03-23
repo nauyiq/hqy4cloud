@@ -1,7 +1,7 @@
 package com.hqy.coll.service.impl;
 
-import com.hqy.coll.service.ExceptionCollectionService;
-import com.hqy.fundation.common.enums.ExceptionLevel;
+import com.hqy.foundation.common.enums.ExceptionLevel;
+import com.hqy.foundation.service.ExceptionCollectionService;
 import org.springframework.stereotype.Service;
 
 /**

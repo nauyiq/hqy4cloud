@@ -47,6 +47,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * 场景： 类似一个生命周期的所存在的东西。
+ * 1、每个环节的流转，都是在特定的channel下的，所以clientHead总会在每一个的环节中都是只有一个channel。
+ * 2、clientHead 最终是会和websocket的channel 绑定在一起~
+ */
 public class ClientHead {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHead.class);
@@ -55,7 +60,7 @@ public class ClientHead {
 
     private final AtomicBoolean disconnected = new AtomicBoolean();
     private final Map<Namespace, NamespaceClient> namespaceClients = PlatformDependent.newConcurrentHashMap();
-    private final Map<Transport, TransportState> channels = new HashMap<Transport, TransportState>(2);
+    private final Map<Transport, TransportState> channels = new HashMap<>(2);
     private final HandshakeData handshakeData;
     private final UUID sessionId;
 
@@ -96,6 +101,12 @@ public class ClientHead {
         channels.put(Transport.WEBSOCKET, new TransportState());
     }
 
+    /**
+     * 生命周期轮换 socket.io协议针对每一次poling请求或者websocket upgrade请求会将this绑定到通道上
+     * 同时每一个polling在释放的时候都 将对应的channel清掉(remove)
+     * @param channel 通道
+     * @param transport 传输方式
+     */
     public void bindChannel(Channel channel, Transport transport) {
         log.debug("binding channel: {} to transport: {}", channel, transport);
 
@@ -105,7 +116,7 @@ public class ClientHead {
             clientsBox.remove(prevChannel);
         }
         clientsBox.add(channel, this);
-
+        //场景三： 该transport数据队列使用通道发送
         sendPackets(transport, channel);
     }
 
@@ -265,7 +276,7 @@ public class ClientHead {
     }
 
     /**
-     * 兼容websocket协议的直连方式
+     * websocket 协议升级
      * @param namespace Namespace
      */
     public void upgrade(Namespace namespace) {

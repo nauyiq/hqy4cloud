@@ -3,7 +3,7 @@ package com.hqy.netty.websocket.handler;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.coll.spring.event.ExceptionCollActionEvent;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.fundation.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.common.exception.PublishedException;
 import com.hqy.fundation.common.swticher.CommonSwitcher;

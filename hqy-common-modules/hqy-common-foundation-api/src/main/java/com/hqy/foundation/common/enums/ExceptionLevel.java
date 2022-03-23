@@ -1,4 +1,4 @@
-package com.hqy.fundation.common.enums;
+package com.hqy.foundation.common.enums;
 
 /**
  * @author qiyuan.hong

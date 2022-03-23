@@ -1,11 +1,11 @@
-package com.hqy.coll.service;
+package com.hqy.foundation.service;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
+import com.hqy.foundation.common.enums.ExceptionLevel;
 import com.hqy.fundation.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.common.rpc.api.RPCService;
-import com.hqy.fundation.common.enums.ExceptionLevel;
 
 /**
  * @author qiyuan.hong
@@ -30,5 +30,5 @@ public interface ExceptionCollectionService extends RPCService {
     @ThriftMethod
     void collect(@ThriftField(1) long time, @ThriftField(2)String exceptionClass, @ThriftField(3)String stackTrace,
                  @ThriftField(4)int resultCode, @ThriftField(5)String env,
-                 @ThriftField(6)String nameEn, @ThriftField(7)ExceptionLevel level, @ThriftField(8)String param);
+                 @ThriftField(6)String nameEn, @ThriftField(7) ExceptionLevel level, @ThriftField(8)String param);
 }

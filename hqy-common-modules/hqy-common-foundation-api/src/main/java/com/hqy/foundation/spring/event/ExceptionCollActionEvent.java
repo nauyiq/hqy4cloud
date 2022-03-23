@@ -1,4 +1,4 @@
-package com.hqy.coll.spring.event;
+package com.hqy.foundation.spring.event;
 
 import com.hqy.fundation.common.result.CommonResultCode;
 import org.springframework.context.ApplicationEvent;

@@ -9,22 +9,24 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-common-collector-api</artifactId>
+    <artifactId>hqy-common-foundation-api</artifactId>
+
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
+            <artifactId>hqy-util</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-foundation-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
     </dependencies>
+
+    <packaging>jar</packaging>
+
 
 
 </project>

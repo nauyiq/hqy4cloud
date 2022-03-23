@@ -63,7 +63,7 @@ public class ClientsBox {
             uuid2clients.put(sessionId, client);
             SchedulerKey key = new SchedulerKey(SchedulerKey.Type.POLLING_AUTH_WEBSOCKET_TIMEOUT, sessionId);
             disconnectScheduler.schedule(key, () -> {
-                log.warn("@@@  polling upgrade auth过期 {}, {}", sessionId, bizId);
+                log.warn("@@@ polling upgrade auth过期 {}, {}", sessionId, bizId);
                 // 监听某uuid经过auth认证，但长时间没有去websocket，产生的泄漏
                 uuid2clients.remove(sessionId);
 

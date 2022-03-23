@@ -2,7 +2,7 @@ package com.hqy.rpc.thrift;
 
 import com.facebook.swift.service.RuntimeTApplicationException;
 import com.facebook.swift.service.RuntimeTTransportException;
-import com.hqy.coll.spring.event.ExceptionCollActionEvent;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.fundation.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.fundation.common.base.lang.exception.RpcException;
 import com.hqy.fundation.common.base.project.UsingIpPort;

@@ -116,7 +116,6 @@ public class SocketIOServer implements ClientListeners {
 
     /**
      * Get all namespaces
-     *
      * @return namespaces collection
      */
     public Collection<SocketIONamespace> getAllNamespaces() {
@@ -125,32 +124,32 @@ public class SocketIOServer implements ClientListeners {
 
     public BroadcastOperations getBroadcastOperations() {
         Collection<SocketIONamespace> namespaces = namespacesHub.getAllNamespaces();
-        List<BroadcastOperations> list = new ArrayList<BroadcastOperations>();
-        BroadcastOperations broadcast = null;
+        List<BroadcastOperations> list = new ArrayList<>();
+        BroadcastOperations broadcast;
         if( namespaces != null && namespaces.size() > 0 ) {
             for(SocketIONamespace n : namespaces ) {
                 broadcast = n.getBroadcastOperations();
                 list.add( broadcast );
             }
         }
-        return new MultiRoomBroadcastOperations( list );
+        return new MultiRoomBroadcastOperations(list);
     }
 
     /**
      * Get broadcast operations for clients within
      * room by <code>room</code> name
-     *
      * @param room - name of room
      * @return broadcast operations
      */
     public BroadcastOperations getRoomOperations(String room) {
+        //获取所有的名称空间 默认只有一个
         Collection<SocketIONamespace> namespaces = namespacesHub.getAllNamespaces();
-        List<BroadcastOperations> list = new ArrayList<BroadcastOperations>();
-        BroadcastOperations broadcast = null;
-        if( namespaces != null && namespaces.size() > 0 ) {
+        List<BroadcastOperations> list = new ArrayList<>();
+        BroadcastOperations broadcast;
+        if(namespaces != null && namespaces.size() > 0 ) {
             for( SocketIONamespace n : namespaces ) {
                 broadcast = n.getRoomOperations( room );
-                list.add( broadcast );
+                list.add(broadcast);
             }
         }
         return new MultiRoomBroadcastOperations( list );
@@ -190,14 +189,11 @@ public class SocketIOServer implements ClientListeners {
             addr = new InetSocketAddress(configCopy.getHostname(), configCopy.getPort());
         }
 
-        return b.bind(addr).addListener(new FutureListener<Void>() {
-            @Override
-            public void operationComplete(Future<Void> future) throws Exception {
-                if (future.isSuccess()) {
-                    log.info("SocketIO server started at port: {}", configCopy.getPort());
-                } else {
-                    log.error("SocketIO server start failed at port: {}!", configCopy.getPort());
-                }
+        return b.bind(addr).addListener((FutureListener<Void>) future -> {
+            if (future.isSuccess()) {
+                log.info("SocketIO server started at port: {}", configCopy.getPort());
+            } else {
+                log.error("SocketIO server start failed at port: {}!", configCopy.getPort());
             }
         });
     }
