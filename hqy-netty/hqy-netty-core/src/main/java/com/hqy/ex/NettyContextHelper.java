@@ -1,8 +1,7 @@
 package com.hqy.ex;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import org.springframework.util.StringUtils;
 

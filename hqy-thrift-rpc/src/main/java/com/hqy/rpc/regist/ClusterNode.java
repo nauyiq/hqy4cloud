@@ -1,15 +1,13 @@
 package com.hqy.rpc.regist;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.base.common.base.lang.ActuatorNodeEnum;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 /**

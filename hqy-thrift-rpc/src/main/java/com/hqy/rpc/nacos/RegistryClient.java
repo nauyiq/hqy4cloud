@@ -2,7 +2,7 @@ package com.hqy.rpc.nacos;
 
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 
 import java.util.List;
 

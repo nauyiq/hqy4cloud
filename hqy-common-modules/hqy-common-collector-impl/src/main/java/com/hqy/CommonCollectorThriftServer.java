@@ -2,7 +2,7 @@ package com.hqy;
 
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.foundation.service.ExceptionCollectionService;
-import com.hqy.fundation.common.rpc.api.RPCService;
+import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.rpc.api.AbstractThriftServer;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.stereotype.Component;

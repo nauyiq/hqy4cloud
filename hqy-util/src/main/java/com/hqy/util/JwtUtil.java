@@ -4,7 +4,7 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.DeserializationFeature;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;

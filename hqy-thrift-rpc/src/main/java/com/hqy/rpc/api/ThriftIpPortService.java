@@ -1,6 +1,6 @@
 package com.hqy.rpc.api;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 
 /**
  * @author qiyuan.hong

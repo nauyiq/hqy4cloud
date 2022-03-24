@@ -15,11 +15,10 @@
  */
 package com.hqy.socketio.handler;
 
-import com.hqy.fundation.common.base.lang.BaseMathConstants;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.base.lang.BaseMathConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.Configuration;
 import com.hqy.socketio.HandshakeData;
-import com.hqy.socketio.SocketIOClient;
 import com.hqy.socketio.namespace.Namespace;
 import com.hqy.socketio.namespace.NamespacesHub;
 import com.hqy.socketio.scheduler.CancelableScheduler;

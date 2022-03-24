@@ -1,8 +1,8 @@
 package com.hqy.gateway.filter;
 
-import com.hqy.fundation.common.bind.MessageResponse;
-import com.hqy.fundation.common.result.CommonResultCode;
-import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
+import com.hqy.base.common.bind.MessageResponse;
+import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.fundation.limit.LimitResult;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.gateway.util.ResponseUtil;

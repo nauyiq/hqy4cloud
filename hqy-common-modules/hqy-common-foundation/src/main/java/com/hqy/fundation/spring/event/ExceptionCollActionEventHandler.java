@@ -1,7 +1,7 @@
 package com.hqy.fundation.spring.event;
 
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.foundation.common.enums.ExceptionLevel;
 import com.hqy.util.JsonUtil;
 import org.slf4j.Logger;

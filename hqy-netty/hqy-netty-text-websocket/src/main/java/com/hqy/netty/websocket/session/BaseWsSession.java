@@ -1,6 +1,6 @@
 package com.hqy.netty.websocket.session;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.netty.http.FullHttpRequestProcessor;
 import com.hqy.netty.websocket.base.HandshakeData;
 import com.hqy.netty.websocket.base.enums.WsMessageType;

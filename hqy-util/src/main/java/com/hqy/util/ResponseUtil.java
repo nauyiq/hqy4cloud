@@ -1,7 +1,7 @@
 package com.hqy.util;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.bind.DataResponse;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.bind.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;

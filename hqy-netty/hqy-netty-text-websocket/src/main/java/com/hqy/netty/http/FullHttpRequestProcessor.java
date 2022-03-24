@@ -1,7 +1,7 @@
 package com.hqy.netty.http;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
 import io.netty.handler.codec.http.FullHttpRequest;

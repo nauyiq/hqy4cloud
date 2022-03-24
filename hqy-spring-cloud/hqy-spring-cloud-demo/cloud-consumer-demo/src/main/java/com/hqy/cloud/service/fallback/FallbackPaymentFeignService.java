@@ -1,7 +1,7 @@
 package com.hqy.cloud.service.fallback;
 
 import com.hqy.cloud.service.PaymentFeignService;
-import com.hqy.fundation.common.bind.DataResponse;
+import com.hqy.base.common.bind.DataResponse;
 import org.springframework.stereotype.Component;
 
 /**

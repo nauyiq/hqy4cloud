@@ -1,6 +1,6 @@
 package com.hqy.cloud.controller;
 
-import com.hqy.fundation.common.bind.MessageResponse;
+import com.hqy.base.common.bind.MessageResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;

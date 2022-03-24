@@ -1,6 +1,6 @@
 package com.hqy.fundation.cache.redis;
 
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 
 /**
  * 根据节点快关选用那种redis客户端

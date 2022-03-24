@@ -1,7 +1,7 @@
 package com.hqy.gateway.util;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.bind.MessageResponse;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

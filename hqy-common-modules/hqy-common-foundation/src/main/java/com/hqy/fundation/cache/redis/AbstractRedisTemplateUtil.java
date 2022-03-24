@@ -33,7 +33,7 @@ public abstract class AbstractRedisTemplateUtil {
     /**
      * StringRedisTemplate
      */
-    private static final StringRedisTemplate stringRedisTemplate =
+    private static final StringRedisTemplate STRING_REDIS_TEMPLATE =
             SpringContextHolder.getBean(StringRedisTemplate.class);
 
     /**
@@ -42,6 +42,20 @@ public abstract class AbstractRedisTemplateUtil {
     private static final long DEFAULT_CACHE_SECONDS = 60 * 60 * 24;
 
 
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public StringRedisTemplate getStringRedisTemplate() {
+        return STRING_REDIS_TEMPLATE;
+    }
+
+    /**
+     * 选择对应操作的db;
+     * @param db 哪个db
+     */
+    @SuppressWarnings("rawtypes")
+    public abstract AbstractRedisTemplateUtil selectDb(int db, boolean stringTmp);
 
     /**
      * 删除RedisTemplate中配置的db的所有key
@@ -128,7 +142,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public Set<String> keys(String pattern) {
         try {
-            return stringRedisTemplate.keys(pattern);
+            return STRING_REDIS_TEMPLATE.keys(pattern);
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return null;
@@ -143,9 +157,14 @@ public abstract class AbstractRedisTemplateUtil {
      * @param key 键
      * @return 值
      */
-    public Object get(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
         try {
-            return key == null ? null : redisTemplate.opsForValue().get(key);
+            Object o = redisTemplate.opsForValue().get(key);
+            if (o != null) {
+                return (T) o;
+            }
+            return null;
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return null;
@@ -160,7 +179,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public String getString(String key) {
         try {
-            return key == null ? null : stringRedisTemplate.opsForValue().get(key);
+            return key == null ? null : STRING_REDIS_TEMPLATE.opsForValue().get(key);
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return null;
@@ -224,7 +243,7 @@ public abstract class AbstractRedisTemplateUtil {
     public void set(String key, String value, Long second) {
         try {
             if (second > 0) {
-                stringRedisTemplate.opsForValue().set(key, value, second, TimeUnit.SECONDS);
+                STRING_REDIS_TEMPLATE.opsForValue().set(key, value, second, TimeUnit.SECONDS);
             } else {
                 set(key, value);
             }
@@ -261,7 +280,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public Boolean setEx(String key, String value, Long second) {
         try {
-            return stringRedisTemplate.opsForValue().setIfAbsent(key, value, second, TimeUnit.SECONDS);
+            return STRING_REDIS_TEMPLATE.opsForValue().setIfAbsent(key, value, second, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return false;
@@ -467,7 +486,7 @@ public abstract class AbstractRedisTemplateUtil {
 
     public Set<String> strSMembers(String key) {
         try {
-            return stringRedisTemplate.opsForSet().members(key);
+            return STRING_REDIS_TEMPLATE.opsForSet().members(key);
         } catch (Exception e) {
             log.error("操作失败: ", e);
             return null;
@@ -506,7 +525,7 @@ public abstract class AbstractRedisTemplateUtil {
 
     public void strSAdd(String key, String... values) {
         try {
-            stringRedisTemplate.opsForSet().add(key, values);
+            STRING_REDIS_TEMPLATE.opsForSet().add(key, values);
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
@@ -515,7 +534,7 @@ public abstract class AbstractRedisTemplateUtil {
 
     public void strSAdd(String key, long time, String... values) {
         try {
-            stringRedisTemplate.opsForSet().add(key, values);
+            STRING_REDIS_TEMPLATE.opsForSet().add(key, values);
             if (time > 0) {
                 expire(key, time);
             }
@@ -577,7 +596,7 @@ public abstract class AbstractRedisTemplateUtil {
 
     public void sMove(String key, String... values) {
         try {
-            stringRedisTemplate.opsForSet().remove(key, values);
+            STRING_REDIS_TEMPLATE.opsForSet().remove(key, values);
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }

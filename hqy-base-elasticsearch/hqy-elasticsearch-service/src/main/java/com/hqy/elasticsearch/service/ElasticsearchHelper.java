@@ -1,6 +1,6 @@
 package com.hqy.elasticsearch.service;
 
-import com.hqy.fundation.common.result.PageResult;
+import com.hqy.base.common.result.PageResult;
 import com.hqy.util.proxy.CommonBeanUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;

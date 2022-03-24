@@ -1,12 +1,10 @@
 package com.hqy.rpc.route;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

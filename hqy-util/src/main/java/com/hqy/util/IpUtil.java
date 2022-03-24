@@ -1,7 +1,7 @@
 package com.hqy.util;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.enums.CountryEnum;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.enums.CountryEnum;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;

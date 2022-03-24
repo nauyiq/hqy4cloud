@@ -1,8 +1,8 @@
 package com.hqy.account.service;
 
 import com.facebook.swift.service.ThriftService;
-import com.hqy.fundation.common.base.project.MicroServiceConstants;
-import com.hqy.fundation.common.rpc.api.RPCService;
+import com.hqy.base.common.base.project.MicroServiceConstants;
+import com.hqy.base.common.rpc.api.RPCService;
 
 /**
  * @author qiyuan.hong

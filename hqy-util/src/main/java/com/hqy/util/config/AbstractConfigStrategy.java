@@ -1,6 +1,6 @@
 package com.hqy.util.config;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

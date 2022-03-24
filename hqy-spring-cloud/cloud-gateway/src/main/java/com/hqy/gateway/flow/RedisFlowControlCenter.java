@@ -1,7 +1,7 @@
 package com.hqy.gateway.flow;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 

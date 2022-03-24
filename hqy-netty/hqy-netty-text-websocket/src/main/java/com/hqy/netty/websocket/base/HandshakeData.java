@@ -1,6 +1,6 @@
 package com.hqy.netty.websocket.base;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 
 import java.util.Map;
 import java.util.Objects;

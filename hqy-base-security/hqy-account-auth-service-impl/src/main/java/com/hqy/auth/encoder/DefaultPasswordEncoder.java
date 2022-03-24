@@ -1,6 +1,6 @@
 package com.hqy.auth.encoder;
 
-import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
+import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.util.Md5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

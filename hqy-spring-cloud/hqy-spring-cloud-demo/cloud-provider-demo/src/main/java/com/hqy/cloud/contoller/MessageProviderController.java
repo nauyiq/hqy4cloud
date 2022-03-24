@@ -1,7 +1,7 @@
 package com.hqy.cloud.contoller;
 
 import com.hqy.cloud.service.MessageProviderService;
-import com.hqy.fundation.common.bind.MessageResponse;
+import com.hqy.base.common.bind.MessageResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 

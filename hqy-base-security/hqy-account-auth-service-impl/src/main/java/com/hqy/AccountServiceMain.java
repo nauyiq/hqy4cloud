@@ -1,6 +1,6 @@
 package com.hqy;
 
-import com.hqy.fundation.common.base.project.MicroServiceConstants;
+import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.EnableOrderContext;
 import com.hqy.util.spring.ProjectContextInfo;

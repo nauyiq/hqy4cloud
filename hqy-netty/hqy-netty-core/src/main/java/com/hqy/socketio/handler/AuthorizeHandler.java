@@ -16,7 +16,7 @@
 package com.hqy.socketio.handler;
 
 import com.hqy.ex.NettyContextHelper;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.*;
 import com.hqy.socketio.ack.AckManager;
 import com.hqy.socketio.messages.HttpErrorMessage;

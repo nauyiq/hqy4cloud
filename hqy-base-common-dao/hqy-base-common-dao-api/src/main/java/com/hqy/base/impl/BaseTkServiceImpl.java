@@ -3,7 +3,7 @@ package com.hqy.base.impl;
 import com.hqy.base.BaseDao;
 import com.hqy.base.BaseEntity;
 import com.hqy.base.BaseTkService;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
 
 import java.util.Date;

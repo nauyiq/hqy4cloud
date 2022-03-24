@@ -1,6 +1,6 @@
 package com.hqy.foundation.spring.event;
 
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.result.CommonResultCode;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Date;

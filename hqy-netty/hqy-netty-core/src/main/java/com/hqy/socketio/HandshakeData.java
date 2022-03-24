@@ -15,7 +15,7 @@
  */
 package com.hqy.socketio;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.commons.collections4.CollectionUtils;

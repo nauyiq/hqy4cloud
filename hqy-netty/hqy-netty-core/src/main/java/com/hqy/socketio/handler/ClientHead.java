@@ -16,7 +16,7 @@
 package com.hqy.socketio.handler;
 
 
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.Configuration;
 import com.hqy.socketio.DisconnectableHub;
 import com.hqy.socketio.HandshakeData;
@@ -34,14 +34,12 @@ import com.hqy.socketio.transport.NamespaceClient;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.AttributeKey;
 import io.netty.util.internal.PlatformDependent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketAddress;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;

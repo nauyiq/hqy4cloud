@@ -3,7 +3,7 @@ package com.hqy.auth.server;
 import com.hqy.account.service.AccountService;
 import com.hqy.auth.dto.SecurityUserDTO;
 import com.hqy.auth.dto.UserInfoDTO;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.result.CommonResultCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

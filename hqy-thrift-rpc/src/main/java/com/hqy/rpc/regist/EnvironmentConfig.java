@@ -1,6 +1,6 @@
 package com.hqy.rpc.regist;
 
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

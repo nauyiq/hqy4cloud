@@ -1,7 +1,7 @@
 package com.hqy.gateway.filter;
 
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;

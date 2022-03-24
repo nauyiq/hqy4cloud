@@ -1,13 +1,10 @@
 package com.hqy;
 
-import com.hqy.fundation.common.rpc.api.RPCService;
+import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.rpc.api.AbstractThriftServer;
-import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

@@ -1,7 +1,7 @@
 package com.hqy.cloud.service;
 
 import com.hqy.cloud.service.fallback.FallbackPaymentFeignService;
-import com.hqy.fundation.common.bind.DataResponse;
+import com.hqy.base.common.bind.DataResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;

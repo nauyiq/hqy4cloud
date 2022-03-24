@@ -8,7 +8,7 @@ import com.hqy.coll.service.RPCMinuteFlowRecordService;
 import com.hqy.coll.service.ThrottledIpBlockService;
 import com.hqy.coll.struct.RPCMinuteFlowRecordStruct;
 import com.hqy.coll.struct.ThrottledIpBlockStruct;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;

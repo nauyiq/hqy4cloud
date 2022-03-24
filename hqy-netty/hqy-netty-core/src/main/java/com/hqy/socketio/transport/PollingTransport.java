@@ -15,7 +15,7 @@
  */
 package com.hqy.socketio.transport;
 
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.Transport;
 import com.hqy.socketio.handler.AuthorizeHandler;
 import com.hqy.socketio.handler.ClientHead;

@@ -2,9 +2,9 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.bind.MessageResponse;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.bind.MessageResponse;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.gateway.server.AuthorizationManager;
 import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.spring.ProjectContextInfo;

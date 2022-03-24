@@ -2,8 +2,8 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
-import com.hqy.fundation.common.base.project.MicroServiceManager;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.MicroServiceManager;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.JsonUtil;

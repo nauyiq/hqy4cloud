@@ -2,7 +2,7 @@ package com.hqy.gateway.flow;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.fundation.cache.redis.RedisUtil;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

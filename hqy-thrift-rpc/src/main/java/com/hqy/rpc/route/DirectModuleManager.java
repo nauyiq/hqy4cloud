@@ -1,6 +1,6 @@
 package com.hqy.rpc.route;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 
 /**
  * 直连模块管理 判断当前服务是否是直连服务等。

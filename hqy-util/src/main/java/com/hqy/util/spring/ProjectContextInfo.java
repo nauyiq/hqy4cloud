@@ -1,10 +1,10 @@
 package com.hqy.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
-import com.hqy.fundation.common.base.lang.BaseMathConstants;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.lang.ActuatorNodeEnum;
+import com.hqy.base.common.base.lang.BaseMathConstants;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +67,9 @@ public class ProjectContextInfo implements Serializable {
      * 全局上下文属性定义
      */
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
+
+
+    private static Map<Class<?>, Object> beansMap = new ConcurrentHashMap<>();
 
 
     /**
@@ -186,5 +189,27 @@ public class ProjectContextInfo implements Serializable {
 
     public void setProperties(String key, Object data) {
         this.attributes.put(key, data);
+    }
+
+
+    public static Map<Class<?>, Object> getBeansMap(){
+        return beansMap;
+    }
+
+    @JsonIgnore
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(Class<T> clazz) {
+        if(beansMap.containsKey(clazz)) {
+            return (T) beansMap.get(clazz);
+        }
+        return null;
+    }
+
+    public static void setBean(Object bean) {
+        setBean(bean.getClass(), bean);
+    }
+
+    public static void setBean(Class<?> clazz ,Object bean) {
+        beansMap.put(clazz, bean);
     }
 }

@@ -1,8 +1,8 @@
 package com.hqy;
 
-import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
-import com.hqy.fundation.common.base.project.MicroServiceConstants;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.lang.ActuatorNodeEnum;
+import com.hqy.base.common.base.project.MicroServiceConstants;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.nacos.AbstractNacosClientWrapper;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.util.AssertUtil;
@@ -29,13 +29,13 @@ public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
         UsingIpPort usingIpPort = gatewayThriftServer.getUsingIpPort();
         AssertUtil.notNull(usingIpPort, "System error, Bind rpc port fail. please check thrift service");
 
+
         //定制化节点信息
         ClusterNode node = new ClusterNode();
         node.setNameEn(MicroServiceConstants.GATEWAY);
         node.setName("全局网关服务");
         node.setUip(usingIpPort);
         node.setActuatorNode(ActuatorNodeEnum.CONSUMER);
-
         return node;
     }
 
