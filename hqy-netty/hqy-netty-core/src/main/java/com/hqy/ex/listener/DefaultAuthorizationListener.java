@@ -22,7 +22,7 @@ public class DefaultAuthorizationListener implements AuthorizationListenerAdapto
     public boolean isAuthorized(HandshakeData data) {
         //安全验证策略 jwt token机制
         String accessToken = data.getAccessToken();
-        if (StringUtils.isBlank(accessToken) || JwtUtil.validate(accessToken)) {
+        if (StringUtils.isBlank(accessToken) || !JwtUtil.validate(accessToken)) {
             //安全校验策略不通过
             log.warn("@@@ Handshake isAuthorized failure, not found token or token invalid.");
             return false;

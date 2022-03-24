@@ -43,7 +43,6 @@ public class ClusterNode extends Node implements Serializable {
      */
     private ActuatorNodeEnum actuatorNode;
 
-
     /**
      * 节点创建时间
      */

@@ -31,7 +31,7 @@ public class UsingIpPort implements Serializable {
     private int port;
 
     /**
-     * rpc端口 -1表示不是服务的提供者
+     * rpc端口 -1表示没有注册rpc服务
      */
     private int rpcPort = -1;
 
@@ -44,6 +44,11 @@ public class UsingIpPort implements Serializable {
      * 服务进程编号
      */
     private int index;
+
+    /**
+     * socket端口 -1表示没有注册socket服务
+     */
+    private int socketPort = -1;
 
 
     public UsingIpPort(String ip, int port, int rpcPort, int index) {
@@ -85,7 +90,6 @@ public class UsingIpPort implements Serializable {
         } else if (!ip.equals(other.ip)) {
             return false;
         }
-
         return port == other.port;
     }
 }

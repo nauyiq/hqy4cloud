@@ -1,6 +1,9 @@
 package com.hqy.ex;
 
+import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.project.MicroServiceConstants;
+import com.hqy.util.JwtUtil;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import org.springframework.util.StringUtils;
@@ -83,6 +86,12 @@ public class NettyContextHelper {
         }
 
         return "";
+    }
+
+    public static void main(String[] args) {
+        SocketProjectContext context = new SocketProjectContext(new SocketProjectContext.App(MicroServiceConstants.MESSAGE_NETTY_SERVICE), "TEST");
+        String sign = JwtUtil.sign(context, BaseMathConstants.ONE_MINUTES_4MILLISECONDS * 60);
+        System.out.println(sign);
     }
 
 }
