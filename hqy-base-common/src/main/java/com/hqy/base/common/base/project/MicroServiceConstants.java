@@ -30,4 +30,20 @@ public class MicroServiceConstants {
     public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
 
 
+    /**
+     * socket.io contextPath
+     */
+    public static class SocketContextPath {
+
+        /**
+         * 消息服务的contextPath
+         */
+        public static final String MESSAGE_SERVICE = "/message/websocket";
+
+
+
+
+    }
+
+
 }

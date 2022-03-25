@@ -17,11 +17,19 @@ public class MicroServiceManager {
      */
     private static final Map<String, ActuatorNodeEnum> PROJECT_NAME_MAP = new HashMap<>();
 
+    /**
+     * key:socket.io项目的contextPath
+     * value: 项目的注册名
+     */
+    private static final Map<String, String> SOCKET_CONTEXT_PATH_MAP = new HashMap<>();
+
     static {
         PROJECT_NAME_MAP.put(MicroServiceConstants.GATEWAY, ActuatorNodeEnum.CONSUMER);
         PROJECT_NAME_MAP.put(MicroServiceConstants.COMMON_COLLECTOR, ActuatorNodeEnum.PROVIDER);
         PROJECT_NAME_MAP.put(MicroServiceConstants.ACCOUNT_SERVICE, ActuatorNodeEnum.PROVIDER);
         PROJECT_NAME_MAP.put(MicroServiceConstants.MESSAGE_NETTY_SERVICE, ActuatorNodeEnum.PROVIDER);
+
+        SOCKET_CONTEXT_PATH_MAP.put(MicroServiceConstants.SocketContextPath.MESSAGE_SERVICE, MicroServiceConstants.MESSAGE_NETTY_SERVICE);
     }
 
 
@@ -38,6 +46,15 @@ public class MicroServiceManager {
      */
     public static ActuatorNodeEnum getNodeType(String nameEn) {
         return PROJECT_NAME_MAP.get(nameEn);
+    }
+
+    /**
+     * 根据socket.io的contextPath获取对应的项目名
+     * @param contextPath socket.io contextPath
+     * @return 项目名
+     */
+    public static String getSocketModule(String contextPath) {
+        return SOCKET_CONTEXT_PATH_MAP.get(contextPath);
     }
 
     /**

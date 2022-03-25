@@ -1,14 +1,13 @@
 package com.hqy.rpc.regist;
 
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.util.MathUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
 
 /**
  * 系统初始化的时候 记录下当前环境信息<br>
@@ -50,30 +49,29 @@ public class EnvironmentConfig implements InitializingBean {
      */
     public static boolean FLAG_IO_INTENSIVE_RPC_SERVICE = false;
 
-    @Value("${env:dev}")
+    @Value("${spring.profiles.active}")
     private String env;
 
-    private static final EnvironmentConfig noneSpringBeanInstance = new EnvironmentConfig();
+    private static final EnvironmentConfig NONE_SPRING_BEAN_INSTANCE = new EnvironmentConfig();
 
     private static int cpp = 0;
 
     public static EnvironmentConfig getInstance() {
         try {
             EnvironmentConfig environmentConfig = SpringContextHolder.getBean(EnvironmentConfig.class);
-            int r = new Random().nextInt();
-            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn() && r % 8 == 0) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn() && MathUtil.mathIf(1000, 8)) {
                 log.debug("getInstance >> env = {}", environmentConfig.env);
             }
             return environmentConfig;
         } catch (Exception e) {
             if (cpp % 100 == 0) {
                 log.warn("### 当前节点上下文没有配置EnvironmentConfig 作为Spring Bean:{}", e.getMessage());
-                if (StringUtils.isBlank(noneSpringBeanInstance.env)) {
-                    noneSpringBeanInstance.env = ENV_DEV;
+                if (StringUtils.isBlank(NONE_SPRING_BEAN_INSTANCE.env)) {
+                    NONE_SPRING_BEAN_INSTANCE.env = ENV_DEV;
                 }
             }
             cpp++;
-            return noneSpringBeanInstance;
+            return NONE_SPRING_BEAN_INSTANCE;
         }
     }
 
