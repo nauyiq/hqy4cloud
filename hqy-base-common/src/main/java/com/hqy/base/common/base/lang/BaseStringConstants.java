@@ -50,9 +50,9 @@ public interface BaseStringConstants {
         String AUTHORIZATION_KEY = "Authorization";
 
         /**
-         * token
+         * wtoken:websocket握手安全校验凭证
          */
-        String AUTH_TOKEN = "token";
+        String SOCKET_AUTH_TOKEN = "wtoken";
 
         /**
          * socket.io 通道id,会话id

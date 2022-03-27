@@ -36,7 +36,6 @@ spring:
       discovery:
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
-#RPC注册直连服务配置key
   security:
     oauth2:
       resourceserver:

@@ -92,8 +92,8 @@ public class HandshakeData implements Serializable {
         this.xdomain = xdomain;
 
         //解析参数里的token
-        if (urlParams.containsKey(BaseStringConstants.Auth.AUTH_TOKEN)) {
-            this.token = urlParams.get(BaseStringConstants.Auth.AUTH_TOKEN).get(0);
+        if (urlParams.containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+            this.token = urlParams.get(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN).get(0);
         } else {
             log.warn("@@@ Socket.io handshakeData token is empty.");
         }
