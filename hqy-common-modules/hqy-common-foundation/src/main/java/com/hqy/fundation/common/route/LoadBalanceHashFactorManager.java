@@ -17,11 +17,11 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @date 2022/3/24 15:52
  */
-public class SocketHashFactorManager {
+public class LoadBalanceHashFactorManager {
 
-    private static final Logger log = LoggerFactory.getLogger(SocketHashFactorManager.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadBalanceHashFactorManager.class);
 
-    private SocketHashFactorManager() {}
+    private LoadBalanceHashFactorManager() {}
 
     private static final int DB = 1;
 
@@ -33,6 +33,7 @@ public class SocketHashFactorManager {
         return SocketClusterStatus.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)
                 .concat(module).concat(BaseStringConstants.Symbol.COLON).concat(hash + "");
     }
+
 
     /**
      * 根据模块和hash值获取哈希因子
@@ -55,7 +56,7 @@ public class SocketHashFactorManager {
 
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
-        RedisUtil.instance().selectDb(DB, true).set(key, hashFactor, Long.MAX_VALUE);
+        RedisUtil.instance().selectDb(DB, true).set(key, hashFactor, -1L);
         HASH_CACHE.put(key, hashFactor);
     }
 

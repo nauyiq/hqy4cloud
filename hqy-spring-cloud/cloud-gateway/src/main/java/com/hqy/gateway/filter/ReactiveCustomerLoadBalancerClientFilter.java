@@ -1,16 +1,29 @@
 package com.hqy.gateway.filter;
 
+import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.gateway.route.GatewayLoadBalanceStrategyContext;
+import com.hqy.gateway.route.LoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.reactive.Response;
 import org.springframework.cloud.gateway.config.LoadBalancerProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
+import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
+import org.springframework.cloud.gateway.support.NotFoundException;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.net.URI;
 
+import static org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools.reconstructURI;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 
@@ -21,35 +34,92 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
  * @version 1.0
  * @date 2022/3/25 16:52
  */
-public class ReactiveCustomerLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilter {
-
-    private static final String STRATEGY = "hash";
+@Component
+public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, Ordered {
 
     private static final Logger log = LoggerFactory.getLogger(ReactiveCustomerLoadBalancerClientFilter.class);
 
+    @Resource
+    private LoadBalancerProperties properties;
 
-    public ReactiveCustomerLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties properties) {
-        super(clientFactory, properties);
+    @Resource
+    private DiscoveryClient discoveryClient;
+
+    public ReactiveCustomerLoadBalancerClientFilter(LoadBalancerProperties properties, DiscoveryClient discoveryClient) {
+        this.properties = properties;
+        this.discoveryClient = discoveryClient;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        URI url = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
-        String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
-        if (url == null) {
+        if (CommonSwitcher.ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE.isOff()) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.info("@@@ 开关-是否采用自定义的网关负载均衡策略 -> isOff");
+            }
             //直接执行下一条责任链
             return chain.filter(exchange);
         }
-        if ("lb".equals(url.getScheme()) || "lb".equals(schemePrefix)) {
-            //走父类的负载逻辑 即默认的lb负载逻辑
-            return super.filter(exchange, chain);
+
+        URI url = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
+        String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
+        if (url == null || "lb".equals(url.getScheme()) || "lb".equals(schemePrefix)) {
+            //直接执行下一条责任链
+            return chain.filter(exchange);
         }
 
-        //暂时写死走hash策略
+        //走自己的负载均衡策略
+        ServerWebExchangeUtils.addOriginalRequestUrl(exchange, url);
+
+        if (log.isTraceEnabled()) {
+            log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName()
+                    + " url before: " + url);
+        }
+
+        return choose(exchange, url).doOnNext(response -> {
+            if (!response.hasServer()) {
+                throw NotFoundException.create(properties.isUse404(),
+                        "Unable to find instance for " + url.getHost());
+            }
+            ServiceInstance retrievedInstance = response.getServer();
+            URI uri = exchange.getRequest().getURI();
+            // if the `lb:<scheme>` mechanism was used, use `<scheme>` as the default,
+            // if the loadbalancer doesn't provide one.
+            String overrideScheme = retrievedInstance.isSecure() ? "https" : "http";
+            if (schemePrefix != null) {
+                overrideScheme = url.getScheme();
+            }
+
+            DelegatingServiceInstance serviceInstance = new DelegatingServiceInstance(
+                    retrievedInstance, overrideScheme);
+
+            URI requestUrl = reconstructURI(serviceInstance, uri);
+
+            if (log.isTraceEnabled()) {
+                log.trace("LoadBalancerClientFilter url chosen: " + requestUrl);
+            }
+            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, requestUrl);
+
+        }).then(chain.filter(exchange));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange, URI uri) {
+        GatewayLoadBalanceStrategyContext.LoadBalance loadBalance =
+                GatewayLoadBalanceStrategyContext.LoadBalance.getLoadBalance(uri.getScheme());
+        //选择负载均衡粗略.
+        LoadBalancer<ServiceInstance> loadBalancer = GatewayLoadBalanceStrategyContext.
+                getLoadBalanceStrategy(loadBalance);
+        if (loadBalancer == null) {
+            throw new NotFoundException("No loadbalancer available for " + uri.getHost());
+        }
+        return loadBalancer.choose(exchange, discoveryClient);
+    }
 
 
-        return super.filter(exchange, chain);
-
-
+    @Override
+    public int getOrder() {
+        //10149 刚好在原生过滤器ReactiveLoadBalancerClientFilter前面
+        return 10149;
     }
 }

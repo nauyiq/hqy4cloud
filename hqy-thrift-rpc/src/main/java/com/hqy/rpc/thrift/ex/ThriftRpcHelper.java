@@ -1,5 +1,6 @@
 package com.hqy.rpc.thrift.ex;
 
+import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.base.project.UsingIpPort;
@@ -8,6 +9,7 @@ import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +84,16 @@ public class ThriftRpcHelper {
             throw new IllegalArgumentException("registry nacos instance has error, metadata is null -> ip = " + ip + "nameEn = " + instance.getServiceName());
         }
         return clusterNode;
+    }
+
+    public static NacosServiceInstance copy(int socketPort, ServiceInstance serviceInstance) {
+        NacosServiceInstance nacosServiceInstance = new NacosServiceInstance();
+        nacosServiceInstance.setHost(serviceInstance.getHost());
+        nacosServiceInstance.setServiceId(serviceInstance.getServiceId());
+        nacosServiceInstance.setMetadata(serviceInstance.getMetadata());
+        nacosServiceInstance.setPort(socketPort);
+        nacosServiceInstance.setSecure(serviceInstance.isSecure());
+        return nacosServiceInstance;
     }
 
 }

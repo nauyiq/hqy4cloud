@@ -21,4 +21,10 @@ spring:
           uri: lb://alibaba-provider-demo      #根据服务名进行动态路由，匹配后提供服务的路由地址 #匹配后提供服务的路由地址
           predicates: #predicates就是为了实现一组匹配规则， 让请求过来找到对应的route进行处理
             - Path=/payment/**         # 断言，路径相匹配的进行路由
+        - id: message-socket-hash
+          uri: socket://message-netty-service
+          predicates:
+            - Path=/message/websocket/**
+          filters:
+            - StripPrefix=0
 

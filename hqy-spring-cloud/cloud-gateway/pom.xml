@@ -134,11 +134,7 @@
             <version>8.16</version>
         </dependency>
 
-        <!-- hibenate-validator -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>com.hqy</groupId>

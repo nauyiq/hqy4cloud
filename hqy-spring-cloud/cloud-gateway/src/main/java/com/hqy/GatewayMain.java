@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -47,8 +48,9 @@ public class GatewayMain {
         whiteIpSet.add("**/oauth/**");
         whiteIpSet.add("/oauth/**");
         whiteIpSet.add("/auth/**");
+        whiteIpSet.add("/message/websocket/**");
+        whiteIpSet.add("/payment/**");
         projectContextInfo.setProperties(ProjectContextInfo.WHITE_URI_PROPERTIES_KEY, whiteIpSet);
-
         log.info("############################## ############### ############### ###############");
         log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));
         log.info("##### Server Started OK. serviceName = {}", projectContextInfo.getNameEn());

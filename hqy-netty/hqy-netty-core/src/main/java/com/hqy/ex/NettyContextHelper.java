@@ -26,7 +26,7 @@ public class NettyContextHelper {
      * @param httpResponse httpResponse
      */
     public static void allowCors(HttpResponse httpResponse, String origin) {
-        if (!StringUtils.isEmpty(origin)) {
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(origin)) {
             httpResponse.headers().set("access-control-allow-origin", origin);
         } else {
             httpResponse.headers().set("access-control-allow-origin", "*");

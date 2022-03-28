@@ -35,6 +35,11 @@ public interface BaseStringConstants {
     interface Auth {
 
         /**
+         * socket.io集群 握手的通道hash值
+         */
+        String SOCKET_MULTI_PARAM_KEY = "hash";
+
+        /**
          * ssl 加密通道 keystore
          */
         String SOCKET_SSL_KEYSTORE_KEY = "socket.ssl.keystore";

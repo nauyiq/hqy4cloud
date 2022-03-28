@@ -68,6 +68,12 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher CONFIG_SSL_BY_NGINX_PROXY = new CommonSwitcher(213,"节点-是否由nginx反向代理 提供SSL链接", true);
 
     /**
+     * 节点-是否采用自定义的网关负载均衡策略
+     */
+    public static final CommonSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new CommonSwitcher(214, "节点-是否采用自定义的网关负载均衡策略", true);
+
+
+    /**
      * 与sid有关（重联场景是生成新的sid)
      * 无用http长连接释放（短时间泄漏）
      * 场景：业务： 兼容忽略js前端框架层面的socketIO层面 多发一次无意义请求的返回开关   <br>
@@ -78,7 +84,7 @@ public class CommonSwitcher extends AbstractSwitcher {
     /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）
      */
-    public static final CommonSwitcher JUST_4_TEST_DEBUG = new CommonSwitcher(250,"节点-DEBUG开关（默认关）",false);
+    public static final CommonSwitcher JUST_4_TEST_DEBUG = new CommonSwitcher(250,"节点-DEBUG开关（默认关）",true);
 
     /**
      * 节点-是否采用上下文里的白名单

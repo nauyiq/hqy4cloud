@@ -230,7 +230,7 @@ public abstract class AbstractRedisTemplateUtil {
      */
     public void set(String key, String value) {
         try {
-            set(key, value, DEFAULT_CACHE_SECONDS);
+            STRING_REDIS_TEMPLATE.opsForValue().set(key, value);
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
@@ -245,13 +245,16 @@ public abstract class AbstractRedisTemplateUtil {
     public void set(String key, String value, Long second) {
         try {
             if (second > 0) {
-                STRING_REDIS_TEMPLATE.opsForValue().set(key, value, second, TimeUnit.SECONDS);
+                redisTemplate.opsForValue().set(key, value, second, TimeUnit.SECONDS);
+            } else if (second == 0){
+                set(key, value, DEFAULT_CACHE_SECONDS);
             } else {
                 set(key, value);
             }
         } catch (Exception e) {
             log.error("操作失败: ", e);
         }
+
     }
 
 
