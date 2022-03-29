@@ -1,5 +1,5 @@
 
-package com.hqy.gateway.route;
+package com.hqy.gateway.loadbalance;
 
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;

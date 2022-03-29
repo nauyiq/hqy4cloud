@@ -3,10 +3,23 @@ package com.hqy.ex;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.base.project.MicroServiceConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.socketio.SocketIOClient;
+import com.hqy.socketio.SocketIOServer;
+import com.hqy.socketio.handler.ClientsBoxEx;
+import com.hqy.util.AssertUtil;
 import com.hqy.util.JwtUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author qiyuan.hong
@@ -14,12 +27,47 @@ import org.springframework.util.StringUtils;
  */
 public class NettyContextHelper {
 
+    private static final Logger log = LoggerFactory.getLogger(NettyContextHelper.class);
+
     private NettyContextHelper() {}
 
     public static boolean isInnerIp(String ip) {
         return BaseStringConstants.INNER_IP.equals(ip);
     }
 
+
+    /**
+     * 推送消息给客户端
+     * @param bizId          发给谁
+     * @param eventName      事件名
+     * @param wsMessageJson  事件的json数据
+     * @return 结果
+     */
+    public static boolean doPush(String bizId, String eventName, String wsMessageJson) {
+        log.info("@@@ doPush message, bizId -> {}, eventName -> {}, wsMessageJson -> {}", bizId, eventName, wsMessageJson);
+        if (org.apache.commons.lang3.StringUtils.isAnyBlank(bizId, eventName)) {
+            return false;
+        }
+        //bizId用户与服务端简历的长连接UUID集合, 即channel的UUID
+        Set<UUID> uuidSet = ClientsBoxEx.getInstance().getUUID(bizId);
+        if (CollectionUtils.isEmpty(uuidSet)) {
+            //表示通知人不在线了. 则无需发通知了
+            log.info("@@@ Message receiver is offline, eventName = {}, to = {}", eventName, bizId);
+        } else {
+            SocketIOServer socketIOServer = ProjectContextInfo.getBean(SocketIOServer.class);
+            if (Objects.isNull(socketIOServer)) {
+                log.warn("@@@ ProjectContext info not found SocketIOServer, please confirm socketIOServer registry to context.");
+                return false;
+            }
+            for (UUID uuid : uuidSet) {
+                SocketIOClient client = socketIOServer.getClient(uuid);
+                if (Objects.nonNull(client) && client.isChannelOpen()) {
+                    client.sendEvent(eventName, wsMessageJson);
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * 允许跨域，回写跨域相关响应头

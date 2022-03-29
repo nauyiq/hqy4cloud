@@ -1,8 +1,8 @@
 package com.hqy.gateway.filter;
 
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.gateway.route.GatewayLoadBalanceStrategyContext;
-import com.hqy.gateway.route.LoadBalancer;
+import com.hqy.gateway.loadbalance.GatewayLoadBalanceStrategyContext;
+import com.hqy.gateway.loadbalance.LoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -11,7 +11,6 @@ import org.springframework.cloud.client.loadbalancer.reactive.Response;
 import org.springframework.cloud.gateway.config.LoadBalancerProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -28,7 +27,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 
 /**
- * 增加hash值负载过滤器 继承ReactiveLoadBalancerClientFilter.java
+ * 增加hash值负载过滤器 基于ReactiveLoadBalancerClientFilter.java
  * 增加自定义hash负载策略
  * @author qiyuan.hong
  * @version 1.0
@@ -71,7 +70,7 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
         ServerWebExchangeUtils.addOriginalRequestUrl(exchange, url);
 
         if (log.isTraceEnabled()) {
-            log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName()
+            log.trace(ReactiveCustomerLoadBalancerClientFilter.class.getSimpleName()
                     + " url before: " + url);
         }
 

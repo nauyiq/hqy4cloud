@@ -54,7 +54,6 @@ public class EnvironmentConfig implements InitializingBean {
 
     private static final EnvironmentConfig NONE_SPRING_BEAN_INSTANCE = new EnvironmentConfig();
 
-    private static int cpp = 0;
 
     public static EnvironmentConfig getInstance() {
         try {
@@ -64,13 +63,12 @@ public class EnvironmentConfig implements InitializingBean {
             }
             return environmentConfig;
         } catch (Exception e) {
-            if (cpp % 100 == 0) {
+            if (MathUtil.mathIf(1, 100)) {
                 log.warn("### 当前节点上下文没有配置EnvironmentConfig 作为Spring Bean:{}", e.getMessage());
                 if (StringUtils.isBlank(NONE_SPRING_BEAN_INSTANCE.env)) {
                     NONE_SPRING_BEAN_INSTANCE.env = ENV_DEV;
                 }
             }
-            cpp++;
             return NONE_SPRING_BEAN_INSTANCE;
         }
     }
@@ -135,7 +133,7 @@ public class EnvironmentConfig implements InitializingBean {
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if("${env}".equalsIgnoreCase(env) || ENV_DEV.equalsIgnoreCase(env) || StringUtils.isEmpty(env)){
             //兼容dev
             env = ENV_DEV;
@@ -146,6 +144,6 @@ public class EnvironmentConfig implements InitializingBean {
      * @return 是否允许RPC直连
      */
     public boolean enableRpcDirect() {
-        return true;
+        return false;
     }
 }

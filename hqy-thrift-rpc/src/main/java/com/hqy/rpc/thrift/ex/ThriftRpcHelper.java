@@ -40,7 +40,7 @@ public class ThriftRpcHelper {
         try {
             String[] split = hashFactor.split(BaseStringConstants.Symbol.COLON);
             int port = Integer.parseInt(split[1]);
-            return new UsingIpPort(split[0], port, port, 0);
+            return new UsingIpPort(split[0], 0, port, 0);
         } catch (Exception e) {
             log.warn("@@@ [{}] 不是ip:rpcPort的格式, 格式化失败", hashFactor);
             return null;

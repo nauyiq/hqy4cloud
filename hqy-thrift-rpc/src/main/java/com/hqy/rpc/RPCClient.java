@@ -156,9 +156,9 @@ public class RPCClient {
     public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvokeCallback callback) {
         //获取服务名
         String serviceNameEn = checkAnnotation(serviceClass);
-        boolean isDirectService = false;
         if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
             //默认的hash因子
+            boolean isDirectService = false;
             try {
                 ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
                 if (EnvironmentConfig.getInstance().enableRpcDirect()) {
@@ -273,7 +273,7 @@ public class RPCClient {
         //服务代理handler
         DynamicInvocationHandler<T> handler;
 
-        //生产者ClusterNode为空, 说明不是直连模式
+        //生产者producer为空, 说明不是直连模式
         if (Objects.isNull(producer)) {
             handler = CLASS_HANDLER_MAP.get(interfaceName);
             if (Objects.isNull(handler)) {

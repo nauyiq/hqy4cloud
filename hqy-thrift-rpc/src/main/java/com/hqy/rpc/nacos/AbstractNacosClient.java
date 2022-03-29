@@ -192,7 +192,9 @@ public abstract class AbstractNacosClient implements RegistryClient {
                 }
             }
         } else {
-            log.debug("hashHandlerMap not EMPTY: {}", JsonUtil.toJson(hashHandlerMap));
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("hashHandlerMap not EMPTY: {}", JsonUtil.toJson(hashHandlerMap));
+            }
         }
         final String key = genTmpKey(hashFactor, nameEn);
         return hashHandlerMap.get(key);

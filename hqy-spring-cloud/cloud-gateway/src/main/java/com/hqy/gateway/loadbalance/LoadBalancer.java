@@ -1,4 +1,4 @@
-package com.hqy.gateway.route;
+package com.hqy.gateway.loadbalance;
 
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;

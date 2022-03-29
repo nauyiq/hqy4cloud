@@ -45,13 +45,18 @@ public class YamlStrategy extends AbstractConfigStrategy {
     private Map<String, String> getYmlData(Map<String, Object> ymlData) {
         data = new HashMap<>(64);
         for (Map.Entry<String, Object> entry : ymlData.entrySet()) {
-            String key = entry.getKey();
-            Object val = entry.getValue();
-            if (val instanceof Map) {
-                foreachYaml(key, (Map<String, Object>) val, 1);
-            } else {
-                data.put(key, val.toString());
+            try {
+                String key = entry.getKey();
+                Object val = entry.getValue();
+                if (val instanceof Map) {
+                    foreachYaml(key, (Map<String, Object>) val, 1);
+                } else {
+                    data.put(key, val.toString());
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
+
         }
         return data;
     }
@@ -64,18 +69,22 @@ public class YamlStrategy extends AbstractConfigStrategy {
      */
     public void foreachYaml(String keyStr, Map<String, Object> objectMap, int step) {
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
-            String key = entry.getKey();
-            Object val = entry.getValue();
-            String newStr;
-            if (StringUtils.isNotEmpty(keyStr)) {
-                newStr = keyStr + BaseStringConstants.Symbol.POINT + key;
-            } else {
-                newStr = key;
-            }
-            if (val instanceof Map) {
-                foreachYaml(newStr, (Map<String, Object>) val, ++step);
-            } else {
-                data.put(newStr, val.toString());
+            try {
+                String key = entry.getKey();
+                Object val = entry.getValue();
+                String newStr;
+                if (StringUtils.isNotEmpty(keyStr)) {
+                    newStr = keyStr + BaseStringConstants.Symbol.POINT + key;
+                } else {
+                    newStr = key;
+                }
+                if (val instanceof Map) {
+                    foreachYaml(newStr, (Map<String, Object>) val, ++step);
+                } else {
+                    data.put(newStr, val.toString());
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
         }
     }

@@ -32,22 +32,11 @@ public class ConfigurationContext {
     public static Map<YamlEnum, YamlStrategy> yamlMap = new ConcurrentHashMap<>();
 
 
-    static {
-        propertiesMap.put(PropertiesEnum.SERVER_PROPERTIES, new PropertyStrategy(PropertiesEnum.SERVER_PROPERTIES.fineName));
-        propertiesMap.put(PropertiesEnum.APPLICATION_PROPERTIES, new PropertyStrategy(PropertiesEnum.APPLICATION_PROPERTIES.fineName));
-        propertiesMap.put(PropertiesEnum.BOOTSTRAP_PROPERTIES, new PropertyStrategy(PropertiesEnum.BOOTSTRAP_PROPERTIES.fineName));
-
-        yamlMap.put(YamlEnum.SERVER_YAML, new YamlStrategy(YamlEnum.SERVER_YAML.fineName));
-        yamlMap.put(YamlEnum.APPLICATION_YAML, new YamlStrategy(YamlEnum.APPLICATION_YAML.fineName));
-        yamlMap.put(YamlEnum.BOOTSTRAP_YAML, new YamlStrategy(YamlEnum.BOOTSTRAP_YAML.fineName));
-
-        System.out.println("\r\n############ propertiesMap And yamlMap initialize. ###############\r\n");
-    }
-
     public static Properties getProperties(PropertiesEnum propertiesEnum) {
         PropertyStrategy propertyStrategy = propertiesMap.get(propertiesEnum);
         if (Objects.isNull(propertyStrategy)) {
-            throw new IllegalStateException("@@@ Initialize propertiesMap missing " + propertiesEnum.fineName);
+            propertyStrategy =  new PropertyStrategy(propertiesEnum.fineName);
+            propertiesMap.put(propertiesEnum, propertyStrategy);
         }
         return propertyStrategy.getProperties();
     }
@@ -66,7 +55,8 @@ public class ConfigurationContext {
     public static Map<String, String> getYaml(YamlEnum yamlEnum) {
         YamlStrategy strategy = yamlMap.get(yamlEnum);
         if (Objects.isNull(strategy)) {
-            throw new IllegalStateException("@@@ Initialize yamlMap missing " + yamlEnum.fineName);
+            strategy = new YamlStrategy(yamlEnum.fineName);
+            yamlMap.put(yamlEnum, strategy);
         }
         return strategy.getData();
     }
@@ -102,6 +92,21 @@ public class ConfigurationContext {
          */
         BOOTSTRAP_PROPERTIES("bootstrap.properties"),
 
+        /**
+         * bootstrap-dev.properties
+         */
+        BOOTSTRAP_DEV_PROPERTIES("bootstrap-dev.properties"),
+
+        /**
+         * bootstrap-test.properties
+         */
+        BOOTSTRAP_TEXT_PROPERTIES("bootstrap-test.properties"),
+
+        /**
+         * bootstrap-prod.properties
+         */
+        BOOTSTRAP_PROD_PROPERTIES("bootstrap-prod.properties"),
+
         ;
 
         public final String fineName;
@@ -129,6 +134,21 @@ public class ConfigurationContext {
          */
         BOOTSTRAP_YAML("bootstrap.yml"),
 
+        /**
+         * bootstrap-dev.yml
+         */
+        BOOTSTRAP_DEV_YAML("bootstrap.yml"),
+
+        /**
+         * bootstrap-test.yml
+         */
+        BOOTSTRAP_TEST_YAML("bootstrap.yml"),
+
+        /**
+         * bootstrap-prod.yml
+         */
+        BOOTSTRAP_PROD_YAML("bootstrap.yml"),
+
         ;
 
         public final String fineName;
@@ -136,6 +156,16 @@ public class ConfigurationContext {
         YamlEnum(String fineName) {
             this.fineName = fineName;
         }
+
+        public static YamlEnum getYaml(String fileName) {
+            for (YamlEnum value : YamlEnum.values()) {
+                if (fileName.equalsIgnoreCase(value.fineName)) {
+                    return value;
+                }
+            }
+            throw new IllegalStateException("@@@ 没有找到对应的Yaml文件枚举. 文件名:" + fileName);
+        }
+
     }
 
 

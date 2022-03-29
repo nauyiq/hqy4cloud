@@ -11,36 +11,4 @@ spring:
     loadbalancer:
       ribbon:
         enabled: false
----
-#开发环境
-spring:
-  config:
-    activate:
-      on-profile: dev
-  cloud:
-    nacos:
-      config:
-        server-addr: 120.76.65.160:8848
-        file-extension: yaml
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-        group: DEV_GROUP
-        extension-configs[0]:
-          data-id: redis-config.yaml
-          group: DEV_GROUP
-          refresh: true
-        extension-configs[1]:
-          data-id: db-config.yaml
-          group: DEV_GROUP
-          refresh: true
-        extension-configs[2]:
-          data-id: rabbitmq-config.yaml
-          group: DEV_GROUP
-          refresh: true
-      discovery:
-        ephemeral: false # false为永久实例，true表示临时实例
-        server-addr: 120.76.65.160:8848
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:8010/rsa/publicKey #配置RSA的公钥访问地址
+

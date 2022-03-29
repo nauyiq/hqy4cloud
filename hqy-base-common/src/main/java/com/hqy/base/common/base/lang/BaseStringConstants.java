@@ -171,6 +171,11 @@ public interface BaseStringConstants {
          * :
          */
         String COLON = ":";
+
+        /**
+         * -
+         */
+        String RAIL = "-";
     }
 
 

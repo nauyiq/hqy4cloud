@@ -27,4 +27,8 @@ spring:
             - Path=/message/websocket/**
           filters:
             - StripPrefix=0
+gateway:
+  dynamicRoute:
+    enabled: true
+    type: nacos
 
