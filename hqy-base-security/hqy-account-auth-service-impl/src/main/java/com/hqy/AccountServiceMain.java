@@ -14,14 +14,11 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * 启动类必须放在包com.hqy下 不然很多bean会扫描不到 导致程序启动抛出not found bean
- * @EnableOrderContext 表示当前服务需要Spring容器优先创建SpringApplicationHolder bean.
- *
  * 账号授权服务 提供auth2授权、用户相关服务等<br>
  * @author qiyuan.hong
  * @date 2022-03-10 21:43
  */
 @MapperScan(basePackages = "com.hqy.account.dao")
-@EnableOrderContext
 @SpringBootApplication
 @EnableDiscoveryClient
 public class AccountServiceMain {

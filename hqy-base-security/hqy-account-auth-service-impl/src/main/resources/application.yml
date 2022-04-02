@@ -1,8 +1,16 @@
-env:
-  dev
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+management: #暴露所有
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 encrypt:
   key-store:
     password: hongqy@2021
     alias: jwt
-    secret: XX#$%()(#*!()!KL<>759428167@qq.com
+    secret: hongqy@2021
     location: classpath:jwt.jks

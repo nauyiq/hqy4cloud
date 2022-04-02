@@ -39,12 +39,12 @@ public class GatewayMain {
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
 
         //TODO 后续再抽出一个基于redis和配置的 白名单
-        Set<String> whiteIpSet = new HashSet<>();
-        whiteIpSet.add("/oauth/**");
-        whiteIpSet.add("/auth/**");
-        whiteIpSet.add("/message/websocket/**");
-        whiteIpSet.add("/payment/**");
-        projectContextInfo.setProperties(ProjectContextInfo.WHITE_URI_PROPERTIES_KEY, whiteIpSet);
+        Set<String> whiteSet = new HashSet<>();
+        whiteSet.add("/oauth/**");
+        whiteSet.add("/auth/**");
+        whiteSet.add("/message/websocket/**");
+        whiteSet.add("/payment/**");
+        projectContextInfo.setProperties(ProjectContextInfo.WHITE_URI_PROPERTIES_KEY, whiteSet);
 
         log.info("############################## ############### ############### ###############");
         log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));

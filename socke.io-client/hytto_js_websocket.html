@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8"/>
+
+    <title>WS客户端探测程序</title>
+
+    <!--         <link href="bootstrap.css" rel="stylesheet"> -->
+
+    <link rel="stylesheet" href="socket.io.css"/>
+    <script src="js/hytto.io.js?opts_path=/model"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script>
+        var userName = 'user' + Math.floor((Math.random() * 1000) + 1);
+        var domain_url = "http://172.31.1.1:9527";
+        var ntoken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDg5NTU3MTU2NjksInBheWxvYWQiOiJ7XCJhcHBcIjp7XCJhcHBcIjpcIm1lc3NhZ2UtbmV0dHktc2VydmljZVwiLFwidmVyc2lvblwiOlwiMS4wXCJ9LFwiYml6SWRcIjpcIjFcIixcImNyZWF0ZVRpbWVcIjoxNjQ4ODY5MzE1NDI3fSJ9.Hhj-KWEB3B2lHYq4vKoi7PlF2KCuem9-VdadjPZgfoA&hash=0';
+
+        var socket =  io.connect(domain_url + '?wtoken=' + ntoken,{path:'/message/websocket'});
+
+        socket.on('connect', function () {
+            output('<span class="connect-msg">Client has connected to the server!</span>');
+        });
+
+        socket.on('serverResponse', function (data) {
+            output('<span class="username-msg">' + data.result + ':</span> ' + data.code + ", " + data.message);
+        });
+
+        socket.on('ServerPushDemoObject', function (data) {
+            output('<span class="server-msg">' + data.name + ':</span> ' + data.message + ",IP=" + data.serverIp);
+        });
+
+        socket.on('disconnect', function () {
+            output('<span class="disconnect-msg">The client has disconnected!</span>');
+        });
+
+        function sendDisconnect() {
+            socket.disconnect();
+        };
+
+        function sendMessage(eventname) {
+            //debugger;
+            if (eventname == 'clientPing') {
+                var message = $('#msg').val();
+                $('#msg').val('');
+                var jsonObject = {
+                    userName: userName,
+                    requestId: 'UUID-654321',
+                    requestReceipt: true,
+                    message: message, clientTime: new Date().getTime()
+                };
+                socket.emit('clientPing', jsonObject);
+            } else if (eventname == 'clientPoll') {
+                //向服务器发送查询请求
+                var message = $('#msg').val();
+                $('#msg').val('');
+                var jsonObject = {
+                    userName: userName,
+                    requestId: 'UUID-123456',
+                    requestReceipt: true,
+                    message: message, clientTime: new Date().getTime()
+                };//jsonObject 是附带的参数
+                socket.emit('clientPoll', jsonObject);
+            }
+        };
+
+        function output(message) {
+            var currentTime = "<span class='time'>" + moment().format('HH:mm:ss') + "</span>";
+            var element = $("<div>" + currentTime + " " + message + "</div>");
+            $('#console').prepend(element);
+        };
+    </script>
+</head>
+
+<body>
+<h1>Netty-Websocket Demo Chat （hytto.js框架）</h1>
+<br/>
+<div id="console" class="well"></div>
+<form class="well form-inline" onsubmit="return false;">
+    <input id="msg" class="input-xlarge" type="text" placeholder="Type something..."/>
+    <button type="button" onClick="sendMessage('clientPing')" class="btn" id="send1">PUSH ‘clientPing’</button>
+    <button type="button" onClick="sendMessage('clientPoll')" class="btn" id="send2">PUSH 'clientPoll'</button>
+    <button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
+</form>
+
+</body>
+</html>

@@ -90,7 +90,6 @@ public class JsonUtil {
 
 	}
 
-	
 	/**
 	 * @description Bean对象转Json字符串
 	 * @param bean
@@ -98,7 +97,6 @@ public class JsonUtil {
 	 */
 	public static String toJson2(Object bean) {
 		try {
-			//MAPPER.setSerializationInclusion(Include.NON_EMPTY);
 			return MAPPER.writeValueAsString(bean);
 		} catch (Exception e) {
 			log.error("toJson is error.bean:{}",bean != null?bean.toString():null);

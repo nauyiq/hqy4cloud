@@ -48,8 +48,9 @@ public class LoadBalanceHashFactorManager {
             hashFactor = RedisUtil.instance().selectDb(DB, true).getString(key);
             if (StringUtils.isBlank(hashFactor)) {
                 hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
+            } else {
+                HASH_CACHE.put(key, hashFactor);
             }
-            HASH_CACHE.put(key, hashFactor);
         }
         return hashFactor;
     }

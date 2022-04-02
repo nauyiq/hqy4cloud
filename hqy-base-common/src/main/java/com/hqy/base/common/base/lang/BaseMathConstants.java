@@ -16,8 +16,11 @@ public interface BaseMathConstants {
     /**
      * 一分钟 毫秒单位
      */
-    int ONE_MINUTES_4MILLISECONDS = 60 * 1000;
+    long ONE_MINUTES_4MILLISECONDS = 60 * 1000;
 
-
+    /**
+     * 一天 毫秒单位
+     */
+    long ONE_DAY_4MILLISECONDS = ONE_MINUTES_4MILLISECONDS * 60 * 24;
 
 }

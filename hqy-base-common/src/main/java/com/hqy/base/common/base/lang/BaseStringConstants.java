@@ -139,9 +139,11 @@ public interface BaseStringConstants {
         String UPGRADE = "Upgrade";
 
         /**
-         * token
+         * Authorization
          */
-        String TOKEN = "token";
+        String AUTHORIZATION = "Authorization";
+
+
     }
 
 

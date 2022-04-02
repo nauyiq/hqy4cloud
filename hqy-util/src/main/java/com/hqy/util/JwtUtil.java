@@ -4,6 +4,7 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.DeserializationFeature;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +27,16 @@ public class JwtUtil {
 
     static {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+
+    /**
+     * 将对象签名为JWT的token字符串，（有效时间为一天）
+     * @param object 需要加密的对象
+     * @return the jwt token
+     */
+    public static <T> String sign(T object) {
+        return sign(object, BaseMathConstants.ONE_DAY_4MILLISECONDS);
     }
 
     /**
@@ -94,8 +105,5 @@ public class JwtUtil {
             return null;
         }
     }
-
-
-
 
 }

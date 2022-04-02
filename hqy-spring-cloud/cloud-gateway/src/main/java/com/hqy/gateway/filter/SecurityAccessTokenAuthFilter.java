@@ -32,7 +32,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String token = request.getHeaders().getFirst(BaseStringConstants.Headers.TOKEN);
+        String token = request.getHeaders().getFirst(BaseStringConstants.Headers.AUTHORIZATION);
         if (StringUtils.isBlank(token)) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.debug("@@@ Token empty, uri = {}", request.getURI());
@@ -50,7 +50,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
                 //request写入JWT的载体信息
                 log.info("AuthGlobalFilter.filter() payload:{}", payload);
                 request = request.mutate().header(BaseStringConstants.Auth.JWT_PAYLOAD_KEY,
-                        URLEncoder.encode(payload, "UTF-8")).build();
+                        payload, "UTF-8").build();
                 exchange = exchange.mutate().request(request).build();
             }
 

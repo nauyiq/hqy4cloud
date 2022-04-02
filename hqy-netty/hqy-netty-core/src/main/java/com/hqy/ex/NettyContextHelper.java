@@ -3,12 +3,10 @@ package com.hqy.ex;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.base.project.MicroServiceConstants;
-import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.SocketIOClient;
 import com.hqy.socketio.SocketIOServer;
 import com.hqy.socketio.handler.ClientsBoxEx;
 import com.hqy.socketio.messages.HttpErrorMessage;
-import com.hqy.util.AssertUtil;
 import com.hqy.util.JwtUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -141,6 +139,9 @@ public class NettyContextHelper {
 
         return "";
     }
+
+
+
 
     public static void main(String[] args) {
         SocketProjectContext context = new SocketProjectContext(new SocketProjectContext.App(MicroServiceConstants.MESSAGE_NETTY_SERVICE), "TEST");
