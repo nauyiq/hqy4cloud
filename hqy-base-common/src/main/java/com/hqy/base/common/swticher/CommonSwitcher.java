@@ -24,6 +24,11 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(201,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
 
     /**
+     * 节点-socket.io项目是否接入网关Gateway （默认打开）
+     */
+    public static final CommonSwitcher ENABLE_GATEWAY_SOCKET_AUTHORIZE = new CommonSwitcher(202, "节点-socket.io项目是否接入网关Gateway", true);
+
+    /**
      * 节点-是否采用基于Lettuce的RedisTemplate （默认true）
      */
     public static final CommonSwitcher ENABLE_LETTUCE_REDIS_TEMPLATE = new CommonSwitcher(202, "节点-是否采用基于Lettuce的RedisTemplate", true);
@@ -42,7 +47,7 @@ public class CommonSwitcher extends AbstractSwitcher {
     /**
      * 节点-使用ThriftServer-Bean, 标志为RPC的提供者
      */
-    public static final CommonSwitcher ENABLE_THRIFT_SERVER_BEAN = new CommonSwitcher(210, "节点-使用ThriftServer-Bean, 标志为RPC的提供者", true);
+    public static final CommonSwitcher ENABLE_THRIFT_SERVER_BEAN = new CommonSwitcher(209, "节点-使用ThriftServer-Bean, 标志为RPC的提供者", true);
 
     /**
      * 节点-是否采用ExceptionCollActionEventHandler

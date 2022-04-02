@@ -15,8 +15,9 @@
  */
 package com.hqy.socketio.handler;
 
-import com.hqy.ex.NettyContextHelper;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.ex.NettyContextHelper;
 import com.hqy.socketio.*;
 import com.hqy.socketio.ack.AckManager;
 import com.hqy.socketio.messages.HttpErrorMessage;
@@ -99,11 +100,21 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             FullHttpRequest req = (FullHttpRequest) msg;
             Channel channel = ctx.channel();
             QueryStringDecoder queryDecoder = new QueryStringDecoder(req.uri());
+            //origin
+            String origin = req.headers().get(HttpHeaderNames.ORIGIN);
 
             if (!configuration.isAllowCustomRequests()
                     && !queryDecoder.path().startsWith(connectPath)) {
-                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.BAD_REQUEST);
-                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+                if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                    //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                    //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
+                    origin = StringUtils.isBlank(origin) ? "null" : origin;
+                    channel.attr(EncoderHandler.ORIGIN).set(origin);
+                    channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "error connectPath."));
+                } else {
+                    HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                    channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+                }
                 req.release();
                 return;
             }
@@ -111,7 +122,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             List<String> sid = queryDecoder.parameters().get("sid");
             if (queryDecoder.path().equals(connectPath)
                     && sid == null) {
-                String origin = req.headers().get(HttpHeaderNames.ORIGIN);
+
                 if (!authorize(ctx, channel, origin, queryDecoder.parameters(), req)) {
                     req.release();
                     return;
@@ -124,12 +135,11 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
 
     private boolean authorize(ChannelHandlerContext ctx, Channel channel, String origin, Map<String, List<String>> params, FullHttpRequest req)
             throws IOException {
-        Map<String, List<String>> headers = new HashMap<String, List<String>>(req.headers().names().size());
+        Map<String, List<String>> headers = new HashMap<>(req.headers().names().size());
         for (String name : req.headers().names()) {
             List<String> values = req.headers().getAll(name);
             headers.put(name, values);
         }
-
         HandshakeData data = new HandshakeData(req.headers(), params,
                 (InetSocketAddress)channel.remoteAddress(),
                 (InetSocketAddress)channel.localAddress(),
@@ -146,15 +156,21 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             log.error("Authorization error, realIp:{}", requestIp, e);
         }
         if (!result) {
-            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-            //设置允许跨域
-            NettyContextHelper.allowCors(res, data.getOrigin());
-            channel.writeAndFlush(res)
-                    .addListener(ChannelFutureListener.CLOSE);
+            if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
+                channel.attr(EncoderHandler.ORIGIN).set(origin);
+                channel.writeAndFlush(NettyContextHelper.
+                        createHttpErrorMessage(CommonResultCode.INVALID_ACCESS_TOKEN.code, CommonResultCode.INVALID_ACCESS_TOKEN.message));
+                return false;
+            } else {
+                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                NettyContextHelper.allowCors(res, data.getOrigin());
+                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            }
             log.debug("Handshake unauthorized, query params: {} headers: {} realIp:{}", params, headers, requestIp);
             return false;
         }
-
         UUID sessionId;
         if (configuration.isRandomSession()) {
             sessionId = UUID.randomUUID();
@@ -168,23 +184,24 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
         List<String> transportValue = params.get("transport");
         if (transportValue == null) {
             log.error("Got no transports for request {}", req.uri());
-
-            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-            channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                channel.attr(EncoderHandler.ORIGIN).set(origin);
+                channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Got no transports for request."));
+            } else {
+                //返回response并且关闭连接.
+                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            }
             return false;
         }
 
         Transport transport = Transport.byName(transportValue.get(0));
         if (!configuration.getTransports().contains(transport)) {
-            Map<String, Object> errorData = new HashMap<>();
-            errorData.put("code", 0);
-            errorData.put("message", "Transport unknown");
-
             channel.attr(EncoderHandler.ORIGIN).set(origin);
-            channel.writeAndFlush(new HttpErrorMessage(errorData));
+            channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Transport unknown"));
             return false;
         }
-
         //channel.remoteAddress().toString(): 为了不持有此channel的属性对象，导致后续不释放。
         ClientHead client = new ClientHead(sessionId, ackManager, disconnectable, storeFactory, data,
                 clientsBox, transport, disconnectScheduler, configuration, channel.remoteAddress().toString());

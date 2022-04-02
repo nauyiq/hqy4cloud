@@ -27,8 +27,8 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 
 /**
- * 增加hash值负载过滤器 基于ReactiveLoadBalancerClientFilter.java
- * 增加自定义hash负载策略
+ * 负载均衡过滤器 基于ReactiveLoadBalancerClientFilter.java
+ * 增加自定义负载策略
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/3/25 16:52
@@ -66,7 +66,6 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
             return chain.filter(exchange);
         }
 
-        //走自己的负载均衡策略
         ServerWebExchangeUtils.addOriginalRequestUrl(exchange, url);
 
         if (log.isTraceEnabled()) {
@@ -106,11 +105,11 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
     private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange, URI uri) {
         GatewayLoadBalanceStrategyContext.LoadBalance loadBalance =
                 GatewayLoadBalanceStrategyContext.LoadBalance.getLoadBalance(uri.getScheme());
-        //选择负载均衡粗略.
+        //选择负载均衡.
         LoadBalancer<ServiceInstance> loadBalancer = GatewayLoadBalanceStrategyContext.
                 getLoadBalanceStrategy(loadBalance);
         if (loadBalancer == null) {
-            throw new NotFoundException("No loadbalancer available for " + uri.getHost());
+            throw new NotFoundException("No loadbalancer available for " + uri.getScheme());
         }
         return loadBalancer.choose(exchange, discoveryClient);
     }

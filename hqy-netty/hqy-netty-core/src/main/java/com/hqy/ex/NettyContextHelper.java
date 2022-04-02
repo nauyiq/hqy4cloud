@@ -7,6 +7,7 @@ import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.socketio.SocketIOClient;
 import com.hqy.socketio.SocketIOServer;
 import com.hqy.socketio.handler.ClientsBoxEx;
+import com.hqy.socketio.messages.HttpErrorMessage;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JwtUtil;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -17,9 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author qiyuan.hong
@@ -35,6 +34,13 @@ public class NettyContextHelper {
         return BaseStringConstants.INNER_IP.equals(ip);
     }
 
+
+    public static HttpErrorMessage createHttpErrorMessage(int code, String message) {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("code", code);
+        map.put("message", message);
+        return new HttpErrorMessage(map);
+    }
 
     /**
      * 推送消息给客户端

@@ -1,4 +1,4 @@
-package com.hqy.netty.websocket.handler.bind;
+package com.hqy.netty.websocket.exception;
 
 import com.hqy.netty.websocket.base.HandshakeData;
 import io.netty.channel.ChannelHandlerContext;
