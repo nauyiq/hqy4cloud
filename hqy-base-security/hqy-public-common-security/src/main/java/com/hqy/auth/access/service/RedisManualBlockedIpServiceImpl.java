@@ -1,16 +1,14 @@
 package com.hqy.auth.access.service;
 
+import com.hqy.foundation.limit.service.ManualBlockedIpService;
 import com.hqy.fundation.cache.redis.RedisUtil;
-import com.hqy.fundation.limit.service.ManualBlockedIpService;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.*;
 

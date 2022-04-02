@@ -1,4 +1,4 @@
-package com.hqy.fundation.common;
+package com.hqy.foundation.common;
 
 /**
  * @author qy

@@ -1,4 +1,4 @@
-package com.hqy.fundation.limit.service;
+package com.hqy.foundation.limit.service;
 
 /**
  * BI分析 自动管理的黑名单服务...

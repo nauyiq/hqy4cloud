@@ -2,10 +2,10 @@ package com.hqy.auth.access.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.fundation.limit.service.ManualWhiteIpService;
+import com.hqy.foundation.limit.service.ManualWhiteIpService;
+import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.collections4.CollectionUtils;

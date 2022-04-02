@@ -1,8 +1,8 @@
 package com.hqy.auth.access.service;
 
-import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
-import com.hqy.fundation.limit.service.BiBlockedIpService;
+import com.hqy.foundation.limit.service.BiBlockedIpService;
+import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.DefaultThreadFactory;

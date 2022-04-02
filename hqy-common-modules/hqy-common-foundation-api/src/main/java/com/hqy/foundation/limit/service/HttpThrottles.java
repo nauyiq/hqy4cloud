@@ -1,7 +1,8 @@
-package com.hqy.fundation.limit.service;
+package com.hqy.foundation.limit.service;
 
-import com.hqy.fundation.common.HttpRequestInfo;
-import com.hqy.fundation.limit.LimitResult;
+
+import com.hqy.foundation.common.HttpRequestInfo;
+import com.hqy.foundation.limit.LimitResult;
 
 /**
  * @author qy

@@ -1,4 +1,4 @@
-package com.hqy.fundation.limit;
+package com.hqy.foundation.limit;
 
 /**
  * 限流结果封装类
