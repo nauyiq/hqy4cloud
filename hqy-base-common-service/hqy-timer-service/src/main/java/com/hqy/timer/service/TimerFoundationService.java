@@ -1,4 +1,4 @@
-package com.hqy.fundation.timer;
+package com.hqy.timer.service;
 
 import org.quartz.Job;
 
