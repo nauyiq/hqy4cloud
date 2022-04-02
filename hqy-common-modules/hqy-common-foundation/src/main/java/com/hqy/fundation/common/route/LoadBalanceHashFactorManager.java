@@ -3,6 +3,7 @@ package com.hqy.fundation.common.route;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.fundation.cache.redis.RedisStringUtil;
 import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,7 @@ public class LoadBalanceHashFactorManager {
         String key = genKey(module, hash);
         String hashFactor = HASH_CACHE.getIfPresent(key);
         if (StringUtils.isBlank(hashFactor)) {
-            hashFactor = RedisUtil.instance().selectDb(DB, true).getString(key);
+            hashFactor = RedisStringUtil.instance().selectDb(DB).get(key);
             if (StringUtils.isBlank(hashFactor)) {
                 hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
             } else {
@@ -57,7 +58,7 @@ public class LoadBalanceHashFactorManager {
 
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
-        RedisUtil.instance().selectDb(DB, true).set(key, hashFactor, -1L);
+        RedisStringUtil.instance().selectDb(DB).set(key, hashFactor, -1L);
         HASH_CACHE.put(key, hashFactor);
     }
 

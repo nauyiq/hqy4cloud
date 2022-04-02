@@ -43,7 +43,7 @@ public class SocketClusterStatusManager {
         SocketClusterStatus hashContext = CLUSTER_STATUS_CACHE.getIfPresent(key);
         if (Objects.isNull(hashContext)) {
             //内存中没有 则去redis中获取
-            hashContext = RedisUtil.instance().selectDb(DB, false).get(key);
+            hashContext = RedisUtil.instance().selectDb(DB).get(key);
             if (Objects.isNull(hashContext)) {
                 log.info("@@@ 获取不到当前服务：{} 的socketHashContext.", serviceName);
                 hashContext = new SocketClusterStatus(env, serviceName);
@@ -57,7 +57,7 @@ public class SocketClusterStatusManager {
     public static void registry(SocketClusterStatus socketClusterStatus) {
         String key = genKey(socketClusterStatus.getEnv(), socketClusterStatus.getModule());
         CLUSTER_STATUS_CACHE.put(key, socketClusterStatus);
-        RedisUtil.instance().selectDb(DB, false).set(key, socketClusterStatus, 0L);
+        RedisUtil.instance().selectDb(DB).set(key, socketClusterStatus, 0L);
     }
 
 
