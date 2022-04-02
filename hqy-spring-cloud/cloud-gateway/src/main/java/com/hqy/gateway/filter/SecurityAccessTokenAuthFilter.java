@@ -42,7 +42,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
 
         try {
             // 从token中解析用户信息并设置到Header中去
-            String realToken = token.replace(BaseStringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
+            String realToken = token.replace(BaseStringConstants.Auth.JWT_PREFIX, Strings.EMPTY).replace(BaseStringConstants.Auth.JWT_PREFIX.toLowerCase(), Strings.EMPTY);
             String payload = JWSObject.parse(realToken).getPayload().toString();
             if (StringUtils.isBlank(payload)) {
                 return chain.filter(exchange);

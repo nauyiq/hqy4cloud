@@ -45,7 +45,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(true));
         }
 
-        // 如果token以"bearer "为前缀，到此方法里说明JWT有效即已认证
+        // token必须以"bearer "为前缀
         String token = request.getHeaders().getFirst(BaseStringConstants.Auth.AUTHORIZATION_KEY);
         if (StringUtils.isNotBlank(token) && StringUtils.startsWithIgnoreCase(token, BaseStringConstants.Auth.JWT_PREFIX) ) {
             //白名单ip无需鉴权 放行
