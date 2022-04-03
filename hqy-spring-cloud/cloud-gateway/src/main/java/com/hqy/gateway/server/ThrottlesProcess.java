@@ -1,8 +1,8 @@
 package com.hqy.gateway.server;
 
 import com.hqy.auth.access.service.ManualWhiteIpServiceImpl;
-import com.hqy.auth.access.service.RedisBiBlockedIpServiceImpl;
 import com.hqy.auth.access.service.RedisManualBlockedIpServiceImpl;
+import com.hqy.foundation.limit.service.BiBlockedIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
@@ -87,7 +87,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isBiBlockedIp(String ip) {
-        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
         return service.isBlockIp(ip);
     }
 
@@ -99,7 +99,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public void addBiBlockIp(String ip, Integer blockSeconds) {
-        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
         service.addBlockIp(ip, blockSeconds);
     }
 

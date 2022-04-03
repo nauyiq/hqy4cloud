@@ -2,7 +2,7 @@ package com.hqy.auth.access.service;
 
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.foundation.limit.service.BiBlockedIpService;
-import com.hqy.fundation.cache.redis.RedisUtil;
+import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.DefaultThreadFactory;
@@ -11,7 +11,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
@@ -19,7 +18,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
- * 基于Redis的IP黑名单管理；注意，内部为了优化redis，
+ * 基于Redis的IP黑名单管理，内部为了优化redis 采用内存加定时器进行管理
  * 如果不启用ENABLE_SHARED_BLOCK_IP_LIST的场合，不使用redis来存储，而是使用本地缓存
  * @author qy
  * @date 2021-08-03 11:25
@@ -30,6 +29,7 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
 
     /**
      * 过期时间集合
+     * key:ip, value:过期的时间戳
      */
     private static final Map<String, Long> TIMESTAMP_MAP = new ConcurrentHashMap<>();
 
@@ -69,11 +69,8 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
             return;
         }
         ip = ip.trim();
-        long expireTimeStamp = System.currentTimeMillis() + blockSeconds * 1000L;
-        //放到redis
-        RedisUtil.instance().strSAdd(ProjectContextInfo.BI_BLOCKED_IP_KEY, blockSeconds, ip);
-        //放到内存
-        TIMESTAMP_MAP.put(ip, expireTimeStamp);
+        LettuceStringRedis.getInstance().sAdd(ProjectContextInfo.BI_BLOCKED_IP_KEY, blockSeconds, TimeUnit.SECONDS, ip);
+        TIMESTAMP_MAP.put(ip, System.currentTimeMillis() + blockSeconds * 1000L);
         SET_CACHE.add(ip);
     }
 
@@ -83,7 +80,7 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
             return;
         }
         ip = ip.trim();
-        RedisUtil.instance().sMove(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip);
+        LettuceStringRedis.getInstance().sRem(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip);
         TIMESTAMP_MAP.remove(ip);
         SET_CACHE.remove(ip);
     }
@@ -108,17 +105,15 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
             return SET_CACHE;
         } else {
             //加载redis中的黑名单列表
-            Set<String> ips = RedisUtil.instance().keys(ProjectContextInfo.BI_BLOCKED_IP_KEY);
+            Set<String> ips = LettuceStringRedis.getInstance().sMembers(ProjectContextInfo.BI_BLOCKED_IP_KEY);
             if (CollectionUtils.isEmpty(ips)) {
                 return SET_CACHE;
             }
-            Date now = new Date();
-            Set<String> ipBlockedSet = ips.stream().filter(ip -> !checkExpire(ip, now)).collect(Collectors.toSet());
+            Set<String> ipBlockedSet = ips.stream().filter(ip -> !checkExpire(ip)).collect(Collectors.toSet());
             ipBlockedSet.addAll(SET_CACHE);
             return ipBlockedSet;
         }
     }
-
 
 
     @Override
@@ -132,8 +127,7 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
         } else {
             boolean blocked = SET_CACHE.contains(ip);
             if (blocked) {
-                Boolean isMember = RedisUtil.instance().sIsMember(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip);
-                if (!isMember) {
+                if (!LettuceStringRedis.getInstance().sIsMember(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip)) {
                     TIMESTAMP_MAP.remove(ip);
                     SET_CACHE.remove(ip);
                     return false;
@@ -142,7 +136,7 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
                     if (TIMESTAMP_MAP.containsKey(ip)) {
                         if (System.currentTimeMillis() > TIMESTAMP_MAP.get(ip)) {
                             TIMESTAMP_MAP.remove(ip);
-                            RedisUtil.instance().sMove(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip);
+                            LettuceStringRedis.getInstance().sRem(ProjectContextInfo.BI_BLOCKED_IP_KEY, ip);
                             SET_CACHE.remove(ip);
                             return false;
                         }
@@ -159,14 +153,13 @@ public class RedisBiBlockedIpServiceImpl implements BiBlockedIpService {
     /**
      * 检查是否过期
      * @param ip ip
-     * @param now 当前时间
      * @return 是否过期
      */
-    private boolean checkExpire(String ip, Date now) {
+    private boolean checkExpire(String ip) {
         if (!TIMESTAMP_MAP.containsKey(ip)) {
             return true;
         }
-        if (now.getTime() > TIMESTAMP_MAP.get(ip)) {
+        if (System.currentTimeMillis() > TIMESTAMP_MAP.get(ip)) {
             SET_CACHE.remove(ProjectContextInfo.BI_BLOCKED_IP_KEY);
             TIMESTAMP_MAP.remove(ip);
             return true;

@@ -14,7 +14,7 @@ import java.util.Objects;
  * @date 2022/4/2 17:56
  */
 @Slf4j
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings("rawtypes")
 public class LettuceStringRedis extends AbstractRedisAdaptor {
 
     private LettuceStringRedis(RedisTemplate redisTemplate) {
@@ -26,7 +26,7 @@ public class LettuceStringRedis extends AbstractRedisAdaptor {
 
     public static LettuceStringRedis getInstance() {
         if (Objects.isNull(instance)) {
-            synchronized (LettuceRedis.class) {
+            synchronized (LettuceStringRedis.class) {
                 if (Objects.isNull(instance)) {
                     RedisTemplate template = SpringContextHolder.getBean(StringRedisTemplate.class);
                     instance = new LettuceStringRedis(template);
@@ -35,7 +35,6 @@ public class LettuceStringRedis extends AbstractRedisAdaptor {
         }
         return instance;
     }
-
 
     @Override
     public AbstractRedisAdaptor selectDb(int db) {

@@ -3,8 +3,10 @@ package com.hqy.fundation.cache.redis;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.foundation.cache.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -87,6 +89,33 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         } catch (Exception e) {
             log.error("@@@ [exists] failure: ", e);
             return false;
+        }
+    }
+
+    @Override
+    public Set<String> keys(String pattern) {
+        try {
+            return redisTemplate.keys(pattern);
+        } catch (Exception e) {
+            log.error("@@@ [keys] failure, pattern:{}", pattern, e);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<String> scan(String matchKey) {
+        try {
+            return (Set<String>)redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
+                Set<String> keys = new HashSet<>();
+                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match("*" + matchKey + "*").count(1000).build());
+                while (cursor.hasNext()) {
+                    keys.add(new String(cursor.next()));
+                }
+                return keys;
+            });
+        } catch (Exception e) {
+            log.error("@@@ [scan] failure, matchKey:{}", matchKey, e);
+            return null;
         }
     }
 
@@ -278,6 +307,18 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             return 0L;
         }
     }
+
+    public Long sAdd(String key, long time, TimeUnit timeUnit, Object values){
+        try {
+            Long count = redisTemplate.opsForSet().add(key, values);
+            expire(key, time, timeUnit);
+            return count;
+        } catch (Exception e) {
+            log.error("@@@ [sAdd] failure, key:{}.", key);
+            return 0L;
+        }
+    }
+
 
     @Override
     public <T> Set<T> sMembers(String key) {

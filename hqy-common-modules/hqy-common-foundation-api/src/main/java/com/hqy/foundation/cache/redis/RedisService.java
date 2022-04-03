@@ -45,6 +45,21 @@ public interface RedisService {
      */
     Boolean exists(String key);
 
+    /**
+     * 模糊查询返回匹配到键
+     * 注意！！！ keys的操作会导致数据库暂时被锁住，其他的请求都会被堵塞；业务量大的时候会出问题 使用需谨慎
+     * 如果遇到必须使用模糊的业务场景 推荐使用redis的scan命令 基于游标进行匹配。
+     * @param pattern 正则
+     * @return keys
+     */
+    Set<String> keys(String pattern);
+
+    /**
+     * 增量的迭代key 数据结构为String
+     * @param matchKey 需要匹配的key
+     * @return keys
+     */
+    Set<String> scan(String matchKey);
 
     /**
      * 根据key删除相应value. 可批量删除.

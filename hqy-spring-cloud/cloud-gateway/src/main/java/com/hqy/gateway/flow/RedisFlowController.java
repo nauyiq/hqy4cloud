@@ -1,8 +1,7 @@
 package com.hqy.gateway.flow;
 
-import com.hqy.fundation.cache.redis.LettuceRedis;
-import com.hqy.fundation.cache.redis.RedisUtil;
 import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,18 +47,18 @@ public class RedisFlowController {
         long total = 0L;
         try {
             //如果redis目前没有这个key，创建并赋予1，有效时间为expireSeconds
-            Boolean result = RedisUtil.instance().setNx(limitRedisKey, "1", expireSeconds, TimeUnit.SECONDS);
+            Boolean result = LettuceStringRedis.getInstance().setNx(limitRedisKey, "1", expireSeconds, TimeUnit.SECONDS);
             if (result) {
                 //设置成功 则说明当前ip在时间窗口内首次访问
                 total = 1L;
             } else {
                 //当前key对应的值加1 并且返回加1后的值
-                 total = Objects.requireNonNull(LettuceRedis.getInstance().incr(limitRedisKey, 1L));
+                 total = Objects.requireNonNull(LettuceStringRedis.getInstance().incr(limitRedisKey, 1L));
                 //Redis TTL命令以秒为单位返回key的剩余过期时间。当key不存在时，返回-2。当key存在但没有设置剩余生存时间时，返回-1。否则，以秒为单位，返回key的剩余生存时间。
-                Long expire = LettuceRedis.getInstance().ttl(limitRedisKey);
+                Long expire =  LettuceStringRedis.getInstance().ttl(limitRedisKey);
                 if (Objects.nonNull(expire) && -1L == expire) {
                     //为给定key设置生存时间
-                    LettuceRedis.getInstance().expire(limitRedisKey, expireSeconds, TimeUnit.SECONDS);
+                    LettuceStringRedis.getInstance().expire(limitRedisKey, expireSeconds, TimeUnit.SECONDS);
                 }
             }
         } catch (Exception e) {

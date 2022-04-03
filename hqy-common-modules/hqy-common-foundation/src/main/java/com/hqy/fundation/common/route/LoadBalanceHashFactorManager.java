@@ -3,8 +3,7 @@ package com.hqy.fundation.common.route;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.cache.redis.RedisStringUtil;
-import com.hqy.fundation.cache.redis.RedisUtil;
+import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public class LoadBalanceHashFactorManager {
 
     private LoadBalanceHashFactorManager() {}
 
-    private static final int DB = 1;
 
     private static final Cache<String, String> HASH_CACHE =
             CacheBuilder.newBuilder().initialCapacity(1024).expireAfterAccess(10L, TimeUnit.MINUTES).build();
@@ -34,7 +32,6 @@ public class LoadBalanceHashFactorManager {
         return SocketClusterStatus.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)
                 .concat(module).concat(BaseStringConstants.Symbol.COLON).concat(hash + "");
     }
-
 
     /**
      * 根据模块和hash值获取哈希因子
@@ -46,8 +43,9 @@ public class LoadBalanceHashFactorManager {
         String key = genKey(module, hash);
         String hashFactor = HASH_CACHE.getIfPresent(key);
         if (StringUtils.isBlank(hashFactor)) {
-            hashFactor = RedisStringUtil.instance().selectDb(DB).get(key);
+            hashFactor = LettuceStringRedis.getInstance().get(key);
             if (StringUtils.isBlank(hashFactor)) {
+                log.warn("@@@ Not found hashFactor, module:{}, hash:{}", module, hash);
                 hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
             } else {
                 HASH_CACHE.put(key, hashFactor);
@@ -58,12 +56,8 @@ public class LoadBalanceHashFactorManager {
 
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
-        RedisStringUtil.instance().selectDb(DB).set(key, hashFactor, -1L);
+        LettuceStringRedis.getInstance().set(key, hashFactor, -1L);
         HASH_CACHE.put(key, hashFactor);
     }
-
-
-
-
 
 }

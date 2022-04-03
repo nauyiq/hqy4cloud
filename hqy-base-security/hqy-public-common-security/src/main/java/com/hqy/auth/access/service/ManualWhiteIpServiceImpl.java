@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
-import com.hqy.fundation.cache.redis.RedisUtil;
+import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,20 +42,20 @@ public class ManualWhiteIpServiceImpl implements ManualWhiteIpService, Initializ
 
     @Override
     public void addWhiteIp(String ip) {
-        RedisUtil.instance().strSAdd(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
+        LettuceStringRedis.getInstance().sAdd(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
         CACHE_WHITE.put(ip, System.currentTimeMillis());
     }
 
     @Override
     public void removeWhiteIp(String ip) {
-        RedisUtil.instance().sMove(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
+        LettuceStringRedis.getInstance().sRem(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
         CACHE_WHITE.invalidate(ip);
         contextInfoWhiteSet.remove(ip);
     }
 
     @Override
     public Set<String> getAllWhiteIp() {
-        Set<String> ips = RedisUtil.instance().strSMembers(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
+        Set<String> ips = LettuceStringRedis.getInstance().sMembers(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
         if (CollectionUtils.isEmpty(ips)) {
             return new HashSet<>();
         }
@@ -74,7 +74,7 @@ public class ManualWhiteIpServiceImpl implements ManualWhiteIpService, Initializ
             }
             return true;
         }
-        boolean exist = RedisUtil.instance().sIsMember(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
+        boolean exist = LettuceStringRedis.getInstance().sIsMember(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY, ip);
         if (exist) {
             CACHE_WHITE.put(ip, System.currentTimeMillis());
         }
@@ -91,7 +91,7 @@ public class ManualWhiteIpServiceImpl implements ManualWhiteIpService, Initializ
             }
         }
         if (reset) {
-            RedisUtil.instance().del(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
+            LettuceStringRedis.getInstance().del(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
         }
     }
 

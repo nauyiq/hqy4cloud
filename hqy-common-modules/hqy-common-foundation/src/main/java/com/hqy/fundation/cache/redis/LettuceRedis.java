@@ -12,9 +12,10 @@ import java.util.Objects;
  * @date 2021-08-02 9:41
  */
 @Slf4j
+@SuppressWarnings("rawtypes")
 public class LettuceRedis extends AbstractRedisAdaptor {
 
-    private LettuceRedis(RedisTemplate<String, Object> redisTemplate) {
+    private LettuceRedis(RedisTemplate redisTemplate) {
         super(redisTemplate);
     }
 
@@ -24,8 +25,7 @@ public class LettuceRedis extends AbstractRedisAdaptor {
         if (Objects.isNull(instance)) {
             synchronized (LettuceRedis.class) {
                 if (Objects.isNull(instance)) {
-                    @SuppressWarnings("unchecked")
-                    RedisTemplate<String, Object> template = SpringContextHolder.getBean(RedisTemplate.class, "LettuceRedisTemplate");
+                    RedisTemplate template = SpringContextHolder.getBean(RedisTemplate.class, "LettuceRedisTemplate");
                     instance = new LettuceRedis(template);
                 }
             }
@@ -34,7 +34,6 @@ public class LettuceRedis extends AbstractRedisAdaptor {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public AbstractRedisAdaptor selectDb(int db) {
         if (db < 0 || db > 15) {
             db = 0;
