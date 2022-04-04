@@ -64,8 +64,9 @@ public interface RedisService {
     /**
      * 根据key删除相应value. 可批量删除.
      * @param keys redis key
+     * @return 是否删除成功
      */
-    void del(String... keys);
+    Boolean del(String... keys);
 
 
     /**
@@ -85,7 +86,7 @@ public interface RedisService {
      * @param timeUnit  单位
      * @return 操作是否成功
      */
-    Boolean set(String key, Object value, long time, TimeUnit timeUnit);
+    Boolean set(String key, Object value, Long time, TimeUnit timeUnit);
 
 
     /**

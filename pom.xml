@@ -51,6 +51,7 @@
         <source.plugin.version>3.0.1</source.plugin.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
+        <org.redisson.version>3.13.6</org.redisson.version>
         <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
 
     </properties>
@@ -58,7 +59,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--spring boot -->
+            <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -67,7 +68,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--spring cloud-->
+            <!-- spring cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -77,7 +78,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--spring cloud alibaba -->
+            <!-- spring cloud alibaba -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -86,6 +87,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- version2以上基于grpc的 spring cloud alibaba client-->
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
@@ -93,7 +95,7 @@
             </dependency>
 
 
-            <!--spring data redis-->
+            <!-- spring data redis -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -101,21 +103,21 @@
             </dependency>
 
 
-            <!--mysql-connector-->
+            <!-- mysql-connector -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
 
-            <!--druid-->
+            <!-- druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
 
-            <!--springboot-druid-->
+            <!-- springboot-druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
@@ -169,18 +171,21 @@
                 <version>${hutool.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>com.facebook.swift</groupId>
                 <artifactId>swift-codec</artifactId>
                 <version>${swift.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>com.facebook.swift</groupId>
                 <artifactId>swift-annotations</artifactId>
                 <version>${swift.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>org.apache.thrift</groupId>
                 <artifactId>libthrift</artifactId>
@@ -193,7 +198,7 @@
                 </exclusions>
             </dependency>
 
-
+            <!-- facebook.nifty -->
             <dependency>
                 <groupId>com.facebook.nifty</groupId>
                 <artifactId>nifty-core</artifactId>
@@ -206,13 +211,14 @@
                 <version>${guava.version}</version>
             </dependency>
 
-
+            <!-- elasticsearch client -->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
 
+            <!-- elasticsearch -->
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
@@ -231,6 +237,14 @@
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons.beanutils.version}</version>
             </dependency>
+
+            <!-- redisson client -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${org.redisson.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

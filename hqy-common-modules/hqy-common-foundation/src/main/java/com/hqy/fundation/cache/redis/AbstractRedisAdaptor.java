@@ -120,17 +120,19 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public void del(String... keys) {
+    public Boolean del(String... keys) {
         try {
             if (keys != null && keys.length > 0) {
                 if (keys.length == 1) {
-                    redisTemplate.delete(keys[0]);
+                    return redisTemplate.delete(keys[0]);
                 } else {
-                    redisTemplate.delete(CollectionUtils.arrayToList(keys));
+                    return redisTemplate.delete(CollectionUtils.arrayToList(keys)) != null;
                 }
             }
+            return false;
         } catch (Exception e) {
             log.error("@@@ [del] failure: ", e);
+            return null;
         }
     }
 
@@ -147,18 +149,22 @@ public abstract class AbstractRedisAdaptor implements RedisService {
 
 
     public Boolean set(String key, Object value) {
-        return set(key, value, BaseMathConstants.ONE_DAY_4MILLISECONDS);
+        return set(key, value, null);
     }
 
-    public Boolean set(String key, Object value, long time) {
+    public Boolean set(String key, Object value, Long time) {
         return set(key, value, time, TimeUnit.MILLISECONDS);
     }
 
 
     @Override
-    public Boolean set(String key, Object value, long time, TimeUnit timeUnit) {
+    public Boolean set(String key, Object value, Long time, TimeUnit timeUnit) {
         try {
-            redisTemplate.opsForValue().set(key, value, time, timeUnit);
+            if (time == null || time == 0L) {
+                redisTemplate.opsForValue().set(key, value);
+            } else {
+                redisTemplate.opsForValue().set(key, value, time, timeUnit);
+            }
         }  catch (Exception e) {
             log.error("@@@ [set] failure: key:{}", key, e);
             return false;

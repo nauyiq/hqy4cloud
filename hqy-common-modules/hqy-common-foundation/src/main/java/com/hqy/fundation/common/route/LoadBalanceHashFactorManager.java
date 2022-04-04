@@ -56,7 +56,7 @@ public class LoadBalanceHashFactorManager {
 
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
-        LettuceStringRedis.getInstance().set(key, hashFactor, -1L);
+        LettuceStringRedis.getInstance().set(key, hashFactor);
         HASH_CACHE.put(key, hashFactor);
     }
 
