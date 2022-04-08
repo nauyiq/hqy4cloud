@@ -26,6 +26,12 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- 实时监控  spring-boot-starter-actuator-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!--SpringCloud ailibaba nacos 移除原本的1.0使用http通讯的nacos客户端 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

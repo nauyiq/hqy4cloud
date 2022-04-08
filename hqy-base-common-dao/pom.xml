@@ -16,6 +16,7 @@
     <modules>
         <module>hqy-base-multiple-datasource</module>
         <module>hqy-base-common-dao-api</module>
+        <module>hqy-base-common-dao-transaction</module>
     </modules>
 
 </project>

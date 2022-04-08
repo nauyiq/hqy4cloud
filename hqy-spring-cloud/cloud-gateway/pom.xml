@@ -72,10 +72,6 @@
                     <groupId>com.hqy</groupId>
                     <artifactId>hqy-base-common-dao-api</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-multiple-datasource</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -85,30 +81,10 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>-->
 
-        <!--不去除web依赖 将会和gateway中的web flux冲突-->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-util</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!--不去除web依赖 将会和gateway中的web flux冲突-->
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-public-common-security</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- OAuth2资源服务器-->
@@ -127,33 +103,18 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>8.16</version>
         </dependency>
 
-
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-thrift-rpc</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-loadbalancer</artifactId>
         </dependency>
-    </dependencies>
 
+    </dependencies>
 
 
     <build>

@@ -23,6 +23,7 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+
         <!-- 公共基础服务, rpc, redis -->
         <dependency>
             <groupId>com.hqy</groupId>

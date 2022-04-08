@@ -21,6 +21,12 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-util</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
