@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * @author qiyuan.hong
@@ -16,7 +17,6 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 public class Storage extends BaseEntity<Long> {
 
-
     private Long productId;
 
     private Integer total;
@@ -25,4 +25,5 @@ public class Storage extends BaseEntity<Long> {
 
     private Integer residue;
 
+    private BigDecimal price;
 }

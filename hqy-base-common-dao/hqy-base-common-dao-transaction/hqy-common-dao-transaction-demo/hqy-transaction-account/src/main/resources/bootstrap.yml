@@ -21,6 +21,9 @@ spring:
       discovery:
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
+    alibaba:
+      seata:
+        tx-service-group: default
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包 com.mysql.jdbc.Driver
@@ -31,3 +34,7 @@ mapper:
   mappers: com.hqy.base.BaseDao
   not-empty: false
   identity: mysql
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
