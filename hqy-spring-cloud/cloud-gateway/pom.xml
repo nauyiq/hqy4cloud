@@ -75,12 +75,6 @@
             </exclusions>
         </dependency>
 
-        <!--引入springboot 整合rabbitmq-->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>-->
-
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-public-common-security</artifactId>

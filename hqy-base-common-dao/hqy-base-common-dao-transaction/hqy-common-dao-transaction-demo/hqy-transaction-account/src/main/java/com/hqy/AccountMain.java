@@ -1,11 +1,13 @@
 package com.hqy;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import tk.mybatis.spring.annotation.MapperScan;
 
@@ -17,7 +19,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @Slf4j
 @EnableDiscoveryClient
 @MapperScan(basePackages = "com.hqy.account.dao")
-@SpringBootApplication
+@SpringBootApplication(exclude = { DruidDataSourceAutoConfigure.class, DataSourceAutoConfiguration.class })
 public class AccountMain {
 
 
@@ -32,6 +34,7 @@ public class AccountMain {
          */
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(AccountMain.class, args);
+
 
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");

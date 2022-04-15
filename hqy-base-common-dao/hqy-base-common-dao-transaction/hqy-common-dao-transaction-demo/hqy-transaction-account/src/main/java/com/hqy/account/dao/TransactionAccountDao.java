@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @date 2022/4/8 13:41
  */
 @Repository
-public interface AccountDao extends BaseDao<Account, Long> {
+public interface TransactionAccountDao extends BaseDao<Account, Long> {
 }

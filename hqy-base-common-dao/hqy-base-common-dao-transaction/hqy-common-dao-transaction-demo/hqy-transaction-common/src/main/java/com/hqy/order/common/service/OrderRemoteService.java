@@ -25,8 +25,13 @@ public interface OrderRemoteService extends RPCService {
      * @return 订单号
      */
     @ThriftMethod
-    Long order(@ThriftField(1) Long productId, @ThriftField(2) int count, @ThriftField(3) String money);
+    Long order(@ThriftField(1) Long productId, @ThriftField(2) int count, @ThriftField(3) String money,
+               @ThriftField(4) String storageJson, @ThriftField(5) String accountJson);
 
-
-
+    /**
+     * 修改订单成功状态
+     * @param orderNum
+     */
+    @ThriftMethod
+    void updateOrderStateSuccess(@ThriftField(1)Long orderNum);
 }

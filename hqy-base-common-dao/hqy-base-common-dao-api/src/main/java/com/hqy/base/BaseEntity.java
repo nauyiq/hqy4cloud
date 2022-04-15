@@ -32,4 +32,11 @@ public class BaseEntity<PK>{
      */
     private Date updated;
 
+    public BaseEntity() {
+    }
+
+    public BaseEntity(Date date) {
+        this.created = date;
+        this.updated = date;
+    }
 }

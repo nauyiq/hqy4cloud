@@ -1,6 +1,6 @@
 package com.hqy.account.service.impl;
 
-import com.hqy.account.dao.AccountDao;
+import com.hqy.account.dao.TransactionAccountDao;
 import com.hqy.account.service.AccountService;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 public class AccountServiceImpl extends BaseTkServiceImpl<Account, Long> implements AccountService {
 
     @Resource
-    private AccountDao accountDao;
+    private TransactionAccountDao accountDao;
 
     @Override
     public BaseDao<Account, Long> selectDao() {

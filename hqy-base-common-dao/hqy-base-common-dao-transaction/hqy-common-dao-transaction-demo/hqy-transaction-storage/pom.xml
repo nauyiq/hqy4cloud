@@ -52,6 +52,12 @@
             <artifactId>nacos-client</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy.transaction</groupId>
+            <artifactId>hqy-common-dao-transaction-seata</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 
@@ -65,7 +71,7 @@
                     <include>**/*.xml</include>
                     <include>*.properties</include>
                     <include>*.yml</include>
-                    <include>*.jks</include>
+                    <include>*.conf</include>
                 </includes>
             </resource>
         </resources>

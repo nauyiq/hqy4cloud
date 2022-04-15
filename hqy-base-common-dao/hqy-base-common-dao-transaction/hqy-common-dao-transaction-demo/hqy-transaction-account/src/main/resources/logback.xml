@@ -55,6 +55,7 @@
     <logger name="tk.mybatis" level="WARN"/>
     <logger name="com.alibaba" level="INFO"/>
     <logger name="io.netty" level="WARN"/>
+    <logger name="io.seata" level="DEBUG"/>
     <logger name="io.lettuce" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.redisson.connection.DNSMonitor" level="INFO"/>

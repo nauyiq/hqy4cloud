@@ -20,10 +20,10 @@ import java.util.Set;
  */
 @Slf4j
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class GatewayMain {
 
-    public static void main(String[] args) {    
+    public static void main(String[] args) {
 
         /*
         必须禁用springboot热部署 否则会导致 thrift rpc 调用时thriftMethodManager 进行codec 编码struct类时 抛出类转换异常。
