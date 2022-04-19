@@ -1,7 +1,9 @@
 logging:
   config: classpath:logback.xml
+
 server:
   port: 8206
+
 spring:
   application:
     name: transaction-account-service
@@ -22,15 +24,13 @@ spring:
         ephemeral: true # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-    alibaba:
-      seata:
-        tx-service-group: transaction-account-service
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包 com.mysql.jdbc.Driver
     url: jdbc:mysql://120.76.65.160:3306/transaction_account?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: hongqy@2021
+
 mapper:
   mappers: com.hqy.base.BaseDao
   not-empty: false
@@ -44,19 +44,21 @@ mybatis:
 seata:
   enabled: true
   enableAutoDataSourceProxy: false
-  application-id: ${spring.application.name} # Seata 应用编号，默认为 ${spring.application.name}
-  tx-service-group: ${spring.application.name}  # Seata 事务组编号，用于 TC 集群名
+  application-id: transaction-account-service
+  tx-service-group: transaction-account-service
   service:
     vgroup-mapping:
       transaction-account-service: default
   config:
     type: nacos
     nacos:
-      namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-      server-addr: 120.76.65.160:8848
+      namespace: ec2d7dd8-20de-4c8c-a16d-1cdfe63c5d6e
+      serverAddr: 120.76.65.160:8848
       group: DEV_GROUP
   registry:
     type: nacos # 注册中心类型，默认为 file
     nacos:
       application: seata-server
-      server-addr: 120.76.65.160:8848
+      namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+      serverAddr: 120.76.65.160:8848
+      group: DEV_GROUP

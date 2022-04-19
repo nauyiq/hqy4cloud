@@ -5,6 +5,7 @@ import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.service.AccountRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     private AccountService accountService;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
     public boolean modifyAccount(String account) {
         Account bean = JsonUtil.toBean(account, Account.class);
         if (bean == null) {

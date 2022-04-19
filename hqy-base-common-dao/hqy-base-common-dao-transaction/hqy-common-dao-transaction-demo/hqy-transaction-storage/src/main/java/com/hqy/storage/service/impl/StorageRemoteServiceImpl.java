@@ -5,6 +5,7 @@ import com.hqy.order.common.service.StorageRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.storage.service.StorageService;
 import com.hqy.util.JsonUtil;
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,8 +36,10 @@ public class StorageRemoteServiceImpl extends AbstractRPCService implements Stor
 
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
     public boolean modifyStorage(String storage) {
+        String xid = RootContext.getXID();
+        System.out.println(xid);
         Storage bean = JsonUtil.toBean(storage, Storage.class);
         if (Objects.isNull(bean)) {
             return false;

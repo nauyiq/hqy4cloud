@@ -39,7 +39,7 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
     }
 
     @Override
-    @GlobalTransactional( rollbackFor = Exception.class)
+    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
     public MessageResponse order(Long storageId, Integer count) {
 
         CommonSwitcher.JUST_4_TEST_DEBUG.setStatus(false);
@@ -88,6 +88,8 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
             throw new RuntimeException("@@@ 修改账户余额失败");
         }
 
+        int i = 1/0;
+
         //修改订单状态
         order.setId(orderNum);
         order.setStatus(true);
@@ -96,7 +98,6 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         if (!modify) {
             throw new RuntimeException("@@@ 修改订单状态失败");
         }
-
 
         return new MessageResponse(true, CommonResultCode.SUCCESS.message, CommonResultCode.SUCCESS.code);
     }
