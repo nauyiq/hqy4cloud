@@ -16,6 +16,7 @@ import java.util.Objects;
  * @author qiyuan.hong
  * @date 2021-07-22 16:25
  **/
+@Component
 public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
@@ -89,17 +90,6 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
 
-    /**
-     * 注册上下文 Context信息，方便全局使用
-     * @param name
-     * @param envriment
-     * @param createTime
-     */
-//	public static void registContextInfo(GfwContextInfo info) {
-//		if(info != null){
-//			congtextInfo = info;
-//		}
-//	}
 
 
     /**

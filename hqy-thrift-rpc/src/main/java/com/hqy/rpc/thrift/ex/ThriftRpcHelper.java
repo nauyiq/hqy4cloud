@@ -1,12 +1,15 @@
 package com.hqy.rpc.thrift.ex;
 
+import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +30,6 @@ public class ThriftRpcHelper {
      */
     public static final String DEFAULT_HASH_FACTOR = "default";
 
-    /**
-     * 分隔符 :
-     */
-    public static final String SEPARATOR = ":";
-
-
 
     /**
      * hashFactor  convert UsingIpPort
@@ -41,13 +38,17 @@ public class ThriftRpcHelper {
      */
     public static UsingIpPort convertHash(String hashFactor) {
         try {
-            String[] split = hashFactor.split(SEPARATOR);
+            String[] split = hashFactor.split(BaseStringConstants.Symbol.COLON);
             int port = Integer.parseInt(split[1]);
-            return new UsingIpPort(split[0], port, port, 0);
+            return new UsingIpPort(split[0], 0, port, 0);
         } catch (Exception e) {
             log.warn("@@@ [{}] 不是ip:rpcPort的格式, 格式化失败", hashFactor);
             return null;
         }
+    }
+
+    public static String genHashFactor(String ip, String port) {
+        return ip.concat(BaseStringConstants.Symbol.COLON).concat(port);
     }
 
     /**
@@ -77,12 +78,22 @@ public class ThriftRpcHelper {
         try {
             //原数据
             Map<String, String> metadata = instance.getMetadata();
-            String nodeInfo = metadata.get(BaseStringConstants.NODE_INFO);
+            String nodeInfo = metadata.get(ProjectContextInfo.NODE_INFO);
             clusterNode = JsonUtil.toBean(nodeInfo, ClusterNode.class);
         } catch (Exception e) {
             throw new IllegalArgumentException("registry nacos instance has error, metadata is null -> ip = " + ip + "nameEn = " + instance.getServiceName());
         }
         return clusterNode;
+    }
+
+    public static NacosServiceInstance copy(int socketPort, ServiceInstance serviceInstance) {
+        NacosServiceInstance nacosServiceInstance = new NacosServiceInstance();
+        nacosServiceInstance.setHost(serviceInstance.getHost());
+        nacosServiceInstance.setServiceId(serviceInstance.getServiceId());
+        nacosServiceInstance.setMetadata(serviceInstance.getMetadata());
+        nacosServiceInstance.setPort(socketPort);
+        nacosServiceInstance.setSecure(serviceInstance.isSecure());
+        return nacosServiceInstance;
     }
 
 }

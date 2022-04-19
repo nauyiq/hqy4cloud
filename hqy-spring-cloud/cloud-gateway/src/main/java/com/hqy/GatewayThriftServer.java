@@ -1,13 +1,10 @@
 package com.hqy;
 
-import com.hqy.fundation.common.rpc.api.RPCService;
-import com.hqy.gateway.service.GatewayServiceImpl;
+import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.rpc.api.AbstractThriftServer;
-import com.hqy.util.spring.SpringContextHolder;
-import org.apache.commons.collections.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,19 +13,13 @@ import java.util.List;
  * @author qy
  * @date 2021-09-24 17:47
  */
+@Slf4j
 @Component
-public class GatewayThriftServer extends AbstractThriftServer  {
-
+public class GatewayThriftServer extends AbstractThriftServer {
     @Override
     public List<RPCService> getServiceList4Register() {
-
-        List<RPCService> rpcServices = new ArrayList<>();
-        if (CollectionUtils.isEmpty(rpcServices)) {
-            GatewayServiceImpl gatewayService = SpringContextHolder.getBean(GatewayServiceImpl.class);
-            rpcServices.add(gatewayService);
-        }
-
-        return rpcServices;
+        log.info("@@@ 当前服务为RPC的消费者, 无需注册ThriftServer");
+        return null;
     }
 }
 

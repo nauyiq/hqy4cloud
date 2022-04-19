@@ -1,6 +1,6 @@
 package com.hqy.gateway.filter;
 
-import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
+import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;

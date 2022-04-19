@@ -21,7 +21,9 @@ import com.hqy.socketio.Transport;
 import com.hqy.socketio.handler.AuthorizeHandler;
 import com.hqy.socketio.handler.ClientHead;
 import com.hqy.socketio.handler.ClientsBox;
+import com.hqy.socketio.handler.ClientsBoxEx;
 import com.hqy.socketio.messages.PacketsMessage;
+import com.hqy.socketio.namespace.Namespace;
 import com.hqy.socketio.protocol.Packet;
 import com.hqy.socketio.protocol.PacketType;
 import com.hqy.socketio.scheduler.CancelableScheduler;
@@ -180,25 +182,30 @@ public class WebSocketTransport extends ChannelInboundHandlerAdapter {
 
         client.bindChannel(channel, Transport.WEBSOCKET);
 
-        authorizeHandler.connect(client);
-
-        if (client.getCurrentTransport() == Transport.POLLING) {
-            SchedulerKey key = new SchedulerKey(SchedulerKey.Type.UPGRADE_TIMEOUT, sessionId);
-            scheduler.schedule(key, new Runnable() {
-                @Override
-                public void run() {
-                    ClientHead clientHead = clientsBox.get(sessionId);
-                    if (clientHead != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("client did not complete upgrade - closing transport");
-                        }
-                        clientHead.onChannelDisconnect();
-                    }
-                }
-            }, configuration.getUpgradeTimeout(), TimeUnit.MILLISECONDS);
+        Namespace namespace = authorizeHandler.connect(client, false);
+        if (client.getHandshakeData() != null) {
+            log.info("@@@ 通道upgrade->连接协议：已切换websocket协议, bizId:{},sessionId:{}",client.getHandshakeData().getBizId(), sessionId);
         }
 
-        log.debug("сlient {} handshake completed", sessionId);
+        //polling请求
+        if (client.getCurrentTransport() == Transport.POLLING) {
+            SchedulerKey key = new SchedulerKey(SchedulerKey.Type.UPGRADE_TIMEOUT, sessionId);
+            scheduler.schedule(key, () -> {
+                ClientHead clientHead = clientsBox.get(sessionId);
+                if (clientHead != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("client did not complete upgrade - closing transport");
+                    }
+                    clientHead.onChannelDisconnect();
+                    clientsBox.removeClient(sessionId);
+                }
+            }, configuration.getUpgradeTimeout(), TimeUnit.MILLISECONDS);
+        } else if (client.getCurrentTransport() == Transport.WEBSOCKET) {
+            //兼容直连ws用户的操作。
+            client.upgrade(namespace);
+        }
+
+        log.debug("client {} handshake completed", sessionId);
     }
 
     private String getWebSocketLocation(HttpRequest req) {

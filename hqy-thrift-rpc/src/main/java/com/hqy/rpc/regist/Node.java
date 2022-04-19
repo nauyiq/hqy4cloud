@@ -1,6 +1,6 @@
 package com.hqy.rpc.regist;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +15,6 @@ import java.util.Objects;
 @Data
 @Slf4j
 public abstract class Node {
-
 
     /**
      * 节点名称 (中文名)
@@ -56,19 +55,6 @@ public abstract class Node {
         int rpcPort = uip.getRpcPort();
         return rpcPort != -1;
     }
-
-    /**
-     * 判断当前服务是否提供socket端口
-     * @return
-     */
-    /*public Boolean isSocketService() {
-        if (Objects.isNull(uip)) {
-            log.warn("[系统初始化异常] 节点信息未注册.");
-            return false;
-        }
-        int socketPort = uip.getSocketPort();
-        return socketPort != -1;
-    }*/
 
 
 }

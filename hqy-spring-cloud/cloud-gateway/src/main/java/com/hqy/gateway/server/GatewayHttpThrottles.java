@@ -1,16 +1,16 @@
 package com.hqy.gateway.server;
 
-import com.hqy.coll.gateway.service.CollPersistService;
-import com.hqy.coll.gateway.struct.ThrottledIpBlockStruct;
-import com.hqy.fundation.common.HttpRequestInfo;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.swticher.HttpGeneralSwitcher;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.swticher.HttpGeneralSwitcher;
+import com.hqy.coll.service.CollPersistService;
+import com.hqy.coll.struct.ThrottledIpBlockStruct;
+import com.hqy.foundation.common.HttpRequestInfo;
+import com.hqy.foundation.limit.LimitResult;
+import com.hqy.foundation.limit.service.HttpThrottles;
 import com.hqy.gateway.flow.RedisFlowControlCenter;
 import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.rpc.RPCClient;
-import com.hqy.service.dto.LimitResult;
-import com.hqy.service.limit.HttpThrottles;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -116,12 +116,12 @@ public class GatewayHttpThrottles implements HttpThrottles {
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult;
             //聚合浓缩黑客判定方法
-            if (url.contains(BaseStringConstants.QUESTION_MARK)) {
+            if (url.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
                 //有?就走正常的url校验
                 hackCheckLimitResult = checkHackAccess(request.getRequestParams(), requestIp, request.getUri(), url);
             } else {
                 //防止双引号脚本的内容攻击....
-                hackCheckLimitResult =  checkHackAccess(request.getRequestParams(),requestIp,request.getUri(), request.getRequestUrl());
+                hackCheckLimitResult = checkHackAccess(request.getRequestParams(),requestIp,request.getUri(), request.getRequestUrl());
             }
             if (hackCheckLimitResult.isNeedLimit()) {
                 hackCheckLimitResult.setTip(errMsg.concat("[HAK]"));
@@ -130,7 +130,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
         }
 
         //TODO CHECK DB BUSY?
-
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             //未开启限流器
@@ -152,16 +151,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
                         persistBlockIpAction(requestIp, redisFlowDTO.getBlockSeconds(), url, "BiBlock(RedisFlowControl)", request.getUri());
                     }
                 }
-
                 if (needLimit) {
                     //TODO 当前ip超限了 是不是可以报警一下?
                     log.warn("@@@ RATE LIMIT , too fast access !!! " + errMsg);
                     return new LimitResult(true, errMsg, LimitResult.ReasonEnum.RATE_LIMIT_NG);
                 }
-
             } catch (Exception e) {
-                //TODO 异常采集
-                log.error("Throttles HTTP request [remoteAddr=" + requestIp + "] failed", e);
+                log.error("Throttles HTTP request [requestIp=" + requestIp + "] failed", e);
             }
 
         }
@@ -212,10 +208,10 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 }
             }
 
-            if (StringUtils.isNotBlank(uri) && !"/".equals(uri)) {
+            if (StringUtils.isNotBlank(uri) && !BaseStringConstants.Symbol.INCLINED_ROD.equals(uri)) {
                 boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE);
                 if (hackAccess) {
-                    log.warn("@@@ HACK TOOL REJECT (URI)!!!,{}, remoteAddr:{} ", uri, requestIp);
+                    log.warn("@@@ HACK TOOL REJECT (URI)!!!,{}, requestIp:{} ", uri, requestIp);
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
                         ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);

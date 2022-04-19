@@ -2,19 +2,20 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.MicroServiceHelper;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.MicroServiceManager;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -24,11 +25,14 @@ import java.util.Map;
  * @date 2022/3/1 14:53
  */
 @Slf4j
-@Component
+@Configuration
 public class NacosWatchConfig {
 
     @Value("${spring.application.name}")
     private String nameEn;
+
+    @Resource
+    private AbstractNacosClientWrapper clientWrapper;
 
     /**
      * 加载rpc端口和配置文件中的metadata原数据 并注册到nacos服务
@@ -40,25 +44,23 @@ public class NacosWatchConfig {
     public NacosWatch nacosWatch(NacosDiscoveryProperties properties) {
 
         //nacos客户端
-        AbstractNacosClientWrapper clientWrapper = SpringContextHolder.getBean(AbstractNacosClientWrapper.class);
         String environment = EnvironmentConfig.getInstance().getEnvironment();
 
         //声明nacos节点 并且注册上下文到springContextHolder中.
-        boolean result = clientWrapper.declareNodeRpcServer(environment, MicroServiceHelper.getNodeType(nameEn));
+        boolean result = clientWrapper.declareNodeRpcServer(environment, MicroServiceManager.getNodeType(nameEn));
 
-        log.info("@@@ DeclareNodeRpcServer end. result:{}", result);
+        if (!result) {
+            log.warn("@@@ 声明当前nacos节点node信息 注册ProjectContext失败. nameEn:{}, env:{}", nameEn, environment);
+        }
 
         //获取节点信息.
         ClusterNode clusterNode = clientWrapper.getNode();
         UsingIpPort uip = SpringContextHolder.getProjectContextInfo().getUip();
         clusterNode.setUip(uip);
         clusterNode.setPubValue(SpringContextHolder.getProjectContextInfo().getPubValue());
-
-        //TODO HASH因子等设置
-
         //更改服务详情中的元数据
         Map<String, String> metadata = properties.getMetadata();
-        metadata.put(BaseStringConstants.NODE_INFO, JsonUtil.toJson(clusterNode));
+        metadata.put(ProjectContextInfo.NODE_INFO, JsonUtil.toJson(clusterNode));
         properties.setMetadata(metadata);
         return new NacosWatch(properties);
     }

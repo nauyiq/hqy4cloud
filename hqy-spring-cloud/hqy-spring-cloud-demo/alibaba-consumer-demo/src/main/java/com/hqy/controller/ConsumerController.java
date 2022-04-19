@@ -1,6 +1,6 @@
 package com.hqy.controller;
 
-import com.hqy.fundation.common.bind.DataResponse;
+import com.hqy.base.common.bind.DataResponse;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

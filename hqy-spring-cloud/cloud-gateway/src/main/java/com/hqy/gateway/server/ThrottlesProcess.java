@@ -1,9 +1,9 @@
 package com.hqy.gateway.server;
 
-import com.hqy.service.limit.ThrottlesServer;
-import com.hqy.service.limit.impl.RedisBiBlockedIpServiceImpl;
-import com.hqy.service.limit.impl.RedisManualBlockedIpServiceImpl;
-import com.hqy.service.limit.impl.RedisManualWhiteIpServiceImpl;
+import com.hqy.auth.access.service.ManualWhiteIpServiceImpl;
+import com.hqy.auth.access.service.RedisManualBlockedIpServiceImpl;
+import com.hqy.foundation.limit.service.BiBlockedIpService;
+import com.hqy.foundation.limit.service.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +75,8 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isWhiteIp(String remoteAddress) {
-        return RedisManualWhiteIpServiceImpl.getInstance().isWhiteIp(remoteAddress);
+        ManualWhiteIpServiceImpl whiteIpService = SpringContextHolder.getBean(ManualWhiteIpServiceImpl.class);
+        return whiteIpService.isWhiteIp(remoteAddress);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isBiBlockedIp(String ip) {
-        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
         return service.isBlockIp(ip);
     }
 
@@ -98,7 +99,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public void addBiBlockIp(String ip, Integer blockSeconds) {
-        RedisBiBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisBiBlockedIpServiceImpl.class);
+        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
         service.addBlockIp(ip, blockSeconds);
     }
 
@@ -107,8 +108,5 @@ public class ThrottlesProcess implements ThrottlesServer {
         RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
         service.addBlockIp(ip, blockSeconds);
     }
-
-
-
 
 }

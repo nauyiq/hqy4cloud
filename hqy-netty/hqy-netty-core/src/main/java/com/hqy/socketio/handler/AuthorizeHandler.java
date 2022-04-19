@@ -15,6 +15,9 @@
  */
 package com.hqy.socketio.handler;
 
+import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.ex.NettyContextHelper;
 import com.hqy.socketio.*;
 import com.hqy.socketio.ack.AckManager;
 import com.hqy.socketio.messages.HttpErrorMessage;
@@ -36,6 +39,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,11 +100,21 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             FullHttpRequest req = (FullHttpRequest) msg;
             Channel channel = ctx.channel();
             QueryStringDecoder queryDecoder = new QueryStringDecoder(req.uri());
+            //origin
+            String origin = req.headers().get(HttpHeaderNames.ORIGIN);
 
             if (!configuration.isAllowCustomRequests()
                     && !queryDecoder.path().startsWith(connectPath)) {
-                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.BAD_REQUEST);
-                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+                if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                    //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                    //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
+                    origin = StringUtils.isBlank(origin) ? "null" : origin;
+                    channel.attr(EncoderHandler.ORIGIN).set(origin);
+                    channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "error connectPath."));
+                } else {
+                    HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                    channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+                }
                 req.release();
                 return;
             }
@@ -108,7 +122,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             List<String> sid = queryDecoder.parameters().get("sid");
             if (queryDecoder.path().equals(connectPath)
                     && sid == null) {
-                String origin = req.headers().get(HttpHeaderNames.ORIGIN);
+
                 if (!authorize(ctx, channel, origin, queryDecoder.parameters(), req)) {
                     req.release();
                     return;
@@ -121,62 +135,84 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
 
     private boolean authorize(ChannelHandlerContext ctx, Channel channel, String origin, Map<String, List<String>> params, FullHttpRequest req)
             throws IOException {
-        Map<String, List<String>> headers = new HashMap<String, List<String>>(req.headers().names().size());
+        Map<String, List<String>> headers = new HashMap<>(req.headers().names().size());
         for (String name : req.headers().names()) {
             List<String> values = req.headers().getAll(name);
             headers.put(name, values);
         }
-
         HandshakeData data = new HandshakeData(req.headers(), params,
                 (InetSocketAddress)channel.remoteAddress(),
                 (InetSocketAddress)channel.localAddress(),
-                req.uri(), origin != null && !origin.equalsIgnoreCase("null"));
+                req.uri(), origin != null && !"null".equalsIgnoreCase(origin));
+        //获取客户端真实ip
+        String requestIp = NettyContextHelper.getRequestIp(req);
+        data.setRealIp(requestIp);
+        log.info("@@@ [准备校验握手数据] ip:{}, userAgent:{}", requestIp, data.getUserAgent());
 
         boolean result = false;
         try {
             result = configuration.getAuthorizationListener().isAuthorized(data);
         } catch (Exception e) {
-            log.error("Authorization error", e);
+            log.error("Authorization error, realIp:{}", requestIp, e);
         }
-
         if (!result) {
-            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-            channel.writeAndFlush(res)
-                    .addListener(ChannelFutureListener.CLOSE);
-            log.debug("Handshake unauthorized, query params: {} headers: {}", params, headers);
+            if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
+                channel.attr(EncoderHandler.ORIGIN).set(origin);
+                channel.writeAndFlush(NettyContextHelper.
+                        createHttpErrorMessage(CommonResultCode.INVALID_ACCESS_TOKEN.code, CommonResultCode.INVALID_ACCESS_TOKEN.message));
+                return false;
+            } else {
+                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                NettyContextHelper.allowCors(res, data.getOrigin());
+                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            }
+            log.debug("Handshake unauthorized, query params: {} headers: {} realIp:{}", params, headers, requestIp);
             return false;
         }
-
-        UUID sessionId = null;
+        UUID sessionId;
         if (configuration.isRandomSession()) {
             sessionId = UUID.randomUUID();
         } else {
             sessionId = this.generateOrGetSessionIdFromRequest(req.headers());
         }
+        if (StringUtils.isBlank(data.getBizId())) {
+            data.setBizId(sessionId.toString());
+        }
 
         List<String> transportValue = params.get("transport");
         if (transportValue == null) {
             log.error("Got no transports for request {}", req.uri());
-
-            HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-            channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
+                //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
+                channel.attr(EncoderHandler.ORIGIN).set(origin);
+                channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Got no transports for request."));
+            } else {
+                //返回response并且关闭连接.
+                HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
+            }
             return false;
         }
 
         Transport transport = Transport.byName(transportValue.get(0));
         if (!configuration.getTransports().contains(transport)) {
-            Map<String, Object> errorData = new HashMap<String, Object>();
-            errorData.put("code", 0);
-            errorData.put("message", "Transport unknown");
-
             channel.attr(EncoderHandler.ORIGIN).set(origin);
-            channel.writeAndFlush(new HttpErrorMessage(errorData));
+            channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Transport unknown"));
             return false;
         }
-
-        ClientHead client = new ClientHead(sessionId, ackManager, disconnectable, storeFactory, data, clientsBox, transport, disconnectScheduler, configuration);
+        //channel.remoteAddress().toString(): 为了不持有此channel的属性对象，导致后续不释放。
+        ClientHead client = new ClientHead(sessionId, ackManager, disconnectable, storeFactory, data,
+                clientsBox, transport, disconnectScheduler, configuration, channel.remoteAddress().toString());
         channel.attr(ClientHead.CLIENT).set(client);
         clientsBox.addClient(client);
+        if (CommonSwitcher.SOCKET_POLLING_HANDSHAKE_DATA_LEAK.isOn()) {
+            //新增非法操作监听
+            clientsBox.addClient(client, disconnectScheduler, configuration, namespacesHub);
+        } else {
+            clientsBox.addClient(client);
+        }
 
         String[] transports = {};
         if (configuration.getTransports().contains(Transport.WEBSOCKET)) {
@@ -186,9 +222,10 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
         AuthPacket authPacket = new AuthPacket(sessionId, transports, configuration.getPingInterval(),
                 configuration.getPingTimeout());
         Packet packet = new Packet(PacketType.OPEN);
+        //第一个接口返回的数据类型--包括 sid ,只是将数据放到队列上，还没进行真正意义上的推送。
         packet.setData(authPacket);
+        //需要等到下一个环节的：polling通道 绑定bind  --触发在：clientHead的生命流程中的绑定
         client.send(packet);
-
         client.schedulePingTimeout();
         log.debug("Handshake authorized for sessionId: {}, query params: {} headers: {}", sessionId, params, headers);
         return true;
@@ -213,7 +250,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             Set<Cookie> cookies = ServerCookieDecoder.LAX.decode(cookieHeader);
 
             for (Cookie cookie : cookies) {
-                if (cookie.name().equals("io")) {
+                if ("io".equals(cookie.name())) {
                     try {
                         return UUID.fromString(cookie.value());
                     } catch (IllegalArgumentException iaex) {
@@ -231,19 +268,26 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
         disconnectScheduler.cancel(key);
     }
 
-    public void connect(ClientHead client) {
+    /**
+     * 兼容直连的websocket业务
+     * @param client ClientHead
+     * @param polling boolean
+     * @return Namespace
+     */
+    public Namespace connect(ClientHead client, boolean polling) {
         Namespace ns = namespacesHub.get(Namespace.DEFAULT_NAME);
-
         if (!client.getNamespaces().contains(ns)) {
             Packet packet = new Packet(PacketType.MESSAGE);
             packet.setSubType(PacketType.CONNECT);
             client.send(packet);
-
             configuration.getStoreFactory().pubSubStore().publish(PubSubType.CONNECT, new ConnectMessage(client.getSessionId()));
-
-            SocketIOClient nsClient = client.addNamespaceClient(ns);
-            ns.onConnect(nsClient);
+            client.addNamespaceClient(ns);
+            if (polling) {
+                log.info("@@@ Polling, ignore ns.onConnect.");
+            }
+//            ns.onConnect(nsClient);
         }
+        return ns;
     }
 
     @Override

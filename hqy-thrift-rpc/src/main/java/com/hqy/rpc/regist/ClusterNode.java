@@ -1,15 +1,13 @@
 package com.hqy.rpc.regist;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
+import com.hqy.base.common.base.lang.ActuatorNodeEnum;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -44,7 +42,6 @@ public class ClusterNode extends Node implements Serializable {
      * 是生产者还是消费者
      */
     private ActuatorNodeEnum actuatorNode;
-
 
     /**
      * 节点创建时间

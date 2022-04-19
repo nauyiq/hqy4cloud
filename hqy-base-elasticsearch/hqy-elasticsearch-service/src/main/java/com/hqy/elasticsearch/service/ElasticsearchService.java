@@ -1,8 +1,8 @@
 package com.hqy.elasticsearch.service;
 
 import com.hqy.elasticsearch.ElasticsearchFoundation;
-import com.hqy.fundation.common.result.PageResult;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.result.PageResult;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.util.proxy.CommonBeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

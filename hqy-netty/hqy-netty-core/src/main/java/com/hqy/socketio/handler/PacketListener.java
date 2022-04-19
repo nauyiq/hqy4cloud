@@ -26,6 +26,8 @@ import com.hqy.socketio.scheduler.CancelableScheduler;
 import com.hqy.socketio.scheduler.SchedulerKey;
 import com.hqy.socketio.transport.NamespaceClient;
 import com.hqy.socketio.transport.PollingTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +37,7 @@ public class PacketListener {
     private final NamespacesHub namespacesHub;
     private final AckManager ackManager;
     private final CancelableScheduler scheduler;
+    private static final Logger log = LoggerFactory.getLogger(PacketListener.class);
 
     public PacketListener(AckManager ackManager, NamespacesHub namespacesHub, PollingTransport xhrPollingTransport,
             CancelableScheduler scheduler) {
@@ -67,6 +70,23 @@ public class PacketListener {
             break;
         }
 
+        case PONG:{
+            // 留意有一些post请求会到此 .比如polling-post的参数1:2 即为ping，需要返回pong ,而非probe的探针pong的返回
+            Packet outPacket = new Packet(PacketType.PING);
+            outPacket.setData(packet.getData());
+            // TODO use future
+            client.getBaseClient().send(outPacket, transport);
+
+            if ("probe".equals(packet.getData())) {
+                client.getBaseClient().send(new Packet(PacketType.NOOP), Transport.POLLING);
+            } else {
+                client.getBaseClient().schedulePingTimeout();
+            }
+            Namespace namespace = namespacesHub.get(packet.getNsp());
+            namespace.onPing(client);
+            break;
+        }
+
         case UPGRADE: {
             client.getBaseClient().schedulePingTimeout();
 
@@ -74,6 +94,14 @@ public class PacketListener {
             scheduler.cancel(key);
 
             client.getBaseClient().upgradeCurrentTransport(transport);
+            try {
+                log.info("@@@ Upgrade ok, {}, {}", client.getHandshakeData().getRealIp(), client.getHandshakeData().getBizId());
+                Namespace namespace = namespacesHub.get(packet.getNsp());
+                //升级优化 ，兼容 不同的升级方式
+                client.getBaseClient().upgrade(namespace);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
             break;
         }
 

@@ -2,30 +2,27 @@ package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
-import com.alibaba.nacos.api.naming.pojo.Cluster;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.project.MicroServiceHelper;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.project.MicroServiceManager;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.config.ConfigurationContext;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.util.Assert;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * NamingService nacos客户端工具类，
+ * NamingService nacos服务注册工具类，
  * 当前服务注册进nacos 会初始化此类.
  *
  * https://nacos.io/zh-cn/docs/sdk.html SDK地址...<br>
@@ -107,17 +104,37 @@ public class NamingServiceClient {
      * @return NamingService
      */
     private static NamingService buildNamingService() {
-        if (CommonSwitcher.ENABLE_SPRING_CONTEXT.isOff()) {
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
-            Map<String, Object> attributes = info.getAttributes();
-            namingService = (NamingService) attributes.get(BaseStringConstants.NACOS_NAMING_SERVICE);
-        } else {
+
+        try {
             NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
             namingService = nacosDiscoveryProperties.namingServiceInstance();
+        } catch (Exception e) {
+            log.warn("@@@ Spring容器获取NamingService失败, 可以尝试通过非Spring容器手动加载NamingService");
         }
 
-        AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");
+        if (namingService == null) {
+            //尝试通过Nacos提供的SDK获取NamingService
+            String serverAddress;
+            String nacosAddressKey = "spring.cloud.nacos.config.server-addr";
+            String active = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, "spring.profiles.active");
+            if (StringUtils.isNotBlank(active)) {
+                serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.getYaml
+                        (ConfigurationContext.YamlEnum.BOOTSTRAP_YAML.fineName + BaseStringConstants.Symbol.RAIL + active), nacosAddressKey);
+            } else {
+                 serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, nacosAddressKey);
+            }
 
+            if (StringUtils.isBlank(serverAddress)) {
+                log.warn("@@@ 从配置文件中:{} 获取nacos连接地址失败, 请检查配置文件等数据.", ConfigurationContext.YamlEnum.BOOTSTRAP_YAML);
+            } else {
+                try {
+                    namingService = NamingFactory.createNamingService(serverAddress);
+                } catch (NacosException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+        AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");
         return namingService;
     }
 
@@ -127,10 +144,11 @@ public class NamingServiceClient {
      * @param healthy true表示健康的实例
      * @return
      */
+    @Deprecated
     public List<ClusterNode> loadAllProjectNodeInfo(boolean healthy) {
         //加载所有服务在远程服务nacos中的实例
         List<ClusterNode> nodes = new ArrayList<>();
-        Set<String> serviceEnNames = MicroServiceHelper.getServiceEnNames();
+        Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(null);
         for (String serviceEnName : serviceEnNames) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.info("@@@ LoadAllProjectNodeInfo, serviceName -> {}", serviceEnName);
@@ -151,6 +169,12 @@ public class NamingServiceClient {
         return nodes;
     }
 
+    /**
+     * 根据服务名加载所有的节点信息
+     * @param serviceName 服务名
+     * @param healthy 健康的
+     * @return 节点列表
+     */
     public List<ClusterNode> loadProjectNodeInfo(String serviceName, boolean healthy) {
         List<ClusterNode> nodes = new ArrayList<>();
         //根据服务名获取远程服务nacos中的实例

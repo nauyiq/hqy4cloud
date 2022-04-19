@@ -1,6 +1,8 @@
 package com.hqy.gateway.filter;
 
+import com.hqy.base.common.base.lang.BaseStringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -34,10 +36,16 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
         ServerHttpResponse response = exchange.getResponse();
 
+
         //如果是/favicon.io的路径允许访问
         if (FAVICON_ICO.equals(path)) {
             response.setStatusCode(HttpStatus.OK);
             return Mono.empty();
+        }
+
+        //如果是socket.io项目 则放开piling请求的cors 原因是在socket.io netty内部已经处理了cors
+        if (path.contains("/websocket") && request.getQueryParams().containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+            return chain.filter(exchange);
         }
 
         //如果请求是有效的 CORS，则返回 true
@@ -49,7 +57,12 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
         HttpHeaders headers = response.getHeaders();
         //设置允许跨域头
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
+        if (StringUtils.isBlank(requestHeaders.getOrigin())) {
+            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        } else {
+            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
+        }
+
         headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
 
         if (requestMethod != null) {

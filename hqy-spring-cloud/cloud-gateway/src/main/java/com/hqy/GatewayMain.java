@@ -1,7 +1,6 @@
 package com.hqy;
 
 import com.hqy.util.JsonUtil;
-import com.hqy.util.spring.EnableOrderContext;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -10,20 +9,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 启动类必须放在包com.hqy下 不然很多bean会扫描不到 导致程序启动抛出not found bean
- * @EnableOrderContext 表示当前服务需要Spring容器优先创建SpringApplicationHolder bean.
  * 全局网关服务...启动类...
  * @author qiyuan.hong
  * @date 2021/7/25 19:08
  */
 @Slf4j
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@EnableOrderContext
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class GatewayMain {
 
-    public static void main(String[] args) {    
+    public static void main(String[] args) {
 
         /*
         必须禁用springboot热部署 否则会导致 thrift rpc 调用时thriftMethodManager 进行codec 编码struct类时 抛出类转换异常。
@@ -33,12 +33,22 @@ public class GatewayMain {
         导致需要两个类对象的类全称虽然一致 但是类加载器不一致
          */
         System.setProperty("spring.devtools.restart.enabled", "false");
+
         SpringApplication.run(GatewayMain.class, args);
 
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
+
+        //TODO 后续再抽出一个基于redis和配置的 白名单
+        Set<String> whiteSet = new HashSet<>();
+        whiteSet.add("/oauth/**");
+        whiteSet.add("/auth/**");
+        whiteSet.add("/message/websocket/**");
+        whiteSet.add("/payment/**");
+        projectContextInfo.setProperties(ProjectContextInfo.WHITE_URI_PROPERTIES_KEY, whiteSet);
+
         log.info("############################## ############### ############### ###############");
         log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));
-        log.info("##### Server Started OK.");
+        log.info("##### Server Started OK. serviceName = {}", projectContextInfo.getNameEn());
         log.info("############################## ############### ############### ###############");
     }
 

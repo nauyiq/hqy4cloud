@@ -1,6 +1,6 @@
 package com.hqy.rpc.route;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * @author qy
  * @date 2021-08-13 11:25
  */
-public abstract class AbstractRpcRouter implements RpcRouter {
+public abstract class AbstractRpcRouter implements RPCRouter {
 
     /**
      * 灰度可连接节点列表

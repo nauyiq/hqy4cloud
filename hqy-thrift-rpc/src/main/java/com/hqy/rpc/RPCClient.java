@@ -3,13 +3,12 @@ package com.hqy.rpc;
 import com.facebook.swift.service.ThriftService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.fundation.common.base.lang.ActuatorNodeEnum;
-import com.hqy.fundation.common.base.lang.BaseStringConstants;
-import com.hqy.fundation.common.base.lang.exception.RpcException;
-import com.hqy.fundation.common.base.project.UsingIpPort;
-import com.hqy.fundation.common.base.project.UsingIpPortEx;
-import com.hqy.fundation.common.rpc.api.RPCService;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
+import com.hqy.base.common.base.lang.ActuatorNodeEnum;
+import com.hqy.base.common.base.lang.exception.RpcException;
+import com.hqy.base.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPortEx;
+import com.hqy.base.common.rpc.api.RPCService;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.nacos.NacosClientManager;
 import com.hqy.rpc.nacos.RegistryClient;
 import com.hqy.rpc.regist.ClusterNode;
@@ -157,21 +156,25 @@ public class RPCClient {
     public static <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvokeCallback callback) {
         //获取服务名
         String serviceNameEn = checkAnnotation(serviceClass);
-        boolean isDirectService = false;
         if (ThriftRpcHelper.DEFAULT_HASH_FACTOR.equals(hashFactor)) {
             //默认的hash因子
-            ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
-            if (EnvironmentConfig.getInstance().enableRpcDirect()) {
-                //判断当前服务是否配置直连服务
-                isDirectService = directServer.isDirect(serviceNameEn);
-            }
-            if (isDirectService) {
-                UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
-                if(Objects.nonNull(directUip)) {
-                    //有直连节点数据
-                    log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
-                    return getDirectedService(null, directUip, serviceClass, callback);
+            boolean isDirectService = false;
+            try {
+                ConfigCenterDirectServer directServer = SpringContextHolder.getBean(ConfigCenterDirectServer.class);
+                if (EnvironmentConfig.getInstance().enableRpcDirect()) {
+                    //判断当前服务是否配置直连服务
+                    isDirectService = directServer.isDirect(serviceNameEn);
                 }
+                if (isDirectService) {
+                    UsingIpPort directUip = directServer.getDirectUip(serviceNameEn);
+                    if(Objects.nonNull(directUip)) {
+                        //有直连节点数据
+                        log.info("@@@ 调用直连配置的RPC服务:{}, 接口:{}", directUip, serviceClass);
+                        return getDirectedService(null, directUip, serviceClass, callback);
+                    }
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
         } else {
             //如果哈希因子不是default，需要从节点中根据hash因子选一个来直连
@@ -210,7 +213,6 @@ public class RPCClient {
             }
             service = getProxyService(false, null, null, serviceClass, callback);
         }
-
 
         return service;
     }
@@ -266,9 +268,12 @@ public class RPCClient {
             throw new IllegalArgumentException("@@@ Parameter consumer and producer can not all be empty with distinguish mode.");
         }
 
+        //rpc接口名
         String interfaceName = serviceClass.getName();
+        //服务代理handler
         DynamicInvocationHandler<T> handler;
-        //生产者ClusterNode为空, 说明不是直连模式
+
+        //生产者producer为空, 说明不是直连模式
         if (Objects.isNull(producer)) {
             handler = CLASS_HANDLER_MAP.get(interfaceName);
             if (Objects.isNull(handler)) {
@@ -278,11 +283,13 @@ public class RPCClient {
                     throw new RpcException(value + "rpc interface not registry, check interface annotation: className:" + interfaceName);
                 } else {
                     //分别获取不同颜色的节点 重新创建target服务的代理handler对象.
-                    List<ClusterNode> grayNodeList = client.getAllLivingNode(GrayWhitePub.GRAY);
-                    List<ClusterNode> whiteNodeList = client.getAllLivingNode(GrayWhitePub.WHITE);
-                    List<UsingIpPort> grayUipList = ThriftRpcHelper.convertToUip(grayNodeList);
-                    List<UsingIpPort> whiteUipList = ThriftRpcHelper.convertToUip(whiteNodeList);
-                    handler = new DynamicInvocationHandler<T>(serviceClass, grayUipList, whiteUipList, callback);
+                    List<UsingIpPort> grayUipList =
+                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.GRAY));
+                    List<UsingIpPort> whiteUipList =
+                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.WHITE));
+                    handler = new DynamicInvocationHandler<>(serviceClass, grayUipList, whiteUipList, callback);
+                    handler.setClient(client);
+
                     //添加观察者 监听nacos节点变化事件
                     client.addNodeActivityObserver(handler);
                     CLASS_HANDLER_MAP.put(interfaceName, handler);

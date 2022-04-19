@@ -1,12 +1,9 @@
 package com.hqy.fundation.global;
 
-import com.hqy.fundation.common.bind.MessageResponse;
-import com.hqy.fundation.common.result.CommonResultCode;
+import com.hqy.base.common.bind.MessageResponse;
+import com.hqy.base.common.result.CommonResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,7 +25,6 @@ public class WebMvcGlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR.message, CommonResultCode.SYSTEM_ERROR.code);
     }
-
 
 
   /*  @ResponseBody

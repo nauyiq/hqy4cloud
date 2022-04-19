@@ -21,6 +21,9 @@ import com.hqy.socketio.listener.DataListener;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * 存储的对应事件监听器, 监听器队列等
+ */
 public class EventEntry<T> {
 
     private final Queue<DataListener<T>> listeners = new ConcurrentLinkedQueue<>();

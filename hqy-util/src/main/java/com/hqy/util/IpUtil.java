@@ -1,6 +1,7 @@
 package com.hqy.util;
 
-import com.hqy.fundation.common.enums.CountryEnum;
+import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.enums.CountryEnum;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,7 +12,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -176,26 +176,27 @@ public class IpUtil {
 
         }
         srcIp = request.getHeader("Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !"unknown".equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("WL-Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !"unknown".equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("HTTP_CLIENT_IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !"unknown".equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("HTTP_X_FORWARDED_FOR");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !"unknown".equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
         return request.getRemoteAddr();
     }
+
 
 
     public static String getRequestIp(ServerHttpRequest request) {
@@ -222,12 +223,15 @@ public class IpUtil {
                 // 在所有的接口下再遍历IP
                 for (Enumeration<InetAddress> inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements(); ) {
                     InetAddress inetAddr = inetAddrs.nextElement();
-                    if (!inetAddr.isLoopbackAddress()) {// 排除loopback类型地址
-                        if (inetAddr.getHostAddress().startsWith(DOCKER_IP_PREFIX)) {// 排除docker 的地址
+                    // 排除loopback类型地址
+                    if (!inetAddr.isLoopbackAddress()) {
+                        // 排除docker 的地址
+                        if (inetAddr.getHostAddress().startsWith(DOCKER_IP_PREFIX)) {
                             log.warn("IGNORE :{}", inetAddr);
                             continue;
                         }
-                        if (inetAddr.getHostAddress().endsWith(VIRTUAL_IP_ENDING)) {// 排除 虚拟地址
+                        // 排除 虚拟地址
+                        if (inetAddr.getHostAddress().endsWith(VIRTUAL_IP_ENDING)) {
                             log.warn("IGNORE :{}", inetAddr);
                             continue;
                         }
@@ -258,8 +262,7 @@ public class IpUtil {
 
     /**
      * Cloudflare ：根据http请求获取来源 国家枚举
-     *
-     * @param request
+     * @param request request
      * @return 如果不是Cloudflare的环境，返回null
      */
     public static CountryEnum getCloudFlareCountryEnum(HttpServletRequest request) {
@@ -278,8 +281,7 @@ public class IpUtil {
 
     /**
      * Cloudflare ：根据http请求获取来源国家代码简码： 例如中国CN
-     *
-     * @param request
+     * @param request request
      * @return 如果不是Cloudflare的环境，返回null
      */
     public static String getCloudFlareCountry(HttpServletRequest request) {

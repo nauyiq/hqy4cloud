@@ -3,13 +3,11 @@ package com.hqy.rpc.thrift;
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
 import com.google.common.net.HostAndPort;
-import com.hqy.fundation.common.base.lang.BaseIntegerConstants;
-import com.hqy.fundation.common.exception.NoAvailableProvidersException;
-import com.hqy.fundation.common.result.CommonResultCode;
-import com.hqy.fundation.common.swticher.CommonSwitcher;
-import com.hqy.fundation.concurrent.ThreadLocalPool;
+import com.hqy.base.common.base.lang.BaseMathConstants;
+import com.hqy.base.common.exception.NoAvailableProvidersException;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +90,7 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
     public String gerServiceInfo(T service) {
         NiftyClientChannel clientChannel = getClientChannel(service);
         if (Objects.isNull(clientChannel)) {
-            return CommonResultCode.INVALID_SERVICE.message;
+            return String.format("Invalid service: [%s], NiftyClientChannel is null", service.getClass().getSimpleName());
         }
         return toChannelString(clientChannel);
     }
@@ -157,11 +155,10 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
             }
             int idx = CREATE_COUNT.incrementAndGet() % connectors.length;
             connector = connectors[idx];
-//            ThreadLocalPool.RPC_CONNECTOR_ADDRESS.set(connector.toString());
         } finally {
             lock.unlock();
             //防止整形溢出！！
-            if(CREATE_COUNT.get() == BaseIntegerConstants.POINTER){
+            if(CREATE_COUNT.get() == BaseMathConstants.POINTER){
                 CREATE_COUNT.set(0);
             }
         }
@@ -193,6 +190,9 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
 
 
     private String toChannelString(NiftyClientChannel clientChannel) {
+        if (Objects.isNull(clientChannel)) {
+            return "";
+        }
         Channel channel = clientChannel.getNettyChannel();
         return String.format("(%s - > %s)", channel.getLocalAddress(), channel.getRemoteAddress());
     }

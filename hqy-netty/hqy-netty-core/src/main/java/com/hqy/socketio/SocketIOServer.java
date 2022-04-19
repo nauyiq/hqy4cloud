@@ -18,6 +18,8 @@ package com.hqy.socketio;
 import com.hqy.socketio.listener.*;
 import com.hqy.socketio.namespace.Namespace;
 import com.hqy.socketio.namespace.NamespacesHub;
+import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.thread.DefaultThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -37,24 +39,49 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Fully thread-safe.
- *
+ * socket.io服务端
  */
 public class SocketIOServer implements ClientListeners {
 
     private static final Logger log = LoggerFactory.getLogger(SocketIOServer.class);
 
+    /**
+     * socket.io配置类 业务增强配置也在此源码中增加...
+     */
     private final Configuration configCopy;
+
+    /**
+     * socket.io配置类 业务增强配置也在此源码中增加...
+     */
     private final Configuration configuration;
 
+    /**
+     * 名称空间中心, 默认的为Namespace.DEFAULT_NAME
+     */
     private final NamespacesHub namespacesHub;
+
+    /**
+     * socketio中的namespace的概念。 默认的为Namespace.DEFAULT_NAME
+     */
     private final SocketIONamespace mainNamespace;
 
+    /**
+     * socket.io注册一系列的handler
+     */
     private SocketIOChannelInitializer pipelineFactory = new SocketIOChannelInitializer();
 
+    /**
+     * boss线程组
+     */
     private EventLoopGroup bossGroup;
+
+    /**
+     * 工作线程组
+     */
     private EventLoopGroup workerGroup;
 
     public SocketIOServer(Configuration configuration) {
@@ -89,7 +116,6 @@ public class SocketIOServer implements ClientListeners {
 
     /**
      * Get all namespaces
-     *
      * @return namespaces collection
      */
     public Collection<SocketIONamespace> getAllNamespaces() {
@@ -98,32 +124,32 @@ public class SocketIOServer implements ClientListeners {
 
     public BroadcastOperations getBroadcastOperations() {
         Collection<SocketIONamespace> namespaces = namespacesHub.getAllNamespaces();
-        List<BroadcastOperations> list = new ArrayList<BroadcastOperations>();
-        BroadcastOperations broadcast = null;
+        List<BroadcastOperations> list = new ArrayList<>();
+        BroadcastOperations broadcast;
         if( namespaces != null && namespaces.size() > 0 ) {
             for(SocketIONamespace n : namespaces ) {
                 broadcast = n.getBroadcastOperations();
                 list.add( broadcast );
             }
         }
-        return new MultiRoomBroadcastOperations( list );
+        return new MultiRoomBroadcastOperations(list);
     }
 
     /**
      * Get broadcast operations for clients within
      * room by <code>room</code> name
-     *
      * @param room - name of room
      * @return broadcast operations
      */
     public BroadcastOperations getRoomOperations(String room) {
+        //获取所有的名称空间 默认只有一个
         Collection<SocketIONamespace> namespaces = namespacesHub.getAllNamespaces();
-        List<BroadcastOperations> list = new ArrayList<BroadcastOperations>();
-        BroadcastOperations broadcast = null;
-        if( namespaces != null && namespaces.size() > 0 ) {
+        List<BroadcastOperations> list = new ArrayList<>();
+        BroadcastOperations broadcast;
+        if(namespaces != null && namespaces.size() > 0 ) {
             for( SocketIONamespace n : namespaces ) {
                 broadcast = n.getRoomOperations( room );
-                list.add( broadcast );
+                list.add(broadcast);
             }
         }
         return new MultiRoomBroadcastOperations( list );
@@ -163,14 +189,11 @@ public class SocketIOServer implements ClientListeners {
             addr = new InetSocketAddress(configCopy.getHostname(), configCopy.getPort());
         }
 
-        return b.bind(addr).addListener(new FutureListener<Void>() {
-            @Override
-            public void operationComplete(Future<Void> future) throws Exception {
-                if (future.isSuccess()) {
-                    log.info("SocketIO server started at port: {}", configCopy.getPort());
-                } else {
-                    log.error("SocketIO server start failed at port: {}!", configCopy.getPort());
-                }
+        return b.bind(addr).addListener((FutureListener<Void>) future -> {
+            if (future.isSuccess()) {
+                log.info("SocketIO server started at port: {}", configCopy.getPort());
+            } else {
+                log.error("SocketIO server start failed at port: {}!", configCopy.getPort());
             }
         });
     }
@@ -192,14 +215,36 @@ public class SocketIOServer implements ClientListeners {
         bootstrap.option(ChannelOption.SO_BACKLOG, config.getAcceptBackLog());
     }
 
+    /**
+     * 初始化线程组
+     */
     protected void initGroups() {
-        if (configCopy.isUseLinuxNativeEpoll()) {
-            bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads());
-            workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads());
+        //优化服务器环境，优先使用Linux服务器支持的Epoll机制,提升性能
+        configCopy.setUseLinuxNativeEpoll(ProjectContextInfo.isUseLinuxNativeEpoll());
+        //threadFactory
+        ThreadFactory sioBossGroupFactory = new DefaultThreadFactory("sioBossGroupFactory") ;
+        ThreadFactory sioWorkerGroupFactory = new DefaultThreadFactory("sioWorkerGroupFactory");
+
+        if (configCopy.isIntensiveSocketIoService()) {
+            //如果是io密集型的socket服务 则线程数翻倍...
+            if (configCopy.isUseLinuxNativeEpoll()) {
+                bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads() * 2, sioBossGroupFactory);
+                workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads() * 2, sioWorkerGroupFactory);
+            } else {
+                bossGroup = new NioEventLoopGroup(configCopy.getBossThreads() * 2, sioBossGroupFactory);
+                workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            }
         } else {
-            bossGroup = new NioEventLoopGroup(configCopy.getBossThreads());
-            workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads());
+            if (configCopy.isUseLinuxNativeEpoll()) {
+                bossGroup = new EpollEventLoopGroup(configCopy.getBossThreads(), sioBossGroupFactory);
+                workerGroup = new EpollEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            } else {
+                bossGroup = new NioEventLoopGroup(configCopy.getBossThreads(), sioBossGroupFactory);
+                workerGroup = new NioEventLoopGroup(configCopy.getWorkerThreads(), sioWorkerGroupFactory);
+            }
         }
+
+
     }
 
     /**
@@ -251,7 +296,6 @@ public class SocketIOServer implements ClientListeners {
         mainNamespace.addEventInterceptor(eventInterceptor);
 
     }
-
 
     @Override
     public void removeAllListeners(String eventName) {

@@ -2,8 +2,8 @@ package com.hqy.cloud.contoller;
 
 import com.hqy.cloud.entity.Payment;
 import com.hqy.cloud.service.PaymentService;
-import com.hqy.fundation.common.bind.DataResponse;
-import com.hqy.fundation.common.bind.MessageResponse;
+import com.hqy.base.common.bind.DataResponse;
+import com.hqy.base.common.bind.MessageResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;

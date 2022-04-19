@@ -15,25 +15,68 @@
  */
 package com.hqy.socketio.listener;
 
-
+/**
+ * 客户端监听器
+ */
 public interface ClientListeners {
 
+    /**
+     * 添加复合类型的事件监听器
+     * @param eventName 事件名
+     * @param listener 复合类型的事件监听器
+     * @param eventClass 事件的class
+     */
     void addMultiTypeEventListener(String eventName, MultiTypeEventListener listener, Class<?> ... eventClass);
 
+    /**
+     * 添加事件监听器
+     * @param eventName 事件名
+     * @param eventClass 事件的class
+     * @param listener 监听器
+     */
     <T> void addEventListener(String eventName, Class<T> eventClass, DataListener<T> listener);
 
+    /**
+     * 添加事件拦截器
+     * @param eventInterceptor 事件拦截器
+     */
     void addEventInterceptor(EventInterceptor eventInterceptor);
 
+    /**
+     * 添加断开连接事件监听器
+     * @param listener 断开连接事件监听器
+     */
     void addDisconnectListener(DisconnectListener listener);
 
+    /**
+     * 添加连接事件监听器
+     * @param listener 连接事件监听器
+     */
     void addConnectListener(ConnectListener listener);
 
+    /**
+     * 添加ping事件监听器
+     * @param listener ping事件监听器
+     */
     void addPingListener(PingListener listener);
 
+    /**
+     * 添加监听器 并且直接执行ScannerEngine.scan
+     * @param listeners 监听器
+     */
     void addListeners(Object listeners);
 
+    /**
+     * 添加监听器 并且直接执行ScannerEngine.scan
+     * @param listeners 监听器
+     * @param listenersClass 监听器class
+     */
     void addListeners(Object listeners, Class<?> listenersClass);
 
+    /**
+     * 根据事件名移除所有的事件监听器
+     * @param eventName 事件名
+     */
     void removeAllListeners(String eventName);
     
 }

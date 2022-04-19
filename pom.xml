@@ -8,6 +8,8 @@
     <artifactId>hqy-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <description>各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务</description>
+
     <modules>
         <module>hqy-netty</module>
         <module>hqy-util</module>
@@ -18,6 +20,7 @@
         <module>hqy-base-common-service</module>
         <module>hqy-thrift-rpc</module>
         <module>hqy-base-elasticsearch</module>
+        <module>hqy-base-security</module>
     </modules>
 
     <properties>
@@ -48,13 +51,14 @@
         <source.plugin.version>3.0.1</source.plugin.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
-        <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3     -->
+        <org.redisson.version>3.13.6</org.redisson.version>
+        <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
     </properties>
 
 
     <dependencyManagement>
         <dependencies>
-            <!--spring boot -->
+            <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -63,25 +67,25 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--spring cloud-->
+            <!-- spring cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${springcloud.version}</version>
-
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-            <!--spring cloud alibaba -->
+            <!-- spring cloud alibaba -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${springcloud.alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <version>${springcloud.alibaba.version}</version>
             </dependency>
 
+            <!-- version2以上基于grpc的 spring cloud alibaba client-->
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
@@ -89,7 +93,7 @@
             </dependency>
 
 
-            <!--spring data redis-->
+            <!-- spring data redis -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -97,27 +101,35 @@
             </dependency>
 
 
-            <!--mysql-connector-->
+            <!-- mysql-connector -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
 
-            <!--druid-->
+            <!-- druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
 
-            <!--springboot-druid-->
+            <!-- springboot-druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${springboot.druid.version}</version>
             </dependency>
 
+            <!-- hibernate-validator -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>5.2.4.Final</version>
+            </dependency>
+
+            <!-- mybatis整合springboot -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -135,7 +147,6 @@
                 <artifactId>javax.servlet-api</artifactId>
                <version>${servlet.version}</version>
             </dependency>
-
 
             <!-- springboot-tk mapper -->
             <dependency>
@@ -159,18 +170,21 @@
                 <version>${hutool.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>com.facebook.swift</groupId>
                 <artifactId>swift-codec</artifactId>
                 <version>${swift.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>com.facebook.swift</groupId>
                 <artifactId>swift-annotations</artifactId>
                 <version>${swift.version}</version>
             </dependency>
 
+            <!-- facebook.thrift -->
             <dependency>
                 <groupId>org.apache.thrift</groupId>
                 <artifactId>libthrift</artifactId>
@@ -183,7 +197,7 @@
                 </exclusions>
             </dependency>
 
-
+            <!-- facebook.nifty -->
             <dependency>
                 <groupId>com.facebook.nifty</groupId>
                 <artifactId>nifty-core</artifactId>
@@ -196,13 +210,14 @@
                 <version>${guava.version}</version>
             </dependency>
 
-
+            <!-- elasticsearch client -->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
 
+            <!-- elasticsearch -->
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
@@ -221,6 +236,14 @@
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons.beanutils.version}</version>
             </dependency>
+
+            <!-- redisson client -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${org.redisson.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -234,15 +257,6 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
-
-        <!--slf4j-->
-       <!-- <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${org.slf4j.version}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>log4j</groupId>
@@ -309,6 +323,7 @@
             <optional>true</optional>
         </dependency>
 
+
     </dependencies>
 
     <build>
@@ -323,6 +338,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
             <!-- 打包源代码插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -340,6 +356,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -362,30 +379,8 @@
                 </configuration>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.5.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
-    <!--<build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.0.1.RELEASE</version>
-                <configuration>
-                    <fork>true</fork>
-                    <addResources>true</addResources>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>-->
 
 
 </project>

@@ -41,9 +41,17 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.*;
 import java.security.KeyStore;
 
+/**
+ * 初始化Socket.io业务的pipeline和handler
+ * @author qiyuan.hong
+ */
 public class SocketIOChannelInitializer extends ChannelInitializer<Channel> implements DisconnectableHub {
 
+    /**
+     * socket.io编码器名称
+     */
     public static final String SOCKETIO_ENCODER = "socketioEncoder";
+
     public static final String WEB_SOCKET_TRANSPORT_COMPRESSION = "webSocketTransportCompression";
     public static final String WEB_SOCKET_TRANSPORT = "webSocketTransport";
     public static final String WEB_SOCKET_AGGREGATOR = "webSocketAggregator";

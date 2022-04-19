@@ -1,11 +1,10 @@
 package com.hqy.elasticsearch;
 
-import com.hqy.fundation.common.result.PageResult;
+import com.hqy.base.common.result.PageResult;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

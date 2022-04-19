@@ -37,31 +37,39 @@ public abstract class ExecutorServiceProject {
     /**
      * 等待时间 2分钟
      */
-    private static final long keepAliveTime = 2L;
+    private static final long KEEP_ALIVE_TIME = 2L;
 
     /**
      * 阻塞队列
      */
     private BlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(capacity);
 
+    /**
+     * 线程池名称
+     */
     private String poolThreadName;
 
+    /**
+     * 线程工厂
+     */
     private ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(poolThreadName + "-%d").build();
 
-    /**
-     * 默认使用此构造
-     * @param poolThreadName
-     */
-    private ExecutorServiceProject(String poolThreadName) {
+    public ExecutorServiceProject(String poolThreadName) {
         this.poolThreadName =  poolThreadName;
     }
 
-    public ExecutorServiceProject(  int coreSize, int maxSize, int capacity,String poolThreadName, ThreadFactory threadFactory) {
+    public ExecutorServiceProject(int coreSize, int maxSize, int capacity,String poolThreadName, ThreadFactory threadFactory) {
         this(coreSize, maxSize, capacity, poolThreadName);
         this.threadFactory = threadFactory;
     }
 
-    public ExecutorServiceProject( int coreSize, int maxSize, int capacity, String poolThreadName ) {
+    public ExecutorServiceProject(int coreSize, int maxSize, int capacity,String poolThreadName, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+        this(coreSize, maxSize, capacity, poolThreadName);
+        this.threadFactory = threadFactory;
+        this.handler = handler;
+    }
+
+    public ExecutorServiceProject( int coreSize, int maxSize, int capacity, String poolThreadName) {
         super();
         this.coreSize = coreSize;
         this.maxSize = maxSize;
@@ -98,7 +106,7 @@ public abstract class ExecutorServiceProject {
     /**
      * 拒绝策略
      */
-    private final RejectedExecutionHandler handler = (r, executor) -> {
+    private RejectedExecutionHandler handler = (r, executor) -> {
         log.warn("WARN ~ ExecutorServiceProject rejectedExecution !");
         try {
             if (rejectCounter % 100 == 0) {
@@ -111,14 +119,27 @@ public abstract class ExecutorServiceProject {
 
     };
 
-    private final ThreadPoolExecutor EXECUTOR_SERVICE = new ThreadPoolExecutor(coreSize, maxSize, keepAliveTime, TimeUnit.MINUTES, workQueue, threadFactory, handler);
+    private final ThreadPoolExecutor EXECUTOR_SERVICE =
+            new ThreadPoolExecutor(coreSize, maxSize, KEEP_ALIVE_TIME, TimeUnit.MINUTES, workQueue, threadFactory, handler);
+
 
     public int getWorkingQueueSize() {
         return workQueue.size();
     }
 
+
     public int getWorkingQueueCapacity() {
         return capacity;
+    }
+
+
+    /**
+     * 队列长度是否超过百分一
+     * @return
+     */
+    public boolean isQueueHundredthFull() {
+        float using = (float) getWorkingQueueSize() / getWorkingQueueCapacity();
+        return using > 0.01F;
     }
 
     /**

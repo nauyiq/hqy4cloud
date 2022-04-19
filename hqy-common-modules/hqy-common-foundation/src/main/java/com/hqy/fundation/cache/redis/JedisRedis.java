@@ -12,10 +12,16 @@ import java.util.Objects;
  * @date  2021-07-22 16:10
  */
 @Slf4j
-public class JedisRedis extends AbstractRedisTemplateUtil {
+public class JedisRedis extends AbstractRedisAdaptor {
 
     private JedisRedis(RedisTemplate<String, Object> redisTemplate) {
         super(redisTemplate);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public AbstractRedisAdaptor selectDb(int db) {
+        return null;
     }
 
     private static volatile JedisRedis instance = null;

@@ -25,6 +25,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * 注解@OnConnect扫描器
+ */
 public class OnConnectScanner implements AnnotationScanner  {
 
     @Override
@@ -34,16 +37,13 @@ public class OnConnectScanner implements AnnotationScanner  {
 
     @Override
     public void addListener(Namespace namespace, final Object object, final Method method, Annotation annotation) {
-        namespace.addConnectListener(new ConnectListener() {
-            @Override
-            public void onConnect(SocketIOClient client) {
-                try {
-                    method.invoke(object, client);
-                } catch (InvocationTargetException e) {
-                    throw new SocketIOException(e.getCause());
-                } catch (Exception e) {
-                    throw new SocketIOException(e);
-                }
+        namespace.addConnectListener(client -> {
+            try {
+                method.invoke(object, client);
+            } catch (InvocationTargetException e) {
+                throw new SocketIOException(e.getCause());
+            } catch (Exception e) {
+                throw new SocketIOException(e);
             }
         });
     }
@@ -57,6 +57,7 @@ public class OnConnectScanner implements AnnotationScanner  {
         for (Class<?> eventType : method.getParameterTypes()) {
             if (eventType.equals(SocketIOClient.class)) {
                 valid = true;
+                break;
             }
         }
         if (!valid) {

@@ -2,12 +2,12 @@ package com.hqy.rpc.nacos;
 
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.GrayWhitePub;
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 
 import java.util.List;
 
 /**
- * nacos服务调用者视角
+ * 注册中心 服务调用者视角
  * @author qiyuan.hong
  * @date 2021-09-17 18:30
  */
@@ -26,6 +26,11 @@ public interface RegistryClient {
      */
     ClusterNode getOneLivingNode(GrayWhitePub pub);
 
+    /**
+     * 返回当前节点注册到注册中心的名称
+     * @return
+     */
+    String getServiceNameEn();
 
     /**
      * 轮询获取所有活着的节点，负载均衡（不区分灰度 白度）

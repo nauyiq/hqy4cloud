@@ -1,5 +1,40 @@
-env:
-  dev
-#RPC注册直连服务配置key
-direct:
-  nodesMap: "{cloud-gateway: '172.0.0.1:8080'}"
+#暴露所有
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true #开启从注册中心动态创建路由的功能，利用微服务名进行路由
+      routes:
+        - id: account-auth-service
+          uri: lb://account-auth-service
+          predicates:
+            - Path=/oauth/**
+#        - id: payment_get_routh             #路由的ID，没有固定规则但要求唯一，建议配合服务名
+#          uri: lb://alibaba-provider-demo      #根据服务名进行动态路由，匹配后提供服务的路由地址 #匹配后提供服务的路由地址
+#          predicates: #predicates就是为了实现一组匹配规则， 让请求过来找到对应的route进行处理
+#            - Path=/payment/**         # 断言，路径相匹配的进行路由
+        - id: message-socket-hash
+          uri: socket://message-netty-service
+          predicates:
+            - Path=/message/websocket/**
+        - id: message-netty-service
+          uri: lb://message-netty-service
+          predicates:
+            - Path=/message/connection
+        - id: message-static
+          uri: lb://message-netty-service
+          predicates:
+            - Path=/message/socketIo-client
+          filters:
+            - StripPrefix=1
+gateway:
+  dynamicRoute:
+    enabled: true
+    type: nacos
+

@@ -10,12 +10,20 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 时间工具类 <br/>
+ * 切记：SimpleDateFormat是线程不安全的 使用的时候最好确保是在同步的环境下使用的
+ * 因此这也是官方为什么不推荐把SimpleDateFormat当做静态常量定义.
  * @author qiyuan.hong
  * @date  2021-09-15 16:15
  */
 public class CommonDateUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CommonDateUtil.class);
+
+    /**
+     * 到分钟的格式
+     */
+    public static final DateFormat TIME_MINUTE_FORMAT = new SimpleDateFormat("hh-MM-dd HH:mm");
 
     /**
      * 时间 转 HH:mm格式

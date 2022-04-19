@@ -1,16 +1,15 @@
 package com.hqy.rpc.route;
 
-import com.hqy.fundation.common.base.project.UsingIpPort;
+import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 基于@RreshScope注解获取配置中心的配置数据
@@ -26,14 +25,10 @@ public class ConfigCenterDirectServer implements DirectModuleManager {
      * key:服务名
      * value ip:端口 比如172.0.0.1:8080
      */
-//    @Value("#{${direct.nodesMap}}")
-    private static Map<String, String> directNodesMap = new HashMap<>();
-    static {
-        directNodesMap.put("test", "test");
-    }
+    private static final Map<String, String> DIRECT_NODES_MAP = new ConcurrentHashMap<>();
 
     private boolean checkNodes() {
-        if (directNodesMap == null || directNodesMap.isEmpty()) {
+        if (DIRECT_NODES_MAP.isEmpty()) {
             log.warn("@@@ Initialize directNodes, directNodes is null.");
             return false;
         }
@@ -46,7 +41,7 @@ public class ConfigCenterDirectServer implements DirectModuleManager {
         if (!result) {
             return null;
         }
-        String ipPort = directNodesMap.get(moduleNameEn);
+        String ipPort = DIRECT_NODES_MAP.get(moduleNameEn);
         if (StringUtils.isBlank(ipPort)) {
             return null;
         }
@@ -60,7 +55,7 @@ public class ConfigCenterDirectServer implements DirectModuleManager {
         }
         boolean result = checkNodes();
         if (result) {
-            return directNodesMap.get(moduleName) != null;
+            return DIRECT_NODES_MAP.get(moduleName) != null;
         }
         return false;
     }

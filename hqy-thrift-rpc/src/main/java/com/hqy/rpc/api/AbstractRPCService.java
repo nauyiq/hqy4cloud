@@ -1,6 +1,6 @@
 package com.hqy.rpc.api;
 
-import com.hqy.fundation.common.rpc.api.RPCService;
+import com.hqy.base.common.rpc.api.RPCService;
 
 /**
  * 所有RPC服务都推荐继承的父类。<br>
