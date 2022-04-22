@@ -1,4 +1,4 @@
-package com.hqy.rpc.thrift;
+package com.hqy.rpc.event;
 
 import com.facebook.swift.service.ThriftEventHandler;
 

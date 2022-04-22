@@ -22,34 +22,48 @@ import com.facebook.nifty.core.TChannelBufferInputTransport;
 import com.facebook.nifty.core.TChannelBufferOutputTransport;
 import com.facebook.swift.codec.ThriftCodec;
 import com.facebook.swift.codec.ThriftCodecManager;
+import com.facebook.swift.codec.ThriftField;
+import com.facebook.swift.codec.ThriftIdlAnnotation;
 import com.facebook.swift.codec.internal.TProtocolReader;
 import com.facebook.swift.codec.internal.TProtocolWriter;
-import com.facebook.swift.codec.metadata.ThriftFieldMetadata;
-import com.facebook.swift.codec.metadata.ThriftParameterInjection;
-import com.facebook.swift.codec.metadata.ThriftType;
+import com.facebook.swift.codec.metadata.*;
 import com.facebook.swift.service.metadata.ThriftMethodMetadata;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.hqy.foundation.common.thread.ProjectThreadLocalContext;
+import com.hqy.rpc.thrift.RemoteExParam;
+import com.hqy.util.ArgsUtil;
+import com.hqy.util.identity.ProjectSnowflakeIdWorker;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.weakref.jmx.Managed;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.facebook.swift.codec.metadata.FieldKind.THRIFT_FIELD;
 import static org.apache.thrift.TApplicationException.*;
 import static org.apache.thrift.protocol.TMessageType.*;
 
 @ThreadSafe
-public class ThriftMethodHandler
-{
+public class ThriftMethodHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ThriftMethodHandler.class);
+
     private final String name;
     private final String qualifiedName;
     private final List<ParameterHandler> parameterCodecs;
@@ -59,17 +73,22 @@ public class ThriftMethodHandler
 
     private final boolean invokeAsynchronously;
 
-    public ThriftMethodHandler(ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager)
-    {
+    public ThriftMethodHandler(ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
         name = methodMetadata.getName();
         qualifiedName = methodMetadata.getQualifiedName();
         invokeAsynchronously = methodMetadata.isAsync();
-
         oneway = methodMetadata.getOneway();
 
+
+        //业务调用链中的方法参数.
+        List<ThriftFieldMetadata> originFieldMetadataList = methodMetadata.getParameters();
+        //修改源码 动态植入拓展参数.
+        ThriftFieldMetadata injectGeneralParamFieldMetadata = injectGeneralParamFieldMetadata(originFieldMetadataList, codecManager);
+        originFieldMetadataList.add(injectGeneralParamFieldMetadata);
+
         // get the thrift codecs for the parameters
-        ParameterHandler[] parameters = new ParameterHandler[methodMetadata.getParameters().size()];
-        for (ThriftFieldMetadata fieldMetadata : methodMetadata.getParameters()) {
+        ParameterHandler[] parameters = new ParameterHandler[originFieldMetadataList.size()];
+        for (ThriftFieldMetadata fieldMetadata : originFieldMetadataList) {
             ThriftParameterInjection parameter = (ThriftParameterInjection) fieldMetadata.getInjections().get(0);
 
             ParameterHandler handler = new ParameterHandler(
@@ -92,14 +111,59 @@ public class ThriftMethodHandler
         successCodec = (ThriftCodec<Object>) codecManager.getCodec(methodMetadata.getReturnType());
     }
 
+
+    public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originFieldMetadataList, ThriftCodecManager codecManager) {
+        //拼接到业务参数的默认 因此长度+1
+        short parameterId = (short) (originFieldMetadataList.size() + 1);
+        String parameterName = RemoteExParam.class.getSimpleName();
+        Type parameterType = RemoteExParam.class;
+        //构建thrift注入对象 用于参数注入
+        ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originFieldMetadataList.size(), parameterType);
+        ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);
+
+        Field[] fields = RemoteExParam.class.getDeclaredFields();
+        Map<String, String> parameterIdlAnnotations = new HashMap<>(fields.length);
+        ImmutableMap.Builder<String, String> idlAnnotationsBuilder = ImmutableMap.builder();
+        boolean isLegacyId = false;
+        for (Field field : fields) {
+            ThriftField thriftField = null;
+            for (Annotation annotation : field.getAnnotations()) {
+                if (annotation instanceof ThriftField) {
+                    thriftField = (ThriftField) annotation;
+                    break;
+                }
+            }
+            //不可能为null 因为GeneralParam是硬编码的类.
+            if (thriftField == null) {
+                break;
+            }
+            isLegacyId = thriftField.isLegacyId();
+            for (ThriftIdlAnnotation idlAnnotation : thriftField.idlAnnotations()) {
+                idlAnnotationsBuilder.put(idlAnnotation.key(), idlAnnotation.value());
+            }
+            parameterIdlAnnotations = idlAnnotationsBuilder.build();
+        }
+
+        return new ThriftFieldMetadata(parameterId, isLegacyId, false,
+                ThriftField.Requiredness.NONE,
+                parameterIdlAnnotations,
+                new DefaultThriftTypeReference(thriftType),
+                parameterName, THRIFT_FIELD,
+                ImmutableList.of(parameterInjection),
+                Optional.absent(),
+                Optional.absent(),
+                Optional.absent(),
+                Optional.absent());
+    }
+
+
+
     @Managed
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getQualifiedName()
-    {
+    public String getQualifiedName() {
         return qualifiedName;
     }
 
@@ -112,20 +176,15 @@ public class ThriftMethodHandler
             final int sequenceId,
             final ClientContextChain contextChain,
             final Object... args)
-            throws Exception
-    {
-        if (invokeAsynchronously)
-        {
+            throws Exception {
+        if (invokeAsynchronously) {
             // This method declares a Future return value: run it asynchronously
             return asynchronousInvoke(channel, inputTransport, outputTransport, inputProtocol, outputProtocol, sequenceId, contextChain, args);
-        }
-        else
-        {
+        } else {
             try {
                 // This method declares an immediate return value: run it synchronously
                 return synchronousInvoke(channel, inputTransport, outputTransport, inputProtocol, outputProtocol, sequenceId, contextChain, args);
-            }
-            finally {
+            } finally {
                 contextChain.done();
             }
         }
@@ -140,9 +199,16 @@ public class ThriftMethodHandler
             int sequenceId,
             ClientContextChain contextChain,
             Object[] args)
-            throws Exception
-    {
+            throws Exception {
         Object results = null;
+
+        try {
+            //在源码基础 业务无感知的动态拼接一个参数.
+            args = addDynamicArgs(args);
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
 
         // write request
         contextChain.preWrite(args);
@@ -184,6 +250,8 @@ public class ThriftMethodHandler
         return results;
     }
 
+
+
     public ListenableFuture<Object> asynchronousInvoke(
             final RequestChannel channel,
             final TChannelBufferInputTransport inputTransport,
@@ -192,11 +260,16 @@ public class ThriftMethodHandler
             final TProtocol outputProtocol,
             final int sequenceId,
             final ClientContextChain contextChain,
-            final Object[] args)
-        throws Exception
-    {
+                  Object[] args)
+            throws Exception {
         final AsyncMethodCallFuture<Object> future = AsyncMethodCallFuture.create(contextChain);
         final RequestContext requestContext = RequestContexts.getCurrentContext();
+
+        try {
+            args = addDynamicArgs(args);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
 
         contextChain.preWrite(args);
         outputTransport.resetOutputBuffer();
@@ -211,8 +284,7 @@ public class ThriftMethodHandler
                 if (oneway) {
                     try {
                         future.set(null);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         future.setException(e);
                     }
                 }
@@ -229,12 +301,10 @@ public class ThriftMethodHandler
                     Object results = readResponse(inputProtocol);
                     contextChain.postRead(results);
                     future.set(results);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     contextChain.postReadException(e);
                     future.setException(e);
-                }
-                finally {
+                } finally {
                     RequestContexts.setCurrentContext(oldRequestContext);
                 }
             }
@@ -256,8 +326,7 @@ public class ThriftMethodHandler
     }
 
     private Object readResponse(TProtocol in)
-            throws Exception
-    {
+            throws Exception {
         TProtocolReader reader = new TProtocolReader(in);
         reader.readStructBegin();
         Object results = null;
@@ -265,13 +334,11 @@ public class ThriftMethodHandler
         while (reader.nextField()) {
             if (reader.getFieldId() == 0) {
                 results = reader.readField(successCodec);
-            }
-            else {
+            } else {
                 ThriftCodec<Object> exceptionCodec = exceptionCodecs.get(reader.getFieldId());
                 if (exceptionCodec != null) {
                     exception = (Exception) reader.readField(exceptionCodec);
-                }
-                else {
+                } else {
                     reader.skipFieldData();
                 }
             }
@@ -295,8 +362,7 @@ public class ThriftMethodHandler
     }
 
     private void writeArguments(TProtocol out, int sequenceId, Object[] args)
-            throws Exception
-    {
+            throws Exception {
         // Note that though setting message type to ONEWAY can be helpful when looking at packet
         // captures, some clients always send CALL and so servers are forced to rely on the "oneway"
         // attribute on thrift method in the interface definition, rather than checking the message
@@ -318,8 +384,7 @@ public class ThriftMethodHandler
     }
 
     private void waitForResponse(TProtocol in, int sequenceId)
-            throws TException
-    {
+            throws TException {
         TMessage message = in.readMessageBegin();
         if (message.type == EXCEPTION) {
             TApplicationException exception = TApplicationException.read(in);
@@ -328,52 +393,60 @@ public class ThriftMethodHandler
         }
         if (message.type != REPLY) {
             throw new TApplicationException(INVALID_MESSAGE_TYPE,
-                                            "Received invalid message type " + message.type + " from server");
+                    "Received invalid message type " + message.type + " from server");
         }
         if (!message.name.equals(this.name)) {
             throw new TApplicationException(WRONG_METHOD_NAME,
-                                            "Wrong method name in reply: expected " + this.name + " but received " + message.name);
+                    "Wrong method name in reply: expected " + this.name + " but received " + message.name);
         }
         if (message.seqid != sequenceId) {
             throw new TApplicationException(BAD_SEQUENCE_ID, name + " failed: out of sequence response");
         }
     }
 
-    private static final class ParameterHandler
-    {
+    private Object[] addDynamicArgs(Object[] args) {
+        Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
+        if (rootId == null) {
+            rootId = 0L;
+        }
+        Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
+        if (parentId == null) {
+            parentId = 0L;
+        }
+        long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
+        RemoteExParam param = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
+        args = ArgsUtil.addArg(args, param);
+        return args;
+    }
+
+    private static final class ParameterHandler {
         private final short id;
         private final String name;
         private final ThriftCodec<Object> codec;
 
-        private ParameterHandler(short id, String name, ThriftCodec<Object> codec)
-        {
+        private ParameterHandler(short id, String name, ThriftCodec<Object> codec) {
             this.id = id;
             this.name = name;
             this.codec = codec;
         }
 
-        public short getId()
-        {
+        public short getId() {
             return id;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public ThriftCodec<Object> getCodec()
-        {
+        public ThriftCodec<Object> getCodec() {
             return codec;
         }
     }
 
-    private static final class AsyncMethodCallFuture<T> extends AbstractFuture<T>
-    {
+    private static final class AsyncMethodCallFuture<T> extends AbstractFuture<T> {
         private final ClientContextChain contextChain;
 
-        public static <T> AsyncMethodCallFuture<T> create(ClientContextChain contextChain)
-        {
+        public static <T> AsyncMethodCallFuture<T> create(ClientContextChain contextChain) {
             return new AsyncMethodCallFuture<>(contextChain);
         }
 
@@ -382,22 +455,19 @@ public class ThriftMethodHandler
         }
 
         @Override
-        public boolean set(@Nullable T value)
-        {
+        public boolean set(@Nullable T value) {
             contextChain.done();
             return super.set(value);
         }
 
         @Override
-        public boolean setException(Throwable throwable)
-        {
+        public boolean setException(Throwable throwable) {
             contextChain.done();
             return super.setException(throwable);
         }
 
         @Override
-        public boolean cancel(boolean mayInterruptIfRunning)
-        {
+        public boolean cancel(boolean mayInterruptIfRunning) {
             // Async call futures represent requests running on some other service,
             // there is no way to cancel the request once it has been sent.
             return false;

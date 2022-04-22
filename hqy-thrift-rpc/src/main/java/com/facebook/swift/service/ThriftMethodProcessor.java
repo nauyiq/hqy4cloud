@@ -44,6 +44,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.thrift.TApplicationException.INTERNAL_ERROR;
@@ -63,12 +65,7 @@ public class ThriftMethodProcessor {
     private final ThriftCodec<Object> successCodec;
     private final Map<Class<?>, ExceptionProcessor> exceptionCodecs;
 
-    public ThriftMethodProcessor(
-            Object service,
-            String serviceName,
-            ThriftMethodMetadata methodMetadata,
-            ThriftCodecManager codecManager
-    ) {
+    public ThriftMethodProcessor(Object service, String serviceName, ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
         this.service = service;
         this.serviceName = serviceName;
 
@@ -81,8 +78,13 @@ public class ThriftMethodProcessor {
 
         parameters = ImmutableList.copyOf(methodMetadata.getParameters());
 
+        //修改源码 动态植入拓展参数.
+        List<ThriftFieldMetadata> exParameters = new ArrayList<>(parameters);
+        ThriftFieldMetadata injectGeneralParamFieldMetadata = ThriftMethodHandler.injectGeneralParamFieldMetadata(methodMetadata.getParameters(), codecManager);
+        exParameters.add(injectGeneralParamFieldMetadata);
+
         ImmutableMap.Builder<Short, ThriftCodec<?>> builder = ImmutableMap.builder();
-        for (ThriftFieldMetadata fieldMetadata : methodMetadata.getParameters()) {
+        for (ThriftFieldMetadata fieldMetadata : exParameters) {
             builder.put(fieldMetadata.getId(), codecManager.getCodec(fieldMetadata.getThriftType()));
         }
         parameterCodecs = builder.build();
@@ -149,13 +151,7 @@ public class ThriftMethodProcessor {
                     try {
                         contextChain.preWrite(result);
 
-                        writeResponse(out,
-                                sequenceId,
-                                TMessageType.REPLY,
-                                "success",
-                                (short) 0,
-                                successCodec,
-                                result);
+                        writeResponse(out, sequenceId, TMessageType.REPLY, "success", (short) 0, successCodec, result);
 
                         contextChain.postWrite(result);
 
@@ -195,27 +191,12 @@ public class ThriftMethodProcessor {
                         if (exceptionCodec != null) {
                             contextChain.declaredUserException(t, exceptionCodec.getCodec());
                             // write expected exception response
-                            writeResponse(
-                                    out,
-                                    sequenceId,
-                                    TMessageType.REPLY,
-                                    "exception",
-                                    exceptionCodec.getId(),
-                                    exceptionCodec.getCodec(),
-                                    t);
+                            writeResponse(out, sequenceId, TMessageType.REPLY, "exception", exceptionCodec.getId(), exceptionCodec.getCodec(), t);
                             contextChain.postWriteException(t);
                         } else {
                             contextChain.undeclaredUserException(t);
                             // unexpected exception
-                            TApplicationException applicationException =
-                                    ThriftServiceProcessor.createAndWriteApplicationException(
-                                            out,
-                                            requestContext,
-                                            method.getName(),
-                                            sequenceId,
-                                            INTERNAL_ERROR,
-                                            "Internal error processing " + method.getName() + ": " + t.getMessage(),
-                                            t);
+                            TApplicationException applicationException = ThriftServiceProcessor.createAndWriteApplicationException(out, requestContext, method.getName(), sequenceId, INTERNAL_ERROR, "Internal error processing " + method.getName() + ": " + t.getMessage(), t);
 
                             contextChain.postWriteException(applicationException);
                         }
@@ -254,8 +235,7 @@ public class ThriftMethodProcessor {
         }
     }
 
-    private Object[] readArguments(TProtocol in)
-            throws Exception {
+    private Object[] readArguments(TProtocol in) throws Exception {
         try {
             int numArgs = method.getParameterTypes().length;
             Object[] args = new Object[numArgs];
@@ -305,13 +285,7 @@ public class ThriftMethodProcessor {
         }
     }
 
-    private <T> void writeResponse(TProtocol out,
-                                   int sequenceId,
-                                   byte responseType,
-                                   String responseFieldName,
-                                   short responseFieldId,
-                                   ThriftCodec<T> responseCodec,
-                                   T result) throws Exception {
+    private <T> void writeResponse(TProtocol out, int sequenceId, byte responseType, String responseFieldName, short responseFieldId, ThriftCodec<T> responseCodec, T result) throws Exception {
         out.writeMessageBegin(new TMessage(name, responseType, sequenceId));
 
         TProtocolWriter writer = new TProtocolWriter(out);

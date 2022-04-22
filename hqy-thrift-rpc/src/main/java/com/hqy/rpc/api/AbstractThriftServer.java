@@ -9,16 +9,20 @@ import com.facebook.swift.service.ThriftServiceProcessor;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.rpc.config.ThriftServerProperties;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.thread.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -43,9 +47,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public abstract class AbstractThriftServer implements InitializingBean {
 
-    private final int MULTIPLE_BASE = 4;
-
-    private static final int MAX_RETRY_TIMES = 64;
 
     /**
      * 项目端口
@@ -54,96 +55,68 @@ public abstract class AbstractThriftServer implements InitializingBean {
     int port = 0;
 
     /**
-     * rpc端口 默认10001
-     */
-    @Value("${thrift.listen.port:10001}")
-    int rpcPort = 10001;
-
-
-    /**
-     * netty boos线程池线程个数 默认1
-     */
-    @Value("${thrift.acceptor.thread:1}")
-    int bossThreadNum = 1;
-
-    protected int ioWorkerThreadNum = Runtime.getRuntime().availableProcessors() * MULTIPLE_BASE;
-
-    protected int logicThreadNum = Runtime.getRuntime().availableProcessors() * MULTIPLE_BASE;
-
-    /**
      * 当前服务器IP 端口 进程号
      */
     private UsingIpPort uip = null;
 
-    @Bean
-    public ThriftServer getThriftServer() {
 
+    private List<ThriftEventHandler> eventHandlers = new LinkedList<>();
+
+    public void registryEventHandler(List<ThriftEventHandler> eventHandlers) {
+        if (CollectionUtils.isNotEmpty(eventHandlers)) {
+            this.eventHandlers = eventHandlers;
+        }
+    }
+
+
+
+    @Bean
+    @ConditionalOnBean(ThriftServerProperties.class)
+    @ConditionalOnMissingBean(ThriftServer.class)
+    public ThriftServer createThriftServer(ThriftServerProperties properties) {
         AssertUtil.isTrue(port != 0, "AbstractThriftServer get service port fail, port == 0.");
-        //是否注册ThriftServer
+
         boolean registryThriftServer = true;
+        List<RPCService> serviceList4Register = getServiceList4Register();
         if (CommonSwitcher.ENABLE_THRIFT_SERVER_BEAN.isOff()) {
-            log.warn("### AbstractThriftServer[getThriftServer] CommonSwitcher ENABLE_THRIFT_SERVER_BEAN = false");
-            log.warn("### Can Not Get ThriftServer Bean.");
+            log.warn("@@@ [createThriftServer] CommonSwitcher.ENABLE_THRIFT_SERVER_BEAN = false");
             registryThriftServer = false;
         } else {
             //获取当前服务暴露的rpc接口列表
-            List<Class<? extends AbstractRPCService>> rpcServiceClasses = getRpcServiceClasses();
-            if (rpcServiceClasses == null) {
+            if (serviceList4Register == null) {
                 //如果是不对外提供rpc服务的独立的节点 则无需注册ThriftServer
-                log.info("### FLAG_RPC_REDUCED_SERVICE 标记为无对外提供RPC服务的节点 ");
+                log.info("@@@ FLAG_RPC_REDUCED_SERVICE 标记为无对外提供RPC服务的节点 ");
                 EnvironmentConfig.FLAG_RPC_REDUCED_SERVICE = true;
                 registryThriftServer = false;
-            } else if (rpcServiceClasses.size() <= 1) {
-                //如果是暴露的RPC实例列表较少时, 可以适当减少io线程数
-                log.info("### RPC实例数较低, 适当减少RPC处理线程");
-                int boundary = 6;
-                ioWorkerThreadNum = ioWorkerThreadNum / MULTIPLE_BASE;
-                if (ioWorkerThreadNum > boundary) {
-                    ioWorkerThreadNum = boundary;
-                }
-                logicThreadNum = logicThreadNum / MULTIPLE_BASE;
-                if (logicThreadNum > boundary) {
-                    logicThreadNum = boundary;
-                }
-            } else if (EnvironmentConfig.FLAG_IO_INTENSIVE_RPC_SERVICE) {
-                //如果是io密集型的应用...RPC处理线程数再翻倍
-                ioWorkerThreadNum = ioWorkerThreadNum * 2;
-                logicThreadNum = logicThreadNum * 2;
-                log.info("### EnvironmentConfig.FLAG_IO_INTENSIVE_RPC_SERVICE!");
-                log.info("### IO密集型业务项目，线程数目 再次翻倍！");
             } else {
-                log.info("### 普通rpc-服务准备启动：{} 倍CPU核数的IO线程!!!", MULTIPLE_BASE);
+                determineProcessingProperties(serviceList4Register.size(), properties);
+                log.info("@@@ determineProcessingProperties:{}", JsonUtil.toJson(properties));
             }
-            log.info("### 注册rpc实例：{}", JsonUtil.toJson(rpcServiceClasses));
-            log.info("AbstractThriftServer[getThriftServer]  bossThreadNum:{}, ioThreadNum:{}, logicThreadNum:{}",
-                    bossThreadNum, ioWorkerThreadNum, logicThreadNum);
-            log.info("AbstractThriftServer[getThriftServer]  default configured serverPort:{}", rpcPort);
         }
 
         String ip = IpUtil.getHostAddress();
         int pid = Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+
         if (registryThriftServer) {
             InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
             //TODO 设置服务端事件处理器 ThriftEventHandler
             List<ThriftEventHandler> eventHandlers = new LinkedList<>();
-            List<RPCService> rpcServices = getServiceList4Register();
-            ThriftServiceProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), eventHandlers, rpcServices);
+            ThriftServiceProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), eventHandlers, serviceList4Register);
 
-            ExecutorService boosExecutor = new ThreadPoolExecutor(this.bossThreadNum, this.bossThreadNum, 0L,
+            ExecutorService boosExecutor = new ThreadPoolExecutor(properties.getNettyBossThreadNum(), properties.getNettyBossThreadNum(), 0L,
                     TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("BossWorker"));
-            ExecutorService ioWorkerExecutor = new ThreadPoolExecutor(this.ioWorkerThreadNum, this.ioWorkerThreadNum, 0L,
+            ExecutorService ioWorkerExecutor = new ThreadPoolExecutor(properties.getNettyIoWorkerThreadNum(), properties.getNettyIoWorkerThreadNum(), 0L,
                     TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("IoWorker"));
-            ExecutorService logicWorkerExecutor = new ThreadPoolExecutor(this.logicThreadNum, this.logicThreadNum, 0L,
+            ExecutorService logicWorkerExecutor = new ThreadPoolExecutor(properties.getNettyLogicThreadNum(), properties.getNettyLogicThreadNum(), 0L,
                     TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("LogicWorker"));
 
             final NettyServerConfig serverConfig = NettyServerConfig.newBuilder().setBossThreadExecutor(boosExecutor)
-                    .setBossThreadCount(this.bossThreadNum).setWorkerThreadExecutor(ioWorkerExecutor)
-                    .setWorkerThreadCount(this.ioWorkerThreadNum).build();
+                    .setBossThreadCount(properties.getNettyBossThreadNum()).setWorkerThreadExecutor(ioWorkerExecutor)
+                    .setWorkerThreadCount(properties.getNettyIoWorkerThreadNum()).build();
 
-            //获取可以使用的端口.
-            getRpcPort(ip);
-            uip = new UsingIpPort(ip, port, rpcPort, pid);
+            int rpcPort = getEnableRpcPort(ip, properties);
+            uip = new UsingIpPort(ip, port, properties.getRpcPort(), pid);
             log.info("@@@ Registry ThriftServer, uip = {}", JsonUtil.toJson(uip));
 
             ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor)
@@ -158,19 +131,62 @@ public abstract class AbstractThriftServer implements InitializingBean {
 
     }
 
-    private void getRpcPort(String ip) {
+    private void determineProcessingProperties(int size, ThriftServerProperties properties) {
+        int nettyIoWorkerThreadNum = properties.getNettyIoWorkerThreadNum();
+        int nettyLogicThreadNum = properties.getNettyLogicThreadNum();
+        if (size <= 1) {
+            //如果是暴露的RPC实例列表较少时, 可以适当减少io线程数
+            log.info("@@@ RPC实例数较低, 适当减少RPC处理线程");
+            int boundary = 6;
+            nettyIoWorkerThreadNum = nettyIoWorkerThreadNum / boundary;
+            if (nettyIoWorkerThreadNum > boundary) {
+                nettyIoWorkerThreadNum = boundary;
+            }
+            nettyLogicThreadNum = nettyLogicThreadNum / boundary;
+            if (nettyLogicThreadNum > boundary) {
+                nettyIoWorkerThreadNum = boundary;
+            }
+        } else if (EnvironmentConfig.FLAG_IO_INTENSIVE_RPC_SERVICE) {
+            //如果是io密集型的应用...RPC处理线程数再翻倍
+            log.info("### IO密集型业务项目，线程数目 再次翻倍！");
+            nettyIoWorkerThreadNum = nettyIoWorkerThreadNum * 2;
+            nettyLogicThreadNum = nettyLogicThreadNum * 2;
+        } else {
+            log.info("### 普通rpc-服务准备启动：{} 倍CPU核数的IO线程!!!", properties.getMultipleBaseCount());
+        }
+        properties.setNettyIoWorkerThreadNum(nettyIoWorkerThreadNum);
+        properties.setNettyLogicThreadNum(nettyLogicThreadNum);
+    }
+
+
+    private List<ThriftEventHandler> registerThriftEventHandler() {
+        return new ArrayList<>();
+    }
+
+
+
+    /**
+     * 获取可以使用的rpc端口
+     * @param ip
+     * @param properties
+     * @return
+     */
+    private int getEnableRpcPort(String ip, ThriftServerProperties properties) {
+        int rpcPort = properties.getRpcPort();
+        int connectRetryTime = properties.getConnectRetryTime();
         int i = 0;
-        while (isPortUsing(this.rpcPort)) {
+        while (isPortUsing(rpcPort)) {
             log.warn("### The server port already bind! retry new port!!! [{}:{}]", ip, rpcPort);
             i++;
-            if(i == MAX_RETRY_TIMES){
+            if(i == connectRetryTime){
                 log.warn("@@@ 重试了{}次，仍然拿不到可用的端口～ 悲剧了！", i);
-                throw new RuntimeException("Port is using ! Server failed start after MAX_RETRY_TIMES:" + MAX_RETRY_TIMES);
+                throw new RuntimeException("Port is using ! Server failed start after MAX_RETRY_TIMES:" + connectRetryTime);
             }else{
                 //端口号使用 涨幅 + 4
-                this.rpcPort = this.rpcPort + 4;
+                rpcPort = rpcPort + 4;
             }
         }
+        return rpcPort;
     }
 
     /**
@@ -196,7 +212,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
 
     /**
      * 子类拓展：获取子类提供的RPC服务实例
-     * @return
+     * @return List<RPCService>
      */
     public abstract List<RPCService> getServiceList4Register();
 
