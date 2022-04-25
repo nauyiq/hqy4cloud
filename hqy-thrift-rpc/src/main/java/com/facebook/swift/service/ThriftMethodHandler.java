@@ -22,11 +22,13 @@ import com.facebook.nifty.core.TChannelBufferInputTransport;
 import com.facebook.nifty.core.TChannelBufferOutputTransport;
 import com.facebook.swift.codec.ThriftCodec;
 import com.facebook.swift.codec.ThriftCodecManager;
-import com.facebook.swift.codec.ThriftField;
-import com.facebook.swift.codec.ThriftIdlAnnotation;
+import com.facebook.swift.codec.ThriftField.Requiredness;
 import com.facebook.swift.codec.internal.TProtocolReader;
 import com.facebook.swift.codec.internal.TProtocolWriter;
-import com.facebook.swift.codec.metadata.*;
+import com.facebook.swift.codec.metadata.ThriftFieldMetadata;
+import com.facebook.swift.codec.metadata.ThriftInjection;
+import com.facebook.swift.codec.metadata.ThriftParameterInjection;
+import com.facebook.swift.codec.metadata.ThriftType;
 import com.facebook.swift.service.metadata.ThriftMethodMetadata;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -48,10 +50,7 @@ import org.weakref.jmx.Managed;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,9 +60,6 @@ import static org.apache.thrift.protocol.TMessageType.*;
 
 @ThreadSafe
 public class ThriftMethodHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(ThriftMethodHandler.class);
-
     private final String name;
     private final String qualifiedName;
     private final List<ParameterHandler> parameterCodecs;
@@ -71,24 +67,28 @@ public class ThriftMethodHandler {
     private final Map<Short, ThriftCodec<Object>> exceptionCodecs;
     private final boolean oneway;
 
+
     private final boolean invokeAsynchronously;
 
+    private static final Logger log = LoggerFactory.getLogger(ThriftMethodHandler.class);
+
+
     public ThriftMethodHandler(ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
+
+        List<ThriftFieldMetadata> original = methodMetadata.getParameters();
+
+        //动态添加一个参数
+        ThriftFieldMetadata injectGeneralParamFieldMetadata = injectGeneralParamFieldMetadata(original, codecManager);
+        original.add(injectGeneralParamFieldMetadata);
+
         name = methodMetadata.getName();
         qualifiedName = methodMetadata.getQualifiedName();
         invokeAsynchronously = methodMetadata.isAsync();
         oneway = methodMetadata.getOneway();
 
+        ParameterHandler[] parameters = new ParameterHandler[original.size()];
 
-        //业务调用链中的方法参数.
-        List<ThriftFieldMetadata> originFieldMetadataList = methodMetadata.getParameters();
-        //修改源码 动态植入拓展参数.
-        ThriftFieldMetadata injectGeneralParamFieldMetadata = injectGeneralParamFieldMetadata(originFieldMetadataList, codecManager);
-        originFieldMetadataList.add(injectGeneralParamFieldMetadata);
-
-        // get the thrift codecs for the parameters
-        ParameterHandler[] parameters = new ParameterHandler[originFieldMetadataList.size()];
-        for (ThriftFieldMetadata fieldMetadata : originFieldMetadataList) {
+        for (ThriftFieldMetadata fieldMetadata : original) {
             ThriftParameterInjection parameter = (ThriftParameterInjection) fieldMetadata.getInjections().get(0);
 
             ParameterHandler handler = new ParameterHandler(
@@ -110,53 +110,6 @@ public class ThriftMethodHandler {
         // get the thrift codec for the return value
         successCodec = (ThriftCodec<Object>) codecManager.getCodec(methodMetadata.getReturnType());
     }
-
-
-    public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originFieldMetadataList, ThriftCodecManager codecManager) {
-        //拼接到业务参数的默认 因此长度+1
-        short parameterId = (short) (originFieldMetadataList.size() + 1);
-        String parameterName = RemoteExParam.class.getSimpleName();
-        Type parameterType = RemoteExParam.class;
-        //构建thrift注入对象 用于参数注入
-        ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originFieldMetadataList.size(), parameterType);
-        ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);
-
-        Field[] fields = RemoteExParam.class.getDeclaredFields();
-        Map<String, String> parameterIdlAnnotations = new HashMap<>(fields.length);
-        ImmutableMap.Builder<String, String> idlAnnotationsBuilder = ImmutableMap.builder();
-        boolean isLegacyId = false;
-        for (Field field : fields) {
-            ThriftField thriftField = null;
-            for (Annotation annotation : field.getAnnotations()) {
-                if (annotation instanceof ThriftField) {
-                    thriftField = (ThriftField) annotation;
-                    break;
-                }
-            }
-            //不可能为null 因为GeneralParam是硬编码的类.
-            if (thriftField == null) {
-                break;
-            }
-            isLegacyId = thriftField.isLegacyId();
-            for (ThriftIdlAnnotation idlAnnotation : thriftField.idlAnnotations()) {
-                idlAnnotationsBuilder.put(idlAnnotation.key(), idlAnnotation.value());
-            }
-            parameterIdlAnnotations = idlAnnotationsBuilder.build();
-        }
-
-        return new ThriftFieldMetadata(parameterId, isLegacyId, false,
-                ThriftField.Requiredness.NONE,
-                parameterIdlAnnotations,
-                new DefaultThriftTypeReference(thriftType),
-                parameterName, THRIFT_FIELD,
-                ImmutableList.of(parameterInjection),
-                Optional.absent(),
-                Optional.absent(),
-                Optional.absent(),
-                Optional.absent());
-    }
-
-
 
     @Managed
     public String getName() {
@@ -203,11 +156,22 @@ public class ThriftMethodHandler {
         Object results = null;
 
         try {
-            //在源码基础 业务无感知的动态拼接一个参数.
-            args = addDynamicArgs(args);
+            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
+            if (rootId == null) {
+                rootId = 0L;
+            }
+            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
+            if (parentId == null) {
 
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+                parentId = 0L;
+            }
+            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
+            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
+//        	appendArg.isSyncronizedCall = true;
+            args = ArgsUtil.addArg(args, appendArg);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         // write request
@@ -250,8 +214,6 @@ public class ThriftMethodHandler {
         return results;
     }
 
-
-
     public ListenableFuture<Object> asynchronousInvoke(
             final RequestChannel channel,
             final TChannelBufferInputTransport inputTransport,
@@ -260,15 +222,28 @@ public class ThriftMethodHandler {
             final TProtocol outputProtocol,
             final int sequenceId,
             final ClientContextChain contextChain,
-                  Object[] args)
+            Object[] args)
             throws Exception {
         final AsyncMethodCallFuture<Object> future = AsyncMethodCallFuture.create(contextChain);
         final RequestContext requestContext = RequestContexts.getCurrentContext();
 
         try {
-            args = addDynamicArgs(args);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            //动态添加一个参数
+            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
+            if (rootId == null) {
+                rootId = 0L;
+            }
+            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
+            if (parentId == null) {
+                parentId = 0L;
+            }
+            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
+            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
+//        	appendArg.isSyncronizedCall = false;
+            args = ArgsUtil.addArg(args, appendArg);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         contextChain.preWrite(args);
@@ -323,6 +298,25 @@ public class ThriftMethodHandler {
         });
 
         return future;
+    }
+
+    public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originThriftFieldMetadata, ThriftCodecManager codecManager) {
+        short parameterId = (short) (originThriftFieldMetadata.size() + 1);
+        String parameterName = RemoteExParam.class.getSimpleName();
+        Type parameterType = RemoteExParam.class;
+        ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originThriftFieldMetadata.size(), parameterType);
+        ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);
+        return new ThriftFieldMetadata(
+                parameterId,
+                Requiredness.NONE,
+                thriftType,
+                parameterName,
+                THRIFT_FIELD,
+                ImmutableList.of(parameterInjection),
+                Optional.absent(),
+                Optional.absent(),
+                Optional.absent(),
+                Optional.absent());
     }
 
     private Object readResponse(TProtocol in)
@@ -402,21 +396,6 @@ public class ThriftMethodHandler {
         if (message.seqid != sequenceId) {
             throw new TApplicationException(BAD_SEQUENCE_ID, name + " failed: out of sequence response");
         }
-    }
-
-    private Object[] addDynamicArgs(Object[] args) {
-        Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
-        if (rootId == null) {
-            rootId = 0L;
-        }
-        Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
-        if (parentId == null) {
-            parentId = 0L;
-        }
-        long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
-        RemoteExParam param = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
-        args = ArgsUtil.addArg(args, param);
-        return args;
     }
 
     private static final class ParameterHandler {

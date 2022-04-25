@@ -33,6 +33,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.hqy.util.ArgsUtil;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TMessageType;
@@ -217,6 +218,8 @@ public class ThriftMethodProcessor {
 
     private ListenableFuture<?> invokeMethod(Object[] args) {
         try {
+            //移除动态添加的参数 RemoteParamEx 消费者在执行rpc之前 就把RemoteParamEx放到ThriftHandler中.
+            args = ArgsUtil.reduceTailArg(args);
             Object response = method.invoke(service, args);
             if (response instanceof ListenableFuture) {
                 return (ListenableFuture<?>) response;

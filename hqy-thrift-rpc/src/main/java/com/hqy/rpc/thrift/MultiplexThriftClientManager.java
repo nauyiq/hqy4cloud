@@ -5,7 +5,11 @@ import com.facebook.nifty.client.NiftyClient;
 import com.facebook.swift.codec.ThriftCodecManager;
 import com.facebook.swift.service.ThriftClientEventHandler;
 import com.facebook.swift.service.ThriftClientManager;
+import com.hqy.rpc.event.ThriftClientStatsEventHandler;
+import com.hqy.rpc.regist.EnvironmentConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,11 +17,11 @@ import java.util.Set;
 /**
  * 单例类 实现一个进程中NIO客户端复用。 提升性能，减少不必要的Netty客户端
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-18 10:44
+ * @date  2021-08-18 10:44
  */
-@Slf4j
 public class MultiplexThriftClientManager {
+
+    private static final Logger log = LoggerFactory.getLogger(MultiplexThriftClientManager.class);
 
     private final ThriftClientManager clientManager;
 
@@ -28,10 +32,13 @@ public class MultiplexThriftClientManager {
 
     private MultiplexThriftClientManager() {
         Set<ThriftClientEventHandler> eventHandlers = new HashSet<>();
+        if (EnvironmentConfig.getInstance().isRPCCollection() || EnvironmentConfig.getInstance().isRPCCallChainPersistence()) {
+            eventHandlers.add(new ThriftClientStatsEventHandler());
+        }
         //NIO线路复用！！！！
         ThriftCodecManager codecManager = new ThriftCodecManager();
         NettyClientConfig clientConfig = NettyClientConfig.newBuilder().setWorkerThreadCount(WORKER_THREAD_COUNT).build();
-        log.info("### workerThreadCount={}", WORKER_THREAD_COUNT);
+        log.info("@@@ WorkerThreadCount={}", WORKER_THREAD_COUNT);
         NiftyClient client = new NiftyClient(clientConfig);
         //NIO线路复用！
         this.clientManager = new ThriftClientManager(codecManager, client, eventHandlers);

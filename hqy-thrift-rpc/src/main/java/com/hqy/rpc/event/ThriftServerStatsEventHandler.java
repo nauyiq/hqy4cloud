@@ -2,17 +2,26 @@ package com.hqy.rpc.event;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.service.ThriftEventHandler;
+import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.thrift.RemoteExParam;
 import com.hqy.rpc.thrift.RequestContextKey;
 import com.hqy.rpc.thrift.ThriftContext;
+import com.hqy.rpc.thrift.ex.RemoteContextChecker;
 import com.hqy.util.ArgsUtil;
+import com.hqy.util.JsonUtil;
+import io.seata.core.context.RootContext;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * thrift服务端事件handler.
+ * thrift服务端事件handler. 声明后 可以动态的在thrift rpc的执行生命周期内 拓展业务. 类似aop
+ * 绑定RemoteExParam拓展参数：
+ *            1 标记当前rpc责任链.
+ *            2 绑定seata分布式事务全局事务id.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/22 15:32
@@ -45,8 +54,27 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
             ((ThriftContext)context).setParam(remoteExParam);
             //移除 ThriftMethodHandler中动态添加的参数.
             ArgsUtil.reduceTailArg(args);
+            getInjectTransactionXidAndBinding(remoteExParam, methodName);
         } catch (Exception e) {
             log.warn("@@@ ThriftServerStatsEventHandler.postRead error. [{}]", e.getMessage());
+        }
+    }
+
+    private void getInjectTransactionXidAndBinding(RemoteExParam remoteExParam, String methodName) {
+        if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOn()) {
+            String xid = remoteExParam.xid;
+            if (StringUtils.isNotBlank(xid) && RemoteContextChecker.isTransactional(methodName)) {
+                try {
+                    RootContext.bind(xid);
+                    log.info("@@@ GlobalTransactional xid binding. xid:{}, method:{}", xid, methodName);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            } else {
+                log.warn("@@@ Checking method : {} need binding xid, but xid is empty. exParam:{}", methodName, JsonUtil.toJson(remoteExParam));
+            }
+        } else {
+            log.info("@@@ CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOff");
         }
     }
 
@@ -93,6 +121,29 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
 
     @Override
     public void done(Object context, String methodName) {
+        ThriftContext thriftContext = (ThriftContext) context;
+        try {
+            if (CommonSwitcher.ENABLE_THRIFT_RPC_COLLECTION.isOn()) {
+                /*String rid = thriftContext.getRootId();
+                String cid = thriftContext.getChildId();
+                String pid =  thriftContext.getParentId() ;
+                if(StringUtils.isNotEmpty(rid)) {
+                    rootId = Long.parseLong(rid);
+
+                }
+                if(StringUtils.isNotEmpty(cid)) {
+                    childId = Long.parseLong(cid);
+                }
+                if(StringUtils.isNotEmpty(pid)) {
+                   Long  parentId = Long.parseLong(pid);
+                    ThreadLocalCCC.PARENT_ID.set(parentId);
+                }*/
+            }
+        } catch (Exception e) {
+
+        }
+
+
         //TODO 异常采集
         super.done(context, methodName);
     }

@@ -31,7 +31,22 @@ public class CommonSwitcher extends AbstractSwitcher {
     /**
      * 节点-是否采用基于Lettuce的RedisTemplate （默认true）
      */
-    public static final CommonSwitcher ENABLE_LETTUCE_REDIS_TEMPLATE = new CommonSwitcher(202, "节点-是否采用基于Lettuce的RedisTemplate", true);
+    public static final CommonSwitcher ENABLE_LETTUCE_REDIS_TEMPLATE = new CommonSwitcher(203, "节点-是否采用基于Lettuce的RedisTemplate", true);
+
+    /**
+     * 节点-是否启用RPC接口采集
+     */
+    public static final CommonSwitcher ENABLE_THRIFT_RPC_COLLECTION = new CommonSwitcher(204, "节点-是否启用RPC接口采集", true);
+
+    /**
+     * 节点-是否采用Thrift-rpc调用链持久化
+     */
+    public static final CommonSwitcher ENABLE_THRIFT_RPC_CALL_CHAIN_PERSISTENCE = new CommonSwitcher(205, "节点-是否采用Thrift-rpc调用链持久化", true);
+
+    /**
+     * 节点-是否采用分布式事务传播
+     */
+    public static final CommonSwitcher ENABLE_PROPAGATE_GLOBAL_TRANSACTION = new CommonSwitcher(206, "节点-是否采用分布式事务传播", true);
 
     /**
      * 节点-同IP/Env RPC调度优先(非灰度机制才有效)

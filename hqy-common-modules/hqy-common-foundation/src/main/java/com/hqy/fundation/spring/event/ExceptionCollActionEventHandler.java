@@ -101,6 +101,7 @@ public class ExceptionCollActionEventHandler {
         count = count == null ? 0 : count;
 
         Lock lock = locks[sign];
+
         lock.lock();
         try {
             doCollection(event, count);

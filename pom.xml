@@ -43,7 +43,7 @@
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
         <hutool.version>5.6.3</hutool.version>
         <servlet.version>3.1.0</servlet.version>
-        <swift.version>0.22.1</swift.version>
+        <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
         <guava.version>22.0</guava.version>
@@ -52,6 +52,7 @@
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <org.redisson.version>3.13.6</org.redisson.version>
+        <seata.version>1.4.2</seata.version>
         <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
     </properties>
 
@@ -242,6 +243,19 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${org.redisson.version}</version>
+            </dependency>
+
+            <!-- seata -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-core</artifactId>
+                <version>${seata.version}</version>
             </dependency>
 
         </dependencies>

@@ -146,4 +146,21 @@ public class EnvironmentConfig implements InitializingBean {
     public boolean enableRpcDirect() {
         return false;
     }
+
+
+    /**
+     * 是否采用rpc接口采集
+     * @return
+     */
+    public boolean isRPCCollection() {
+        return CommonSwitcher.ENABLE_THRIFT_RPC_COLLECTION.isOn();
+    }
+
+    /**
+     * 是否采用调用链持久化
+     * @return
+     */
+    public boolean isRPCCallChainPersistence() {
+        return CommonSwitcher.ENABLE_THRIFT_RPC_CALL_CHAIN_PERSISTENCE.isOn();
+    }
 }

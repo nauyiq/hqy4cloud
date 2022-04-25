@@ -10,6 +10,7 @@ import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.config.ThriftServerProperties;
+import com.hqy.rpc.event.ThriftServerStatsEventHandler;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
@@ -75,7 +76,6 @@ public abstract class AbstractThriftServer implements InitializingBean {
     @ConditionalOnMissingBean(ThriftServer.class)
     public ThriftServer createThriftServer(ThriftServerProperties properties) {
         AssertUtil.isTrue(port != 0, "AbstractThriftServer get service port fail, port == 0.");
-
         boolean registryThriftServer = true;
         List<RPCService> serviceList4Register = getServiceList4Register();
         if (CommonSwitcher.ENABLE_THRIFT_SERVER_BEAN.isOff()) {
@@ -100,8 +100,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
         if (registryThriftServer) {
             InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-            //TODO 设置服务端事件处理器 ThriftEventHandler
-            List<ThriftEventHandler> eventHandlers = new LinkedList<>();
+            List<ThriftEventHandler> eventHandlers = registerThriftEventHandler();
             ThriftServiceProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), eventHandlers, serviceList4Register);
 
             ExecutorService boosExecutor = new ThreadPoolExecutor(properties.getNettyBossThreadNum(), properties.getNettyBossThreadNum(), 0L,
@@ -160,7 +159,13 @@ public abstract class AbstractThriftServer implements InitializingBean {
 
 
     private List<ThriftEventHandler> registerThriftEventHandler() {
-        return new ArrayList<>();
+        List<ThriftEventHandler> thriftEventHandlers = new LinkedList<>();
+        if (CommonSwitcher.ENABLE_THRIFT_RPC_COLLECTION.isOn()) {
+            //注册ThriftServerStatsEventHandler 用于rpc采集. 调用链持久化.
+            ThriftEventHandler thriftServerStatsEventHandler = new ThriftServerStatsEventHandler();
+            thriftEventHandlers.add(thriftServerStatsEventHandler);
+        }
+        return thriftEventHandlers;
     }
 
 

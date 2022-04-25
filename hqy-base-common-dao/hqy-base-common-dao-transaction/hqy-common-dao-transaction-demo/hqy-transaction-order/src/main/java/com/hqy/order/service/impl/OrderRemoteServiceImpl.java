@@ -10,6 +10,7 @@ import com.hqy.order.service.OrderService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ public class OrderRemoteServiceImpl extends AbstractRPCService implements OrderR
     @Override
     @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
     public Long order(Long productId, int count, String money, String storageJson, String accountJson) {
+        String xid = RootContext.getXID();
         Order order = new Order();
         order.setProductId(productId);
         order.setCount(count);

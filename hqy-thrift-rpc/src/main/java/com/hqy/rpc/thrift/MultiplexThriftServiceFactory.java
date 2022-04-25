@@ -16,6 +16,8 @@ import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.jboss.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +26,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 复合的ThriftService工厂类
  * 利用apache common pool ，对象缓存复用。+NIO链接多路复用。<br>
- *  * 通过暴露的updateAddresses 方法 来更新远程连接。<br>
- *  <T> RPCService
+ * 通过暴露的updateAddresses 方法 来更新远程连接。<br>
+ * <T> RPCService
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-08-13 14:43
+ * @date  2021-08-13 14:43
  */
-@Slf4j
 public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(MultiplexThriftServiceFactory.class);
 
     /**
      * RPCService
@@ -79,9 +82,9 @@ public class MultiplexThriftServiceFactory<T> extends BasePooledObjectFactory<T>
         this.serviceClass = serviceClass;
         this.hostIp = hostIp;
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.debug("[ThriftServiceFactory] init ! addressesGray={}", addressGray);
-            log.debug("[ThriftServiceFactory] init ! addressesWhite={}", addressWhite);
-            log.debug("[ThriftServiceFactory] init ! hostIp={}", hostIp);
+            log.debug("[ThriftServiceFactory] init! addressesGray={}", addressGray);
+            log.debug("[ThriftServiceFactory] init! addressesWhite={}", addressWhite);
+            log.debug("[ThriftServiceFactory] init! hostIp={}", hostIp);
         }
         updateAddress(addressGray, addressWhite);
     }
