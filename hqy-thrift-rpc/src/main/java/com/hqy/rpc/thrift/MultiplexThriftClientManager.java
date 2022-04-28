@@ -5,7 +5,7 @@ import com.facebook.nifty.client.NiftyClient;
 import com.facebook.swift.codec.ThriftCodecManager;
 import com.facebook.swift.service.ThriftClientEventHandler;
 import com.facebook.swift.service.ThriftClientManager;
-import com.hqy.rpc.handler.ThriftClientStatsEventHandler;
+import com.hqy.rpc.thrift.handler.ThriftClientStatsEventHandler;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

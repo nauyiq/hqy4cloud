@@ -15,7 +15,7 @@ import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.route.ConfigCenterDirectServer;
-import com.hqy.rpc.thrift.DynamicInvocationHandler;
+import com.hqy.rpc.thrift.handler.DynamicInvocationHandler;
 import com.hqy.rpc.thrift.InvokeCallback;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import com.hqy.util.AssertUtil;

@@ -1,4 +1,4 @@
-package com.hqy.rpc.handler;
+package com.hqy.rpc.thrift.handler;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.service.ThriftEventHandler;
@@ -56,13 +56,14 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
             ((ThriftContext)context).setParam(remoteExParam);
             //移除 ThriftMethodHandler中动态添加的参数.
             ArgsUtil.reduceTailArg(args);
-            getInjectTransactionXidAndBinding(remoteExParam, methodName);
+            boolean bind = getInjectTransactionXidAndBinding(remoteExParam, methodName);
+            ((ThriftContext)context).setBind(bind);
         } catch (Exception e) {
             log.warn("@@@ ThriftServerStatsEventHandler.postRead error. [{}]", e.getMessage());
         }
     }
 
-    private void getInjectTransactionXidAndBinding(RemoteExParam remoteExParam, String methodName) {
+    private boolean getInjectTransactionXidAndBinding(RemoteExParam remoteExParam, String methodName) {
         if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOn()) {
             String rpcXid = remoteExParam.xid;
             String xid = RootContext.getXID();
@@ -70,6 +71,7 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
                 try {
                     RootContext.bind(rpcXid);
                     log.info("@@@ GlobalTransactional rpcXid binding. rpcXid:{}, method:{}", rpcXid, methodName);
+                    return true;
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
@@ -79,6 +81,7 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
         } else {
             log.info("@@@ CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOff");
         }
+        return false;
     }
 
     @Override
@@ -114,7 +117,26 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
     @Override
     public void done(Object context, String methodName) {
         ThriftContext thriftContext = (ThriftContext) context;
+
         try {
+            if (thriftContext.isBind()) {
+                String rpcXid = thriftContext.getParam().xid;
+                //如果bind了上游传递的xid. 则服务的提供者provider 需要进行xid的清理.
+                String unbindXid = RootContext.unbind();
+                if (log.isDebugEnabled()) {
+                    log.debug("unbind[" + unbindXid + "] from RootContext");
+                }
+
+                if (!rpcXid.equalsIgnoreCase(unbindXid)) {
+                    log.warn("xid in change during RPC from " + rpcXid + " to " + unbindXid);
+                    // 调用过程有新的事务上下文开启，则不能清除
+                    if (unbindXid != null) {
+                        RootContext.bind(unbindXid);
+                        log.warn("bind [" + unbindXid + "] back to RootContext");
+                    }
+                }
+
+            }
             if (CommonSwitcher.ENABLE_THRIFT_RPC_COLLECTION.isOn()) {
                 /*String rid = thriftContext.getRootId();
                 String cid = thriftContext.getChildId();

@@ -100,6 +100,10 @@ public class TransactionContext {
     }
 
 
+    /**
+     * 确认标记当前rpc方法是否需要进行事务传播
+     * @param method thrift rpc remote method.
+     */
     public static void makeThriftMethodTransactional(Method method) {
         String methodName = method.getName();
         if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOff()) {

@@ -1,4 +1,4 @@
-package com.hqy.rpc.handler;
+package com.hqy.rpc.thrift.handler;
 
 import com.facebook.nifty.client.ClientRequestContext;
 import com.facebook.nifty.client.RequestChannel;

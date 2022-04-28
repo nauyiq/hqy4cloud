@@ -105,6 +105,9 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         order.setStatus(true);
         modify = update(order);
 
+
+//        int i = 1/0;
+
         if (!modify) {
             throw new RuntimeException("@@@ 修改订单状态失败");
         }

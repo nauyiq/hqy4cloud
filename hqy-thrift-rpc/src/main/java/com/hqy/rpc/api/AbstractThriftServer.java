@@ -10,7 +10,7 @@ import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.config.ThriftServerProperties;
-import com.hqy.rpc.handler.ThriftServerStatsEventHandler;
+import com.hqy.rpc.thrift.handler.ThriftServerStatsEventHandler;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;

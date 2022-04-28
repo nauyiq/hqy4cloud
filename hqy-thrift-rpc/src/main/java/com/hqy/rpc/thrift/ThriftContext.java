@@ -63,6 +63,11 @@ public class ThriftContext {
      */
     private Throwable throwable;
 
+    /**
+     * 是否绑定上游传递过来的xid
+     */
+    private boolean bind = false;
+
 
     public ThriftContext() {
     }
@@ -94,7 +99,13 @@ public class ThriftContext {
         return param.childId;
     }
 
+    public boolean isBind() {
+        return bind;
+    }
 
+    public void setBind(boolean bind) {
+        this.bind = bind;
+    }
 
     public boolean isResult() {
         return result;
