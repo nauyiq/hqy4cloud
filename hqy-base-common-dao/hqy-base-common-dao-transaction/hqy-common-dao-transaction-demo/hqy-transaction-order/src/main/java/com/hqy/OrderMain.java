@@ -37,6 +37,7 @@ public class OrderMain {
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(OrderMain.class, args);
 
+
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");
         log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));

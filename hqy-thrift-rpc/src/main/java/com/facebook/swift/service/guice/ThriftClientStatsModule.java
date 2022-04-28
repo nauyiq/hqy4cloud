@@ -36,18 +36,22 @@ import static com.facebook.swift.service.guice.ClientEventHandlersBinder.clientE
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 import static java.lang.String.format;
 
-public class ThriftClientStatsModule implements Module {
+public class ThriftClientStatsModule implements Module
+{
     @Override
-    public void configure(Binder binder) {
+    public void configure(Binder binder)
+    {
         // We bind the ThriftClientProviderProviders in a Set so below we can export the thrift methods to JMX
         newSetBinder(binder, ThriftClientBinder.ThriftClientProvider.class).permitDuplicates();
         binder.bind(ThriftClientStatsHandler.class).in(Scopes.SINGLETON);
         clientEventHandlersBinder(binder).addHandler(ThriftClientStatsHandler.class);
         ExportBinder.newExporter(binder)
                 .exportMap(ObjectName.class, ThriftMethodStats.class)
-                .withGeneratedName(new MapObjectNameFunction<ObjectName, ThriftMethodStats>() {
+                .withGeneratedName(new MapObjectNameFunction<ObjectName, ThriftMethodStats>()
+                {
                     @Override
-                    public ObjectName name(ObjectName key, ThriftMethodStats value) {
+                    public ObjectName name(ObjectName key, ThriftMethodStats value)
+                    {
                         return key;
                     }
                 });
@@ -56,12 +60,13 @@ public class ThriftClientStatsModule implements Module {
     @Provides
     @Singleton
     public Map<ObjectName, ThriftMethodStats> getClientStats(Set<ThriftClientBinder.ThriftClientProvider> clientProviders,
-                                                             Set<ThriftClientEventHandler> eventHandlers) {
+                                                             Set<ThriftClientEventHandler> eventHandlers)
+    {
         // find a ThriftClientStatsHandler in eventHandlers
         ConcurrentMap<String, ThriftMethodStats> stats = null;
-        for (ThriftClientEventHandler h : eventHandlers) {
+        for (ThriftClientEventHandler h: eventHandlers) {
             if (h instanceof ThriftClientStatsHandler) {
-                stats = ((ThriftClientStatsHandler) h).getStats();
+                stats = ((ThriftClientStatsHandler)h).getStats();
                 break;
             }
         }
@@ -83,7 +88,8 @@ public class ThriftClientStatsModule implements Module {
                 }
             }
             return builder.build();
-        } catch (MalformedObjectNameException e) {
+        }
+        catch (MalformedObjectNameException e) {
             throw Throwables.propagate(e);
         }
     }

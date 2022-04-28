@@ -5,6 +5,7 @@ import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.service.AccountRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,8 +25,12 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     private AccountService accountService;
 
     @Override
-    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean modifyAccount(String account) {
+
+        String xid = RootContext.getXID();
+        System.out.println(xid);
+
         Account bean = JsonUtil.toBean(account, Account.class);
         if (bean == null) {
             return false;
@@ -34,7 +39,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     }
 
     @Override
-    public String queryById(Long account) {
+    public String getAccountById(Long account) {
         Account data = accountService.queryById(account);
         return data == null ? "" : JsonUtil.toJson(data);
     }

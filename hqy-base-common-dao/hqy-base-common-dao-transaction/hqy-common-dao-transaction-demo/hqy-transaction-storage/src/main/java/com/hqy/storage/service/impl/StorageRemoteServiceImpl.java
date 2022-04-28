@@ -36,7 +36,7 @@ public class StorageRemoteServiceImpl extends AbstractRPCService implements Stor
 
 
     @Override
-    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean modifyStorage(String storage) {
         String xid = RootContext.getXID();
         System.out.println(xid);

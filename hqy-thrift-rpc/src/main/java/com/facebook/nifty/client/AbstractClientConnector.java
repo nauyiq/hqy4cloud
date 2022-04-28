@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.facebook.nifty.client;
 
-import com.facebook.nifty.client.socks.Socks4ClientBootstrap;
 import com.facebook.nifty.duplex.TDuplexProtocolFactory;
 import com.google.common.net.HostAndPort;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -27,9 +26,8 @@ import java.net.SocketAddress;
 
 public abstract class AbstractClientConnector<T extends NiftyClientChannel>
         implements NiftyClientConnector<T> {
-    protected final SocketAddress address;
+    private final SocketAddress address;
     private final TDuplexProtocolFactory protocolFactory;
-    private volatile SocketAddress resolvedAddress;
 
     public AbstractClientConnector(SocketAddress address, TDuplexProtocolFactory protocolFactory) {
         this.address = address;
@@ -38,14 +36,7 @@ public abstract class AbstractClientConnector<T extends NiftyClientChannel>
 
     @Override
     public ChannelFuture connect(ClientBootstrap bootstrap) {
-        if (bootstrap instanceof Socks4ClientBootstrap) {
-            return bootstrap.connect(address);
-        }
-
-        if (resolvedAddress == null) {
-            resolvedAddress = resolvedAddress((InetSocketAddress) address);
-        }
-        return bootstrap.connect(resolvedAddress);
+        return bootstrap.connect(address);
     }
 
     @Override
@@ -58,17 +49,13 @@ public abstract class AbstractClientConnector<T extends NiftyClientChannel>
     }
 
     protected static SocketAddress toSocketAddress(HostAndPort address) {
-        return InetSocketAddress.createUnresolved(address.getHost(), address.getPort());
+//        return new InetSocketAddress(address.getHostText(), address.getPort());
+
+        //升级guava22
+        return new InetSocketAddress(address.getHost(), address.getPort());
     }
 
     protected static TDuplexProtocolFactory defaultProtocolFactory() {
         return TDuplexProtocolFactory.fromSingleFactory(new TBinaryProtocol.Factory());
-    }
-
-    private static InetSocketAddress resolvedAddress(InetSocketAddress address) {
-        if (!address.isUnresolved()) {
-            return address;
-        }
-        return new InetSocketAddress(address.getHostString(), address.getPort());
     }
 }

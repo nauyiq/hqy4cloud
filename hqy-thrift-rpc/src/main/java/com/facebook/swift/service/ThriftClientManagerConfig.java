@@ -15,7 +15,6 @@
  */
 package com.facebook.swift.service;
 
-import com.facebook.nifty.ssl.SslClientConfiguration;
 import com.google.common.net.HostAndPort;
 import io.airlift.configuration.Config;
 
@@ -23,7 +22,6 @@ public class ThriftClientManagerConfig
 {
     private HostAndPort defaultSocksProxyAddress = null;
     private Integer workerThreadCount = null;
-    private SslClientConfiguration sslClientConfiguration = null;
 
     public HostAndPort getDefaultSocksProxyAddress()
     {
@@ -31,8 +29,6 @@ public class ThriftClientManagerConfig
     }
 
     public Integer getWorkerThreadCount() { return workerThreadCount; }
-
-    public SslClientConfiguration getSslClientConfiguration() { return sslClientConfiguration; }
 
     @Config("thrift.clientmanager.default-socks-proxy")
     public void setDefaultSocksProxyAddress(HostAndPort defaultSocksProxyAddress)
@@ -44,9 +40,5 @@ public class ThriftClientManagerConfig
     public void setWorkerThreadCount(int workerThreadCount)
     {
         this.workerThreadCount = Integer.valueOf(workerThreadCount);
-    }
-
-    public void setSslClientConfiguration(SslClientConfiguration sslClientConfiguration) {
-        this.sslClientConfiguration = sslClientConfiguration;
     }
 }

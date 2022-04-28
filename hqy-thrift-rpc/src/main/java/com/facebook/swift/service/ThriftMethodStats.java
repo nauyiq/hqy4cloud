@@ -17,18 +17,18 @@ package com.facebook.swift.service;
 
 import io.airlift.stats.CounterStat;
 import io.airlift.stats.DistributionStat;
-import io.airlift.stats.TimeStat;
+import io.airlift.stats.TimedStat;
 import io.airlift.units.Duration;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 
 public class ThriftMethodStats
 {
-    private final TimeStat success = new TimeStat();
-    private final TimeStat read = new TimeStat();
-    private final TimeStat invoke = new TimeStat();
-    private final TimeStat write = new TimeStat();
-    private final TimeStat error = new TimeStat();
+    private final TimedStat success = new TimedStat();
+    private final TimedStat read = new TimedStat();
+    private final TimedStat invoke = new TimedStat();
+    private final TimedStat write = new TimedStat();
+    private final TimedStat error = new TimedStat();
     private final DistributionStat readSize = new DistributionStat();
     private final DistributionStat writeSize = new DistributionStat();
     private final CounterStat readSizeTotal = new CounterStat();
@@ -36,35 +36,35 @@ public class ThriftMethodStats
 
     @Managed
     @Nested
-    public TimeStat getRead()
+    public TimedStat getRead()
     {
         return read;
     }
 
     @Managed
     @Nested
-    public TimeStat getInvoke()
+    public TimedStat getInvoke()
     {
         return invoke;
     }
 
     @Managed
     @Nested
-    public TimeStat getWrite()
+    public TimedStat getWrite()
     {
         return write;
     }
 
     @Managed
     @Nested
-    public TimeStat getSuccess()
+    public TimedStat getSuccess()
     {
         return success;
     }
 
     @Managed
     @Nested
-    public TimeStat getError()
+    public TimedStat getError()
     {
         return error;
     }
@@ -99,27 +99,27 @@ public class ThriftMethodStats
 
     public void addReadTime(Duration duration)
     {
-        read.add(duration);
+        read.addValue(duration);
     }
 
     public void addInvokeTime(Duration duration)
     {
-        invoke.add(duration);
+        invoke.addValue(duration);
     }
 
     public void addWriteTime(Duration duration)
     {
-        write.add(duration);
+        write.addValue(duration);
     }
 
     public void addSuccessTime(Duration duration)
     {
-        success.add(duration);
+        success.addValue(duration);
     }
 
     public void addErrorTime(Duration duration)
     {
-        error.add(duration);
+        error.addValue(duration);
     }
 
     public void addReadByteCount(int readByteCount)

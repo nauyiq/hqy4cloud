@@ -23,12 +23,14 @@ import com.facebook.swift.service.ThriftClientManagerConfig;
 import com.google.inject.*;
 
 import static com.facebook.swift.service.guice.ClientEventHandlersBinder.clientEventHandlersBinder;
-import static io.airlift.configuration.ConfigBinder.configBinder;
+import static io.airlift.configuration.ConfigurationModule.bindConfig;
 
-public class ThriftClientModule implements Module {
+public class ThriftClientModule implements Module
+{
     @Override
-    public void configure(Binder binder) {
-        configBinder(binder).bindConfig(ThriftClientManagerConfig.class);
+    public void configure(Binder binder)
+    {
+        bindConfig(binder).to(ThriftClientManagerConfig.class);
 
         binder.bind(NiftyClient.class).toProvider(NiftyClientProvider.class).in(Scopes.SINGLETON);
 
@@ -39,26 +41,25 @@ public class ThriftClientModule implements Module {
         clientEventHandlersBinder(binder);
     }
 
-    private static class NiftyClientProvider implements Provider<NiftyClient> {
+    private static class NiftyClientProvider implements Provider<NiftyClient>
+    {
         private final ThriftClientManagerConfig clientManagerConfig;
 
         @Inject
-        public NiftyClientProvider(ThriftClientManagerConfig clientManagerConfig) {
+        public NiftyClientProvider(ThriftClientManagerConfig clientManagerConfig)
+        {
             this.clientManagerConfig = clientManagerConfig;
         }
 
         @Override
-        public NiftyClient get() {
+        public NiftyClient get()
+        {
             NettyClientConfigBuilder builder = NettyClientConfig.newBuilder();
 
             builder.setDefaultSocksProxyAddress(clientManagerConfig.getDefaultSocksProxyAddress());
 
             if (clientManagerConfig.getWorkerThreadCount() != null) {
                 builder.setWorkerThreadCount(clientManagerConfig.getWorkerThreadCount());
-            }
-
-            if (clientManagerConfig.getSslClientConfiguration() != null) {
-                builder.setSSLClientConfiguration(clientManagerConfig.getSslClientConfiguration());
             }
 
             return new NiftyClient(builder.build());

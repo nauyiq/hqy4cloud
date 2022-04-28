@@ -1,13 +1,12 @@
-package com.hqy.rpc.event;
+package com.hqy.rpc.handler;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.service.ThriftEventHandler;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.thrift.RemoteExParam;
 import com.hqy.rpc.thrift.RequestContextKey;
 import com.hqy.rpc.thrift.ThriftContext;
-import com.hqy.rpc.thrift.ex.RemoteContextChecker;
+import com.hqy.rpc.transaction.TransactionContext;
 import com.hqy.util.ArgsUtil;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;
@@ -30,6 +29,9 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ThriftServerStatsEventHandler.class);
 
+    /**
+     * thrift rpc请求中的上下文
+     */
     private RequestContext requestContext = null;
 
     @Override
@@ -62,16 +64,17 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
 
     private void getInjectTransactionXidAndBinding(RemoteExParam remoteExParam, String methodName) {
         if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOn()) {
-            String xid = remoteExParam.xid;
-            if (StringUtils.isNotBlank(xid) && RemoteContextChecker.isTransactional(methodName)) {
+            String rpcXid = remoteExParam.xid;
+            String xid = RootContext.getXID();
+            if (StringUtils.isBlank(xid) && StringUtils.isNotBlank(rpcXid) && TransactionContext.isTransactional(methodName)) {
                 try {
-                    RootContext.bind(xid);
-                    log.info("@@@ GlobalTransactional xid binding. xid:{}, method:{}", xid, methodName);
+                    RootContext.bind(rpcXid);
+                    log.info("@@@ GlobalTransactional rpcXid binding. rpcXid:{}, method:{}", rpcXid, methodName);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             } else {
-                log.warn("@@@ Checking method : {} need binding xid, but xid is empty. exParam:{}", methodName, JsonUtil.toJson(remoteExParam));
+                log.warn("@@@ Checking method : {} need binding rpcXid, but rpcXid is empty. exParam:{}", methodName, JsonUtil.toJson(remoteExParam));
             }
         } else {
             log.info("@@@ CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOff");
@@ -93,15 +96,10 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
         String stackTrace = ExceptionUtils.getStackTrace(t);
         log.warn("@@@ preWriteException. stackTrance: {}", stackTrace);
         ((ThriftContext)context).setResult(false);
-        ((ThriftContext)context).setThrowable(t);
-
-        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
-        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
-        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
-        requestContext.setContextData(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
-        requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
-        requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
+        setPropertiesByException((ThriftContext) context, t, stackTrace);
     }
+
+
 
     @Override
     public void postWriteException(Object context, String methodName, Throwable t) throws TException {
@@ -109,13 +107,7 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
 
         if (((ThriftContext)context).getThrowable() == null) {
             String stackTrace = ExceptionUtils.getStackTrace(t);
-            ((ThriftContext)context).setThrowable(t);
-            requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
-            requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
-            requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
-            requestContext.setContextData(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
-            requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
-            requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
+            setPropertiesByException((ThriftContext) context, t, stackTrace);
         }
     }
 
@@ -143,8 +135,17 @@ public class ThriftServerStatsEventHandler extends ThriftEventHandler {
 
         }
 
-
         //TODO 异常采集
         super.done(context, methodName);
+    }
+
+    private void setPropertiesByException(ThriftContext context, Throwable t, String stackTrace) {
+        context.setThrowable(t);
+        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
+        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
+        requestContext.getConnectionContext().setAttribute(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
+        requestContext.setContextData(RequestContextKey.KEY_RPC_SUCCESS, Boolean.FALSE);
+        requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_STACK, stackTrace);
+        requestContext.setContextData(RequestContextKey.KEY_EXCEPTION_CLASS, t.getClass().getName());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,35 +23,41 @@ import org.jboss.netty.channel.Channel;
 /**
  * Wraps incoming channel buffer into TTransport.
  */
-public class TNiftyReadOnlyTransport extends TTransport {
+public class TNiftyReadOnlyTransport extends TTransport
+{
     private final Channel channel;
     private final ChannelBuffer in;
 
-    public TNiftyReadOnlyTransport(Channel channel, ChannelBuffer in) {
+    public TNiftyReadOnlyTransport(Channel channel, ChannelBuffer in)
+    {
         this.channel = channel;
         this.in = in;
     }
 
     @Override
-    public boolean isOpen() {
+    public boolean isOpen()
+    {
         return channel.isOpen();
     }
 
     @Override
     public void open()
-            throws TTransportException {
+            throws TTransportException
+    {
         // no-op
     }
 
     @Override
-    public void close() {
+    public void close()
+    {
         // no-op
         channel.close();
     }
 
     @Override
     public int read(byte[] bytes, int offset, int length)
-            throws TTransportException {
+            throws TTransportException
+    {
         int _read = Math.min(in.readableBytes(), length);
         in.readBytes(bytes, offset, _read);
         return _read;
@@ -59,13 +65,15 @@ public class TNiftyReadOnlyTransport extends TTransport {
 
     @Override
     public void write(byte[] bytes, int offset, int length)
-            throws TTransportException {
+            throws TTransportException
+    {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void flush()
-            throws TTransportException {
+            throws TTransportException
+    {
         throw new UnsupportedOperationException();
     }
 }

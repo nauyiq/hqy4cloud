@@ -22,28 +22,34 @@ import com.google.inject.multibindings.Multibinder;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
-public class ClientEventHandlersBinder {
-    public static ClientEventHandlersBinder clientEventHandlersBinder(Binder binder) {
+public class ClientEventHandlersBinder
+{
+    public static ClientEventHandlersBinder clientEventHandlersBinder(Binder binder)
+    {
         return new ClientEventHandlersBinder(newSetBinder(binder, ThriftClientEventHandler.class));
     }
 
     private final Multibinder<ThriftClientEventHandler> binder;
 
-    public ClientEventHandlersBinder(Multibinder<ThriftClientEventHandler> binder) {
+    public ClientEventHandlersBinder(Multibinder<ThriftClientEventHandler> binder)
+    {
         this.binder = binder;
     }
 
-    public ClientEventHandlersBinder addHandler(Class<? extends ThriftClientEventHandler> cls) {
+    public ClientEventHandlersBinder addHandler(Class<? extends ThriftClientEventHandler> cls)
+    {
         binder.addBinding().to(cls);
         return this;
     }
 
-    public ClientEventHandlersBinder addHandler(Key<? extends ThriftClientEventHandler> key) {
+    public ClientEventHandlersBinder addHandler(Key<? extends ThriftClientEventHandler> key)
+    {
         binder.addBinding().to(key);
         return this;
     }
 
-    public ClientEventHandlersBinder addHandler(ThriftClientEventHandler handler) {
+    public ClientEventHandlersBinder addHandler(ThriftClientEventHandler handler)
+    {
         binder.addBinding().toInstance(handler);
         return this;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,34 @@ import org.jboss.netty.channel.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class TimeoutHandler implements ChannelUpstreamHandler, ChannelDownstreamHandler {
+public final class TimeoutHandler implements ChannelUpstreamHandler, ChannelDownstreamHandler
+{
     private static final String NAME = "_TIMEOUT_HANDLER";
 
     private volatile long lastMessageReceivedNanos = 0L;
-    private volatile long lastMessageSentNanos = 0L;
+    private volatile long  lastMessageSentNanos = 0L;
 
-    public static synchronized void addToPipeline(ChannelPipeline cp) {
+    public static synchronized void addToPipeline(ChannelPipeline cp)
+    {
         checkNotNull(cp, "cp is null");
         if (cp.get(NAME) == null) {
             cp.addFirst(NAME, new TimeoutHandler());
         }
     }
 
-    public static TimeoutHandler findTimeoutHandler(ChannelPipeline cp) {
+    public static TimeoutHandler findTimeoutHandler(ChannelPipeline cp)
+    {
         return (TimeoutHandler) cp.get(NAME);
     }
 
-    private TimeoutHandler() {
+    private TimeoutHandler()
+    {
     }
 
     @Override
     public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
-            throws Exception {
+        throws Exception
+    {
         if (e instanceof MessageEvent) {
             lastMessageReceivedNanos = System.nanoTime();
         }
@@ -50,18 +55,21 @@ public final class TimeoutHandler implements ChannelUpstreamHandler, ChannelDown
 
     @Override
     public void handleDownstream(ChannelHandlerContext ctx, ChannelEvent e)
-            throws Exception {
+        throws Exception
+    {
         if (e instanceof MessageEvent) {
             lastMessageSentNanos = System.nanoTime();
         }
         ctx.sendDownstream(e);
     }
 
-    public long getLastMessageReceivedNanos() {
+    public long getLastMessageReceivedNanos()
+    {
         return lastMessageReceivedNanos;
     }
 
-    public long getLastMessageSentNanos() {
+    public long getLastMessageSentNanos()
+    {
         return lastMessageSentNanos;
     }
 }

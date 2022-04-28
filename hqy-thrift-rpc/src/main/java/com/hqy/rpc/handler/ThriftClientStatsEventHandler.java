@@ -1,4 +1,4 @@
-package com.hqy.rpc.event;
+package com.hqy.rpc.handler;
 
 import com.facebook.nifty.client.ClientRequestContext;
 import com.facebook.nifty.client.RequestChannel;
@@ -9,6 +9,7 @@ import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.thrift.RemoteExParam;
 import com.hqy.rpc.thrift.ThriftContext;
 import com.hqy.rpc.thrift.ex.RemoteContextChecker;
+import com.hqy.rpc.transaction.TransactionContext;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;
 import org.apache.commons.lang3.StringUtils;
@@ -41,27 +42,33 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
     }
 
     @Override
-    public void preWrite(Object context, String methodName, Object[] args) {
-        boolean needCollect = RemoteContextChecker.needCollect(methodName);
-        ((ThriftContext) context).setCollection(needCollect);
-        ((ThriftContext) context).setPreWriteTime(System.currentTimeMillis());
-        if (EnvironmentConfig.getInstance().isRPCCallChainPersistence()) {
-            try {
-                //框架层面动态注入一个参数 RemoteExParam
-                Object obj = args[args.length - 1];
-                if (obj instanceof RemoteExParam) {
-                    RemoteExParam param = (RemoteExParam) obj;
-                    injectTransactionalXid(methodName, param);
-                    ((ThriftContext) context).setParam(param);
-                } else {
-                    log.warn("@@@ ThriftClientStatsEventHandler.preWrite -> not expected argument type for 'RemoteExParam':{}", obj.getClass().getSimpleName());
+    public void preWrite(Object context, final String methodName, Object[] args) {
+        if (context instanceof ThriftContext) {
+            boolean needCollect = RemoteContextChecker.needCollect(methodName);
+            ((ThriftContext) context).setCollection(needCollect);
+            ((ThriftContext) context).setPreWriteTime(System.currentTimeMillis());
+            if (EnvironmentConfig.getInstance().isRPCCallChainPersistence()) {
+                try {
+                    //框架层面动态注入一个参数 RemoteExParam
+                    Object obj = args[args.length - 1];
+                    if (obj instanceof RemoteExParam) {
+                        RemoteExParam param = (RemoteExParam) obj;
+                        //判断是否需要注入seata xid
+                        if (TransactionContext.isTransactional(methodName)) {
+                            injectTransactionalXid(methodName, param);
+                        }
+                        ((ThriftContext) context).setParam(param);
+                    } else {
+                        log.warn("@@@ ThriftClientStatsEventHandler.preWrite -> not expected argument type for 'RemoteExParam':{}", obj.getClass().getSimpleName());
+                    }
+                    ((ThriftContext) context).setReqParamJson(JsonUtil.toJson(args));
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
                 }
-                ((ThriftContext) context).setReqParamJson(JsonUtil.toJson(args));
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
 
+            }
         }
+
     }
 
 
@@ -85,15 +92,8 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
         log.error("@@@ RPC Client preReadException:{}", e.getMessage());
         preRead(context, methodName);
         ((ThriftContext) context).setResult(false);
-
-        if (e instanceof InvocationTargetException && e.getCause() != null
-                && e.getCause() instanceof RuntimeTApplicationException && e.getCause().getCause() != null
-                && e.getCause().getCause() instanceof TApplicationException
-                && ((TApplicationException) e.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
-            ((ThriftContext) context).setResult(true);
-        } else {
-            ((ThriftContext) context).setThrowable(e);
-        }
+        //兼容客户端返回了null
+        compatibilityServerReturnNull(e, (ThriftContext) context);
     }
 
 
@@ -106,14 +106,9 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
         if (e instanceof TApplicationException && e.getMessage() != null && e.getMessage().contains("unknown result")) {
             ((ThriftContext) context).setResult(true);
             log.warn("@@@ RPC method return null, ignored : methodName= {}", methodName);
-            //兼容客户端返回了null
-        } else if (e instanceof InvocationTargetException && e.getCause() != null
-                && e.getCause() instanceof RuntimeTApplicationException && e.getCause().getCause() != null
-                && e.getCause().getCause() instanceof TApplicationException
-                && ((TApplicationException) e.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
-            ((ThriftContext) context).setResult(true);
         } else {
-            ((ThriftContext) context).setThrowable(e);
+            //兼容客户端返回了null
+            compatibilityServerReturnNull(e, (ThriftContext) context);
         }
     }
 
@@ -124,12 +119,28 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
 
 
     /**
+     * 兼容客户端返回了null
+     * @param e
+     * @param context
+     */
+    private void compatibilityServerReturnNull(Throwable e, ThriftContext context) {
+        if (e instanceof InvocationTargetException && e.getCause() != null
+                && e.getCause() instanceof RuntimeTApplicationException && e.getCause().getCause() != null
+                && e.getCause().getCause() instanceof TApplicationException
+                && ((TApplicationException) e.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
+            context.setResult(true);
+        } else {
+            context.setThrowable(e);
+        }
+    }
+
+    /**
      * 根据环境还有方法 判断是否需要注入全局事务id
      * @param methodName 方法名
      * @param param      拓展参数RemoteExParam
      */
     private void injectTransactionalXid(String methodName, RemoteExParam param) {
-        if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOn() && RemoteContextChecker.isTransactional(methodName)) {
+        if (CommonSwitcher.ENABLE_PROPAGATE_GLOBAL_TRANSACTION.isOn() ) {
             String xid = RootContext.getXID();
             if (StringUtils.isBlank(xid)) {
                 log.info("@@@ Seata transaction id is empty. please check @GlobalTransactional, methodName:{}", methodName);

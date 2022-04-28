@@ -8,10 +8,14 @@ import com.hqy.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -21,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @version 1.0
  * @date 2022/4/25 10:05
  */
+@Component
 @SuppressWarnings("unchecked")
 public class RemoteContextChecker {
 
@@ -28,29 +33,16 @@ public class RemoteContextChecker {
 
     public static final String IGNORE_COLLECT_KEY = "IGNORE_COLLECT";
 
-    private RemoteContextChecker() {
-    }
 
     /**
      * 忽略异常采集的rpc方法集合
      */
     private static final Set<String> IGNORE_METHOD = new CopyOnWriteArraySet<>();
 
-    /**
-     * 需要传播seata事务id的rpc方法集合
-     */
-    private static final Set<String> TRANSACTION_METHOD = new CopyOnWriteArraySet<>();
 
 
-    static {
-        Class<? extends RPCService>[] ignoreClassArray = new Class[]{
-                CollPersistService.class
-        };
 
-        for (Class<? extends RPCService> rpcClass : ignoreClassArray) {
-            addIgnore(rpcClass);
-        }
-    }
+
 
     /**
      * 忽略异常采集 某个rpc方法 .
@@ -87,40 +79,8 @@ public class RemoteContextChecker {
         }
     }
 
-    /**
-     * 标记某个rpc方法需要开启分布式事务.
-     * @param methodName rpc方法名
-     */
-    public static void addTransaction(String methodName) {
-        if (StringUtils.isEmpty(methodName)) {
-            return;
-        }
-        TRANSACTION_METHOD.add(methodName);
-    }
 
-    /**
-     * 标记某个rpc类下的所有rpc方法需要开启分布式事务.
-     * @param rpcClass rpc类
-     */
-    public static void addTransaction(@Nonnull Class<? extends RPCService> rpcClass) {
-        try {
-            ThriftService thriftService = rpcClass.getAnnotation(ThriftService.class);
-            String methodPrefix = null;
-            if (thriftService != null) {
-                methodPrefix = thriftService.value();
-            }
-            Method[] methods = rpcClass.getMethods();
-            for (Method m : methods) {
-                if (StringUtils.hasText(methodPrefix)) {
-                    TRANSACTION_METHOD.add(methodPrefix + "." + m.getName());
-                } else {
-                    TRANSACTION_METHOD.add(m.getName());
-                }
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+
 
     /**
      * 判断是否需要进行RPC采集？ 如果是，需要在ThriftServerStatsEventHandler 中客户端调用端采集异常或者慢的RPC方法
@@ -149,18 +109,7 @@ public class RemoteContextChecker {
         return !IGNORE_METHOD.contains(methodName);
     }
 
-    /**
-     * 判断当前rpc方法是否需要开启分布式事务. 如果是则需要进行xid的传播.
-     * @param methodName rpc方法
-     * @return true or false
-     */
-    public static boolean isTransactional(String methodName) {
-        if (methodName.startsWith(MicroServiceConstants.COMMON_COLLECTOR)) {
-            return false;
-        }
 
-        return TRANSACTION_METHOD.contains(methodName);
-    }
 
 
 

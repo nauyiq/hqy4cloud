@@ -20,8 +20,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.airlift.configuration.Config;
 import io.airlift.units.DataSize;
 import io.airlift.units.Duration;
-import io.airlift.units.MaxDataSize;
-import io.airlift.units.MinDataSize;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -32,23 +30,23 @@ import java.util.concurrent.*;
 import static com.google.common.base.Preconditions.*;
 import static io.airlift.units.DataSize.Unit.MEGABYTE;
 
-public class ThriftServerConfig {
+public class ThriftServerConfig
+{
     private static final int DEFAULT_BOSS_THREAD_COUNT = 1;
-    private static final int DEFAULT_IO_WORKER_THREAD_COUNT = 2 * Runtime.getRuntime().availableProcessors();
+    //private static final int DEFAULT_IO_WORKER_THREAD_COUNT = 2 * Runtime.getRuntime().availableProcessors();
+    public static final int DEFAULT_MAX_IO_WORKER = 16;
+    //2019-09-09 nifty-client 最多16个线程，防止抢占了业务CPU
+    private static final int DEFAULT_IO_WORKER_THREAD_COUNT = Runtime.getRuntime().availableProcessors() > DEFAULT_MAX_IO_WORKER ? DEFAULT_MAX_IO_WORKER:Runtime.getRuntime().availableProcessors() ;
     private static final int DEFAULT_WORKER_THREAD_COUNT = 200;
-    private static final int DEFAULT_PER_CONNECTION_QUEUED_RESPONSE_LIMIT = 16;
 
     private String bindAddress = "localhost";
     private int port;
     private int acceptBacklog = 1024;
     private int connectionLimit;
-    private int maxQueuedResponsesPerConnection = DEFAULT_PER_CONNECTION_QUEUED_RESPONSE_LIMIT;
     private int acceptorThreadCount = DEFAULT_BOSS_THREAD_COUNT;
     private int ioThreadCount = DEFAULT_IO_WORKER_THREAD_COUNT;
-    private int trafficClass = 0;
     private Duration idleConnectionTimeout = Duration.valueOf("60s");
     private Duration taskExpirationTimeout = Duration.valueOf("5s");
-    private Duration queueTimeout = null;
     private Optional<Integer> workerThreads = Optional.absent();
     private Optional<Integer> maxQueuedRequests = Optional.absent();
     private Optional<ExecutorService> workerExecutor = Optional.absent();
@@ -57,113 +55,111 @@ public class ThriftServerConfig {
     private String protocolName = "binary";
     /**
      * The default maximum allowable size for a single incoming thrift request or outgoing thrift
-     * response. A server can configure the actual maximum to be much higher (up to 0x3FFFFFFF or
-     * almost 1 GB). The default max could also be safely bumped up, but 64MB is chosen simply
+     * response. A server can configure the actual maximum to be much higher (up to 0x7FFFFFFF or
+     * almost 2 GB). This default could also be safely bumped up, but 64MB is chosen simply
      * because it seems reasonable that if you are sending requests or responses larger than
      * that, it should be a conscious decision (something you must manually configure).
      */
     private DataSize maxFrameSize = new DataSize(64, MEGABYTE);
 
-    public String getBindAddress() {
+    public String getBindAddress()
+    {
         return bindAddress;
     }
 
     @Config("thrift.bind-address")
-    public ThriftServerConfig setBindAddress(String bindAddress) {
+    public ThriftServerConfig setBindAddress(String bindAddress)
+    {
         this.bindAddress = bindAddress;
         return this;
     }
 
     @Min(0)
     @Max(65535)
-    public int getPort() {
+    public int getPort()
+    {
         return port;
     }
 
     @Config("thrift.port")
-    public ThriftServerConfig setPort(int port) {
+    public ThriftServerConfig setPort(int port)
+    {
         this.port = port;
         return this;
     }
 
-    @MinDataSize("0B")
-    // 0x3FFFFFFF bytes
-    @MaxDataSize("1073741823B")
-    public DataSize getMaxFrameSize() {
+    public DataSize getMaxFrameSize()
+    {
         return maxFrameSize;
     }
 
     /**
      * Sets a maximum frame size
-     *
      * @param maxFrameSize
      * @return
      */
     @Config("thrift.max-frame-size")
-    public ThriftServerConfig setMaxFrameSize(DataSize maxFrameSize) {
-        checkArgument(maxFrameSize.toBytes() <= 0x3FFFFFFF);
+    public ThriftServerConfig setMaxFrameSize(DataSize maxFrameSize)
+    {
         this.maxFrameSize = maxFrameSize;
         return this;
     }
 
     /**
-     * <p>Sets the number of pending connections that the {@link java.net.ServerSocket} will
+     * Sets the number of pending connections that the {@link java.net.ServerSocket} will
      * queue up before the server process can actually accept them. If your server may take a lot
      * of connections in a very short interval, you'll want to set this higher to avoid rejecting
-     * some of the connections. Setting this to 0 will apply an implementation-specific default.</p>
-     *
-     * <p>The default value is 1024.</p>
-     *
-     * <p>Actual behavior of the socket backlog is dependent on OS and JDK implementation, and it may
+     * some of the connections. Setting this to 0 will apply an implementation-specific default.
+     * </b>
+     * The default value is 1024.
+     * </b>
+     * Actual behavior of the socket backlog is dependent on OS and JDK implementation, and it may
      * even be ignored on some systems. See JDK docs
-     * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/ServerSocket.html#ServerSocket%28int%2C%20int%29" target="_top">here</a>
-     * for details.</p>
+     * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/ServerSocket.html#ServerSocket(int, int)">here</a>
+     * for details.
      *
      * @param acceptBacklog
      * @return
      */
     @Config("thrift.accept-backlog")
-    public ThriftServerConfig setAcceptBacklog(int acceptBacklog) {
+    public ThriftServerConfig setAcceptBacklog(int acceptBacklog)
+    {
         this.acceptBacklog = acceptBacklog;
         return this;
     }
 
     @Min(0)
-    public int getAcceptBacklog() {
+    public int getAcceptBacklog()
+    {
         return acceptBacklog;
     }
 
-    public int getAcceptorThreadCount() {
+    public int getAcceptorThreadCount()
+    {
         return acceptorThreadCount;
     }
 
     @Config("thrift.acceptor-threads.count")
-    public ThriftServerConfig setAcceptorThreadCount(int acceptorThreadCount) {
+    public ThriftServerConfig setAcceptorThreadCount(int acceptorThreadCount)
+    {
         this.acceptorThreadCount = acceptorThreadCount;
         return this;
     }
 
-    public int getIoThreadCount() {
+    public int getIoThreadCount()
+    {
         return ioThreadCount;
     }
 
     @Config("thrift.io-threads.count")
-    public ThriftServerConfig setIoThreadCount(int ioThreadCount) {
+    public ThriftServerConfig setIoThreadCount(int ioThreadCount)
+    {
         this.ioThreadCount = ioThreadCount;
         return this;
     }
 
-    public int getTrafficClass() {
-        return trafficClass;
-    }
-
-    @Config("thrift.traffic-class")
-    public ThriftServerConfig setTrafficClass(int trafficClass) {
-        this.trafficClass = trafficClass;
-        return this;
-    }
-
-    public Duration getIdleConnectionTimeout() {
+    public Duration getIdleConnectionTimeout()
+    {
         return this.idleConnectionTimeout;
     }
 
@@ -171,37 +167,21 @@ public class ThriftServerConfig {
      * Sets a timeout period between receiving requests from a client connection. If the timeout
      * is exceeded (no complete requests have arrived from the client within the timeout), the
      * server will disconnect the idle client.
-     * <p>
+     *
      * The default is 60s.
      *
      * @param idleConnectionTimeout The timeout
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.idle-connection-timeout")
-    public ThriftServerConfig setIdleConnectionTimeout(Duration idleConnectionTimeout) {
+    public ThriftServerConfig setIdleConnectionTimeout(Duration idleConnectionTimeout)
+    {
         this.idleConnectionTimeout = idleConnectionTimeout;
         return this;
     }
 
-    public Duration getQueueTimeout() {
-        return queueTimeout;
-    }
-
-    /**
-     * Sets a timeout period between receiving a request and the pulling the request off the queue.
-     * If the timeout expires before the request reaches the front of the queue and begins
-     * processing, the server will discard the request instead of processing it.
-     *
-     * @param queueTimeout The timeout
-     * @return This {@link ThriftServerConfig} instance
-     */
-    @Config("thrift.queue-timeout")
-    public ThriftServerConfig setQueueTimeout(Duration queueTimeout) {
-        this.queueTimeout = queueTimeout;
-        return this;
-    }
-
-    public Duration getTaskExpirationTimeout() {
+    public Duration getTaskExpirationTimeout()
+    {
         return taskExpirationTimeout;
     }
 
@@ -216,32 +196,36 @@ public class ThriftServerConfig {
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.task-expiration-timeout")
-    public ThriftServerConfig setTaskExpirationTimeout(Duration taskExpirationTimeout) {
+    public ThriftServerConfig setTaskExpirationTimeout(Duration taskExpirationTimeout)
+    {
         this.taskExpirationTimeout = taskExpirationTimeout;
         return this;
     }
 
     @Min(0)
-    public int getConnectionLimit() {
+    public int getConnectionLimit()
+    {
         return this.connectionLimit;
     }
 
     /**
      * Sets an upper bound on the number of concurrent connections the server will accept.
-     * <p>
+     *
      * The default is not to limit the number of connections.
      *
      * @param connectionLimit The maximum number of concurrent connections
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.connection-limit")
-    public ThriftServerConfig setConnectionLimit(int connectionLimit) {
+    public ThriftServerConfig setConnectionLimit(int connectionLimit)
+    {
         this.connectionLimit = connectionLimit;
         return this;
     }
 
     @Min(1)
-    public int getWorkerThreads() {
+    public int getWorkerThreads()
+    {
         return workerThreads.or(DEFAULT_WORKER_THREAD_COUNT);
     }
 
@@ -249,71 +233,51 @@ public class ThriftServerConfig {
      * Sets the number of worker threads that will be created for processing thrift requests after
      * they have arrived. Any value passed here will be ignored if
      * {@link ThriftServerConfig#setWorkerExecutor(ExecutorService)} is called.
-     * <p>
+     *
      * The default value is 200.
      *
      * @param workerThreads Number of worker threads to use
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.threads.max")
-    public ThriftServerConfig setWorkerThreads(int workerThreads) {
+    public ThriftServerConfig setWorkerThreads(int workerThreads)
+    {
         this.workerThreads = Optional.of(workerThreads);
         return this;
     }
 
-    public String getWorkerExecutorKey() {
+    public String getWorkerExecutorKey()
+    {
         return workerExecutorKey.orNull();
     }
 
     /**
      * Sets the key for locating an {@link ExecutorService} from the
      * mapped executors installed by Guice modules.
-     * <p>
-     * If you are not configuring your application using Guice, it will probably be simpler to just
-     * call
-     * {@link ThriftServerConfig#setWorkerExecutor(ExecutorService)}
-     * instead.
-     * <p>
+     *
+     * If you are not configuring your application usingGuice, it will probably be simpler to just
+     * call {@link this#setWorkerExecutor(ExecutorService)} instead.
+     *
      * Use of this method on a {@link ThriftServerConfig} instance is
-     * incompatible with use of {@link ThriftServerConfig#setWorkerExecutor(ExecutorService)}
-     * or {@link ThriftServerConfig#setWorkerThreads(int)}
+     * incompatible with use of {@link this#setWorkerExecutor(ExecutorService)}
+     * or {@link this#setWorkerThreads(int)}
      */
     @Config("thrift.worker-executor-key")
-    public ThriftServerConfig setWorkerExecutorKey(String workerExecutorKey) {
+    public ThriftServerConfig setWorkerExecutorKey(String workerExecutorKey)
+    {
         this.workerExecutorKey = Optional.fromNullable(workerExecutorKey);
         return this;
     }
 
-    public Integer getMaxQueuedRequests() {
+    public Integer getMaxQueuedRequests()
+    {
         return maxQueuedRequests.orNull();
     }
 
-    /**
-     * Sets the maximum number of received requests that will wait in the queue to be executed.
-     * <p>
-     * After this many requests are waiting, the worker queue will start rejecting requests, which
-     * will cause the server to fail those requests.
-     */
     @Config("thrift.max-queued-requests")
-    public ThriftServerConfig setMaxQueuedRequests(Integer maxQueuedRequests) {
+    public ThriftServerConfig setMaxQueuedRequests(Integer maxQueuedRequests)
+    {
         this.maxQueuedRequests = Optional.fromNullable(maxQueuedRequests);
-        return this;
-    }
-
-    public int getMaxQueuedResponsesPerConnection() {
-        return maxQueuedResponsesPerConnection;
-    }
-
-    /**
-     * Sets the maximum number of responses that may accumulate per connection before the connection
-     * starts blocking reads (to avoid building up limitless queued responses).
-     * <p>
-     * This limit applies whenever either the client doesn't support receiving out-of-order
-     * responses.
-     */
-    @Config("thrift.max-queued-responses-per-connection")
-    public ThriftServerConfig setMaxQueuedResponsesPerConnection(int maxQueuedResponsesPerConnection) {
-        this.maxQueuedResponsesPerConnection = maxQueuedResponsesPerConnection;
         return this;
     }
 
@@ -324,79 +288,82 @@ public class ThriftServerConfig {
      * by calling any of the following (though only <b>one</b> of these should actually be called):</p>
      *
      * <ul>
-     *     <li>{@link ThriftServerConfig#setWorkerThreads}</li>
-     *     <li>{@link ThriftServerConfig#setWorkerExecutor}</li>
-     *     <li>{@link ThriftServerConfig#setWorkerExecutorKey}</li>
+     *     <li>{@link this#setWorkerThreads(int)}</li>
+     *     <li>{@link this#setWorkerExecutor(ExecutorService)}</li>
+     *     <li>{@link this#setWorkerExecutorKey(String)}</li>
      * </ul>
      *
      * <p>The default behavior if none of the above were called is to synthesize a fixed-size
-     * {@link ThreadPoolExecutor} using
-     * {@link ThriftServerConfig#DEFAULT_WORKER_THREAD_COUNT}
+     * {@link ThreadPoolExecutor} using {@link this#DEFAULT_WORKER_THREAD_COUNT}
      * threads.</p>
      */
-    public ExecutorService getOrBuildWorkerExecutor(Map<String, ExecutorService> boundWorkerExecutors) {
+    public ExecutorService getOrBuildWorkerExecutor(Map<String, ExecutorService> boundWorkerExecutors)
+    {
         if (workerExecutorKey.isPresent()) {
             checkState(!workerExecutor.isPresent(),
-                    "Worker executor key should not be set along with a specific worker executor instance");
+                       "Worker executor key should not be set along with a specific worker executor instance");
             checkState(!workerThreads.isPresent(),
-                    "Worker executor key should not be set along with a number of worker threads");
+                       "Worker executor key should not be set along with a number of worker threads");
             checkState(!maxQueuedRequests.isPresent(),
-                    "When using a custom executor, handling maximum queued requests must be done manually");
+                       "When using a custom executor, handling maximum queued requests must be done manually");
 
             String key = workerExecutorKey.get();
             checkArgument(boundWorkerExecutors.containsKey(key),
-                    "No ExecutorService was bound to key '" + key + "'");
+                          "No ExecutorService was bound to key '" + key + "'");
             ExecutorService executor = boundWorkerExecutors.get(key);
             checkNotNull(executor, "WorkerExecutorKey maps to null");
             return executor;
-        } else if (workerExecutor.isPresent()) {
+        }
+        else if (workerExecutor.isPresent()) {
             checkState(!workerThreads.isPresent(),
-                    "Worker executor should not be set along with number of worker threads");
+                       "Worker executor should not be set along with number of worker threads");
             checkState(!maxQueuedRequests.isPresent(),
-                    "When using a custom executor, handling maximum queued requests must be done manually");
+                       "When using a custom executor, handling maximum queued requests must be done manually");
 
             return workerExecutor.get();
-        } else {
+        }
+        else {
             return makeDefaultWorkerExecutor();
         }
     }
 
     /**
      * Sets the executor that will be used to process thrift requests after they arrive. Setting
-     * this will override any call to
-     * {@link ThriftServerConfig#setWorkerThreads(int)}.
-     * <p>
+     * this will override any call to {@link ThriftServerConfig#setWorkerThreads(int)}.
+     *
      * Use of this method on a {@link ThriftServerConfig} instance is
-     * incompatible with use of
-     * {@link ThriftServerConfig#setWorkerExecutorKey(String)} or
-     * {@link ThriftServerConfig#setWorkerThreads(int)}
+     * incompatible with use of {@link this#setWorkerExecutorKey(String)} or
+     * {@link this#setWorkerThreads(int)}
      *
      * @param workerExecutor The worker executor
      * @return This {@link ThriftServerConfig} instance
      */
-    public ThriftServerConfig setWorkerExecutor(ExecutorService workerExecutor) {
+    public ThriftServerConfig setWorkerExecutor(ExecutorService workerExecutor)
+    {
         this.workerExecutor = Optional.of(workerExecutor);
         return this;
     }
 
-    private ExecutorService makeDefaultWorkerExecutor() {
+    private ExecutorService makeDefaultWorkerExecutor()
+    {
         BlockingQueue<Runnable> queue;
 
         if (maxQueuedRequests.isPresent()) {
             // Create a limited-capacity executor that will throw RejectedExecutionException when full.
             // NiftyDispatcher will handle RejectedExecutionException by sending a TApplicationException.
             queue = new LinkedBlockingQueue<>(maxQueuedRequests.get());
-        } else {
+        }
+        else {
             queue = new LinkedBlockingQueue<>();
         }
 
         return new ThreadPoolExecutor(getWorkerThreads(),
-                getWorkerThreads(),
-                0L,
-                TimeUnit.MILLISECONDS,
-                queue,
-                new ThreadFactoryBuilder().setNameFormat("thrift-worker-%s").build(),
-                new ThreadPoolExecutor.AbortPolicy());
+                                      getWorkerThreads(),
+                                      0L,
+                                      TimeUnit.MILLISECONDS,
+                                      queue,
+                                      new ThreadFactoryBuilder().setNameFormat("thrift-worker-%s").build(),
+                                      new ThreadPoolExecutor.AbortPolicy());
     }
 
     /**
@@ -408,13 +375,15 @@ public class ThriftServerConfig {
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.transport")
-    public ThriftServerConfig setTransportName(String transportName) {
+    public ThriftServerConfig setTransportName(String transportName)
+    {
         this.transportName = transportName;
         return this;
     }
 
     @NotNull
-    public String getTransportName() {
+    public String getTransportName()
+    {
         return transportName;
     }
 
@@ -427,13 +396,15 @@ public class ThriftServerConfig {
      * @return This {@link ThriftServerConfig} instance
      */
     @Config("thrift.protocol")
-    public ThriftServerConfig setProtocolName(String protocolName) {
+    public ThriftServerConfig setProtocolName(String protocolName)
+    {
         this.protocolName = protocolName;
         return this;
     }
 
     @NotNull
-    public String getProtocolName() {
+    public String getProtocolName()
+    {
         return protocolName;
     }
 }

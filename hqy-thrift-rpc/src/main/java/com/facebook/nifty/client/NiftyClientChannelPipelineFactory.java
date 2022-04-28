@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,19 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.LengthFieldPrepender;
 
-class NiftyClientChannelPipelineFactory implements ChannelPipelineFactory {
+class NiftyClientChannelPipelineFactory implements ChannelPipelineFactory
+{
     private final int maxFrameSize;
 
-    NiftyClientChannelPipelineFactory(int maxFrameSize) {
+    NiftyClientChannelPipelineFactory(int maxFrameSize)
+    {
         this.maxFrameSize = maxFrameSize;
     }
 
     @Override
     public ChannelPipeline getPipeline()
-            throws Exception {
+            throws Exception
+    {
         ChannelPipeline cp = Channels.pipeline();
         cp.addLast("frameEncoder", new LengthFieldPrepender(4));
         cp.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(maxFrameSize, 0, 4, 0, 4));

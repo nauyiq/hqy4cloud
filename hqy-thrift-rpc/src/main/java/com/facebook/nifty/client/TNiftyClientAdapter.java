@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,22 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ExceptionEvent;
 
-public abstract class TNiftyClientAdapter implements TNiftyClientListener {
+public abstract class TNiftyClientAdapter implements TNiftyClientListener
+{
     @Override
-    public void onFrameRead(Channel channel, ChannelBuffer buffer) {
+    public void onFrameRead(Channel channel, ChannelBuffer buffer)
+    {
         onInput(new TNiftyReadOnlyTransport(channel, buffer));
     }
 
     @Override
-    public void onChannelClosedOrDisconnected(Channel channel) {
+    public void onChannelClosedOrDisconnected(Channel channel)
+    {
     }
 
     @Override
-    public void onExceptionEvent(ExceptionEvent e) {
+    public void onExceptionEvent(ExceptionEvent e)
+    {
     }
 
     /**

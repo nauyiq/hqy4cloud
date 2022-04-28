@@ -41,7 +41,8 @@ import static com.facebook.swift.codec.metadata.ReflectionHelper.extractParamete
 import static com.google.common.base.Preconditions.checkState;
 
 @Immutable
-public class ThriftMethodMetadata {
+public class ThriftMethodMetadata
+{
     private final String name;
     private final String qualifiedName;
     private final ThriftType returnType;
@@ -51,7 +52,8 @@ public class ThriftMethodMetadata {
     private final ImmutableList<String> documentation;
     private final boolean oneway;
 
-    public ThriftMethodMetadata(String serviceName, Method method, ThriftCatalog catalog) {
+    public ThriftMethodMetadata(String serviceName, Method method, ThriftCatalog catalog)
+    {
         Preconditions.checkNotNull(method, "method is null");
         Preconditions.checkNotNull(catalog, "catalog is null");
 
@@ -64,7 +66,8 @@ public class ThriftMethodMetadata {
 
         if (thriftMethod.value().length() == 0) {
             name = method.getName();
-        } else {
+        }
+        else {
             name = thriftMethod.value();
         }
         this.qualifiedName = serviceName + "." + name;
@@ -135,33 +138,38 @@ public class ThriftMethodMetadata {
         this.oneway = thriftMethod.oneway();
     }
 
-
-
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public ThriftType getReturnType() {
+    public ThriftType getReturnType()
+    {
         return returnType;
     }
 
-    public List<ThriftFieldMetadata> getParameters() {
+    public List<ThriftFieldMetadata> getParameters()
+    {
         return parameters;
     }
 
-    public Map<Short, ThriftType> getExceptions() {
+    public Map<Short, ThriftType> getExceptions()
+    {
         return exceptions;
     }
 
-    public ThriftType getException(short id) {
+    public ThriftType getException(short id)
+    {
         return exceptions.get(id);
     }
 
-    public ImmutableList<String> getDocumentation() {
+    public ImmutableList<String> getDocumentation()
+    {
         return documentation;
     }
 
-    public Method getMethod() {
+    public Method getMethod()
+    {
         return method;
     }
 
@@ -199,17 +207,20 @@ public class ThriftMethodMetadata {
                 }
             }
         }
+
         return exceptions.build();
     }
 
-    public boolean isAsync() {
+    public boolean isAsync()
+    {
         Type returnType = method.getGenericReturnType();
         Class<?> rawType = TypeToken.of(returnType).getRawType();
         return ListenableFuture.class.isAssignableFrom(rawType);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) {
             return true;
         }
@@ -225,11 +236,13 @@ public class ThriftMethodMetadata {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(name, returnType, parameters, method, exceptions, oneway);
     }
 
-    public String getQualifiedName() {
+    public String getQualifiedName()
+    {
         return qualifiedName;
     }
 }

@@ -10,14 +10,13 @@ import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.config.ThriftServerProperties;
-import com.hqy.rpc.event.ThriftServerStatsEventHandler;
+import com.hqy.rpc.handler.ThriftServerStatsEventHandler;
 import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.thread.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -59,16 +58,6 @@ public abstract class AbstractThriftServer implements InitializingBean {
      * 当前服务器IP 端口 进程号
      */
     private UsingIpPort uip = null;
-
-
-    private List<ThriftEventHandler> eventHandlers = new LinkedList<>();
-
-    public void registryEventHandler(List<ThriftEventHandler> eventHandlers) {
-        if (CollectionUtils.isNotEmpty(eventHandlers)) {
-            this.eventHandlers = eventHandlers;
-        }
-    }
-
 
 
     @Bean
@@ -115,7 +104,7 @@ public abstract class AbstractThriftServer implements InitializingBean {
                     .setWorkerThreadCount(properties.getNettyIoWorkerThreadNum()).build();
 
             int rpcPort = getEnableRpcPort(ip, properties);
-            uip = new UsingIpPort(ip, port, properties.getRpcPort(), pid);
+            uip = new UsingIpPort(ip, port, rpcPort, pid);
             log.info("@@@ Registry ThriftServer, uip = {}", JsonUtil.toJson(uip));
 
             ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor)

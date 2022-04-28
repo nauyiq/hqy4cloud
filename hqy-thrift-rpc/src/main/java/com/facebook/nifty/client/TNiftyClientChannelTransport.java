@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Maps.newHashMap;
 
 @NotThreadSafe
-public class TNiftyClientChannelTransport extends TTransport {
+public class TNiftyClientChannelTransport extends TTransport
+{
     private final Class<? extends TServiceClient> clientClass;
     private final NiftyClientChannel channel;
     private final Map<String, Boolean> methodNameToOneWay;
@@ -48,7 +49,8 @@ public class TNiftyClientChannelTransport extends TTransport {
     private final BlockingQueue<ResponseListener> queuedResponses;
 
     public TNiftyClientChannelTransport(
-            Class<? extends TServiceClient> clientClass, NiftyClientChannel channel) {
+            Class<? extends TServiceClient> clientClass, NiftyClientChannel channel)
+    {
         this.clientClass = clientClass;
         this.channel = channel;
 
@@ -59,26 +61,30 @@ public class TNiftyClientChannelTransport extends TTransport {
     }
 
     @Override
-    public boolean isOpen() {
+    public boolean isOpen()
+    {
         return channel.getNettyChannel().isOpen();
     }
 
     @Override
     public void open()
-            throws TTransportException {
+            throws TTransportException
+    {
         if (!isOpen()) {
             throw new IllegalStateException("TNiftyClientChannelTransport requires an already-opened channel");
         }
     }
 
     @Override
-    public void close() {
+    public void close()
+    {
         channel.close();
     }
 
     @Override
     public int read(byte[] buf, int off, int len)
-            throws TTransportException {
+            throws TTransportException
+    {
         if (!responseBufferTransport.isReadable()) {
             try {
                 // If our existing response transport doesn't have any bytes remaining to read,
@@ -91,11 +97,13 @@ public class TNiftyClientChannelTransport extends TTransport {
                 checkState(response.readable(), "Received an empty response");
 
                 responseBufferTransport.setInputBuffer(response);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 // Waiting for response was interrupted
                 Thread.currentThread().interrupt();
                 throw new TTransportException(e);
-            } catch (ExecutionException e) {
+            }
+            catch (ExecutionException e) {
                 // Error while waiting for response
                 Throwables.propagateIfInstanceOf(e, TTransportException.class);
                 throw new TTransportException(e);
@@ -108,32 +116,32 @@ public class TNiftyClientChannelTransport extends TTransport {
 
     @Override
     public void write(byte[] buf, int off, int len)
-            throws TTransportException {
+            throws TTransportException
+    {
         // Write the buffer into the output transport
         requestBufferTransport.write(buf, off, len);
     }
 
     @Override
     public void flush()
-            throws TTransportException {
+            throws TTransportException
+    {
         try {
             boolean sendOneWay = inOneWayRequest();
             ResponseListener listener = new ResponseListener();
             channel.sendAsynchronousRequest(requestBufferTransport.getOutputBuffer().copy(), sendOneWay, listener);
             queuedResponses.add(listener);
             requestBufferTransport.resetOutputBuffer();
-        } catch (TException e) {
+        }
+        catch (TException e) {
             Throwables.propagateIfInstanceOf(e, TTransportException.class);
             throw new TTransportException(TTransportException.UNKNOWN, "Failed to use reflection on Client class to determine whether method is oneway", e);
         }
     }
 
-    public NiftyClientChannel getChannel() {
-        return channel;
-    }
-
     private boolean inOneWayRequest()
-            throws TException {
+            throws TException
+    {
         boolean isOneWayMethod = false;
 
         // Create a temporary transport wrapping the output buffer, so that we can read the method name for this message
@@ -147,7 +155,8 @@ public class TNiftyClientChannelTransport extends TTransport {
         return isOneWayMethod;
     }
 
-    private boolean clientClassHasReceiveHelperMethod(String methodName) {
+    private boolean clientClassHasReceiveHelperMethod(String methodName)
+    {
         boolean isOneWayMethod = false;
 
         if (!methodNameToOneWay.containsKey(methodName)) {
@@ -160,40 +169,48 @@ public class TNiftyClientChannelTransport extends TTransport {
                 // We should fix this by getting flushMessage()/flushOneWayMessage() added to
                 // TTransport.
                 clientClass.getMethod("recv_" + methodName);
-            } catch (NoSuchMethodException e) {
+            }
+            catch (NoSuchMethodException e) {
                 isOneWayMethod = true;
             }
 
             // cache result so we don't use reflection every time
             methodNameToOneWay.put(methodName, isOneWayMethod);
-        } else {
+        }
+        else  {
             isOneWayMethod = methodNameToOneWay.get(methodName);
         }
         return isOneWayMethod;
     }
 
-    private static class ResponseListener implements NiftyClientChannel.Listener {
+    private static class ResponseListener implements NiftyClientChannel.Listener
+    {
         private final SettableFuture<ChannelBuffer> response;
 
-        private ResponseListener() {
+        private ResponseListener()
+        {
             this.response = SettableFuture.create();
         }
 
         @Override
-        public void onRequestSent() {
+        public void onRequestSent()
+        {
         }
 
         @Override
-        public void onResponseReceived(ChannelBuffer response) {
+        public void onResponseReceived(ChannelBuffer response)
+        {
             this.response.set(response);
         }
 
         @Override
-        public void onChannelError(TException cause) {
+        public void onChannelError(TException cause)
+        {
             response.setException(new TTransportException(TTransportException.UNKNOWN, cause));
         }
 
-        public ListenableFuture<ChannelBuffer> getResponse() {
+        public ListenableFuture<ChannelBuffer> getResponse()
+        {
             return response;
         }
     }

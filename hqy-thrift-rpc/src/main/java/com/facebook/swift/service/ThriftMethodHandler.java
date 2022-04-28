@@ -25,10 +25,7 @@ import com.facebook.swift.codec.ThriftCodecManager;
 import com.facebook.swift.codec.ThriftField.Requiredness;
 import com.facebook.swift.codec.internal.TProtocolReader;
 import com.facebook.swift.codec.internal.TProtocolWriter;
-import com.facebook.swift.codec.metadata.ThriftFieldMetadata;
-import com.facebook.swift.codec.metadata.ThriftInjection;
-import com.facebook.swift.codec.metadata.ThriftParameterInjection;
-import com.facebook.swift.codec.metadata.ThriftType;
+import com.facebook.swift.codec.metadata.*;
 import com.facebook.swift.service.metadata.ThriftMethodMetadata;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -51,6 +48,7 @@ import org.weakref.jmx.Managed;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,19 +74,19 @@ public class ThriftMethodHandler {
     public ThriftMethodHandler(ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
 
         List<ThriftFieldMetadata> original = methodMetadata.getParameters();
-
+        List<ThriftFieldMetadata> exFieldMetadata = new ArrayList<>(original);
         //动态添加一个参数
         ThriftFieldMetadata injectGeneralParamFieldMetadata = injectGeneralParamFieldMetadata(original, codecManager);
-        original.add(injectGeneralParamFieldMetadata);
+        exFieldMetadata.add(injectGeneralParamFieldMetadata);
 
         name = methodMetadata.getName();
         qualifiedName = methodMetadata.getQualifiedName();
         invokeAsynchronously = methodMetadata.isAsync();
         oneway = methodMetadata.getOneway();
 
-        ParameterHandler[] parameters = new ParameterHandler[original.size()];
+        ParameterHandler[] parameters = new ParameterHandler[exFieldMetadata.size()];
 
-        for (ThriftFieldMetadata fieldMetadata : original) {
+        for (ThriftFieldMetadata fieldMetadata : exFieldMetadata) {
             ThriftParameterInjection parameter = (ThriftParameterInjection) fieldMetadata.getInjections().get(0);
 
             ParameterHandler handler = new ParameterHandler(
@@ -155,24 +153,7 @@ public class ThriftMethodHandler {
             throws Exception {
         Object results = null;
 
-        try {
-            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
-            if (rootId == null) {
-                rootId = 0L;
-            }
-            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
-            if (parentId == null) {
-
-                parentId = 0L;
-            }
-            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
-            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
-//        	appendArg.isSyncronizedCall = true;
-            args = ArgsUtil.addArg(args, appendArg);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        args = addExParam2Args(args);
 
         // write request
         contextChain.preWrite(args);
@@ -214,6 +195,27 @@ public class ThriftMethodHandler {
         return results;
     }
 
+    private Object[] addExParam2Args(Object[] args) {
+        try {
+            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
+            if (rootId == null) {
+                rootId = 0L;
+            }
+            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
+            if (parentId == null) {
+
+                parentId = 0L;
+            }
+            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
+            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
+            args = ArgsUtil.addArg(args, appendArg);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return args;
+    }
+
     public ListenableFuture<Object> asynchronousInvoke(
             final RequestChannel channel,
             final TChannelBufferInputTransport inputTransport,
@@ -227,24 +229,7 @@ public class ThriftMethodHandler {
         final AsyncMethodCallFuture<Object> future = AsyncMethodCallFuture.create(contextChain);
         final RequestContext requestContext = RequestContexts.getCurrentContext();
 
-        try {
-            //动态添加一个参数
-            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
-            if (rootId == null) {
-                rootId = 0L;
-            }
-            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
-            if (parentId == null) {
-                parentId = 0L;
-            }
-            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
-            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
-//        	appendArg.isSyncronizedCall = false;
-            args = ArgsUtil.addArg(args, appendArg);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        args = addExParam2Args(args);
 
         contextChain.preWrite(args);
         outputTransport.resetOutputBuffer();
@@ -302,7 +287,7 @@ public class ThriftMethodHandler {
 
     public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originThriftFieldMetadata, ThriftCodecManager codecManager) {
         short parameterId = (short) (originThriftFieldMetadata.size() + 1);
-        String parameterName = RemoteExParam.class.getSimpleName();
+        String parameterName = "remoteExParam";
         Type parameterType = RemoteExParam.class;
         ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originThriftFieldMetadata.size(), parameterType);
         ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);
@@ -313,10 +298,10 @@ public class ThriftMethodHandler {
                 parameterName,
                 THRIFT_FIELD,
                 ImmutableList.of(parameterInjection),
-                Optional.absent(),
-                Optional.absent(),
-                Optional.absent(),
-                Optional.absent());
+                Optional.<ThriftConstructorInjection>absent(),
+                Optional.<ThriftMethodInjection>absent(),
+                Optional.<ThriftExtraction>absent(),
+                Optional.<TypeCoercion>absent());
     }
 
     private Object readResponse(TProtocol in)

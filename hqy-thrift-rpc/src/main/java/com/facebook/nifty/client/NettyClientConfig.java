@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package com.facebook.nifty.client;
 
-import com.facebook.nifty.ssl.SslClientConfiguration;
 import com.google.common.net.HostAndPort;
 import org.jboss.netty.util.Timer;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-public class NettyClientConfig {
+public class NettyClientConfig
+{
     private final Map<String, Object> bootstrapOptions;
     private final HostAndPort defaultSocksProxyAddress;
     private final Timer timer;
@@ -30,7 +30,6 @@ public class NettyClientConfig {
     private final int bossThreadCount;
     private final ExecutorService workerExecutor;
     private final int workerThreadCount;
-    private final SslClientConfiguration sslClientConfiguration;
 
     public NettyClientConfig(Map<String, Object> bootstrapOptions,
                              HostAndPort defaultSocksProxyAddress,
@@ -38,8 +37,9 @@ public class NettyClientConfig {
                              ExecutorService bossExecutor,
                              int bossThreadCount,
                              ExecutorService workerExecutor,
-                             int workerThreadCount,
-                             SslClientConfiguration sslClientConfiguration) {
+                             int workerThreadCount)
+
+    {
         this.bootstrapOptions = bootstrapOptions;
         this.defaultSocksProxyAddress = defaultSocksProxyAddress;
         this.timer = timer;
@@ -47,42 +47,45 @@ public class NettyClientConfig {
         this.bossThreadCount = bossThreadCount;
         this.workerExecutor = workerExecutor;
         this.workerThreadCount = workerThreadCount;
-        this.sslClientConfiguration = sslClientConfiguration;
     }
 
-    public Map<String, Object> getBootstrapOptions() {
+    public Map<String, Object> getBootstrapOptions()
+    {
         return bootstrapOptions;
     }
 
-    public ExecutorService getBossExecutor() {
+    public ExecutorService getBossExecutor()
+    {
         return bossExecutor;
     }
 
-    public int getBossThreadCount() {
+    public int getBossThreadCount()
+    {
         return bossThreadCount;
     }
 
-    public HostAndPort getDefaultSocksProxyAddress() {
+    public HostAndPort getDefaultSocksProxyAddress()
+    {
         return defaultSocksProxyAddress;
     }
 
-    public Timer getTimer() {
+    public Timer getTimer()
+    {
         return timer;
     }
 
-    public ExecutorService getWorkerExecutor() {
+    public ExecutorService getWorkerExecutor()
+    {
         return workerExecutor;
     }
 
-    public int getWorkerThreadCount() {
+    public int getWorkerThreadCount()
+    {
         return workerThreadCount;
     }
 
-    public static NettyClientConfigBuilder newBuilder() {
+    public static NettyClientConfigBuilder newBuilder()
+    {
         return new NettyClientConfigBuilder();
-    }
-
-    public SslClientConfiguration sslClientConfiguration() {
-        return sslClientConfiguration;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,32 +20,33 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.handler.codec.frame.FixedLengthFrameDecoder;
 
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import static com.facebook.nifty.client.socks.SocksProtocols.createSock4aPacket;
 import static com.facebook.nifty.client.socks.SocksProtocols.createSocks4packet;
-import static com.google.common.net.InetAddresses.toAddrString;
 
 /**
  * ClientBootstrap for connecting via SOCKS proxy.
  * Currently only SOCK4 is supported since we don't do authentication anyway.
- * <br>
+ * <p/>
  * See http://en.wikipedia.org/wiki/SOCKS
  */
-public class Socks4ClientBootstrap extends ClientBootstrap {
+public class Socks4ClientBootstrap extends ClientBootstrap
+{
     static final String FRAME_DECODER = "frameDecoder";
     static final String HANDSHAKE = "handshake";
 
     private final InetSocketAddress socksProxyAddr;
 
-    public Socks4ClientBootstrap(ChannelFactory channelFactory, InetSocketAddress socksProxyAddr) {
+    public Socks4ClientBootstrap(ChannelFactory channelFactory, InetSocketAddress socksProxyAddr)
+    {
         super(channelFactory);
         this.socksProxyAddr = socksProxyAddr;
     }
 
-    public Socks4ClientBootstrap(InetSocketAddress socksProxyAddr) {
+    public Socks4ClientBootstrap(InetSocketAddress socksProxyAddr)
+    {
         this.socksProxyAddr = socksProxyAddr;
         super.setPipeline(getPipeline());
     }
@@ -55,11 +56,14 @@ public class Socks4ClientBootstrap extends ClientBootstrap {
      * does the connect to SOCKS proxy and does the handshake.
      */
     @Override
-    public ChannelPipelineFactory getPipelineFactory() {
-        return new ChannelPipelineFactory() {
+    public ChannelPipelineFactory getPipelineFactory()
+    {
+        return new ChannelPipelineFactory()
+        {
             @Override
             public ChannelPipeline getPipeline()
-                    throws Exception {
+                    throws Exception
+            {
                 final ChannelPipeline cp = Channels.pipeline();
                 cp.addLast(FRAME_DECODER, new FixedLengthFrameDecoder(8));
                 cp.addLast(HANDSHAKE, new Socks4HandshakeHandler(Socks4ClientBootstrap.super.getPipelineFactory()));
@@ -73,32 +77,39 @@ public class Socks4ClientBootstrap extends ClientBootstrap {
      * send the connection handshake once connection to proxy is established.
      *
      * @return returns a ChannelFuture, it will be ready once the connection to
-     * socks and the remote address is established ( i.e. after the handshake completes )
+     *         socks and the remote address is established ( i.e. after the handshake completes )
      */
     @Override
-    public ChannelFuture connect(final SocketAddress remoteAddress) {
+    public ChannelFuture connect(final SocketAddress remoteAddress)
+    {
         if (!(remoteAddress instanceof InetSocketAddress)) {
             throw new IllegalArgumentException("expecting InetSocketAddress");
         }
         final SettableChannelFuture settableChannelFuture = new SettableChannelFuture();
-        super.connect(socksProxyAddr).addListener(new ChannelFutureListener() {
+        super.connect(socksProxyAddr).addListener(new ChannelFutureListener()
+        {
             @Override
             public void operationComplete(ChannelFuture future)
-                    throws Exception {
+                    throws Exception
+            {
                 settableChannelFuture.setChannel(future.getChannel());
                 if (future.isSuccess()) {
-                    socksConnect(future.getChannel(), (InetSocketAddress) remoteAddress).addListener(new ChannelFutureListener() {
+                    socksConnect(future.getChannel(), (InetSocketAddress) remoteAddress).addListener(new ChannelFutureListener()
+                    {
                         @Override
                         public void operationComplete(ChannelFuture innerFuture)
-                                throws Exception {
+                                throws Exception
+                        {
                             if (innerFuture.isSuccess()) {
                                 settableChannelFuture.setSuccess();
-                            } else {
+                            }
+                            else {
                                 settableChannelFuture.setFailure(innerFuture.getCause());
                             }
                         }
                     });
-                } else {
+                }
+                else {
                     settableChannelFuture.setFailure(future.getCause());
                 }
             }
@@ -111,21 +122,21 @@ public class Socks4ClientBootstrap extends ClientBootstrap {
      * try to look at the remoteAddress and decide to use SOCKS4 or SOCKS4a handshake
      * packet.
      */
-    private static ChannelFuture socksConnect(Channel channel, InetSocketAddress remoteAddress) {
-        channel.write(createHandshake(remoteAddress));
-        return ((Socks4HandshakeHandler) channel.getPipeline().get("handshake")).getChannelFuture();
-    }
+    private ChannelFuture socksConnect(Channel channel, InetSocketAddress remoteAddress)
+    {
+        ChannelBuffer handshake = null;
+        if ((remoteAddress.getAddress() == null && remoteAddress.getHostName() != null) || remoteAddress.getHostName().equals("localhost")) {
+            handshake = createSock4aPacket(remoteAddress.getHostName(), remoteAddress.getPort());
+        }
+        if (remoteAddress.getAddress() != null) {
+            handshake = createSocks4packet(remoteAddress.getAddress(), remoteAddress.getPort());
+        }
 
-    private static ChannelBuffer createHandshake(InetSocketAddress address) {
-        if (address.getAddress() instanceof Inet4Address) {
-            return createSocks4packet(address.getAddress(), address.getPort());
+        if (handshake == null) {
+            throw new IllegalArgumentException("Invalid Address " + remoteAddress);
         }
-        if (address.getAddress() != null) {
-            return createSock4aPacket(toAddrString(address.getAddress()), address.getPort());
-        }
-        if (address.getHostName() != null) {
-            return createSock4aPacket(address.getHostName(), address.getPort());
-        }
-        throw new IllegalArgumentException("Invalid Address " + address);
+
+        channel.write(handshake);
+        return ((Socks4HandshakeHandler) channel.getPipeline().get("handshake")).getChannelFuture();
     }
 }

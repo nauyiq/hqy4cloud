@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,8 @@ public class HttpClientChannel extends AbstractClientChannel {
     }
 
     @Override
-    protected ChannelBuffer extractResponse(Object message) throws TTransportException {
+    protected ChannelBuffer extractResponse(Object message) throws TTransportException
+    {
         if (!(message instanceof HttpResponse)) {
             return null;
         }
@@ -74,19 +75,20 @@ public class HttpClientChannel extends AbstractClientChannel {
     }
 
     @Override
-    protected ChannelFuture writeRequest(ChannelBuffer request) {
+    protected ChannelFuture writeRequest(ChannelBuffer request)
+    {
         HttpRequest httpRequest = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST,
-                endpointUri);
+                                                         endpointUri);
 
-        httpRequest.headers().add(HttpHeaders.HOST, hostName);
-        httpRequest.headers().add(HttpHeaders.CONTENT_LENGTH, request.readableBytes());
-        httpRequest.headers().add(HttpHeaders.CONTENT_TYPE, "application/x-thrift");
-        httpRequest.headers().add(HttpHeaders.ACCEPT, "application/x-thrift");
-        httpRequest.headers().add(HttpHeaders.USER_AGENT, "Java/Swift-HttpThriftClientChannel");
+        httpRequest.headers().set(HttpHeaders.HOST, hostName);
+        httpRequest.headers().set(HttpHeaders.CONTENT_LENGTH, request.readableBytes());
+        httpRequest.headers().set(HttpHeaders.CONTENT_TYPE, "application/x-thrift");
+        httpRequest.headers().set(HttpHeaders.ACCEPT, "application/x-thrift");
+        httpRequest.headers().set(HttpHeaders.USER_AGENT, "Java/Swift-HttpThriftClientChannel");
 
         if (headerDictionary != null) {
             for (Map.Entry<String, String> entry : headerDictionary.entrySet()) {
-                httpRequest.headers().add(entry.getKey(), entry.getValue());
+                httpRequest.headers().set(entry.getKey(), entry.getValue());
             }
         }
 
@@ -95,7 +97,8 @@ public class HttpClientChannel extends AbstractClientChannel {
         return underlyingNettyChannel.write(httpRequest);
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(Map<String, String> headers)
+    {
         this.headerDictionary = headers;
     }
 

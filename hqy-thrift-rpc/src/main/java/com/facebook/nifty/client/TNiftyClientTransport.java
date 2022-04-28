@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,15 +29,19 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Netty Equivalent to a {@link org.apache.thrift.transport.TFramedTransport} over
- * a TSocket. This is just for a proof-of-concept to show that it can be done. You
- * should just use a TSocket for sync client. This already has a built in
- * TFramedTransport. No need to wrap.
+ * Netty Equivalent to a {@link org.apache.thrift.transport.TFramedTransport} over a TSocket.
+ * <p/>
+ * This is just for a proof-of-concept to show that it can be done.
+ * <p/>
+ * You should just use a TSocket for sync client.
+ * <p/>
+ * This already has a built in TFramedTransport. No need to wrap.
  *
  * @deprecated Use {@link TNiftyClientChannelTransport} instead
  */
 @Deprecated
-public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
+public class TNiftyClientTransport extends TNiftyAsyncClientTransport
+{
 
     private final ChannelBuffer readBuffer;
     private final Duration receiveTimeout;
@@ -47,41 +51,49 @@ public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
     private boolean closed;
     private Throwable exception;
 
-    public TNiftyClientTransport(Channel channel, Duration receiveTimeout) {
+    public TNiftyClientTransport(Channel channel, Duration receiveTimeout)
+    {
         super(channel);
         this.receiveTimeout = receiveTimeout;
         this.readBuffer = ChannelBuffers.dynamicBuffer(256);
-        setListener(new TNiftyClientListener() {
+        setListener(new TNiftyClientListener()
+        {
             @Override
-            public void onFrameRead(Channel c, ChannelBuffer buffer) {
+            public void onFrameRead(Channel c, ChannelBuffer buffer)
+            {
                 lock.lock();
                 try {
                     readBuffer.discardReadBytes();
                     readBuffer.writeBytes(buffer);
                     condition.signal();
-                } finally {
+                }
+                finally {
                     lock.unlock();
                 }
             }
 
             @Override
-            public void onChannelClosedOrDisconnected(Channel channel) {
+            public void onChannelClosedOrDisconnected(Channel channel)
+            {
                 lock.lock();
                 try {
                     closed = true;
                     condition.signal();
-                } finally {
+                }
+                finally {
                     lock.unlock();
                 }
             }
 
             @Override
-            public void onExceptionEvent(ExceptionEvent e) {
+            public void onExceptionEvent(ExceptionEvent e)
+            {
                 lock.lock();
                 try {
                     exception = e.getCause();
                     condition.signal();
-                } finally {
+                }
+                finally {
                     lock.unlock();
                 }
             }
@@ -90,10 +102,12 @@ public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
 
     @Override
     public int read(byte[] bytes, int offset, int length)
-            throws TTransportException {
+            throws TTransportException
+    {
         try {
             return this.read(bytes, offset, length, receiveTimeout);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new TTransportException(e);
         }
@@ -101,7 +115,8 @@ public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
 
     // yeah, mimicking sync with async is just horrible
     private int read(byte[] bytes, int offset, int length, Duration receiveTimeout)
-            throws InterruptedException, TTransportException {
+            throws InterruptedException, TTransportException
+    {
         long timeRemaining = receiveTimeout.roundTo(TimeUnit.NANOSECONDS);
         lock.lock();
         try {
@@ -120,7 +135,8 @@ public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
                 if (exception != null) {
                     try {
                         throw new TTransportException(exception);
-                    } finally {
+                    }
+                    finally {
                         exception = null;
                         closed = true;
                         close();
@@ -130,7 +146,8 @@ public class TNiftyClientTransport extends TNiftyAsyncClientTransport {
             if (closed) {
                 throw new TTransportException("channel closed !");
             }
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
         throw new TTransportException(String.format("receive timeout, %d ms has elapsed", receiveTimeout.toMillis()));

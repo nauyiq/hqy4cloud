@@ -64,7 +64,7 @@ public class SnowflakeIdWorker {
         long pid = 0;
         try {
             pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-            System.out.println("Progress ID: " + pid);
+            log.info("Progress ID: " + pid);
         } catch (Exception ex) {
         }
 

@@ -33,7 +33,9 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.hqy.rpc.transaction.TransactionContext;
 import com.hqy.util.ArgsUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TMessageType;
@@ -75,6 +77,9 @@ public class ThriftMethodProcessor {
         resultStructName = name + "_result";
 
         method = methodMetadata.getMethod();
+        // modify resource code, make thrift method is transactional.
+        TransactionContext.makeThriftMethodTransactional(method);
+
         oneway = methodMetadata.getOneway();
 
         parameters = ImmutableList.copyOf(methodMetadata.getParameters());
@@ -93,7 +98,7 @@ public class ThriftMethodProcessor {
         // Build a mapping from thrift parameter ID to a position in the formal argument list
         ImmutableMap.Builder<Short, Short> parameterOrderingBuilder = ImmutableMap.builder();
         short javaArgumentPosition = 0;
-        for (ThriftFieldMetadata fieldMetadata : methodMetadata.getParameters()) {
+        for (ThriftFieldMetadata fieldMetadata : exParameters) {
             parameterOrderingBuilder.put(fieldMetadata.getId(), javaArgumentPosition++);
         }
         thriftParameterIdToJavaArgumentListPositionMap = parameterOrderingBuilder.build();
@@ -152,7 +157,13 @@ public class ThriftMethodProcessor {
                     try {
                         contextChain.preWrite(result);
 
-                        writeResponse(out, sequenceId, TMessageType.REPLY, "success", (short) 0, successCodec, result);
+                        writeResponse(out,
+                                sequenceId,
+                                TMessageType.REPLY,
+                                "success",
+                                (short) 0,
+                                successCodec,
+                                result);
 
                         contextChain.postWrite(result);
 
@@ -175,29 +186,27 @@ public class ThriftMethodProcessor {
                     contextChain.preWriteException(t);
                     if (!oneway) {
                         ExceptionProcessor exceptionCodec = exceptionCodecs.get(t.getClass());
-
-                        if (exceptionCodec == null) {
-                            // In case the method throws a subtype of one of its declared
-                            // exceptions, exact lookup will fail. We need to simulate it.
-                            // (This isn't a problem for normal returns because there the
-                            // output codec is decided in advance.)
-                            for (Map.Entry<Class<?>, ExceptionProcessor> entry : exceptionCodecs.entrySet()) {
-                                if (entry.getKey().isAssignableFrom(t.getClass())) {
-                                    exceptionCodec = entry.getValue();
-                                    break;
-                                }
-                            }
-                        }
-
                         if (exceptionCodec != null) {
-                            contextChain.declaredUserException(t, exceptionCodec.getCodec());
                             // write expected exception response
-                            writeResponse(out, sequenceId, TMessageType.REPLY, "exception", exceptionCodec.getId(), exceptionCodec.getCodec(), t);
+                            writeResponse(
+                                    out,
+                                    sequenceId,
+                                    TMessageType.REPLY,
+                                    "exception",
+                                    exceptionCodec.getId(),
+                                    exceptionCodec.getCodec(),
+                                    t);
                             contextChain.postWriteException(t);
                         } else {
-                            contextChain.undeclaredUserException(t);
                             // unexpected exception
-                            TApplicationException applicationException = ThriftServiceProcessor.createAndWriteApplicationException(out, requestContext, method.getName(), sequenceId, INTERNAL_ERROR, "Internal error processing " + method.getName() + ": " + t.getMessage(), t);
+                            TApplicationException applicationException =
+                                    ThriftServiceProcessor.writeApplicationException(
+                                            out,
+                                            method.getName(),
+                                            sequenceId,
+                                            INTERNAL_ERROR,
+                                            "Internal error processing " + method.getName() + "\r\n" + ExceptionUtils.getStackTrace(t),
+                                            t);
 
                             contextChain.postWriteException(applicationException);
                         }
@@ -240,7 +249,8 @@ public class ThriftMethodProcessor {
 
     private Object[] readArguments(TProtocol in) throws Exception {
         try {
-            int numArgs = method.getParameterTypes().length;
+//            int numArgs = method.getParameterTypes().length;
+            int numArgs = method.getParameterTypes().length + 1;
             Object[] args = new Object[numArgs];
             TProtocolReader reader = new TProtocolReader(in);
 

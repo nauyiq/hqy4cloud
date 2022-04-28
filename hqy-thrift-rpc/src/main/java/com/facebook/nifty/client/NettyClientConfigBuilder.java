@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.facebook.nifty.client;
 
 import com.facebook.nifty.core.NettyConfigBuilderBase;
 import com.facebook.nifty.core.NiftyTimer;
-import com.facebook.nifty.ssl.SslClientConfiguration;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -34,9 +33,9 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 /*
  * Hooks for configuring various parts of Netty.
  */
-public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClientConfigBuilder> {
+public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClientConfigBuilder>
+{
     private HostAndPort defaultSocksProxyAddress = null;
-    private SslClientConfiguration sslClientConfiguration;
 
     private final NioSocketChannelConfig socketChannelConfig = (NioSocketChannelConfig) Proxy.newProxyInstance(
             getClass().getClassLoader(),
@@ -45,7 +44,8 @@ public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClient
     );
 
     @Inject
-    public NettyClientConfigBuilder() {
+    public NettyClientConfigBuilder()
+    {
         // Thrift turns TCP_NODELAY by default, and turning it off can have latency implications
         // so let's turn it on by default as well. It can still be switched off by explicitly
         // calling setTcpNodelay(false) after construction.
@@ -59,7 +59,8 @@ public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClient
      *
      * @return A mutable {@link NioSocketChannelConfig}
      */
-    public NioSocketChannelConfig getSocketChannelConfig() {
+    public NioSocketChannelConfig getSocketChannelConfig()
+    {
         return socketChannelConfig;
     }
 
@@ -70,17 +71,14 @@ public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClient
      * @param defaultSocksProxyAddress The address of the SOCKS proxy server
      * @return This builder
      */
-    public NettyClientConfigBuilder setDefaultSocksProxyAddress(HostAndPort defaultSocksProxyAddress) {
+    public NettyClientConfigBuilder setDefaultSocksProxyAddress(HostAndPort defaultSocksProxyAddress)
+    {
         this.defaultSocksProxyAddress = defaultSocksProxyAddress;
         return this;
     }
 
-    public NettyClientConfigBuilder setSSLClientConfiguration(SslClientConfiguration sslClientConfiguration) {
-        this.sslClientConfiguration = sslClientConfiguration;
-        return this;
-    }
-
-    public NettyClientConfig build() {
+    public NettyClientConfig build()
+    {
         Timer timer = getTimer();
         ExecutorService bossExecutor = getBossExecutor();
         int bossThreadCount = getBossThreadCount();
@@ -94,25 +92,28 @@ public class NettyClientConfigBuilder extends NettyConfigBuilderBase<NettyClient
                 bossExecutor != null ? bossExecutor : buildDefaultBossExecutor(),
                 bossThreadCount,
                 workerExecutor != null ? workerExecutor : buildDefaultWorkerExecutor(),
-                workerThreadCount,
-                sslClientConfiguration
+                workerThreadCount
         );
     }
 
-    private ExecutorService buildDefaultBossExecutor() {
+    private ExecutorService buildDefaultBossExecutor()
+    {
         return newCachedThreadPool(renamingDaemonThreadFactory(threadNamePattern("-boss-%s")));
     }
 
-    private ExecutorService buildDefaultWorkerExecutor() {
+    private ExecutorService buildDefaultWorkerExecutor()
+    {
         return newCachedThreadPool(renamingDaemonThreadFactory(threadNamePattern("-worker-%s")));
     }
 
-    private String threadNamePattern(String suffix) {
+    private String threadNamePattern(String suffix)
+    {
         String niftyName = getNiftyName();
         return "nifty-client" + (Strings.isNullOrEmpty(niftyName) ? "" : "-" + niftyName) + suffix;
     }
 
-    private ThreadFactory renamingDaemonThreadFactory(String nameFormat) {
+    private ThreadFactory renamingDaemonThreadFactory(String nameFormat)
+    {
         return new ThreadFactoryBuilder().setNameFormat(nameFormat).setDaemon(true).build();
     }
 }

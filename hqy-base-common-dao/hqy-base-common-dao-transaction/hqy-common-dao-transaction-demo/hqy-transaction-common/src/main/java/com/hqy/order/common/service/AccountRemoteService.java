@@ -5,6 +5,7 @@ import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.rpc.api.RPCService;
+import com.hqy.rpc.transaction.GlobalTransactionalThriftMethod;
 
 /**
  * @author qiyuan.hong
@@ -20,8 +21,10 @@ public interface AccountRemoteService extends RPCService {
      * @return 是否修改成功
      */
     @ThriftMethod
+    @GlobalTransactionalThriftMethod
     boolean modifyAccount(@ThriftField(1)String account);
 
+
     @ThriftMethod
-    String queryById(@ThriftField(1) Long account);
+    String getAccountById(@ThriftField(1) Long account);
 }

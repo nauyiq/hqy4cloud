@@ -20,16 +20,15 @@ import io.airlift.configuration.Config;
 import io.airlift.units.Duration;
 import io.airlift.units.MinDuration;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-public class ThriftClientConfig {
-    public static final Duration DEFAULT_CONNECT_TIMEOUT = new Duration(500, TimeUnit.MILLISECONDS);
+public class ThriftClientConfig
+{
+    public static final Duration DEFAULT_CONNECT_TIMEOUT = new Duration(1500, TimeUnit.MILLISECONDS);
     public static final Duration DEFAULT_RECEIVE_TIMEOUT = new Duration(1, TimeUnit.MINUTES);
-    public static final Duration DEFAULT_READ_TIMEOUT = new Duration(10, TimeUnit.SECONDS);
+//    public static final Duration DEFAULT_READ_TIMEOUT = new Duration(15, TimeUnit.SECONDS);
+    public static final Duration DEFAULT_READ_TIMEOUT = new Duration(1, TimeUnit.MINUTES);
     public static final Duration DEFAULT_WRITE_TIMEOUT = new Duration(1, TimeUnit.MINUTES);
     // Default max frame size of 16 MB
     public static final int DEFAULT_MAX_FRAME_SIZE = 16777216;
@@ -42,68 +41,78 @@ public class ThriftClientConfig {
     private HostAndPort socksProxy;
 
     @MinDuration("1ms")
-    public Duration getConnectTimeout() {
+    public Duration getConnectTimeout()
+    {
         return connectTimeout;
     }
 
     @Config("thrift.client.connect-timeout")
-    public ThriftClientConfig setConnectTimeout(Duration connectTimeout) {
+    public ThriftClientConfig setConnectTimeout(Duration connectTimeout)
+    {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
     @MinDuration("1ms")
-    public Duration getReceiveTimeout() {
+    public Duration getReceiveTimeout()
+    {
         return receiveTimeout;
     }
 
     @Config("thrift.client.receive-timeout")
-    public ThriftClientConfig setReceiveTimeout(Duration receiveTimeout) {
+    public ThriftClientConfig setReceiveTimeout(Duration receiveTimeout)
+    {
         this.receiveTimeout = receiveTimeout;
         return this;
     }
 
     @MinDuration("1ms")
-    public Duration getReadTimeout() {
+    public Duration getReadTimeout()
+    {
         return readTimeout;
     }
 
     @Config("thrift.client.read-timeout")
-    public ThriftClientConfig setReadTimeout(Duration readTimeout) {
+    public ThriftClientConfig setReadTimeout(Duration readTimeout)
+    {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @MinDuration("1ms")
-    public Duration getWriteTimeout() {
+    public Duration getWriteTimeout()
+    {
         return writeTimeout;
     }
 
     @Config("thrift.client.write-timeout")
-    public ThriftClientConfig setWriteTimeout(Duration writeTimeout) {
+    public ThriftClientConfig setWriteTimeout(Duration writeTimeout)
+    {
         this.writeTimeout = writeTimeout;
         return this;
     }
 
-    public HostAndPort getSocksProxy() {
+    public HostAndPort getSocksProxy()
+    {
         return socksProxy;
     }
 
     @Config("thrift.client.socks-proxy")
-    public ThriftClientConfig setSocksProxy(HostAndPort socksProxy) {
+    public ThriftClientConfig setSocksProxy(HostAndPort socksProxy)
+    {
         this.socksProxy = socksProxy;
         return this;
     }
 
     @Min(0)
-    @Max(0x3FFFFFFF)
-    public int getMaxFrameSize() {
+    public int getMaxFrameSize()
+    {
         return maxFrameSize;
     }
 
     @Config("thrift.client.max-frame-size")
-    public ThriftClientConfig setMaxFrameSize(int maxFrameSize) {
-        checkArgument(maxFrameSize <= 0x3FFFFFFF);
+    public ThriftClientConfig setMaxFrameSize(int maxFrameSize)
+    {
         this.maxFrameSize = maxFrameSize;
         return this;
     }

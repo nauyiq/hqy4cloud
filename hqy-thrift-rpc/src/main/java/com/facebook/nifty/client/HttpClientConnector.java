@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,80 +31,91 @@ import java.net.URISyntaxException;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class HttpClientConnector extends AbstractClientConnector<HttpClientChannel> {
+public class HttpClientConnector extends AbstractClientConnector<HttpClientChannel>
+{
     private final URI endpointUri;
 
     public HttpClientConnector(String hostNameAndPort, String servicePath)
-            throws URISyntaxException {
+            throws URISyntaxException
+    {
         this(hostNameAndPort, servicePath, defaultProtocolFactory());
     }
 
-    public HttpClientConnector(URI uri) {
+    public HttpClientConnector(URI uri)
+    {
         this(uri, defaultProtocolFactory());
     }
 
     public HttpClientConnector(String hostNameAndPort, String servicePath, TDuplexProtocolFactory protocolFactory)
-            throws URISyntaxException {
-        super(new InetSocketAddress(HostAndPort.fromString(hostNameAndPort).getHost(),
-                        HostAndPort.fromString(hostNameAndPort).getPortOrDefault(80)),
-                protocolFactory);
+            throws URISyntaxException
+    {
+        super(new InetSocketAddress(HostAndPort.fromString(
+//                hostNameAndPort).getHostText(),
+                //升级guava22
+                hostNameAndPort).getHost(),
+                                    HostAndPort.fromString(hostNameAndPort).getPortOrDefault(80)),
+              protocolFactory);
 
         this.endpointUri = new URI("http", hostNameAndPort, servicePath, null, null);
     }
 
-    public HttpClientConnector(URI uri, TDuplexProtocolFactory protocolFactory) {
+    public HttpClientConnector(URI uri, TDuplexProtocolFactory protocolFactory)
+    {
         super(toSocketAddress(HostAndPort.fromParts(checkNotNull(uri).getHost(), getPortFromURI(uri))),
-                protocolFactory);
+              protocolFactory);
 
         checkArgument(uri.isAbsolute() && !uri.isOpaque(),
-                "HttpClientConnector requires an absolute URI with a path");
+                      "HttpClientConnector requires an absolute URI with a path");
 
         this.endpointUri = uri;
     }
 
     @Override
-    public HttpClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig) {
+    public HttpClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig)
+    {
         HttpClientChannel channel =
                 new HttpClientChannel(nettyChannel,
-                        clientConfig.getTimer(),
-                        getProtocolFactory(),
-                        endpointUri.getHost(),
-                        endpointUri.getPath());
+                                      clientConfig.getTimer(),
+                                      getProtocolFactory(),
+                                      endpointUri.getHost(),
+                                      endpointUri.getPath());
         channel.getNettyChannel().getPipeline().addLast("thriftHandler", channel);
         return channel;
     }
 
     @Override
-    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig) {
-        return new ChannelPipelineFactory() {
+    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig)
+    {
+        return new ChannelPipelineFactory()
+        {
             @Override
             public ChannelPipeline getPipeline()
-                    throws Exception {
+                    throws Exception
+            {
                 ChannelPipeline cp = Channels.pipeline();
                 cp.addLast("httpClientCodec", new HttpClientCodec());
                 cp.addLast("chunkAggregator", new HttpChunkAggregator(maxFrameSize));
-                if (clientConfig.sslClientConfiguration() != null) {
-                    cp.addFirst("ssl", clientConfig.sslClientConfiguration().createHandler(address));
-                }
                 return cp;
             }
         };
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return endpointUri.toString();
     }
 
-    private static int getPortFromURI(URI uri) {
+    private static int getPortFromURI(URI uri)
+    {
         URI uriNN = checkNotNull(uri);
-        if (uri.getScheme().equalsIgnoreCase("http")) {
+        if (uri.getScheme().toLowerCase().equals("http")) {
             return uriNN.getPort() == -1 ? 80 : uriNN.getPort();
-        } else if (uri.getScheme().equalsIgnoreCase("https")) {
+        } else if (uri.getScheme().toLowerCase().equals("https")) {
             return uriNN.getPort() == -1 ? 443 : uriNN.getPort();
         } else {
             throw new IllegalArgumentException("HttpClientConnector only connects to HTTP/HTTPS " +
-                    "URIs");
+                                               "URIs");
         }
     }
 }

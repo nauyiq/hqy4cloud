@@ -6,6 +6,7 @@ import com.facebook.swift.service.ThriftService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.order.common.entity.Storage;
+import com.hqy.rpc.transaction.GlobalTransactionalThriftMethod;
 
 /**
  * @author qiyuan.hong
@@ -30,5 +31,6 @@ public interface StorageRemoteService extends RPCService {
      * @return 是否成功修改
      */
     @ThriftMethod
-    boolean modifyStorage(String storage);
+    @GlobalTransactionalThriftMethod
+    boolean modifyStorage(@ThriftField(1) String storage);
 }

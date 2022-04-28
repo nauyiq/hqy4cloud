@@ -13,7 +13,9 @@ import com.hqy.order.common.service.StorageRemoteService;
 import com.hqy.order.dao.OrderDao;
 import com.hqy.order.service.OrderService;
 import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.thrift.ex.RemoteContextChecker;
 import com.hqy.util.JsonUtil;
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -44,18 +46,27 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
 
         CommonSwitcher.JUST_4_TEST_DEBUG.setStatus(false);
 
+        String xid = RootContext.getXID();
+        System.out.println(xid);
+
+
+
+
         AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.queryById(1L);
+        String accountJson = accountRemoteService.getAccountById(1L);
         if (StringUtils.isBlank(accountJson)) {
             return new MessageResponse(false, CommonResultCode.USER_NOT_FOUND.message, CommonResultCode.USER_NOT_FOUND.code);
         }
-        Account account = JsonUtil.toBean(accountJson, Account.class);
+
         //获取库存
         StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
         String storageJson = storageRemoteService.getStorage(storageId);
         if (StringUtils.isBlank(storageJson)) {
             return new MessageResponse(false, CommonResultCode.SYSTEM_BUSY.message, CommonResultCode.SYSTEM_BUSY.code);
         }
+
+        Account account = JsonUtil.toBean(accountJson, Account.class);
+
         Storage storage = JsonUtil.toBean(storageJson, Storage.class);
         //判断是否能下单
         BigDecimal residue = account.getResidue();
@@ -88,7 +99,6 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
             throw new RuntimeException("@@@ 修改账户余额失败");
         }
 
-        int i = 1/0;
 
         //修改订单状态
         order.setId(orderNum);

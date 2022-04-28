@@ -92,6 +92,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new CommonSwitcher(214, "节点-是否采用自定义的网关负载均衡策略", true);
 
+    /**
+     * 节点-是否启用RPC CLIENT CHANNEL内存泄露保护开关
+     */
+    public static final CommonSwitcher ENABLE_RPC_CLIENT_CHANNEL_LEAK_PROTECTION = new CommonSwitcher(215, "节点-是否启用RPC CLIENT CHANNEL内存泄露保护开关",true);
+
 
     /**
      * 与sid有关（重联场景是生成新的sid)

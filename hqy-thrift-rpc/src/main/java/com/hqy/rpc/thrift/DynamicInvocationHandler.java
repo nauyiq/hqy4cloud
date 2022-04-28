@@ -16,6 +16,8 @@ import com.hqy.rpc.regist.EnvironmentConfig;
 import com.hqy.rpc.regist.GrayWhitePub;
 import com.hqy.rpc.route.AbstractRpcRouter;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
+import com.hqy.rpc.transaction.GlobalTransactionalThriftMethod;
+import com.hqy.rpc.transaction.TransactionContext;
 import com.hqy.util.IpUtil;
 import com.hqy.util.MathUtil;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -303,6 +305,8 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
             result = genericMsgRpcResult(returnType, method);
             return result;
         }
+        //如果是否是分布式事务方法，则在调用之前标记一下. 在thrift rpc调用过程中会进行事务传播.
+        TransactionContext.makeThriftMethodTransactional(method);
         //是否需要返回结果
         boolean needReturnTarget = true;
         //根据当前节点灰度值和有无开启灰度策略选择一个合适的对象池
@@ -360,6 +364,8 @@ public class DynamicInvocationHandler<T> extends AbstractRpcRouter
 
         return result;
     }
+
+
 
     /**
      * rpc异常处理

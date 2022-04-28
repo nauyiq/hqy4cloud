@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,24 +26,29 @@ import org.jboss.netty.channel.Channels;
 import java.net.InetSocketAddress;
 
 public class UnframedClientConnector extends AbstractClientConnector<UnframedClientChannel> {
-    public UnframedClientConnector(InetSocketAddress address) {
+    public UnframedClientConnector(InetSocketAddress address)
+    {
         this(address, defaultProtocolFactory());
     }
 
-    public UnframedClientConnector(HostAndPort address) {
+    public UnframedClientConnector(HostAndPort address)
+    {
         this(address, defaultProtocolFactory());
     }
 
-    public UnframedClientConnector(InetSocketAddress address, TDuplexProtocolFactory protocolFactory) {
+    public UnframedClientConnector(InetSocketAddress address, TDuplexProtocolFactory protocolFactory)
+    {
         super(address, protocolFactory);
     }
 
-    public UnframedClientConnector(HostAndPort address, TDuplexProtocolFactory protocolFactory) {
+    public UnframedClientConnector(HostAndPort address, TDuplexProtocolFactory protocolFactory)
+    {
         super(toSocketAddress(address), protocolFactory);
     }
 
     @Override
-    public UnframedClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig) {
+    public UnframedClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig)
+    {
         UnframedClientChannel channel = new UnframedClientChannel(nettyChannel, clientConfig.getTimer(), getProtocolFactory());
         ChannelPipeline cp = nettyChannel.getPipeline();
         TimeoutHandler.addToPipeline(cp);
@@ -52,7 +57,8 @@ public class UnframedClientConnector extends AbstractClientConnector<UnframedCli
     }
 
     @Override
-    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig) {
+    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig)
+    {
         return new ChannelPipelineFactory() {
             @Override
             public ChannelPipeline getPipeline()
@@ -60,9 +66,6 @@ public class UnframedClientConnector extends AbstractClientConnector<UnframedCli
                 ChannelPipeline cp = Channels.pipeline();
                 TimeoutHandler.addToPipeline(cp);
                 cp.addLast("thriftUnframedDecoder", new ThriftUnframedDecoder());
-                if (clientConfig.sslClientConfiguration() != null) {
-                    cp.addFirst("ssl", clientConfig.sslClientConfiguration().createHandler(address));
-                }
                 return cp;
             }
         };

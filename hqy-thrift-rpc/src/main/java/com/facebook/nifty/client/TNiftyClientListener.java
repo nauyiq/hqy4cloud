@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ExceptionEvent;
 
-public interface TNiftyClientListener {
+public interface TNiftyClientListener
+{
     /**
      * Called when a full frame as defined in TFramedTransport is available.
      *
      * @param channel the channel
-     * @param buffer  the payload of the frame, without the leading 4-bytes length header
+     * @param buffer the payload of the frame, without the leading 4-bytes length header
      */
     void onFrameRead(Channel channel, ChannelBuffer buffer);
 

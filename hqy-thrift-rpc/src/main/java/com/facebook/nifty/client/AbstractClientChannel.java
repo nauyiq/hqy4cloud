@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.facebook.nifty.client;
 
 import com.facebook.nifty.core.TChannelBufferInputTransport;
 import com.facebook.nifty.duplex.TDuplexProtocolFactory;
-import io.airlift.log.Logger;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import io.airlift.units.Duration;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TMessage;
@@ -32,6 +32,8 @@ import org.jboss.netty.handler.timeout.WriteTimeoutException;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -44,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 @NotThreadSafe
 public abstract class AbstractClientChannel extends SimpleChannelHandler implements
         NiftyClientChannel {
-    private static final Logger LOGGER = Logger.get(AbstractClientChannel.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractClientChannel.class);
 
     private final Channel nettyChannel;
     private Duration sendTimeout = null;
@@ -55,6 +57,10 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
     // Timeout for not receiving any data from the server
     private Duration readTimeout = null;
 
+    /**
+     * 通过当前channel发送的请求的集合
+     * K： 请求序列id sequenceId， V: Request
+     */
     private final Map<Integer, Request> requestMap = new HashMap<>();
     private volatile TException channelError;
     private final Timer timer;
@@ -78,6 +84,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
 
     protected abstract ChannelBuffer extractResponse(Object message) throws TTransportException;
 
+
     protected int extractSequenceId(ChannelBuffer messageBuffer)
             throws TTransportException {
         try {
@@ -88,13 +95,35 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
             messageBuffer.resetReaderIndex();
             return message.seqid;
         } catch (Throwable t) {
-            throw new TTransportException("Could not find sequenceId in Thrift message", t);
+            throw new TTransportException("Could not find sequenceId in Thrift message");
+        }
+    }
+
+    protected TMessage extractTMessage(ChannelBuffer messageBuffer)
+            throws TTransportException {
+        try {
+            messageBuffer.markReaderIndex();
+            TTransport inputTransport = new TChannelBufferInputTransport(messageBuffer);
+            TProtocol inputProtocol = getProtocolFactory().getInputProtocolFactory().getProtocol(inputTransport);
+            TMessage message = inputProtocol.readMessageBegin();
+            messageBuffer.resetReaderIndex();
+            return message;
+        } catch (Throwable t) {
+            throw new TTransportException("Could not find sequenceId in Thrift message");
         }
     }
 
     protected abstract ChannelFuture writeRequest(ChannelBuffer request);
 
+    @Override
     public void close() {
+        //add by rosun 防止内存泄露
+        try {
+            log.info("关闭channel,防止内存泄露. Prevent Memory Leak.");
+            cancelAllTimeouts();
+        } catch (Exception e) {
+        }
+        //add by rosun 防止内存泄露
         getNettyChannel().close();
     }
 
@@ -144,12 +173,24 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         nioSocketChannel.getWorker().executeInIoThread(runnable, true);
     }
 
+    /**
+     * 通过当前通达 发送rpc消息 （发起rpc请求...）
+     *
+     * @see RequestChannel#sendAsynchronousRequest(ChannelBuffer, boolean, Listener)
+     */
     @Override
     public void sendAsynchronousRequest(final ChannelBuffer message,
                                         final boolean oneway,
                                         final Listener listener)
             throws TException {
-        final int sequenceId = extractSequenceId(message);
+        //final int sequenceId = extractSequenceId(message);
+        //获取sequenceId之外 更多处理请求相关的上下文信息
+        final TMessage tmsg = extractTMessage(message);
+        final int sequenceId = tmsg.seqid;
+        final String name = tmsg.name;
+        if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+            log.info("sendAsynchronousRequest >> name={},sequenceId={}, {}", name, sequenceId, requestMap.size());
+        }
 
         // Ensure channel listeners are always called on the channel's I/O thread
         executeInIoThread(new Runnable() {
@@ -157,7 +198,8 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
             public void run() {
                 try {
                     final Request request = makeRequest(sequenceId, listener);
-
+                    //20201230 增加一个TMessage的name 属性，关联记录当前rpc消息的名称..
+                    request.setTmessageName(name);
                     if (!nettyChannel.isConnected()) {
                         fireChannelErrorCallback(listener, new TTransportException(TTransportException.NOT_OPEN, "Channel closed"));
                         return;
@@ -171,13 +213,20 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                     }
 
                     ChannelFuture sendFuture = writeRequest(message);
+                    //TODO 发送没有请求超时?是否需要清除？   handlerOnewayMemoryLeak(oneway, sequenceId);
+//                    queueSendTimeout(request, oneway, sequenceId);
                     queueSendTimeout(request);
 
                     sendFuture.addListener(new ChannelFutureListener() {
                         @Override
                         public void operationComplete(ChannelFuture future) throws Exception {
                             messageSent(future, request, oneway);
+                            //场景：内存泄漏 2021-2-3 (同步和异步都会进入此 【留意】    sendAsynchronousRequest
+                            //只有异步 oneway的方式需要进行如下操作。同步的方式会在接收处移除此，故同步 的没有泄漏。
+                            handlerOnewayMemoryLeak(oneway, sequenceId);
                         }
+
+
                     });
                 } catch (Throwable t) {
                     // onError calls all registered listeners in the requestMap, but this request
@@ -193,7 +242,22 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         });
     }
 
+
+    /**
+     * 场景：内存泄漏  (同步和异步都会进入此 【留意】    sendAsynchronousRequest
+     * 只有异步 oneway的方式需要进行如下操作。同步的方式会在接收处移除此，故同步 的没有泄漏。
+     *
+     * @param oneway
+     * @param sequenceId
+     */
+    private void handlerOnewayMemoryLeak(final boolean oneway, final int sequenceId) {
+        if (oneway && CommonSwitcher.ENABLE_RPC_CLIENT_CHANNEL_LEAK_PROTECTION.isOn()) {
+            requestMap.remove(sequenceId);
+        }
+    }
+
     private void messageSent(ChannelFuture future, Request request, boolean oneway) {
+
         try {
             if (future.isSuccess()) {
                 cancelRequestTimeouts(request);
@@ -204,6 +268,9 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                     queueReceiveAndReadTimeout(request);
                 }
             } else {
+                //modify luos 优化timeout 内存泄露问题
+                cancelRequestTimeouts(request);//手动cancel掉相关定时任务
+                //modify luos 优化timeout 内存泄露问题
                 TTransportException transportException =
                         new TTransportException("Sending request failed",
                                 future.getCause());
@@ -221,6 +288,9 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
 
             if (response != null) {
                 int sequenceId = extractSequenceId(response);
+                //优化by rosun 获取sequenceId之外 更多处理请求相关的上下文信息
+//                final TMessage tmsg  =  extractTMessage(response);
+//                final int sequenceId = tmsg.seqid;
                 onResponseReceived(sequenceId, response);
             } else {
                 ctx.sendUpstream(e);
@@ -247,23 +317,44 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         cancelRequestTimeouts(request);
     }
 
+    /**
+     * 取消request 的所有的超时相关的任务..
+     *
+     * @param request
+     */
     private void cancelRequestTimeouts(Request request) {
-        Timeout sendTimeout = request.getSendTimeout();
-        if (sendTimeout != null && !sendTimeout.isCancelled()) {
-            sendTimeout.cancel();
+        try {
+            Timeout sendTimeout = request.getSendTimeout();
+            if (sendTimeout != null && !sendTimeout.isCancelled()) {
+                sendTimeout.cancel();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
 
-        Timeout receiveTimeout = request.getReceiveTimeout();
-        if (receiveTimeout != null && !receiveTimeout.isCancelled()) {
-            receiveTimeout.cancel();
+        try {
+            Timeout receiveTimeout = request.getReceiveTimeout();
+            if (receiveTimeout != null && !receiveTimeout.isCancelled()) {
+                receiveTimeout.cancel();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
 
-        Timeout readTimeout = request.getReadTimeout();
-        if (readTimeout != null && !readTimeout.isCancelled()) {
-            readTimeout.cancel();
+        try {
+            Timeout readTimeout = request.getReadTimeout();
+            if (readTimeout != null && !readTimeout.isCancelled()) {
+                readTimeout.cancel();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
+
     }
 
+    /**
+     * 终结当前通道中在处理的所有的Reqeust 的相关的超时任务
+     */
     private void cancelAllTimeouts() {
         for (Request request : requestMap.values()) {
             cancelRequestTimeouts(request);
@@ -288,24 +379,55 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
     }
 
     protected void onError(Throwable t) {
+        log.warn("onError:1 出错了~ " + t.getMessage(), t);
         TException wrappedException = wrapException(t);
 
         if (channelError == null) {
             channelError = wrappedException;
         }
 
-        cancelAllTimeouts();
-
+        log.warn("onError:2 fireChannelErrorCallback;");
         Collection<Request> requests = new ArrayList<>();
         requests.addAll(requestMap.values());
-        requestMap.clear();
         for (Request request : requests) {
-            fireChannelErrorCallback(request.getListener(), wrappedException);
+            try {
+                fireChannelErrorCallback(request.getListener(), wrappedException);
+            } catch (Exception e) {
+                log.warn(e.getMessage() + " | " + e.getClass().getName());
+            }
         }
+        /*** 聚合到disposeMemoryLeak() 方法
+         cancelAllTimeouts();
+         Channel channel = getNettyChannel();
+         if (nettyChannel.isOpen())
+         {
+         LOGGER.warn("onError:3 channel.close();关闭当前channel;");
+         channel.close();
+         }
+         ***/
+        //聚合到disposeMemoryLeak() 方法
+        disposeMemoryLeak();
 
-        Channel channel = getNettyChannel();
-        if (nettyChannel.isOpen()) {
-            channel.close();
+
+    }
+
+    /**
+     * 2020 1230 防止内存泄露,channel有问题的时候 清理掉 残留的东东
+     */
+    public void disposeMemoryLeak() {
+        try {
+            log.warn("onError:3 cancelAllTimeouts; 取消所有的超时定时任务;");
+            cancelAllTimeouts();
+            //cancel完定时任务后，务必手动清理掉MAP 防止内存泄露...
+            requestMap.clear();
+            log.warn("onError:4 channel.close(); 清空 requestMap;");
+            Channel channel = getNettyChannel();
+//            if (nettyChannel.isOpen()) {
+//                log.warn("onError:5 channel.close();关闭当前channel;");
+//                channel.close();
+//            }
+        } catch (Exception e) {
+            log.warn(e.getMessage() + " | " + e.getClass().getName());
         }
     }
 
@@ -321,7 +443,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         try {
             listener.onRequestSent();
         } catch (Throwable t) {
-            LOGGER.warn(t, "Request sent listener callback triggered an exception");
+            log.warn("Request sent listener callback triggered an exception: {}", t);
         }
     }
 
@@ -329,7 +451,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         try {
             listener.onResponseReceived(response);
         } catch (Throwable t) {
-            LOGGER.warn(t, "Response received listener callback triggered an exception");
+            log.warn("Response received listener callback triggered an exception: {}", t);
         }
     }
 
@@ -337,7 +459,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         try {
             listener.onChannelError(exception);
         } catch (Throwable t) {
-            LOGGER.warn(t, "Channel error listener callback triggered an exception");
+            log.warn("Channel error listener callback triggered an exception: {}", t);
         }
     }
 
@@ -346,18 +468,37 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
     }
 
     private void onSendTimeoutFired(Request request) {
+        //modify by luoshan start 添加钉钉告警
+        log.warn("警告，IGNORED RPC TIME OUT（onSendTimeoutFired） ,兼容 超时模式.RPC调用已超时！本次超时被忽略，可以继续调用。");
+//        DingdingWarnService.warn("onSendTimeoutFired" ,getRemoteAddr(),new String[] {request.getTmessageName()} );
         cancelAllTimeouts();
         WriteTimeoutException timeoutException = new WriteTimeoutException("Timed out waiting " + getSendTimeout() + " to send data to server");
         fireChannelErrorCallback(request.getListener(), new TTransportException(TTransportException.TIMED_OUT, timeoutException));
     }
 
+    private String getRemoteAddr() {
+        String remoteString = null;
+        try {
+            remoteString = this.nettyChannel.getRemoteAddress().toString();
+        } catch (Exception e) {
+            remoteString = "";
+        }
+        return remoteString;
+    }
+
     private void onReceiveTimeoutFired(Request request) {
+        //modify by luoshan start 添加钉钉告警
+        log.warn("警告，IGNORED RPC TIME OUT（onReceiveTimeoutFired） ,兼容 超时模式.RPC调用已超时！本次超时被忽略，可以继续调用。");
+//        DingdingWarnService.warn("onReceiveTimeoutFired", getRemoteAddr(),new String[] {request.getTmessageName()} );
         cancelAllTimeouts();
         ReadTimeoutException timeoutException = new ReadTimeoutException("Timed out waiting " + getReceiveTimeout() + " to receive response");
         fireChannelErrorCallback(request.getListener(), new TTransportException(TTransportException.TIMED_OUT, timeoutException));
     }
 
     private void onReadTimeoutFired(Request request) {
+        //modify by luoshan start 添加钉钉告警
+//        DingdingWarnService.warn("onReadTimeoutFired",getRemoteAddr(),new String[] {request.getTmessageName()});
+        log.warn("警告，IGNORED RPC TIME OUT（onReadTimeoutFired） ,兼容 超时模式.RPC调用已超时！本次超时被忽略，可以继续调用。");
         cancelAllTimeouts();
         ReadTimeoutException timeoutException = new ReadTimeoutException("Timed out waiting " + getReadTimeout() + " to read data from server");
         fireChannelErrorCallback(request.getListener(), new TTransportException(TTransportException.TIMED_OUT, timeoutException));
@@ -379,7 +520,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 try {
                     sendTimeout = timer.newTimeout(sendTimeoutTask, sendTimeoutMs, TimeUnit.MILLISECONDS);
                 } catch (IllegalStateException e) {
-                    throw new TTransportException("Unable to schedule send timeout", e);
+                    throw new TTransportException("Unable to schedule send timeout");
                 }
                 request.setSendTimeout(sendTimeout);
             }
@@ -401,7 +542,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 try {
                     timeout = timer.newTimeout(receiveTimeoutTask, receiveTimeoutMs, TimeUnit.MILLISECONDS);
                 } catch (IllegalStateException e) {
-                    throw new TTransportException("Unable to schedule request timeout", e);
+                    throw new TTransportException("Unable to schedule request timeout");
                 }
                 request.setReceiveTimeout(timeout);
             }
@@ -416,7 +557,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 try {
                     timeout = timer.newTimeout(readTimeoutTask, readTimeoutNanos, TimeUnit.NANOSECONDS);
                 } catch (IllegalStateException e) {
-                    throw new TTransportException("Unable to schedule read timeout", e);
+                    throw new TTransportException("Unable to schedule read timeout");
                 }
                 request.setReadTimeout(timeout);
             }
@@ -460,6 +601,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         private final Listener listener;
         private Timeout sendTimeout;
         private Timeout receiveTimeout;
+        private String tmessageName;
 
         private volatile Timeout readTimeout;
 
@@ -494,6 +636,16 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
         public void setSendTimeout(Timeout sendTimeout) {
             this.sendTimeout = sendTimeout;
         }
+
+        public String getTmessageName() {
+
+            return tmessageName;
+        }
+
+        public void setTmessageName(String tmessageName) {
+
+            this.tmessageName = tmessageName;
+        }
     }
 
     private final class ReadTimeoutTask implements TimerTask {
@@ -507,6 +659,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
             this.request = request;
         }
 
+        @Override
         public void run(Timeout timeout) throws Exception {
             if (timeoutHandler == null) {
                 return;

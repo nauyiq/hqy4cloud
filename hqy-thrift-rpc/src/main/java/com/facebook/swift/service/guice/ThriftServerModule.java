@@ -34,11 +34,13 @@ import java.util.concurrent.ExecutorService;
 
 import static com.google.inject.multibindings.MapBinder.newMapBinder;
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
-import static io.airlift.configuration.ConfigBinder.configBinder;
+import static io.airlift.configuration.ConfigurationModule.bindConfig;
 
-public class ThriftServerModule implements Module {
+public class ThriftServerModule implements Module
+{
     @Override
-    public void configure(Binder binder) {
+    public void configure(Binder binder)
+    {
         // Setup map binder for executor services
         workerExecutorBinder(binder).permitDuplicates();
 
@@ -63,59 +65,67 @@ public class ThriftServerModule implements Module {
         binder.bind(ThriftServiceProcessor.class).toProvider(ThriftServiceProcessorProvider.class).in(Scopes.SINGLETON);
         binder.bind(NiftyProcessor.class).to(Key.get(ThriftServiceProcessor.class)).in(Scopes.SINGLETON);
 
-        configBinder(binder).bindConfig(ThriftServerConfig.class);
+        bindConfig(binder).to(ThriftServerConfig.class);
         binder.bind(ThriftServer.NiftySecurityFactoryHolder.class);
         binder.bind(ThriftServer.class).in(Scopes.SINGLETON);
-        binder.bind(ThriftServer.SslServerConfigurationHolder.class);
-        binder.bind(ThriftServer.TransportAttachObserverHolder.class);
     }
 
     // helpers for binding frame codec factories
 
-    public static ScopedBindingBuilder bindFrameCodecFactory(Binder binder, String key, Class<? extends ThriftFrameCodecFactory> frameCodecFactoryClass) {
+    public static ScopedBindingBuilder bindFrameCodecFactory(Binder binder, String key, Class<? extends ThriftFrameCodecFactory> frameCodecFactoryClass)
+    {
         return newMapBinder(binder, String.class, ThriftFrameCodecFactory.class).addBinding(key).to(frameCodecFactoryClass);
     }
 
-    public static void bindFrameCodecFactory(Binder binder, String key, ThriftFrameCodecFactory frameCodecFactory) {
+    public static void bindFrameCodecFactory(Binder binder, String key, ThriftFrameCodecFactory frameCodecFactory)
+    {
         newMapBinder(binder, String.class, ThriftFrameCodecFactory.class).addBinding(key).toInstance(frameCodecFactory);
     }
 
     // helpers for binding protocol factories
 
-    public static ScopedBindingBuilder bindProtocolFactory(Binder binder, String key, Class<? extends TDuplexProtocolFactory> protocolFactoryClass) {
+    public static ScopedBindingBuilder bindProtocolFactory(Binder binder, String key, Class<? extends TDuplexProtocolFactory> protocolFactoryClass)
+    {
         return newMapBinder(binder, String.class, TDuplexProtocolFactory.class).addBinding(key).to(protocolFactoryClass);
     }
 
-    public static void bindProtocolFactory(Binder binder, String key, TDuplexProtocolFactory protocolFactory) {
+    public static void bindProtocolFactory(Binder binder, String key, TDuplexProtocolFactory protocolFactory)
+    {
         newMapBinder(binder, String.class, TDuplexProtocolFactory.class).addBinding(key).toInstance(protocolFactory);
     }
 
     // Helpers for binding worker executors
 
-    public static ScopedBindingBuilder bindWorkerExecutor(Binder binder, String key, Class<? extends ExecutorService> executorServiceClass) {
+    public static ScopedBindingBuilder bindWorkerExecutor(Binder binder, String key, Class<? extends ExecutorService> executorServiceClass)
+    {
         return workerExecutorBinder(binder).addBinding(key).to(executorServiceClass);
     }
 
-    public static ScopedBindingBuilder bindWorkerExecutor(Binder binder, String key, Provider<? extends ExecutorService> executorServiceProvider) {
+    public static ScopedBindingBuilder bindWorkerExecutor(Binder binder, String key, Provider<? extends ExecutorService> executorServiceProvider)
+    {
         return workerExecutorBinder(binder).addBinding(key).toProvider(executorServiceProvider);
     }
 
-    public static ScopedBindingBuilder bindWorkerExecutorProvider(Binder binder, String key, Class<? extends javax.inject.Provider<? extends ExecutorService>> executorServiceProvider) {
-        return workerExecutorBinder(binder).addBinding(key).toProvider(executorServiceProvider);
+    public static ScopedBindingBuilder bindWorkerExecutorProvider(Binder binder, String key, Class<? extends javax.inject.Provider<? extends ExecutorService>> executorServiceProvider)
+    {
+      return workerExecutorBinder(binder).addBinding(key).toProvider(executorServiceProvider);
     }
 
-    public static void bindWorkerExecutor(Binder binder, String key, ExecutorService executorService) {
+    public static void bindWorkerExecutor(Binder binder, String key, ExecutorService executorService)
+    {
         workerExecutorBinder(binder).addBinding(key).toInstance(executorService);
     }
 
-    private static MapBinder<String, ExecutorService> workerExecutorBinder(Binder binder) {
+    private static MapBinder<String, ExecutorService> workerExecutorBinder(Binder binder)
+    {
         return newMapBinder(binder, String.class, ExecutorService.class, ThriftServerWorkerExecutor.class);
     }
 
     @Provides
     @ThriftServerTimer
     @Singleton
-    public Timer getThriftServerTimer() {
+    public Timer getThriftServerTimer()
+    {
         return new NiftyTimer("thrift");
     }
 }

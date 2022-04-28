@@ -20,8 +20,7 @@ public class ArgsUtil {
             throw new IllegalStateException("addArg ,args error or appendArg error!");
         }
         int len = args.length;
-        Object[] result;
-        result = Arrays.copyOf(args, len + 1);
+        Object[] result = Arrays.copyOf(args, len + 1);
         result[len] = appendArg;
         return result;
     }
@@ -36,9 +35,7 @@ public class ArgsUtil {
             throw new IllegalStateException("reduceTailArg ,args error!");
         }
         int len = args.length;
-        Object[] result;
-        result = Arrays.copyOf(args, len - 1);
-        return result;
+        return Arrays.copyOf(args, len - 1);
     }
 
 

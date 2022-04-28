@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,21 +26,25 @@ import java.net.InetSocketAddress;
  * This handshake handler swap out the channel pipeline with the delegate
  * upon handshake completion.
  */
-public class Socks4HandshakeHandler extends SimpleChannelHandler {
+public class Socks4HandshakeHandler extends SimpleChannelHandler
+{
     private final SettableChannelFuture channelFuture = new SettableChannelFuture();
     private final ChannelPipelineFactory delegate;
 
-    public Socks4HandshakeHandler(ChannelPipelineFactory delegate) {
+    public Socks4HandshakeHandler(ChannelPipelineFactory delegate)
+    {
         this.delegate = delegate;
     }
 
-    public SettableChannelFuture getChannelFuture() {
+    public SettableChannelFuture getChannelFuture()
+    {
         return channelFuture;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
-            throws Exception {
+            throws Exception
+    {
         channelFuture.setChannel(ctx.getChannel());
         if (e.getMessage() instanceof ChannelBuffer) {
             ChannelBuffer msg = (ChannelBuffer) e.getMessage();
@@ -64,7 +68,8 @@ public class Socks4HandshakeHandler extends SimpleChannelHandler {
                     ctx.getPipeline().addLast(name, delegatePipeline.get(name));
                 }
                 channelFuture.setSuccess();
-            } else {
+            }
+            else {
                 channelFuture.setFailure(new IOException("sock server reply failure code :" + Integer.toHexString(status)));
             }
         }
@@ -72,7 +77,8 @@ public class Socks4HandshakeHandler extends SimpleChannelHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e)
-            throws Exception {
+            throws Exception
+    {
         channelFuture.setChannel(ctx.getChannel());
         channelFuture.setFailure(e.getCause());
     }

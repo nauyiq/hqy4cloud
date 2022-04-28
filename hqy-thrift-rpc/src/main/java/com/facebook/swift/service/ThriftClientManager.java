@@ -204,7 +204,7 @@ public class ThriftClientManager implements Closeable {
             @Nullable
             @Override
             public T apply(@NotNull C channel) {
-                String name = Strings.isNullOrEmpty(clientName) ? DEFAULT_NAME : clientName;
+                String name = Strings.isNullOrEmpty(clientName) ? connector.toString() : clientName;
 
                 try {
                     return createClient(channel, type, name, eventHandlers);
@@ -280,7 +280,7 @@ public class ThriftClientManager implements Closeable {
     /**
      * Returns the {@link NiftyClientChannel} backing a Swift client
      *
-     * @throws IllegalArgumentException if the client is not using a {@link com.facebook.nifty.client.NiftyClientChannel}
+     * @throws IllegalArgumentException if the client is not using a {@link NiftyClientChannel}
      * @deprecated Use {@link #getRequestChannel} instead, and cast the result to a {@link NiftyClientChannel} if necessary
      */
     public NiftyClientChannel getNiftyChannel(Object client) {
@@ -444,7 +444,7 @@ public class ThriftClientManager implements Closeable {
             }
 
             ThriftMethodHandler methodHandler = methods.get(method);
-
+            boolean ok = true;
             try {
                 if (methodHandler == null) {
                     throw new TApplicationException(UNKNOWN_METHOD, "Unknown method : '" + method + "'");
@@ -464,6 +464,7 @@ public class ThriftClientManager implements Closeable {
 
                 ClientRequestContext requestContext = new NiftyClientRequestContext(getInputProtocol(), getOutputProtocol(), channel, remoteAddress);
                 ClientContextChain context = new ClientContextChain(eventHandlers, methodHandler.getQualifiedName(), requestContext);
+                //不管是同步，异步，半工 双工 调用 通通都走这里.... 在ThriftMethodHandler内部才区分
                 return methodHandler.invoke(channel,
                         inputTransport,
                         outputTransport,
@@ -473,9 +474,11 @@ public class ThriftClientManager implements Closeable {
                         context,
                         args);
             } catch (InterruptedException e) {
+                ok = false;
                 Thread.currentThread().interrupt();
                 throw new RuntimeTException("Thread interrupted", new TException(e));
             } catch (TException e) {
+                ok = false;
                 Class<? extends TException> thrownType = e.getClass();
 
                 for (Class<?> exceptionType : method.getExceptionTypes()) {
@@ -497,6 +500,14 @@ public class ThriftClientManager implements Closeable {
                     throw new RuntimeTTransportException(e.getMessage(), (TTransportException) e);
                 }
                 throw new RuntimeTException(e.getMessage(), e);
+            } finally {
+                // 防止内存泄露
+                if (!ok) {
+                    //强化内存回收 防止内存泄露....
+                    if (channel instanceof AbstractClientChannel) {
+                        ((AbstractClientChannel) channel).disposeMemoryLeak();
+                    }
+                }
             }
         }
     }
@@ -535,11 +546,7 @@ public class ThriftClientManager implements Closeable {
             if (!name.equals(that.name)) {
                 return false;
             }
-            if (!type.equals(that.type)) {
-                return false;
-            }
-
-            return true;
+            return type.equals(that.type);
         }
 
         @Override

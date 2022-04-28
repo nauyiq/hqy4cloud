@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Facebook, Inc.
+ * Copyright (C) 2012-2013 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,18 @@ import org.jboss.netty.channel.DefaultChannelFuture;
 /**
  * A channel future that allow channel to be set at a later time.
  */
-public class SettableChannelFuture extends DefaultChannelFuture {
+public class SettableChannelFuture extends DefaultChannelFuture
+{
     private Channel settableChannel = null;
     private boolean channelIsSet = false;
 
-    public SettableChannelFuture() {
+    public SettableChannelFuture()
+    {
         super(null, false);
     }
 
-    public void setChannel(Channel channel) {
+    public void setChannel(Channel channel)
+    {
         if (!channelIsSet) {
             this.settableChannel = channel;
             this.channelIsSet = true;
@@ -37,12 +40,14 @@ public class SettableChannelFuture extends DefaultChannelFuture {
     }
 
     @Override
-    public Channel getChannel() {
+    public Channel getChannel()
+    {
         return this.settableChannel;
     }
 
     @Override
-    public boolean setFailure(Throwable cause) {
+    public boolean setFailure(Throwable cause)
+    {
         if (!this.channelIsSet) {
             throw new IllegalStateException("channel not set yet !");
         }
@@ -50,7 +55,8 @@ public class SettableChannelFuture extends DefaultChannelFuture {
     }
 
     @Override
-    public boolean setSuccess() {
+    public boolean setSuccess()
+    {
         if (!this.channelIsSet) {
             throw new IllegalStateException("channel not set yet !");
         }
