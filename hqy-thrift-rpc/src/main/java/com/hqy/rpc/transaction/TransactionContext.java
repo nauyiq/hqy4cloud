@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *      处理请求前，解析获取 XID 并绑定到 RootContext 中
  *      处理请求后，将 XID 从 RootContext 中解绑
  *
+ * https://blog.csdn.net/fu_huo_1993/article/details/120267484
  * Seata事务管理的原理：
  * Seata 的事务上下文由 RootContext 来管理。
  * 应用开启一个全局事务后，RootContext 会自动绑定该事务的 XID，事务结束（提交或回滚完成），RootContext 会自动解绑 XID。<br/>

@@ -33,4 +33,9 @@ public interface StorageRemoteService extends RPCService {
     @ThriftMethod
     @GlobalTransactionalThriftMethod
     boolean modifyStorage(@ThriftField(1) String storage);
+
+
+    @ThriftMethod
+    @GlobalTransactionalThriftMethod
+    boolean tccModifyStorage(@ThriftField(1) String beforeStorage, @ThriftField(2) String afterStorage);
 }

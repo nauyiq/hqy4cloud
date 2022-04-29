@@ -26,5 +26,10 @@ public interface AccountRemoteService extends RPCService {
 
 
     @ThriftMethod
+    @GlobalTransactionalThriftMethod
+    boolean tccModifyAccount(@ThriftField(1) String beforeAccount, @ThriftField(2) String afterAccount);
+
+
+    @ThriftMethod
     String getAccountById(@ThriftField(1) Long account);
 }

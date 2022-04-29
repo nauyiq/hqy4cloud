@@ -66,4 +66,12 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     boolean update(T t);
 
+
+    /**
+     * 根据id删除数据
+     * @param pk 主键id
+     * @return 是否删除成功
+     */
+    boolean deleteById(PK pk);
+
 }

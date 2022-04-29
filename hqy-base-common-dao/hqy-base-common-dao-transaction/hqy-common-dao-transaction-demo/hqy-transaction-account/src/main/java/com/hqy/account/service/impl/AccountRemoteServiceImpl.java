@@ -1,6 +1,7 @@
 package com.hqy.account.service.impl;
 
 import com.hqy.account.service.AccountService;
+import com.hqy.account.service.TccAccountService;
 import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.service.AccountRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
@@ -23,6 +24,8 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
 
     @Resource
     private AccountService accountService;
+    @Resource
+    private TccAccountService tccAccountService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -42,5 +45,10 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     public String getAccountById(Long account) {
         Account data = accountService.queryById(account);
         return data == null ? "" : JsonUtil.toJson(data);
+    }
+
+    @Override
+    public boolean tccModifyAccount(String beforeAccount, String afterAccount) {
+        return tccAccountService.modifyAccount(JsonUtil.toBean(beforeAccount, Account.class), JsonUtil.toBean(afterAccount, Account.class));
     }
 }

@@ -19,12 +19,15 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/order")
-    public MessageResponse order(Long storageId, Integer count) {
+    public MessageResponse order(Long storageId, Integer count, boolean tcc) {
         if (storageId == null) {
             storageId = 1L;
         }
         if (count == null || count <= 0) {
             count = 1;
+        }
+        if (tcc) {
+            return orderService.tccOrder(storageId, count);
         }
         return orderService.order(storageId, count);
     }

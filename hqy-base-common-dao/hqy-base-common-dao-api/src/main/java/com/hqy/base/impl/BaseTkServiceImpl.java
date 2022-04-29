@@ -81,4 +81,11 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
         int i = dao.updateByPrimaryKey(t);
         return i > 0;
     }
+
+    @Override
+    public boolean deleteById(PK pk) {
+        BaseDao<T, PK> dao = checkDao();
+        int i = dao.deleteByPrimaryKey(pk);
+        return i > 0;
+    }
 }

@@ -4,6 +4,7 @@ import com.hqy.order.common.entity.Storage;
 import com.hqy.order.common.service.StorageRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.storage.service.StorageService;
+import com.hqy.storage.service.TccStorageService;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -25,6 +26,9 @@ public class StorageRemoteServiceImpl extends AbstractRPCService implements Stor
     @Resource
     private StorageService storageService;
 
+    @Resource
+    private TccStorageService tccStorageService;
+
     @Override
     public String getStorage(Long storageId) {
         if (storageId == null) {
@@ -45,5 +49,10 @@ public class StorageRemoteServiceImpl extends AbstractRPCService implements Stor
             return false;
         }
         return storageService.update(bean);
+    }
+
+    @Override
+    public boolean tccModifyStorage(String beforeStorage, String afterStorage) {
+        return tccStorageService.modifyStorage(JsonUtil.toBean(beforeStorage, Storage.class), JsonUtil.toBean(afterStorage, Storage.class));
     }
 }

@@ -19,4 +19,12 @@ public interface OrderService extends BaseTkService<Order, Long> {
      */
     MessageResponse order(Long storageId, Integer count);
 
+    /**
+     * 下单
+     * @param storageId 商品id
+     * @param count 数目
+     * @return MessageResponse
+     */
+    MessageResponse tccOrder(Long storageId, Integer count);
+
 }
