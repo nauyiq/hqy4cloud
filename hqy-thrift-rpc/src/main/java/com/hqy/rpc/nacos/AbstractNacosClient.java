@@ -247,9 +247,10 @@ public abstract class AbstractNacosClient implements RegistryClient {
             int count = loadNodesAndNotifyNodeObserver(null);
             log.info("@@@ 初始化Nacos节点数据情况, 存活节点个数：{}", count);
             //获取服务列表 并且是生产者节点的列表
-            Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(ActuatorNodeEnum.PROVIDER);
+//            Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(ActuatorNodeEnum.PROVIDER);
             //订阅节点变化监听器
-            subscribe(serviceEnNames.toArray(new String[0]));
+//            subscribe(serviceEnNames.toArray(new String[0]));
+            subscribe(getServiceNameEn());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return false;

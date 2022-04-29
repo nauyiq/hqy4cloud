@@ -283,10 +283,8 @@ public class RPCClient {
                     throw new RpcException(value + "rpc interface not registry, check interface annotation: className:" + interfaceName);
                 } else {
                     //分别获取不同颜色的节点 重新创建target服务的代理handler对象.
-                    List<UsingIpPort> grayUipList =
-                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.GRAY));
-                    List<UsingIpPort> whiteUipList =
-                            ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.WHITE));
+                    List<UsingIpPort> grayUipList = ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.GRAY));
+                    List<UsingIpPort> whiteUipList = ThriftRpcHelper.convertToUip(client.getAllLivingNode(GrayWhitePub.WHITE));
                     handler = new DynamicInvocationHandler<>(serviceClass, grayUipList, whiteUipList, callback);
                     handler.setClient(client);
 

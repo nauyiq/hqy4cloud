@@ -3,8 +3,8 @@ package com.hqy.rpc.nacos;
 import com.hqy.base.common.base.project.MicroServiceManager;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 静态的获取各个节点的RegistryClient
@@ -19,7 +19,7 @@ public class NacosClientManager {
      * key: 服务的注册名 即注册进注册中心的名字
      * value: 对应的注册服务的客户端
      */
-    private static final Map<String, RegistryClient> REGISTRY_MAP = new HashMap<>();
+    private static final Map<String, RegistryClient> REGISTRY_MAP = new ConcurrentHashMap<>();
 
 
     public static Map<String, RegistryClient> getRegistryMap() {
