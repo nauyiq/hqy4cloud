@@ -49,7 +49,7 @@ public class EnvironmentConfig implements InitializingBean {
      */
     public static boolean FLAG_IO_INTENSIVE_RPC_SERVICE = false;
 
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:dev}")
     private String env;
 
     private static final EnvironmentConfig NONE_SPRING_BEAN_INSTANCE = new EnvironmentConfig();
@@ -75,8 +75,6 @@ public class EnvironmentConfig implements InitializingBean {
 
     public String getEnvironment() {
         if (StringUtils.isBlank(env)) {
-            env = ENV_DEV;
-        } else if ("${env}".equalsIgnoreCase(env)) {
             env = ENV_DEV;
         }
         //兼容大小写
@@ -134,7 +132,7 @@ public class EnvironmentConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if("${env}".equalsIgnoreCase(env) || ENV_DEV.equalsIgnoreCase(env) || StringUtils.isEmpty(env)){
+        if(ENV_DEV.equalsIgnoreCase(env) || StringUtils.isEmpty(env)){
             //兼容dev
             env = ENV_DEV;
         }
