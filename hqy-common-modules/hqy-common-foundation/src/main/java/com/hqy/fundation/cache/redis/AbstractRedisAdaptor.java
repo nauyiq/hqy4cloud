@@ -1,7 +1,7 @@
 package com.hqy.fundation.cache.redis;
 
-import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.foundation.cache.redis.RedisService;
+import com.hqy.fundation.cache.exception.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
@@ -52,7 +52,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 return "ok";
             });
         } catch (Exception e) {
-            log.error("@@@ [flushDb] failure: ", e);
+            throw new RedisException("@@@ [flushDb] failure: ", e);
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 redisTemplate.expire(key, time, timeUnit);
             }
         } catch (Exception e) {
-            log.error("@@@ [expire] failure: ", e);
+            throw new RedisException("@@@ [expire] failure: ", e);
         }
     }
 
@@ -77,8 +77,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.getExpire(key, timeUnit);
         } catch (Exception e) {
-            log.error("@@@ [ttl] failure: ", e);
-            return 0L;
+            throw new RedisException("@@@ [ttl] failure: ", e);
         }
     }
 
@@ -87,8 +86,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.hasKey(key);
         } catch (Exception e) {
-            log.error("@@@ [exists] failure: ", e);
-            return false;
+            throw new RedisException("@@@ [exists] failure: ", e);
         }
     }
 
@@ -97,9 +95,8 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.keys(pattern);
         } catch (Exception e) {
-            log.error("@@@ [keys] failure, pattern:{}", pattern, e);
+            throw new RedisException("@@@ [keys] failure, pattern: " + pattern, e);
         }
-        return null;
     }
 
     @Override
@@ -114,8 +111,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 return keys;
             });
         } catch (Exception e) {
-            log.error("@@@ [scan] failure, matchKey:{}", matchKey, e);
-            return null;
+            throw new RedisException("@@@ [scan] failure, matchKey: " + matchKey, e);
         }
     }
 
@@ -131,8 +127,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             }
             return false;
         } catch (Exception e) {
-            log.error("@@@ [del] failure: ", e);
-            return null;
+            throw new RedisException("@@@ [del] failure: ", e);
         }
     }
 
@@ -142,8 +137,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             Object o = redisTemplate.opsForValue().get(key);
             return o == null ? null : (T) o;
         } catch (Exception e) {
-            log.error("@@@ [get] failure: ", e);
-            return null;
+            throw new RedisException("@@@ [get] failure: ", e);
         }
     }
 
@@ -166,8 +160,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 redisTemplate.opsForValue().set(key, value, time, timeUnit);
             }
         }  catch (Exception e) {
-            log.error("@@@ [set] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [set] failure: key: " + key, e);
         }
         return true;
     }
@@ -177,8 +170,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForValue().setIfAbsent(key, value, time, TimeUnit.SECONDS);
         } catch (Exception e) {
-            log.error("@@@ [setEx] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [setEx] failure: key: " + key, e);
         }
     }
 
@@ -187,8 +179,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForValue().setIfPresent(key, value, time, TimeUnit.SECONDS);
         } catch (Exception e) {
-            log.error("@@@ [setEx] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [setEx] failure: key: " + key, e);
         }
     }
 
@@ -197,8 +188,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForValue().increment(key, delta);
         } catch (Exception e) {
-            log.error("@@@ [incr] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [incr] failure: key: " + key, e);
         }
 
     }
@@ -209,8 +199,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
            Object o = redisTemplate.opsForHash().get(key, hashKey);
            return o == null ? null : (T) o;
        } catch (Exception e) {
-           log.error("@@@ [hGet] failure: key:{}", key, e);
-           return null;
+           throw new RedisException("@@@ [hGet] failure: key: " + key, e);
        }
     }
 
@@ -220,8 +209,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             redisTemplate.opsForHash().put(key, hashKey, value);
             return true;
         } catch (Exception e) {
-            log.error("@@@ [hSet] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [hSet] failure: key: " + key, e);
         }
     }
 
@@ -232,8 +220,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             expire(key, time, timeUnit);
             return true;
         } catch (Exception e) {
-            log.error("@@@ [hSet] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [hSet] failure: key: " + key, e);
         }
     }
 
@@ -243,8 +230,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
        try {
            return redisTemplate.opsForHash().multiGet(key, hashKeys);
        } catch (Exception e) {
-           log.error("@@@ [hmGet] failure: key:{}", key, e);
-           return new ArrayList<>();
+           throw new RedisException("@@@ [hmGet] failure: key: " + key, e);
        }
     }
 
@@ -253,8 +239,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             redisTemplate.opsForHash().putAll(key, map);
         } catch (Exception e) {
-            log.error("@@@ [hmSet] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [hmSet] failure: key: " + key, e);
         }
         return true;
     }
@@ -265,8 +250,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             Map map = redisTemplate.opsForHash().entries(key);
             return (Map<K, V>) map;
         } catch (Exception e) {
-            log.error("@@@ [hGetAll] failure: key:{}", key, e);
-            return null;
+            throw new RedisException("@@@ [hGetAll] failure: key: " + key, e);
         }
    }
 
@@ -276,8 +260,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForHash().delete(key, hashKey);
         } catch (Exception e) {
-            log.error("@@@ [hDel] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [hDel] failure: key:{}" + key, e);
         }
     }
 
@@ -286,8 +269,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForHash().hasKey(key, hashKey);
         } catch (Exception e) {
-            log.error("@@@ [hExists] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [hExists] failure: key: " + key, e);
         }
 
     }
@@ -297,8 +279,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForHash().increment(key, hashKey, by);
         } catch (Exception e) {
-            log.error("@@@ [hIncrBy] failure: key:{}", key, e);
-            return 0;
+            throw new RedisException("@@@ [hIncrBy] failure: key: " + key, e);
         }
 
     }
@@ -309,8 +290,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            log.error("@@@ [sAdd] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [sAdd] failure: key: " + key, e);
         }
     }
 
@@ -320,8 +300,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             expire(key, time, timeUnit);
             return count;
         } catch (Exception e) {
-            log.error("@@@ [sAdd] failure, key:{}.", key);
-            return 0L;
+            throw new RedisException("@@@ [sAdd] failure, key: " + key);
         }
     }
 
@@ -331,8 +310,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            log.error("@@@ [sMembers] failure: key:{}", key, e);
-            return null;
+            throw new RedisException("@@@ [sMembers] failure: key: " + key, e);
         }
     }
 
@@ -341,8 +319,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            log.error("@@@ [sMembers] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [sMembers] failure: key: " + key, e);
         }
     }
 
@@ -351,8 +328,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            log.error("@@@ [sCard] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [sCard] failure: key: " + key, e);
         }
     }
 
@@ -361,8 +337,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForSet().remove(key, values);
         } catch (Exception e) {
-            log.error("@@@ [sRem] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [sRem] failure: key: " + key, e);
         }
     }
 
@@ -371,8 +346,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForZSet().add(key, value, score);
         } catch (Exception e) {
-            log.error("@@@ [zADD] failure: key:{}", key, e);
-            return false;
+            throw new RedisException("@@@ [zADD] failure: key: " + key, e);
         }
     }
 
@@ -381,8 +355,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForZSet().remove(key, values);
         } catch (Exception e) {
-            log.error("@@@ [zRem] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [zRem] failure: key: " + key, e);
         }
     }
 
@@ -391,8 +364,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return redisTemplate.opsForZSet().rank(key, value);
         } catch (Exception e) {
-            log.error("@@@ [zRank] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [zRank] failure: key: " + key, e);
         }
     }
 
@@ -406,8 +378,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 return redisTemplate.opsForList().leftPush(key, values);
             }
         } catch (Exception e) {
-            log.error("@@@ [lPush] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [lPush] failure: key: " + key, e);
         }
     }
 
@@ -417,8 +388,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             Object o = redisTemplate.opsForList().leftPop(key);
             return o == null ? null : (T) o;
         } catch (Exception e) {
-            log.error("@@@ [lPop] failure: key:{}", key, e);
-            return null;
+            throw new RedisException("@@@ [lPop] failure: key: " + key, e);
         }
     }
 
@@ -427,8 +397,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         try {
             return (List<T>)redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            log.error("@@@ [lRange] failure: key:{}", key, e);
-            return null;
+            throw new RedisException("@@@ [lRange] failure: key: " + key, e);
         }
     }
 
@@ -441,8 +410,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
                 return redisTemplate.opsForList().rightPush(key, values);
             }
         } catch (Exception e) {
-            log.error("@@@ [rPush] failure: key:{}", key, e);
-            return 0L;
+            throw new RedisException("@@@ [rPush] failure: key: " + key, e);
         }
     }
 
@@ -452,8 +420,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
             Object o = redisTemplate.opsForList().rightPop(key);
             return o == null ? null : (T) o;
         } catch (Exception e) {
-            log.error("@@@ [rPop] failure: key:{}", key, e);
-            return null;
+            throw new RedisException("@@@ [rPop] failure: key: " + key, e);
         }
     }
 

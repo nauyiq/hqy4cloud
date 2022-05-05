@@ -75,7 +75,7 @@
     </dependencies>
 
     <build>
-        <finalName>hqy-common-mq-coll-service</finalName>
+        <finalName>hqy-common-collector-service</finalName>
         <resources>
             <resource>
                 <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
