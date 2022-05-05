@@ -132,7 +132,40 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         String xid = RootContext.getXID();
         log.info("xid :{}", xid);
 
-//        tccOderService.order()
+
+        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
+        String accountJson = accountRemoteService.getAccountById(1L);
+        if (StringUtils.isBlank(accountJson)) {
+            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        }
+        //获取库存
+        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
+        String storageJson = storageRemoteService.getStorage(storageId);
+        if (StringUtils.isBlank(storageJson)) {
+            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        }
+
+        Account account = JsonUtil.toBean(accountJson, Account.class);
+
+        Storage storage = JsonUtil.toBean(storageJson, Storage.class);
+
+        //判断是否能下单
+        BigDecimal residue = account.getResidue();
+        BigDecimal price = storage.getPrice();
+        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
+        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
+            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        }
+
+        //下单
+        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
+        Long orderNum = insertReturnPk(order);
+        if (orderNum == null) {
+            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        }
+
+        order.setId(orderNum);
+        tccOderService.order(storageId, count, totalMoney, account, storage, accountJson, storageJson,  order);
 
         return new MessageResponse(true, CommonResultCode.SUCCESS.message, CommonResultCode.SUCCESS.code);
     }

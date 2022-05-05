@@ -1,7 +1,6 @@
 package com.hqy.order.service.impl;
 
-import com.hqy.base.common.bind.MessageResponse;
-import com.hqy.base.common.result.CommonResultCode;
+import com.alibaba.fastjson.JSONObject;
 import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.entity.Order;
 import com.hqy.order.common.entity.Storage;
@@ -13,13 +12,10 @@ import com.hqy.rpc.RPCClient;
 import com.hqy.util.JsonUtil;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.spring.annotation.GlobalTransactional;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * @author qiyuan.hong
@@ -34,60 +30,31 @@ public class TccOrderServiceImpl implements TccOderService {
 
     @Override
     @GlobalTransactional(rollbackFor = Exception.class)
-    public boolean order(BusinessActionContext context, Long storageId, Integer count) {
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.getAccountById(1L);
-        if (StringUtils.isBlank(accountJson)) {
-            return false;
-        }
-        //获取库存
-        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
-        String storageJson = storageRemoteService.getStorage(storageId);
-        if (StringUtils.isBlank(storageJson)) {
-            return false;
-        }
+    public boolean order( Long storageId, Integer count, BigDecimal totalMoney,Account account, Storage storage,  String accountJson, String storageJson,Order order) {
 
-        Account account = JsonUtil.toBean(accountJson, Account.class);
-
-        Storage storage = JsonUtil.toBean(storageJson, Storage.class);
-
-
-
-        //判断是否能下单
-        BigDecimal residue = account.getResidue();
-        BigDecimal price = storage.getPrice();
-        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
-        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
-            return false;
-        }
-
-        //下单
-        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
-        Long orderNum = orderService.insertReturnPk(order);
-        if (orderNum == null) {
-            return false;
-        }
-        order.setId(orderNum);
 
         //减库存
         storage.setUsed(storage.getUsed() + count);
         storage.setResidue(storage.getResidue() - count);
+
+        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
         boolean modify =  storageRemoteService.tccModifyStorage(storageJson, JsonUtil.toJson(storage));
         if (!modify) {
-            return false;
+            throw new RuntimeException("@@@ 修改账户余额失败");
         }
+
 
         //减账户余额
         account.setUsed(account.getUsed().add(totalMoney));
         account.setResidue(account.getResidue().subtract(totalMoney));
+
+        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
         modify = accountRemoteService.tccModifyAccount(accountJson ,JsonUtil.toJson(account));
         if (!modify) {
             throw new RuntimeException("@@@ 修改账户余额失败");
         }
 
-        Map<String, Object> actionContext = context.getActionContext();
-        actionContext.put("order",  order);
-        context.setActionContext(actionContext);
+
 
 
         return true;
@@ -96,7 +63,8 @@ public class TccOrderServiceImpl implements TccOderService {
     @Override
     public boolean commitTcc(BusinessActionContext context) {
 
-        Order order = (Order)context.getActionContext("order");
+        JSONObject orderString = (JSONObject)context.getActionContext("order");
+        Order order = orderString.toJavaObject(Order.class);
         //修改订单状态
         order.setStatus(true);
         boolean modify = orderService.update(order);
@@ -108,7 +76,8 @@ public class TccOrderServiceImpl implements TccOderService {
 
     @Override
     public boolean cancel(BusinessActionContext context) {
-        Order order = (Order)context.getActionContext("order");
+        JSONObject orderString = (JSONObject)context.getActionContext("order");
+        Order order = orderString.toJavaObject(Order.class);
         if (order != null) {
             return orderService.deleteById(order.getId());
         }

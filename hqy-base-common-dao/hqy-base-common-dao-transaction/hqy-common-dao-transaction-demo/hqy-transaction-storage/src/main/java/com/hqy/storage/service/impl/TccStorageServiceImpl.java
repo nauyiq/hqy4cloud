@@ -1,5 +1,6 @@
 package com.hqy.storage.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hqy.order.common.entity.Storage;
 import com.hqy.storage.service.StorageService;
 import com.hqy.storage.service.TccStorageService;
@@ -38,7 +39,7 @@ public class TccStorageServiceImpl implements TccStorageService {
 
     @Override
     public boolean cancel(BusinessActionContext context) {
-        Storage beforeStorage = (Storage) context.getActionContext("beforeStorage");
-        return storageService.update(beforeStorage);
+        JSONObject beforeStorage = (JSONObject) context.getActionContext("beforeStorage");
+        return storageService.update(beforeStorage.toJavaObject(Storage.class));
     }
 }

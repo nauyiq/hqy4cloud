@@ -1,9 +1,14 @@
 package com.hqy.order.service;
 
+import com.hqy.order.common.entity.Account;
+import com.hqy.order.common.entity.Order;
+import com.hqy.order.common.entity.Storage;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.BusinessActionContextParameter;
 import io.seata.rm.tcc.api.LocalTCC;
 import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
+
+import java.math.BigDecimal;
 
 /**
  * @author qiyuan.hong
@@ -24,8 +29,14 @@ public interface TccOderService {
      * @return
      */
     @TwoPhaseBusinessAction(name = "order", commitMethod = "commitTcc", rollbackMethod = "cancel")
-    boolean order(BusinessActionContext context, @BusinessActionContextParameter(paramName = "storageId") Long storageId,
-                           @BusinessActionContextParameter(paramName = "count") Integer count);
+    boolean order(@BusinessActionContextParameter(paramName = "storageId" ) Long storageId,
+                  @BusinessActionContextParameter(paramName = "count" )Integer count,
+                  @BusinessActionContextParameter(paramName = "totalMoney" )BigDecimal totalMoney,
+                  @BusinessActionContextParameter(paramName = "account" )Account account,
+                  @BusinessActionContextParameter(paramName = "storage" )Storage storage,
+                  @BusinessActionContextParameter(paramName = "accountJson" )String accountJson,
+                  @BusinessActionContextParameter(paramName = "storageJson" )String storageJson,
+                  @BusinessActionContextParameter(paramName = "order" ) Order order);
 
 
     /**

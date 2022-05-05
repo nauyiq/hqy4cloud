@@ -1,5 +1,6 @@
 package com.hqy.account.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hqy.account.service.AccountService;
 import com.hqy.account.service.TccAccountService;
 import com.hqy.order.common.entity.Account;
@@ -41,7 +42,7 @@ public class TccAccountServiceImpl implements TccAccountService {
 
     @Override
     public boolean cancel(BusinessActionContext context) {
-        Account beforeAccount = (Account) context.getActionContext().get("beforeAccount");
-        return service.update(beforeAccount);
+        JSONObject beforeAccount = (JSONObject) context.getActionContext().get("beforeAccount");
+        return service.update( beforeAccount.toJavaObject(Account.class));
     }
 }

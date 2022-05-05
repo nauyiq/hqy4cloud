@@ -49,6 +49,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
 
     @Override
     public boolean tccModifyAccount(String beforeAccount, String afterAccount) {
+        int i = 1 / 0;
         return tccAccountService.modifyAccount(JsonUtil.toBean(beforeAccount, Account.class), JsonUtil.toBean(afterAccount, Account.class));
     }
 }
