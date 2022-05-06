@@ -21,6 +21,7 @@
         <module>hqy-thrift-rpc</module>
         <module>hqy-base-elasticsearch</module>
         <module>hqy-base-security</module>
+        <module>hqy-base-mq</module>
     </modules>
 
     <properties>
