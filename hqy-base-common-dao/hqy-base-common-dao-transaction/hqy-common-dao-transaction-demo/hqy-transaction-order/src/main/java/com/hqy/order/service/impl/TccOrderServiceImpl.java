@@ -79,7 +79,7 @@ public class TccOrderServiceImpl implements TccOderService {
         JSONObject orderString = (JSONObject)context.getActionContext("order");
         Order order = orderString.toJavaObject(Order.class);
         if (order != null) {
-            return orderService.deleteById(order.getId());
+            return orderService.deleteByPrimaryKey(order.getId());
         }
         return true;
     }

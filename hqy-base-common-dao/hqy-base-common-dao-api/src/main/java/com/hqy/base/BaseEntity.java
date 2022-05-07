@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Date;
  * @date 2022/3/1 17:39
  */
 @Data
-public class BaseEntity<PK>{
+public class BaseEntity<PK> implements Serializable {
 
     /**
      * 主键：id

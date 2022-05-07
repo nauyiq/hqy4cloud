@@ -13,6 +13,7 @@
     <artifactId>hqy-base-mq</artifactId>
     <modules>
         <module>hqy-mq-rabbitmq</module>
+        <module>hqy-base-mq-api</module>
     </modules>
 
     <properties>

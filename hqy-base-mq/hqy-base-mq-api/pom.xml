@@ -9,39 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-mq-rabbitmq</artifactId>
+    <artifactId>hqy-base-mq-api</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <packaging>jar</packaging>
-
 
     <dependencies>
-
-        <!-- springboot rabbitmq support. -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
-        <!-- hqy util module. -->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-util</artifactId>
+            <artifactId>hqy-base-common-dao-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-        <!-- mq-api -->
-        <dependency>
-            <groupId>com.hqy.mq</groupId>
-            <artifactId>hqy-base-mq-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
     </dependencies>
-
 
 </project>

@@ -72,6 +72,14 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      * @param pk 主键id
      * @return 是否删除成功
      */
-    boolean deleteById(PK pk);
+    boolean deleteByPrimaryKey(PK pk);
+
+    /**
+     * 根据实体属性作为条件进行删除，查询条件使用等号
+     * @param t t   实体对象
+     * @return      是否删除数据成功
+     */
+    boolean delete(T t);
+
 
 }
