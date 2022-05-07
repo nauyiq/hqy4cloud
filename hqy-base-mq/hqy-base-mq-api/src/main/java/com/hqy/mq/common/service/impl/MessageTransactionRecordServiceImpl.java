@@ -22,14 +22,12 @@ import javax.annotation.Resource;
 @Service
 public abstract class MessageTransactionRecordServiceImpl<T> extends BaseTkServiceImpl<MessageRecord<T>, Long> implements MessageTransactionRecordService<T>  {
 
-    public MessageTransactionRecordServiceImpl(DeliveryMessageService deliveryMessageService) {
-        this.deliveryMessageService = deliveryMessageService;
-    }
-
     @Resource
     private MessageRecordDao<T> messageRecordDao;
 
-    DeliveryMessageService deliveryMessageService;
+
+    public abstract DeliveryMessageService getDeliveryMessageService();
+
 
     @Override
     public BaseDao<MessageRecord<T>, Long> selectDao() {
@@ -52,6 +50,6 @@ public abstract class MessageTransactionRecordServiceImpl<T> extends BaseTkServi
             return delete(new MessageRecord<>(messageId));
         }
         MessageRecord<T> tMessageRecord = queryOne(new MessageRecord<>(messageId));
-        return deliveryMessageService.deliveryMessage(tMessageRecord);
+        return getDeliveryMessageService().deliveryMessage(tMessageRecord);
     }
 }

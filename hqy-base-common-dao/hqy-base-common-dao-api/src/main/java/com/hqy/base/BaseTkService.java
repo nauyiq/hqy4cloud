@@ -34,6 +34,12 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     List<T> queryList(T t);
 
+    /**
+     * 查询所有
+     * @return 查询表中所有的数据.
+     */
+    List<T> queryAll();
+
 
     /**
      * 插入一行数据到数据库

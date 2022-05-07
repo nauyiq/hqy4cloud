@@ -9,4 +9,14 @@ import com.hqy.order.common.entity.Storage;
  * @date 2022/4/8 14:15
  */
 public interface StorageService extends BaseTkService<Storage, Long> {
+
+    /**
+     * CAS
+     * @param productId
+     * @param use
+     * @param residue
+     * @param beforeResidue
+     * @return
+     */
+    boolean casUpdate(Long productId, int use, int residue, Integer beforeResidue);
 }

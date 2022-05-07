@@ -27,4 +27,11 @@ public interface OrderService extends BaseTkService<Order, Long> {
      */
     MessageResponse tccOrder(Long storageId, Integer count);
 
+    /**
+     * 基于mq 本地消息表的 分布式事务下单
+     * @param storageId 库存id
+     * @param count     数目
+     * @return
+     */
+    MessageResponse mqOrderDemo(Long storageId, Integer count);
 }

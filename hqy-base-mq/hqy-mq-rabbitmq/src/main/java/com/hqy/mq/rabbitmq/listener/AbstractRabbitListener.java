@@ -1,6 +1,7 @@
 package com.hqy.mq.rabbitmq.listener;
 
 import com.hqy.base.common.exception.MessageMqException;
+import com.hqy.mq.common.listener.payload.RabbitPayload;
 import com.hqy.mq.rabbitmq.config.RabbitmqAutoConfiguration;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
 import com.hqy.util.AssertUtil;
@@ -50,7 +51,7 @@ public abstract class AbstractRabbitListener<T extends RabbitPayload> {
             //No throw exception, return ack ok.
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (MessageMqException mqException) {
-            String messageId = payload.getMessageId();
+            String messageId = payload.obtainMessageId();
             log.warn("@@@ Consumer message throwException, messageId:{}", messageId);
             int retryTime = 1;
             if (RETRY_MAP.containsKey(messageId)) {

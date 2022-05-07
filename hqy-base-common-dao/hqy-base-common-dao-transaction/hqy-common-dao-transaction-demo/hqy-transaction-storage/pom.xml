@@ -69,6 +69,13 @@
             <artifactId>seata-spring-boot-starter</artifactId>
             <version>1.4.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.hqy.mq</groupId>
+            <artifactId>hqy-mq-rabbitmq</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 

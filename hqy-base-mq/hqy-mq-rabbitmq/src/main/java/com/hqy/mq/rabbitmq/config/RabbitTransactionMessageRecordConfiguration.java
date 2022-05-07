@@ -1,7 +1,10 @@
 package com.hqy.mq.rabbitmq.config;
 
 import com.hqy.mq.common.service.DeliveryMessageService;
+import com.hqy.mq.common.service.impl.MessageTransactionRecordServiceImpl;
 import com.hqy.mq.rabbitmq.RabbitmqProcessor;
+import com.hqy.util.spring.SpringContextHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -18,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @date 2022/5/7 11:26
  */
+@Slf4j
 @Configuration
 @SuppressWarnings("rawtypes")
 @ConditionalOnProperty(prefix = "spring.rabbitmq", name = "transactional", value = "true")
@@ -45,11 +49,23 @@ public class RabbitTransactionMessageRecordConfiguration {
     }
 
     @Bean
+    @SuppressWarnings("unchecked")
     public DeliveryMessageService rabbitDeliveryService() {
         return messageRecord -> {
             try {
-                RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord,
-                        new CorrelationData(messageRecord.getMessageId()));
+                CorrelationData correlationData = new CorrelationData(messageRecord.getMessageId());
+                correlationData.getFuture().addCallback(ackCallBack -> {
+                    if (ackCallBack == null || !ackCallBack.isAck()) {
+                        //重发消息
+                        RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData);
+                    } else {
+                        MessageTransactionRecordServiceImpl service = SpringContextHolder.getBean(MessageTransactionRecordServiceImpl.class);
+                        messageRecord.setStatus(true);
+                        service.update(messageRecord);
+                    }
+                }, failCallback -> RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData));
+
+                RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData);
             } catch (Exception e) {
                 return false;
             }

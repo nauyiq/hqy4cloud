@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author qiyuan.hong
@@ -28,6 +29,15 @@ public class OrderRemoteServiceImpl extends AbstractRPCService implements OrderR
 
     @Resource
     private OrderService orderService;
+
+    @Override
+    public String queryOrderById(Long orderId) {
+        Order order = orderService.queryById(orderId);
+        if (Objects.isNull(order)) {
+            return "";
+        }
+        return JsonUtil.toJson(order);
+    }
 
     @Override
     @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)

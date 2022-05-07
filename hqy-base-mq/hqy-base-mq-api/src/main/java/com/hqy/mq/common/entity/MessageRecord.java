@@ -2,6 +2,7 @@ package com.hqy.mq.common.entity;
 
 import com.google.common.base.Objects;
 import com.hqy.base.BaseEntity;
+import com.hqy.mq.common.listener.payload.RabbitPayload;
 
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/5/7 10:02
  */
-public class MessageRecord<T> extends BaseEntity<Long> {
+public class MessageRecord<T> extends BaseEntity<Long> implements RabbitPayload {
 
     /**
      * 业务id
@@ -93,5 +94,10 @@ public class MessageRecord<T> extends BaseEntity<Long> {
     @Override
     public int hashCode() {
         return Objects.hashCode(super.hashCode(), businessId, messageId, retries, status);
+    }
+
+    @Override
+    public String obtainMessageId() {
+        return messageId;
     }
 }

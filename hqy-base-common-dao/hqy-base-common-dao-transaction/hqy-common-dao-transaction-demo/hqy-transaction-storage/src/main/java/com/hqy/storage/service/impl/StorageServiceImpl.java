@@ -24,4 +24,10 @@ public class StorageServiceImpl extends BaseTkServiceImpl<Storage, Long> impleme
     public BaseDao<Storage, Long> selectDao() {
         return storageDao;
     }
+
+
+    @Override
+    public boolean casUpdate(Long productId, int use, int residue, Integer beforeResidue) {
+        return storageDao.casUpdate(productId, use, residue, beforeResidue) > 0;
+    }
 }

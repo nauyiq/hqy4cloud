@@ -50,6 +50,12 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     }
 
     @Override
+    public List<T> queryAll() {
+        BaseDao<T, PK> dao = checkDao();
+        return dao.selectAll();
+    }
+
+    @Override
     public boolean insert(T t) {
         AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
         BaseDao<T, PK> dao = checkDao();

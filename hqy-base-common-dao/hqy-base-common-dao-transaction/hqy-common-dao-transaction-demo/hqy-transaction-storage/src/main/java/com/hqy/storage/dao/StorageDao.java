@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface StorageDao extends BaseDao<Storage, Long> {
+
+    long casUpdate(Long productId, int use, int residue, Integer beforeResidue);
 }

@@ -18,6 +18,14 @@ public interface OrderRemoteService extends RPCService {
 
 
     /**
+     * 根据订单id 获取订单详情
+     * @param orderId 订单id
+     * @return
+     */
+    @ThriftMethod
+    String queryOrderById(@ThriftField(1) Long orderId);
+
+    /**
      * 下单
      * @param productId 商品id
      * @param count 数量

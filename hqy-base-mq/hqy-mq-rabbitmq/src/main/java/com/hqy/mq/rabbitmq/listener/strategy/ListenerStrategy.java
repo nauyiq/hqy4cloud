@@ -1,6 +1,6 @@
 package com.hqy.mq.rabbitmq.listener.strategy;
 
-import com.hqy.mq.rabbitmq.listener.RabbitPayload;
+import com.hqy.mq.common.listener.payload.RabbitPayload;
 
 /**
  * Listen for rabbitmq strategy.
