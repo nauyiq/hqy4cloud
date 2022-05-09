@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.hqy.base.BaseEntity;
 import com.hqy.mq.common.listener.payload.RabbitPayload;
 
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/5/7 10:02
  */
+@Table(name = "t_message_record")
 public class MessageRecord<T> extends BaseEntity<Long> implements RabbitPayload {
 
     /**

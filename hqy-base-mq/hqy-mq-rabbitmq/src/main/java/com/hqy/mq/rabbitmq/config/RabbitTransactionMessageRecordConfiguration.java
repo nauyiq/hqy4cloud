@@ -5,10 +5,7 @@ import com.hqy.mq.common.service.impl.MessageTransactionRecordServiceImpl;
 import com.hqy.mq.rabbitmq.RabbitmqProcessor;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,11 +28,14 @@ public class RabbitTransactionMessageRecordConfiguration {
 
     public static final String QUEUE = "global-transaction-queue";
 
-    public static final String ROOTING_KEY = "global-transaction-key";
+
+
+
+
 
     @Bean
-    DirectExchange transactionalDirectExchange() {
-        return new DirectExchange(EXCHANGE, true, false);
+    FanoutExchange transactionalExchange() {
+        return new FanoutExchange(EXCHANGE, true, false);
     }
 
     @Bean
@@ -44,9 +44,13 @@ public class RabbitTransactionMessageRecordConfiguration {
     }
 
     @Bean
-    Binding transactionalBinding(DirectExchange transactionalDirectExchange, Queue transactionalQueue) {
-        return BindingBuilder.bind(transactionalQueue).to(transactionalDirectExchange).with(ROOTING_KEY);
+    Binding transactionalBinding(FanoutExchange transactionalExchange, Queue transactionalQueue) {
+        return BindingBuilder.bind(transactionalQueue).to(transactionalExchange);
     }
+
+
+
+
 
     @Bean
     @SuppressWarnings("unchecked")
@@ -57,15 +61,15 @@ public class RabbitTransactionMessageRecordConfiguration {
                 correlationData.getFuture().addCallback(ackCallBack -> {
                     if (ackCallBack == null || !ackCallBack.isAck()) {
                         //重发消息
-                        RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData);
+                        RabbitmqProcessor.getInstance().sendMessage(EXCHANGE,  "", messageRecord, correlationData);
                     } else {
                         MessageTransactionRecordServiceImpl service = SpringContextHolder.getBean(MessageTransactionRecordServiceImpl.class);
                         messageRecord.setStatus(true);
                         service.update(messageRecord);
                     }
-                }, failCallback -> RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData));
+                }, failCallback -> RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, "", messageRecord, correlationData));
 
-                RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, ROOTING_KEY, messageRecord, correlationData);
+                RabbitmqProcessor.getInstance().sendMessage(EXCHANGE, "", messageRecord, correlationData);
             } catch (Exception e) {
                 return false;
             }

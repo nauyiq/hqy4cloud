@@ -3,5 +3,9 @@
 
 <mapper namespace="com.hqy.storage.dao.StorageDao">
 
-    
+
+    <update id="casUpdate" >
+        UPDATE used = #{use}, residue = #{residue} WHERE id = #{productId} AND residue = #{beforeResidue}
+    </update>
+
 </mapper>

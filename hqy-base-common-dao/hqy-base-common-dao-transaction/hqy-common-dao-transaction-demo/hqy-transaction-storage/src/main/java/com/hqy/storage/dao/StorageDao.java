@@ -2,6 +2,7 @@ package com.hqy.storage.dao;
 
 import com.hqy.base.BaseDao;
 import com.hqy.order.common.entity.Storage;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,5 +13,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StorageDao extends BaseDao<Storage, Long> {
 
-    long casUpdate(Long productId, int use, int residue, Integer beforeResidue);
+    long casUpdate(@Param("productId")Long productId, @Param("user") int use,  @Param("residue")int residue, @Param("beforeResidue") Integer beforeResidue);
 }

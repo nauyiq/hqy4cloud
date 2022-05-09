@@ -1,15 +1,14 @@
-package com.hqy.storage.listener;
+package com.hqy.account.listener;
 
-import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.account.service.AccountService;
 import com.hqy.mq.common.entity.MessageRecord;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
+import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.Storage;
 import com.hqy.order.common.service.OrderRemoteService;
 import com.hqy.rpc.RPCClient;
-import com.hqy.storage.service.StorageService;
 import com.hqy.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,9 +30,8 @@ import java.util.concurrent.TimeUnit;
 @RabbitListener(queues = RabbitTransactionMessageRecordConfiguration.QUEUE)
 public class ReceiverOrderListener extends AbstractRabbitListener<MessageRecord<Long>> {
 
-
     @Resource
-    private StorageService storageService;
+    private AccountService accountService;
 
     @Override
     public ListenerStrategy<MessageRecord<Long>> strategy() {
@@ -54,32 +52,25 @@ public class ReceiverOrderListener extends AbstractRabbitListener<MessageRecord<
                     Order order = JsonUtil.toBean(orderJson, Order.class);
                     Long productId = order.getProductId();
                     Integer count = order.getCount();
-                    //获取当时下单查询到的库存
-                    Storage storage = LettuceRedis.getInstance().get(messageId);
-                    if (Objects.isNull(storage)) {
-                        storage = storageService.queryById(productId);
-                    }
 
-                    if (Objects.isNull(storage)) {
-                        //TODO 查询不到库存...发一个回滚消息...
-                        return;
-                    }
 
-                    //乐观锁 CAS 更新库存
-                    boolean casUpdate = storageService.casUpdate(productId, storage.getUsed() + count, storage.getResidue() - count, storage.getResidue());
+                    Account account = accountService.queryById(1L);
+                    //TODO 减账户余额 需要重新判断条件.
+
+                    //TODO 减账户余额 需要重新判断条件.
+
+                    //减账户余额
+                    boolean update = accountService.update(account);
 
                     int retryTime = 1;
-                    if (!casUpdate) {
-                        while (!casUpdate) {
+                    if (!update) {
+                        while (!update) {
                             if (retryTime > 10) {
                                 break;
                             }
                             try {
-                                //如果更新失败 有可能是发生了并发问题 即库存数据变更了 重新读取库存
-                                Storage queryStorage = storageService.queryById(productId);
-                                //FIXME 正常来说应该重新判断下单条件...
-                                casUpdate = storageService.casUpdate
-                                        (productId, queryStorage.getUsed() + count, queryStorage.getResidue() - count, queryStorage.getResidue());
+                                //FIXME 正常来说应该重新判断账户条件...
+                                update = accountService.update(account);
                                 TimeUnit.MILLISECONDS.sleep(30);
                             } catch (Exception e) {
                                 log.error(e.getMessage(), e);
@@ -88,15 +79,13 @@ public class ReceiverOrderListener extends AbstractRabbitListener<MessageRecord<
                         }
                     }
 
-                    if (!casUpdate)  {
-                        //TODO 更新库存失败... 发一个回滚消息
+                    if (update)  {
+                        //TODO 发消息给order服务 说明扣款成功
                     } else {
-                        //TODO 发消息给order服务 说明当前订单已经扣完库存了
+                        //TODO 更新余额失败... 发一个回滚消息
                     }
                 }
             }
-
-
 
             @Override
             public void compensate(MessageRecord<Long> messageRecord) throws RuntimeException {
