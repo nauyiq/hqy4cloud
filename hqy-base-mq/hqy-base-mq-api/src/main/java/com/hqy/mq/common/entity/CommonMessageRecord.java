@@ -2,9 +2,7 @@ package com.hqy.mq.common.entity;
 
 import com.google.common.base.Objects;
 import com.hqy.base.BaseEntity;
-import com.hqy.mq.common.listener.payload.RabbitPayload;
 
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -14,13 +12,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/5/7 10:02
  */
-@Table(name = "t_message_record")
-public class MessageRecord<T> extends BaseEntity<Long> implements RabbitPayload {
-
-    /**
-     * 业务id
-     */
-    private T businessId;
+public abstract class CommonMessageRecord extends BaseEntity<Long>  {
 
     /**
      * 消息id
@@ -37,28 +29,21 @@ public class MessageRecord<T> extends BaseEntity<Long> implements RabbitPayload 
      */
     private Boolean status;
 
-    public MessageRecord() {
+    public CommonMessageRecord() {
     }
 
-    public MessageRecord(String messageId) {
+    public CommonMessageRecord(String messageId) {
         this.messageId = messageId;
     }
 
-    public MessageRecord(T businessId, String messageId, Integer retries, Boolean status) {
+    public CommonMessageRecord(String messageId, Integer retries, Boolean status) {
         super(new Date());
-        this.businessId = businessId;
         this.messageId = messageId;
         this.retries = retries;
         this.status = status;
     }
 
-    public T getBusinessId() {
-        return businessId;
-    }
 
-    public void setBusinessId(T businessId) {
-        this.businessId = businessId;
-    }
 
     public String getMessageId() {
         return messageId;
@@ -89,17 +74,13 @@ public class MessageRecord<T> extends BaseEntity<Long> implements RabbitPayload 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MessageRecord<?> that = (MessageRecord<?>) o;
-        return Objects.equal(businessId, that.businessId) && Objects.equal(messageId, that.messageId) && Objects.equal(retries, that.retries) && Objects.equal(status, that.status);
+        CommonMessageRecord that = (CommonMessageRecord) o;
+        return Objects.equal(messageId, that.messageId) && Objects.equal(retries, that.retries) && Objects.equal(status, that.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), businessId, messageId, retries, status);
+        return Objects.hashCode(super.hashCode(), messageId, retries, status);
     }
 
-    @Override
-    public String obtainMessageId() {
-        return messageId;
-    }
 }

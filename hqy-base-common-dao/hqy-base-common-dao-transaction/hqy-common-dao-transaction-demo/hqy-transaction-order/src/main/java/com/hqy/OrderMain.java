@@ -18,7 +18,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @date 2022/4/8 10:50
  */
 @EnableDiscoveryClient
-@MapperScan(basePackages = "com.hqy.order.dao")
+@MapperScan(basePackages = {"com.hqy.*.dao", "com.hqy.mq.common.mapper"})
 @SpringBootApplication(exclude = { DruidDataSourceAutoConfigure.class, DataSourceAutoConfiguration.class })
 public class OrderMain {
 
@@ -36,7 +36,6 @@ public class OrderMain {
          */
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(OrderMain.class, args);
-
 
         ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
         log.info("############################## ############### ############### ###############");

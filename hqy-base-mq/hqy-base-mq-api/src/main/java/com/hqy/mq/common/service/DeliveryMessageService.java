@@ -1,6 +1,6 @@
 package com.hqy.mq.common.service;
 
-import com.hqy.mq.common.entity.MessageRecord;
+import com.hqy.mq.common.entity.CommonMessageRecord;
 
 /**
  * @author qiyuan.hong
@@ -12,9 +12,9 @@ public interface DeliveryMessageService {
 
     /**
      * 投递消息到中间件.
-     * @param messageRecord 本地消息记录表 entity
+     * @param commonMessageRecord 本地消息记录表 entity
      * @return              是否投递成功.
      */
-    boolean deliveryMessage(MessageRecord messageRecord);
+    boolean deliveryMessage(CommonMessageRecord commonMessageRecord);
 
 }

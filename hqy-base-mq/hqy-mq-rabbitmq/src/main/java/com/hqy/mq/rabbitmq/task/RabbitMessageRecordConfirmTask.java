@@ -1,7 +1,7 @@
 package com.hqy.mq.rabbitmq.task;
 
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.mq.common.entity.MessageRecord;
+import com.hqy.mq.common.entity.CommonMessageRecord;
 import com.hqy.mq.common.service.MessageTransactionRecordService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -35,19 +35,19 @@ public class RabbitMessageRecordConfirmTask {
      */
     @Scheduled(cron = "0 0/2 * * * ?")
     public void confirm() {
-        List<MessageRecord> messageRecords = messageTransactionRecordService.queryAll();
-        if (CollectionUtils.isEmpty(messageRecords)) {
+        List<CommonMessageRecord> commonMessageRecords = messageTransactionRecordService.queryAllMessage();
+        if (CollectionUtils.isEmpty(commonMessageRecords)) {
             return;
         }
 
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("[RabbitMessageRecordConfirmTask] scan message table list begin. count:{}", messageRecords.size());
+            log.info("[RabbitMessageRecordConfirmTask] scan message table list begin. count:{}", commonMessageRecords.size());
         }
 
-        for (MessageRecord messageRecord : messageRecords) {
-            if (!messageRecord.getStatus()) {
+        for (CommonMessageRecord commonMessageRecord : commonMessageRecords) {
+            if (!commonMessageRecord.getStatus()) {
                 //解决存放在本地事务表中 但是状态是false的消息 说明当前消息需要发消息
-                messageTransactionRecordService.commit(messageRecord.getMessageId(), true);
+                messageTransactionRecordService.commit(commonMessageRecord.getMessageId(), true);
             }
         }
     }

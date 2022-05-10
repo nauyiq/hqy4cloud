@@ -1,11 +1,12 @@
 package com.hqy.storage.listener;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
-import com.hqy.mq.common.entity.MessageRecord;
+import com.hqy.mq.common.entity.CommonMessageRecord;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
 import com.hqy.order.common.entity.Order;
+import com.hqy.order.common.entity.OrderMessageRecord;
 import com.hqy.order.common.entity.Storage;
 import com.hqy.order.common.service.OrderRemoteService;
 import com.hqy.rpc.RPCClient;
@@ -29,22 +30,22 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RabbitListener(queues = RabbitTransactionMessageRecordConfiguration.QUEUE)
-public class ReceiverOrderListener extends AbstractRabbitListener<MessageRecord<Long>> {
+public class ReceiverOrderListener extends AbstractRabbitListener<OrderMessageRecord> {
 
 
     @Resource
     private StorageService storageService;
 
     @Override
-    public ListenerStrategy<MessageRecord<Long>> strategy() {
+    public ListenerStrategy<OrderMessageRecord> strategy() {
 
-        return new ListenerStrategy<MessageRecord<Long>>() {
+        return new ListenerStrategy<OrderMessageRecord>() {
 
             @Override
-            public void action(MessageRecord<Long> messageRecord) throws RuntimeException {
-                checkParameter(messageRecord);
-                String messageId = messageRecord.getMessageId();
-                Long orderId = messageRecord.getBusinessId();
+            public void action(OrderMessageRecord commonMessageRecord) throws RuntimeException {
+                checkParameter(commonMessageRecord);
+                String messageId = commonMessageRecord.getMessageId();
+                Long orderId = commonMessageRecord.getBusinessId();
                 //根据订单id 获取订单数据
                 OrderRemoteService orderRemoteService = RPCClient.getRemoteService(OrderRemoteService.class);
                 String orderJson = orderRemoteService.queryOrderById(orderId);
@@ -99,16 +100,16 @@ public class ReceiverOrderListener extends AbstractRabbitListener<MessageRecord<
 
 
             @Override
-            public void compensate(MessageRecord<Long> messageRecord) throws RuntimeException {
+            public void compensate(OrderMessageRecord commonMessageRecord) throws RuntimeException {
                 //TODO 更新库存失败... 发一个回滚消息
             }
         };
     }
 
 
-    private void checkParameter(MessageRecord<Long> messageRecord) {
-        if (StringUtils.isEmpty( messageRecord.getMessageId()) || Objects.isNull(messageRecord.getBusinessId())) {
-            log.error("[ReceiverOrderListener] invalid parameter, payload:{}", JsonUtil.toJson(messageRecord));
+    private void checkParameter(OrderMessageRecord commonMessageRecord) {
+        if (StringUtils.isEmpty( commonMessageRecord.getMessageId()) || Objects.isNull(commonMessageRecord.getBusinessId())) {
+            log.error("[ReceiverOrderListener] invalid parameter, payload:{}", JsonUtil.toJson(commonMessageRecord));
             throw new IllegalArgumentException("[ReceiverOrderListener] invalid parameter.");
         }
     }
