@@ -72,3 +72,34 @@ AT模式需要保证每个业务库，都有一张`undo_log`表，保存着业�
 SELECT FOR UPDATE 语句的执行会申请 **全局锁** ，如果 **全局锁** 被其他事务持有，则释放本地锁（回滚 SELECT FOR UPDATE 语句的本地执行）并重试。这个过程中，查询是被 block 住的，直到 **全局锁** 拿到，即读取的相关数据是 **已提交** 的，才返回。
 
 出于总体性能上的考虑，Seata 目前的方案并没有对所有 SELECT 语句都进行代理，仅针对 FOR UPDATE 的 SELECT 语句。
+
+**for update**仅适用于InnoDB，且必须在事务块(BEGIN/COMMIT)中才能生效。在进行事务操作时，通过“for update”语句，MySQL会对查询结果集中每行数据都添加排他锁，其他线程对该记录的更新与删除操作都会阻塞。排他锁包含行锁、表锁。
+
+
+
+### TCC 模式
+
+TCC模式也是二阶段提交的模型
+
+- 一阶段 prepare 行为
+- 二阶段 commit 或 rollback 行为
+
+并且TCC不依赖底层数据资源的支持 但是对代码的侵入严重
+
+- 一阶段 prepare 行为：调用 **自定义** 的 prepare 逻辑。
+- 二阶段 commit 行为：调用 **自定义** 的 commit 逻辑。
+- 二阶段 rollback 行为：调用 **自定义** 的 rollback 逻辑。
+
+所谓 TCC 模式，是指支持把 **自定义** 的分支事务纳入到全局事务的管理中。
+
+
+
+### #Seata服务端启动命令
+
+seata-server.sh -h 127.0.0.1 -p 8091 -m db -n 1 -e test
+
+    -h: 注册到注册中心的ip
+    -p: Server rpc 监听端口
+    -m: 全局事务会话信息存储模式，file、db、redis，优先读取启动参数 (Seata-Server 1.3及以上版本支持redis)
+    -n: Server node，多个Server时，需区分各自节点，用于生成不同区间的transactionId，以免冲突
+    -e: 多环境配置参考 http://seata.io/en-us/docs/ops/multi-configuration-isolation.html
