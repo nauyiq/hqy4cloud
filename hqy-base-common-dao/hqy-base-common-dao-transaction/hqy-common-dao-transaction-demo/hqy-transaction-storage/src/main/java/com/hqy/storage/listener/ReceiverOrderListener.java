@@ -1,7 +1,6 @@
 package com.hqy.storage.listener;
 
 import com.hqy.fundation.cache.redis.LettuceRedis;
-import com.hqy.mq.common.entity.CommonMessageRecord;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;

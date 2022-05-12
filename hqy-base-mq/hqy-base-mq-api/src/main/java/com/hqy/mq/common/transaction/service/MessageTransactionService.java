@@ -1,6 +1,7 @@
-package com.hqy.mq.common.service;
+package com.hqy.mq.common.transaction.service;
 
-import com.hqy.mq.common.entity.CommonMessageRecord;
+import com.hqy.base.BaseTkService;
+import com.hqy.mq.common.transaction.entity.CommonMessageRecord;
 
 import java.util.List;
 
@@ -10,15 +11,14 @@ import java.util.List;
  * @version 1.0
  * @date 2022/5/7 9:32
  */
-public interface MessageTransactionRecordService {
-
+public interface MessageTransactionService<T extends CommonMessageRecord> extends BaseTkService<T, Long> {
 
     /**
      * 预提交.
      * @param  payload 消息表实体.
      * @return         是否入库成功.
      */
-    boolean preCommit(CommonMessageRecord payload);
+    boolean preCommit(T payload);
 
     /**
      * 提交本地消息，即把本地消息投递到消息中间件.
@@ -28,10 +28,6 @@ public interface MessageTransactionRecordService {
      */
     boolean commit(String messageId, boolean commit);
 
-
-    List<CommonMessageRecord> queryAllMessage();
-
-    boolean updateMessage(CommonMessageRecord messageRecord);
 
 
 

@@ -1,4 +1,4 @@
-package com.hqy.mq.common.entity;
+package com.hqy.mq.common.transaction.entity;
 
 import com.google.common.base.Objects;
 import com.hqy.base.BaseEntity;
@@ -7,7 +7,6 @@ import java.util.Date;
 
 /**
  * 无事务的mq + 本地消息表
- * 本地消息表entity.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/5/7 10:02

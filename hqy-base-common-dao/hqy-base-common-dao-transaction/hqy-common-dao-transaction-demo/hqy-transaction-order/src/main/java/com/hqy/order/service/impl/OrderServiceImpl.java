@@ -8,7 +8,6 @@ import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.fundation.cache.redis.LettuceRedis;
-import com.hqy.mq.common.service.MessageTransactionRecordService;
 import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.entity.Order;
 import com.hqy.order.common.entity.OrderMessageRecord;
@@ -21,6 +20,7 @@ import com.hqy.order.service.TccOderService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.identity.ProjectSnowflakeIdWorker;
+import com.hqy.util.spring.SpringContextHolder;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
@@ -47,17 +47,10 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
     @Resource
     private TccOderService tccOderService;
 
-    @Resource
-    private MessageTransactionRecordService messageTransactionRecordService;
-
     @Override
     public BaseDao<Order, Long> selectDao() {
         return orderDao;
     }
-
-
-
-
 
     @Override
     @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
@@ -181,14 +174,10 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MessageResponse mqOrderDemo(Long storageId, Integer count) {
-        //获取账号信息.
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.getAccountById(1L);
-        Account account = JsonUtil.toBean(accountJson, Account.class);
+        /*//获取账号信息.
+        Account account = getAccount();
         //获取库存信息
-        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
-        String storageJson = storageRemoteService.getStorage(storageId);
-        Storage storage = JsonUtil.toBean(storageJson, Storage.class);
+        Storage storage = getStorage(storageId);
         //判断是否可以下单
         BigDecimal residue = account.getResidue();
         BigDecimal price = storage.getPrice();
@@ -220,7 +209,65 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         if (!commit) {
             //直接抛出异常. 回滚事务
             throw new MessageMqException("commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
+        }*/
+        return new MessageResponse(true, CommonResultCode.SUCCESS.message);
+    }
+
+    private Storage getStorage(Long storageId) {
+        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
+        String storageJson = storageRemoteService.getStorage(storageId);
+        return JsonUtil.toBean(storageJson, Storage.class);
+    }
+
+    private Account getAccount() {
+        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
+        String accountJson = accountRemoteService.getAccountById(1L);
+        return JsonUtil.toBean(accountJson, Account.class);
+    }
+
+
+    @Override
+    public MessageResponse kafkaOrder(Long storageId, Integer count) {
+        //获取账号信息.
+        Account account = getAccount();
+        //获取库存信息
+        Storage storage = getStorage(storageId);
+        //判断是否可以下单
+        BigDecimal residue = account.getResidue();
+        BigDecimal price = storage.getPrice();
+        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
+        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
+            return new MessageResponse(false, "Insufficient account balance.");
+        }
+        //下单
+        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
+        Long orderNum = insertReturnPk(order);
+        if (orderNum == null) {
+            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        }
+        //自定义消息id
+        String messageId = ProjectSnowflakeIdWorker.getInstance().nextId() + "";
+
+        KafkaMessageTransactionRecordServiceImpl kafkaMessageTransactionRecordService
+                = SpringContextHolder.getBean(KafkaMessageTransactionRecordServiceImpl.class);
+
+        //本地消息表存一条消息. 由于和下单是同个库 因此可以被同一个事务控制.
+        OrderMessageRecord orderMessageRecord = new OrderMessageRecord(orderNum, messageId, 0, false);
+        boolean preCommit = kafkaMessageTransactionRecordService.preCommit(orderMessageRecord);
+        if (!preCommit) {
+            //直接抛出异常. 回滚事务
+            throw new MessageMqException("preCommit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
+        }
+        //将消息关联的库存信息放到redis
+        LettuceRedis.getInstance().set(messageId, storage, BaseMathConstants.ONE_HOUR_4MILLISECONDS);
+        //投递消息到mq
+        boolean commit = kafkaMessageTransactionRecordService.commit(messageId, true);
+
+        if (!commit) {
+            //直接抛出异常. 回滚事务
+            throw new MessageMqException("commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
         }
         return new MessageResponse(true, CommonResultCode.SUCCESS.message);
+
     }
 }

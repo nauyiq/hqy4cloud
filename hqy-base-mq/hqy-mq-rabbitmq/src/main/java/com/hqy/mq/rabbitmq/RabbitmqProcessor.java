@@ -35,7 +35,7 @@ public class RabbitmqProcessor {
     }
 
 
-    private void sendMessage(String exchange, String routingKey, Object data) {
+    public void sendMessage(String exchange, String routingKey, Object data) {
         sendMessage(exchange, routingKey, data, null);
     }
 

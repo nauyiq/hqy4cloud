@@ -1,7 +1,6 @@
 package com.hqy.mq.rabbitmq.config;
 
-import com.hqy.mq.common.service.DeliveryMessageService;
-import com.hqy.mq.common.service.MessageTransactionRecordService;
+import com.hqy.mq.common.transaction.stategy.DeliveryMessageStrategy;
 import com.hqy.mq.rabbitmq.RabbitmqProcessor;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -19,22 +18,22 @@ public class DeliveryMessageServiceConfig {
 
     @Bean
     @SuppressWarnings("unchecked")
-    public DeliveryMessageService rabbitDeliveryService() {
+    public DeliveryMessageStrategy rabbitDeliveryService() {
         return messageRecord -> {
             try {
-                CorrelationData correlationData = new CorrelationData(messageRecord.getMessageId());
-                correlationData.getFuture().addCallback(ackCallBack -> {
-                    if (ackCallBack == null || !ackCallBack.isAck()) {
-                        //重发消息
-                        RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE,  "", messageRecord, correlationData);
-                    } else {
-                        MessageTransactionRecordService service = SpringContextHolder.getBean(MessageTransactionRecordService.class);
-                        messageRecord.setStatus(true);
-                        service.updateMessage(messageRecord);
-                    }
-                }, failCallback -> RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE, "", messageRecord, correlationData));
-
-                RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE, "", messageRecord, correlationData);
+//                CorrelationData correlationData = new CorrelationData(messageRecord.getMessageId());
+//                correlationData.getFuture().addCallback(ackCallBack -> {
+//                    if (ackCallBack == null || !ackCallBack.isAck()) {
+//                        //重发消息
+//                        RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE,  "", messageRecord, correlationData);
+//                    } else {
+//                        MessageTransactionRecordService service = SpringContextHolder.getBean(MessageTransactionRecordService.class);
+//                        messageRecord.setStatus(true);
+//                        service.updateMessage(messageRecord);
+//                    }
+//                }, failCallback -> RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE, "", messageRecord, correlationData));
+//
+//                RabbitmqProcessor.getInstance().sendMessage(RabbitTransactionMessageRecordConfiguration.EXCHANGE, "", messageRecord, correlationData);
             } catch (Exception e) {
                 return false;
             }

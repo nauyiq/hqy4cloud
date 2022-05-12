@@ -1,7 +1,7 @@
 package com.hqy.order.common.entity;
 
-import com.hqy.mq.common.entity.CommonMessageRecord;
-import com.hqy.mq.common.listener.payload.RabbitPayload;
+import com.hqy.mq.common.transaction.entity.CommonMessageRecord;
+import com.hqy.mq.common.listener.payload.MessagePayload;
 
 import javax.persistence.Table;
 
@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * @date 2022/5/10 17:01
  */
 @Table(name = "t_message_record")
-public class OrderMessageRecord extends CommonMessageRecord implements RabbitPayload {
+public class OrderMessageRecord extends CommonMessageRecord implements MessagePayload {
 
     private Long businessId;
 

@@ -34,4 +34,12 @@ public interface OrderService extends BaseTkService<Order, Long> {
      * @return
      */
     MessageResponse mqOrderDemo(Long storageId, Integer count);
+
+    /**
+     * 基于kafka 实现本地消息表的 分布式事务下单demo
+     * @param storageId 库存id
+     * @param count     数目
+     * @return messageResponse
+     */
+    MessageResponse kafkaOrder(Long storageId, Integer count);
 }

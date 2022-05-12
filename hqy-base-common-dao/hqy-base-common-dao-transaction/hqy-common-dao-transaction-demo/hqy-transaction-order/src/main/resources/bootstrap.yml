@@ -39,10 +39,12 @@ spring:
     username: root
     password: hongqy@2021
   kafka:
+    #configuration注入条件
+    transactional: true
     bootstrap-servers:
       - 47.106.168.100:9092
       - 47.106.168.100:9093
-      - 106.55.173.37:9090
+      - 106.55.173.37:9092
     producer:
       retries: 0
       acks: 1

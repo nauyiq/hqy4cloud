@@ -45,4 +45,17 @@ public class OrderController {
     }
 
 
+    @PostMapping("/mq/kafka/order")
+    public MessageResponse kafkaOrder(Long storageId, Integer count) {
+        if (storageId == null) {
+            storageId = 1L;
+        }
+        if (count == null || count <= 0) {
+            count = 1;
+        }
+        return orderService.kafkaOrder(storageId, count);
+    }
+
+
+
 }
