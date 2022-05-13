@@ -18,6 +18,8 @@ public class KafkaTransactionalInitialConfiguration {
 
     public static final String TRANSACTIONAL_TOPIC = "global-transaction-topic";
 
+    public static final String TRANSACTIONAL_STORAGE_TOPIC = "global-transaction-storage";
+
     /**
      * 本地消息表 事务topic
      * 分区数   partition: 4
@@ -26,7 +28,12 @@ public class KafkaTransactionalInitialConfiguration {
      */
     @Bean
     public NewTopic transactionalTopic() {
-        return new NewTopic(TRANSACTIONAL_TOPIC, 4, (short)3);
+        return new NewTopic(TRANSACTIONAL_TOPIC, 4, (short) 3);
+    }
+
+    @Bean
+    public NewTopic transactionalStorageTopic() {
+        return new NewTopic(TRANSACTIONAL_STORAGE_TOPIC, 4, (short) 3);
     }
 
 

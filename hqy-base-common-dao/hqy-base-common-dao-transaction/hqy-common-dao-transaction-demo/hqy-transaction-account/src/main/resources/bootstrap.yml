@@ -20,6 +20,10 @@ spring:
           data-id: redis-config.yaml
           group: DEV_GROUP
           refresh: true
+        extension-configs[1]:
+          data-id: rabbitmq-config.yaml
+          group: DEV_GROUP
+          refresh: true
       discovery:
         ephemeral: true # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848

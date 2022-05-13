@@ -54,6 +54,6 @@ public class KafkaDeliveryMessageStrategy extends AbstractKafkaDeliveryMessageAd
         });
 
 
-        return false;
+        return true;
     }
 }

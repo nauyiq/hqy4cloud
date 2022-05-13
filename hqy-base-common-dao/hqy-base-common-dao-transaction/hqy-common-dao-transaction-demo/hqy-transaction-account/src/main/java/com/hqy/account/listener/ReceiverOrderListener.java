@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/5/7 16:58
  */
 @Slf4j
-@Component
+//@Component
 @RabbitListener(queues = RabbitTransactionMessageRecordConfiguration.QUEUE)
 public class ReceiverOrderListener extends AbstractRabbitListener<OrderMessageRecord> {
 

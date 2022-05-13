@@ -19,6 +19,14 @@ spring:
           data-id: redis-config.yaml
           group: DEV_GROUP
           refresh: true
+        extension-configs[1]:
+          data-id: rabbitmq-config.yaml
+          group: DEV_GROUP
+          refresh: true
+        extension-configs[2]:
+          data-id: seata-config.yaml
+          group: DEV_GROUP
+          refresh: true
       discovery:
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
@@ -29,6 +37,46 @@ spring:
     url: jdbc:mysql://120.76.65.160:3306/transaction_storage?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: hongqy@2021
+
+  kafka:
+    #configuration注入条件
+    transactional: true
+    bootstrap-servers:
+      - 47.106.168.100:9092
+      - 47.106.168.100:9093
+      - 106.55.173.37:9092
+    producer:
+      retries: 0
+      acks: 1
+      batch-size: 16384
+      properties:
+        linger:
+          ms: 0 # 提交延时
+      # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka
+      # linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
+      buffer-memory: 33554432 # 生产端缓冲区大小
+      # Kafka提供的序列化和反序列化类
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      properties:
+        group:
+          id: defaultConsumerGroup  # 默认的消费组ID
+        session.timeout.ms: 120000 # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        request.timeout.ms: 120000 # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+      enable-auto-commit: true # 是否自动提交offset
+      auto-commit-interval: 1000 # 提交offset延时(接收到消息后多久提交offset)
+      # 当kafka中没有初始offset或offset超出范围时将自动重置offset
+      # earliest:重置为分区中最小的offset;
+      # latest:重置为分区中最新的offset(消费分区中新产生的数据);
+      # none:只要有一个分区不存在已提交的offset,就抛出异常;
+      auto-offset-reset: latest
+      # Kafka提供的序列化和反序列化类
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # 消费端监听的topic不存在时，项目启动会报错(关掉)
+    listener:
+      missing-topics-fatal: false
 
 mapper:
   mappers: com.hqy.base.BaseDao
@@ -41,23 +89,8 @@ mybatis:
 
 # Seata 配置项，对应 SeataProperties 类
 seata:
-  enabled: true
-  enableAutoDataSourceProxy: false
   application-id: transaction-storage-service
   tx-service-group: transaction-storage-service
   service:
     vgroup-mapping:
       transaction-storage-service: default
-  config:
-    type: nacos
-    nacos:
-      namespace: ec2d7dd8-20de-4c8c-a16d-1cdfe63c5d6e
-      serverAddr: 120.76.65.160:8848
-      group: DEV_GROUP
-  registry:
-    type: nacos # 注册中心类型，默认为 file
-    nacos:
-      application: seata-server
-      namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-      serverAddr: 120.76.65.160:8848
-      group: DEV_GROUP

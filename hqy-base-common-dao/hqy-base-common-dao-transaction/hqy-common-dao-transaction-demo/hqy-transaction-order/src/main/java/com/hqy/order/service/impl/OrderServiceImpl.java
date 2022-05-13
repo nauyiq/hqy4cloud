@@ -227,6 +227,7 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MessageResponse kafkaOrder(Long storageId, Integer count) {
         //获取账号信息.
         Account account = getAccount();

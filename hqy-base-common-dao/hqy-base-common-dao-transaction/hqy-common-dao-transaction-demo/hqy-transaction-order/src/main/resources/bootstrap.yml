@@ -39,39 +39,51 @@ spring:
     username: root
     password: hongqy@2021
   kafka:
-    #configuration注入条件
+    # KafkaTransactionalInitialConfiguration ConditionalOnProperty
     transactional: true
+    # kafka集群
     bootstrap-servers:
       - 47.106.168.100:9092
       - 47.106.168.100:9093
       - 106.55.173.37:9092
+    # ======================= producer =======================
     producer:
+      #如果该值大于零时，表示启用重试失败的发送次数
       retries: 0
+      # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
       acks: 1
+      #每当多个记录被发送到同一分区时，生产者将尝试将记录一起批量处理为更少的请求，默认值为16384(单位字节)
       batch-size: 16384
+      # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka
+      # linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
       properties:
         linger:
           ms: 0 # 提交延时
-      # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka
-      # linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
-      buffer-memory: 33554432 # 生产端缓冲区大小
-      # Kafka提供的序列化和反序列化类
+      #生产者可用于缓冲等待发送到服务器的记录的内存总字节数，默认值为3355443
+      buffer-memory: 33554432
+      #key的Serializer类，实现类实现了接口org.apache.kafka.common.serialization.Serializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # ======================= consumer =======================
     consumer:
       properties:
+        #用于标识此使用者所属的使用者组的唯一字符串
         group:
-          id: defaultConsumerGroup  # 默认的消费组ID
-        session.timeout.ms: 120000 # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
-        request.timeout.ms: 120000 # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
-      enable-auto-commit: true # 是否自动提交offset
-      auto-commit-interval: 1000 # 提交offset延时(接收到消息后多久提交offset)
+          id: defaultConsumerGroup
+        # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        session.timeout.ms: 120000
+        # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        request.timeout.ms: 120000
+      # 是否自动提交offset
+      enable-auto-commit: true
+      # 提交offset延时(接收到消息后多久提交offset)
+      auto-commit-interval: 1000
       # 当kafka中没有初始offset或offset超出范围时将自动重置offset
       # earliest:重置为分区中最小的offset;
       # latest:重置为分区中最新的offset(消费分区中新产生的数据);
       # none:只要有一个分区不存在已提交的offset,就抛出异常;
       auto-offset-reset: latest
-      # Kafka提供的序列化和反序列化类
+      #key的Serializer类，实现类实现了接口org.apache.kafka.common.serialization.Serializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     # 消费端监听的topic不存在时，项目启动会报错(关掉)
