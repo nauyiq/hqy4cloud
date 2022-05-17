@@ -3,28 +3,25 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-parent</artifactId>
-        <groupId>com.hqy</groupId>
+        <artifactId>hqy-base-mq</artifactId>
+        <groupId>com.hqy.mq</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hqy.mq</groupId>
-    <artifactId>hqy-base-mq</artifactId>
-    <modules>
-        <module>hqy-mq-rabbitmq</module>
-        <module>hqy-base-mq-api</module>
-        <module>hqy-mq-kafka</module>
-        <module>hqy-mq-rocketmq</module>
-    </modules>
+    <artifactId>hqy-mq-rocketmq</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <packaging>pom</packaging>
-
-    <description>集合各个mq中间件， 外部项目需要使用mq 直接引入对应mq模块即可</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.hqy.mq</groupId>
+            <artifactId>hqy-base-mq-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
