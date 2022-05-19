@@ -18,12 +18,12 @@ public enum CommonResultCode {
     /**
      * 系统异常
      */
-    SYSTEM_ERROR(9999, "System internal error, Please try again later."),
+    SYSTEM_ERROR(9999, "System internal error, please try again later."),
 
     /**
      * 系统繁忙
      */
-    SYSTEM_BUSY(9000, "System is busy, Please try again later."),
+    SYSTEM_BUSY(9000, "System is busy, please try again later."),
 
 
     /**
@@ -35,7 +35,7 @@ public enum CommonResultCode {
     /**
      * 新增数据异常
      */
-    SYSTEM_ERROR_INSERT_FAIL(9100, "System internal error, insert data failure, please try again later."),
+    SYSTEM_ERROR_INSERT_FAIL(9100, "Insert data to db failure."),
 
     /**
      * 无效的token
@@ -52,15 +52,18 @@ public enum CommonResultCode {
      */
     CONSUMING_TIME_RPC(9400, "Consuming time RPC method"),
 
-    /**
-     * 无效的数据
-     */
-    INVALID_DATA(1003, "System internal error, invalid data, please check inputData again"),
+
 
     /**
      * 错误参数
      */
-    ERROR_PARAM(1001, "invalid parameter, please check parameter again."),
+    ERROR_PARAM(1001, "Invalid parameter, please check parameter again."),
+
+
+    /**
+     * 无效的数据
+     */
+    INVALID_DATA(1003, "Invalid data, please check input again"),
 
 
     /**
