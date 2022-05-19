@@ -56,6 +56,17 @@ public class OrderController {
         return orderService.kafkaOrder(storageId, count);
     }
 
+    @PostMapping
+    public MessageResponse rocketMqOrder(Long storageId, Integer count) {
+        if (storageId == null) {
+            storageId = 1L;
+        }
+        if (count == null || count <= 0) {
+            count = 1;
+        }
+        return orderService.rocketMqOrder(storageId, count);
+    }
+
 
 
 }

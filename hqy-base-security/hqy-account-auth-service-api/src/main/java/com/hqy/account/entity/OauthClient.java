@@ -1,4 +1,4 @@
-package com.hqy.account.entity.auth;
+package com.hqy.account.entity;
 
 import com.hqy.base.BaseEntity;
 import lombok.Data;

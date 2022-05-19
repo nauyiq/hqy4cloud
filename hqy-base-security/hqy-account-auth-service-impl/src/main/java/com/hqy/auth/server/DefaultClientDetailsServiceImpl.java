@@ -1,6 +1,6 @@
 package com.hqy.auth.server;
 
-import com.hqy.account.entity.auth.OauthClient;
+import com.hqy.account.entity.OauthClient;
 import com.hqy.account.service.OauthClientService;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;

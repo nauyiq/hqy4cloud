@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 /**
+ * 账户表 t_account
  * @author qiyuan.hong
  * @date 2022-03-10 21:12
  */
@@ -30,11 +31,6 @@ public class Account extends BaseEntity<Long> {
     private String email;
 
     /**
-     * 盐
-     */
-    private String salt;
-
-    /**
      * 状态
      */
     private Boolean status = true;
@@ -44,7 +40,7 @@ public class Account extends BaseEntity<Long> {
     }
 
     public Account(String usernameOrEmail) {
-        if (ValidationUtil.validateEmail(email)) {
+        if (ValidationUtil.validateEmail(usernameOrEmail)) {
             this.email = usernameOrEmail;
         } else {
             this.username = usernameOrEmail;
@@ -52,10 +48,9 @@ public class Account extends BaseEntity<Long> {
     }
 
 
-    public Account(String username, String password, String salt, String email) {
+    public Account(String username, String password, String email) {
         this.username = username;
         this.password = password;
-        this.salt = salt;
         this.email = email;
         Date now = new Date();
         super.setCreated(now);
@@ -86,13 +81,6 @@ public class Account extends BaseEntity<Long> {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
 
     public String getEmail() {
         return email;

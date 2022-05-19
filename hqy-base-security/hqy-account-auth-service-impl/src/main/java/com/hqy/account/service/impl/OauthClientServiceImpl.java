@@ -1,7 +1,7 @@
 package com.hqy.account.service.impl;
 
 import com.hqy.account.dao.OauthClientDao;
-import com.hqy.account.entity.auth.OauthClient;
+import com.hqy.account.entity.OauthClient;
 import com.hqy.account.service.OauthClientService;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;

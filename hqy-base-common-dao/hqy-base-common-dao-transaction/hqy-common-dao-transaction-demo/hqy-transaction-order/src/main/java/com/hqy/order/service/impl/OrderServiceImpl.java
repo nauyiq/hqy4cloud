@@ -25,6 +25,7 @@ import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -271,4 +272,34 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         return new MessageResponse(true, CommonResultCode.SUCCESS.message);
 
     }
+
+
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public MessageResponse rocketMqOrder(Long storageId, Integer count) {
+        //获取账号信息.
+        Account account = getAccount();
+        //获取库存信息
+        Storage storage = getStorage(storageId);
+        //判断是否可以下单
+        BigDecimal residue = account.getResidue();
+        BigDecimal price = storage.getPrice();
+        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
+        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
+        }
+
+        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
+        if (!insert(order)) {
+            return CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR_INSERT_FAIL);
+        }
+
+
+
+        return null;
+    }
+
 }

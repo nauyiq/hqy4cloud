@@ -42,4 +42,12 @@ public interface OrderService extends BaseTkService<Order, Long> {
      * @return messageResponse
      */
     MessageResponse kafkaOrder(Long storageId, Integer count);
+
+    /**
+     * 基于rocket mq 实现分布式事务下单demo
+     * @param storageId
+     * @param count
+     * @return
+     */
+    MessageResponse rocketMqOrder(Long storageId, Integer count);
 }

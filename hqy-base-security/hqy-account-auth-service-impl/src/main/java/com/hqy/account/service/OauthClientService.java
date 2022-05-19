@@ -1,6 +1,6 @@
 package com.hqy.account.service;
 
-import com.hqy.account.entity.auth.OauthClient;
+import com.hqy.account.entity.OauthClient;
 import com.hqy.base.BaseTkService;
 
 /**

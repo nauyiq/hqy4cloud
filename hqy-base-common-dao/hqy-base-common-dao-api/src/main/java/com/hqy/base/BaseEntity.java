@@ -40,4 +40,10 @@ public abstract class BaseEntity<PK> implements Serializable {
         this.created = date;
         this.updated = date;
     }
+
+    public BaseEntity(PK id, Date date) {
+        this.id = id;
+        this.created = date;
+        this.updated = date;
+    }
 }
