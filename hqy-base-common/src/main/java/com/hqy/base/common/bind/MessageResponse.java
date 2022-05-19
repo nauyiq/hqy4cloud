@@ -1,60 +1,57 @@
 package com.hqy.base.common.bind;
 
+import com.hqy.base.common.result.CommonResultCode;
+
+/**
+ * @author qy
+ * @date 2021-09-14 19:49
+ */
 public class MessageResponse extends BaseResponse {
 
-    public static int CODE_REFRESH_FORCE = 50;
-    public static int CODE_REFRESH = 51;
-
     private static final long serialVersionUID = 8029449562864881L;
-    
+
+    /**
+     * 业务状态码
+     */
     private int code = 0;
-    
+
+    /**
+     * 业务响应消息
+     */
     private String message;
 
     public MessageResponse() {
-
     }
 
     public MessageResponse(String message) {
-
         this(false, message);
     }
 
     public MessageResponse(boolean result, String message) {
-
         super.setResult(result);
         this.message = message;
         if (!result) {
-            code = 400;
+            code = CommonResultCode.SYSTEM_ERROR.code;
         }
     }
 
     public MessageResponse(boolean result, String message, int code) {
-
         super.setResult(result);
         this.message = message;
         this.code = code;
     }
 
     public MessageResponse(int code) {
-
         this(code, null);
     }
 
     public MessageResponse(int code, String message) {
-
         this.message = message;
         this.code = code;
-        if (code >= 100) {
-            setResult(false);
-        }
+        setResult(true);
     }
 
-    /**
-     * @return 出错消息
-     */
     public String getMessage() {
-
         return message;
     }
 
@@ -68,12 +65,10 @@ public class MessageResponse extends BaseResponse {
     }
 
     public int getCode() {
-
         return code;
     }
 
     public void setCode(int code) {
-
         this.code = code;
     }
 }

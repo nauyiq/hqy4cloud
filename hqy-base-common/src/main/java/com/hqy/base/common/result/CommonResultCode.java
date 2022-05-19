@@ -1,5 +1,8 @@
 package com.hqy.base.common.result;
 
+import com.hqy.base.common.bind.DataResponse;
+import com.hqy.base.common.bind.MessageResponse;
+
 /**
  * 全局错误码和消息提示
  * @author qy
@@ -81,6 +84,7 @@ public enum CommonResultCode {
         this.message = message;
     }
 
+
     public int getCode() {
         return code;
     }
@@ -96,4 +100,36 @@ public enum CommonResultCode {
     public void setMessage(String message) {
         this.message = message;
     }
+
+
+    public static MessageResponse messageResponse(){
+        return messageResponse(true, SUCCESS);
+    }
+
+    public static MessageResponse messageResponse(CommonResultCode code) {
+        return messageResponse(false, code);
+    }
+
+    public static MessageResponse messageResponse(boolean result, CommonResultCode code) {
+        return new MessageResponse(result, code.message, code.code);
+    }
+
+
+    public static DataResponse dataResponse() {
+        return dataResponse(true, SUCCESS, null);
+    }
+
+    public static DataResponse dataResponse(CommonResultCode code) {
+        return dataResponse(false, code, null);
+    }
+
+    public static DataResponse dataResponse(CommonResultCode code, Object data) {
+        return dataResponse(true, code, data);
+    }
+
+    public static DataResponse dataResponse(boolean result, CommonResultCode code, Object data) {
+        return new DataResponse(result, code.message, code.code, data);
+    }
+
+
 }
