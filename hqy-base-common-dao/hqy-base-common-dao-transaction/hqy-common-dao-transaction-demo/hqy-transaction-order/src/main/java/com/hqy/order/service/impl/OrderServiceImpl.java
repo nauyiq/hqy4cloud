@@ -8,6 +8,7 @@ import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.order.common.dto.OrderDetailDTO;
 import com.hqy.order.common.entity.Account;
 import com.hqy.order.common.entity.Order;
 import com.hqy.order.common.entity.OrderMessageRecord;
@@ -18,6 +19,7 @@ import com.hqy.order.dao.OrderDao;
 import com.hqy.order.service.OrderService;
 import com.hqy.order.service.TccOderService;
 import com.hqy.rpc.RPCClient;
+import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.identity.ProjectSnowflakeIdWorker;
 import com.hqy.util.spring.SpringContextHolder;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.json.Json;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -53,120 +56,78 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         return orderDao;
     }
 
+    /**
+     * @GlobalTransactional seata开启分布式事务的全局入口 即TM开始全局事务。
+     * timeoutMills 超时时间 默认60s
+     * name         全局事务实例的给定名称 默认方法名
+     * rollbackFor  与@Transactional 一样 捕获到什么异常而回滚。
+     * @param  storageId 商品id
+     * @param  count 数目
+     * @return MessageResponse
+     */
     @Override
-    @GlobalTransactional(timeoutMills = 3000000, name = "test-buy", rollbackFor = Exception.class)
-    public MessageResponse order(Long storageId, Integer count) {
+    @GlobalTransactional(name = "seataATOrder", rollbackFor = Exception.class)
+    public MessageResponse seataATOrder(Long storageId, Integer count) {
 
-        CommonSwitcher.JUST_4_TEST_DEBUG.setStatus(false);
+        //seata事务在微服务进行传播 最主要的依赖就是全局事务id xid.
+        log.info("Seata TM start global transaction, xid:{}", RootContext.getXID());
 
-        String xid = RootContext.getXID();
-        System.out.println(xid);
-
-
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.getAccountById(1L);
-        if (StringUtils.isBlank(accountJson)) {
-            return new MessageResponse(false, CommonResultCode.USER_NOT_FOUND.message, CommonResultCode.USER_NOT_FOUND.code);
-        }
-
-        //获取库存
-        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
-        String storageJson = storageRemoteService.getStorage(storageId);
-        if (StringUtils.isBlank(storageJson)) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_BUSY.message, CommonResultCode.SYSTEM_BUSY.code);
-        }
-
-        Account account = JsonUtil.toBean(accountJson, Account.class);
-
-        Storage storage = JsonUtil.toBean(storageJson, Storage.class);
-        //判断是否能下单
-        BigDecimal residue = account.getResidue();
-        BigDecimal price = storage.getPrice();
-        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
-        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_BUSY.message, CommonResultCode.SYSTEM_BUSY.code);
+        //校验订单
+        Account account = getAccount();
+        Storage storage = getStorage(storageId);
+        OrderDetailDTO detail = new OrderDetailDTO(account, storage, count, storage.getResidue());
+        if (!detail.enableOrder()) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
         //下单
-        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
-        Long orderNum = insertReturnPk(order);
-        if (orderNum == null) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_BUSY.message, CommonResultCode.SYSTEM_BUSY.code);
+        Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
+        if (!insert(order)) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
-        //减库存
+        //RPC减库存
         storage.setUsed(storage.getUsed() + count);
         storage.setResidue(storage.getResidue() - count);
-        boolean modify =  storageRemoteService.modifyStorage(JsonUtil.toJson(storage));
-        if (!modify) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_BUSY.message, CommonResultCode.SYSTEM_BUSY.code);
+        if (!modifyStorage(storage)) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
-        //减账户余额
-        account.setUsed(account.getUsed().add(totalMoney));
-        account.setResidue(account.getResidue().subtract(totalMoney));
-        modify = accountRemoteService.modifyAccount(JsonUtil.toJson(account));
-        if (!modify) {
-            throw new RuntimeException("@@@ 修改账户余额失败");
-        }
-
+        //RPC减账户余额
+        account.setUsed(account.getUsed().add(detail.totalMoney));
+        account.setResidue(account.getResidue().subtract(detail.totalMoney));
+        AssertUtil.isTrue(modifyAccount(account), "修改账户余额失败");
 
         //修改订单状态
-        order.setId(orderNum);
+        order.setId(order.getId());
         order.setStatus(true);
-        modify = update(order);
-
-//        int i = 1/0;
-
-        if (!modify) {
-            throw new RuntimeException("@@@ 修改订单状态失败");
-        }
-
-        return new MessageResponse(true, CommonResultCode.SUCCESS.message, CommonResultCode.SUCCESS.code);
+        AssertUtil.isTrue(update(order), "修改订单状态失败");
+        return CommonResultCode.messageResponse();
     }
 
 
     @Override
-    @GlobalTransactional(rollbackFor = Exception.class)
-    public MessageResponse tccOrder(Long storageId, Integer count) {
+    @GlobalTransactional(name = "seataTccOrder", rollbackFor = Exception.class)
+    public MessageResponse seataTccOrder(Long storageId, Integer count) {
 
-        String xid = RootContext.getXID();
-        log.info("xid :{}", xid);
+        //seata事务在微服务进行传播 最主要的依赖就是全局事务id xid.
+        log.info("Seata TM start global transaction, xid:{}", RootContext.getXID());
 
-
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.getAccountById(1L);
-        if (StringUtils.isBlank(accountJson)) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
-        }
-        //获取库存
-        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
-        String storageJson = storageRemoteService.getStorage(storageId);
-        if (StringUtils.isBlank(storageJson)) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
+        //校验订单
+        Account account = getAccount();
+        Storage storage = getStorage(storageId);
+        OrderDetailDTO detail = new OrderDetailDTO(account, storage, count, storage.getResidue());
+        if (!detail.enableOrder()) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
-        Account account = JsonUtil.toBean(accountJson, Account.class);
+        //生成order
+        Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
+        long orderId = ProjectSnowflakeIdWorker.getInstance().nextId();
+        order.setId(orderId);
 
-        Storage storage = JsonUtil.toBean(storageJson, Storage.class);
-
-        //判断是否能下单
-        BigDecimal residue = account.getResidue();
-        BigDecimal price = storage.getPrice();
-        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
-        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
-        }
-
-        //下单
-        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
-        Long orderNum = insertReturnPk(order);
-        if (orderNum == null) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
-        }
-
-        order.setId(orderNum);
-        tccOderService.order(storageId, count, totalMoney, account, storage, accountJson, storageJson,  order);
+        order.setId(order.getId());
+        tccOderService.order(count, detail.totalMoney, account, storage,  order);
 
         return new MessageResponse(true, CommonResultCode.SUCCESS.message, CommonResultCode.SUCCESS.code);
     }
@@ -224,6 +185,16 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
         String accountJson = accountRemoteService.getAccountById(1L);
         return JsonUtil.toBean(accountJson, Account.class);
+    }
+
+    private boolean modifyStorage(Storage storage) {
+        StorageRemoteService service = RPCClient.getRemoteService(StorageRemoteService.class);
+        return service.modifyStorage(JsonUtil.toJson(storage));
+    }
+
+    private boolean modifyAccount(Account account) {
+        AccountRemoteService service = RPCClient.getRemoteService(AccountRemoteService.class);
+        return service.modifyAccount(JsonUtil.toJson(account));
     }
 
 

@@ -35,6 +35,12 @@ public interface StorageRemoteService extends RPCService {
     boolean modifyStorage(@ThriftField(1) String storage);
 
 
+    /**
+     * 基于seata tcc模式的修改订单库存.
+     * @param beforeStorage 修改之前的库存 json
+     * @param afterStorage  修改之后的库存 json
+     * @return 是否修改成功
+     */
     @ThriftMethod
     @GlobalTransactionalThriftMethod
     boolean tccModifyStorage(@ThriftField(1) String beforeStorage, @ThriftField(2) String afterStorage);

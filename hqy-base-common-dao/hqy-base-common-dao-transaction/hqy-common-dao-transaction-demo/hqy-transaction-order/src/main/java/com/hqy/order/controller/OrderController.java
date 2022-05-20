@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
+ * 分布式事务模拟下单方案落地.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/11 14:52
@@ -18,19 +19,17 @@ public class OrderController {
     @Resource
     OrderService orderService;
 
-    @PostMapping("/order")
-    public MessageResponse order(Long storageId, Integer count, boolean tcc) {
-        if (storageId == null) {
-            storageId = 1L;
-        }
-        if (count == null || count <= 0) {
-            count = 1;
-        }
-        if (tcc) {
-            return orderService.tccOrder(storageId, count);
-        }
-        return orderService.order(storageId, count);
+    @PostMapping("/seata/at/order")
+    public MessageResponse seataATOrder() {
+        return orderService.seataATOrder(1L, 3);
     }
+
+
+    @PostMapping("/seata/tcc/order")
+    public MessageResponse seataTccOrder() {
+        return orderService.seataTccOrder(1L, 3);
+    }
+
 
 
     @PostMapping("/mq/order")

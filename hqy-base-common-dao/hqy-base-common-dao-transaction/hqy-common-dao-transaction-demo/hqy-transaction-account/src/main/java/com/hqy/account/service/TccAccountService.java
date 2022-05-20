@@ -35,6 +35,7 @@ public interface TccAccountService {
      * 确认方法、可以另命名，但要保证与commitMethod一致
      * context可以传递try方法的参数
      * 参数是固定的, 不可以增加或减少,
+     * 返回true表示成功 返回false seata会默认不断重试 直到成功为止
      * @param context
      * @return
      */
@@ -44,6 +45,7 @@ public interface TccAccountService {
     /**
      * 二阶段取消方法
      * 参数是固定的, 不可以增加或减少
+     * 返回true表示成功 返回false seata会默认不断重试 直到成功为止
      * @param context
      * @return
      */

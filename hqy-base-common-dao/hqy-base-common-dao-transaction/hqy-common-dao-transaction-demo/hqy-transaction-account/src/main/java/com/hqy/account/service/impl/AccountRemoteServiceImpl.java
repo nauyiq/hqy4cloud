@@ -8,6 +8,7 @@ import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
  * @date 2022/4/8 13:45
  */
 @Service
+@Slf4j
 public class AccountRemoteServiceImpl extends AbstractRPCService implements AccountRemoteService {
 
     @Resource
@@ -31,13 +33,12 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     @Transactional(rollbackFor = Exception.class)
     public boolean modifyAccount(String account) {
 
-        String xid = RootContext.getXID();
-        System.out.println(xid);
-
+        log.info("@@@ tcc 修改账号余额, xid:{}", RootContext.getXID());
         Account bean = JsonUtil.toBean(account, Account.class);
         if (bean == null) {
             return false;
         }
+        //TODO 同理正常应该加乐观锁或者悲观锁
         return accountService.update(bean);
     }
 
@@ -49,7 +50,6 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
 
     @Override
     public boolean tccModifyAccount(String beforeAccount, String afterAccount) {
-        int i = 1 / 0;
         return tccAccountService.modifyAccount(JsonUtil.toBean(beforeAccount, Account.class), JsonUtil.toBean(afterAccount, Account.class));
     }
 }

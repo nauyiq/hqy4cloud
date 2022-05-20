@@ -58,27 +58,25 @@ public class SnowflakeIdWorker {
      */
     private long lastTimestamp = -1L;
 
-    //==============================Constructors=====================================
+
 
     public SnowflakeIdWorker() {
         long pid = 0;
         try {
             pid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             log.info("Progress ID: " + pid);
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-
         if (pid > maxWorkerId) {
             pid = pid % maxWorkerId;
         }
         this.workerId = pid;
-
         this.datacenterId = pid;
     }
 
     /**
      * 构造函数
-     *
      * @param workerId     工作ID (0~31)
      * @param datacenterId 数据中心ID (0~31)
      */
@@ -86,9 +84,8 @@ public class SnowflakeIdWorker {
         if (workerId > maxWorkerId) {
             workerId = workerId % maxWorkerId;
         }
-        /**
-         * 支持的最大数据标识id，结果是31
-         */
+
+        //支持的最大数据标识id，结果是31
         long maxDatacenterId = ~(-1L << datacenterIdBits);
         if (datacenterId > maxDatacenterId) {
             datacenterId = datacenterId % maxDatacenterId;
@@ -103,7 +100,6 @@ public class SnowflakeIdWorker {
         this.datacenterId = datacenterId;
     }
 
-    // ==============================Methods==========================================
 
     /**
      * 获得下一个ID (该方法是线程安全的)
@@ -112,22 +108,16 @@ public class SnowflakeIdWorker {
      */
     public synchronized long nextId() {
         long timestamp = timeGen();
-
         //如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
         if (timestamp < lastTimestamp) {
             throw new RuntimeException(
                     String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
 
-        //如果是同一时间生成的，则进行毫秒内序列
-        /**
-         * 序列在id中占的位数
-         */
+        //如果是同一时间生成的，则进行毫秒内序列 序列在id中占的位数
         long sequenceBits = 12L;
         if (lastTimestamp == timestamp) {
-            /**
-             * 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
-             */
+             //生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
             long sequenceMask = ~(-1L << sequenceBits);
             sequence = (sequence + 1) & sequenceMask;
             //毫秒内序列溢出
@@ -145,21 +135,13 @@ public class SnowflakeIdWorker {
         lastTimestamp = timestamp;
 
         //移位并通过或运算拼到一起组成64位的ID
-        /**
-         * 数据标识id向左移17位(12+5)
-         */
+        //数据标识id向左移17位(12+5)
         long datacenterIdShift = sequenceBits + workerIdBits;
-        /**
-         * 时间截向左移22位(5+5+12)
-         */
+        //时间截向左移22位(5+5+12)
         long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-        /**
-         * 机器ID向左移12位
-         */
+        //机器ID向左移12位
         long workerIdShift = 12L;
-        /**
-         * 开始时间截 (2015-01-01)
-         */
+        //开始时间截 (2015-01-01)
         long twepoch = 1420041600000L;
         return ((timestamp - twepoch) << timestampLeftShift)
                 | (datacenterId << datacenterIdShift)
@@ -192,11 +174,10 @@ public class SnowflakeIdWorker {
 
     /**
      * 将二进制转换为10进制
-     *
-     * @param
+     * @param binStr
      * @return
      */
-    public static long biannary2Decimal(String binStr) {
+    public static long binary2Decimal(String binStr) {
         //String binStr = bi+"";
         long sum = 0;
         int len = binStr.length();

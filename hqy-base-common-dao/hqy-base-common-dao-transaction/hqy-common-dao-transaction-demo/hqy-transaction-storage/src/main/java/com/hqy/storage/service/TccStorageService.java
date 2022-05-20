@@ -22,9 +22,9 @@ public interface TccStorageService {
      * commitMethod = commit 为二阶段确认方法
      * rollbackMethod = rollback 为二阶段取消方法
      * BusinessActionContextParameter注解 传递参数到二阶段中
-     * @param beforeStorage
-     * @param afterStorage
-     * @return
+     * @param beforeStorage 修改之前的库存实例
+     * @param afterStorage  修改之后的库存实例
+     * @return 是否成功
      */
     @TwoPhaseBusinessAction(name = "modifyStorage", commitMethod = "commitTcc", rollbackMethod = "cancel")
     boolean modifyStorage( @BusinessActionContextParameter(paramName = "beforeStorage") Storage beforeStorage,
@@ -35,6 +35,7 @@ public interface TccStorageService {
      * 确认方法、可以另命名，但要保证与commitMethod一致
      * context可以传递try方法的参数
      * 参数是固定的, 不可以增加或减少,
+     * 返回true表示成功 返回false seata会默认不断重试 直到成功为止
      * @param context
      * @return
      */
@@ -44,6 +45,7 @@ public interface TccStorageService {
     /**
      * 二阶段取消方法
      * 参数是固定的, 不可以增加或减少
+     * 返回true表示成功 返回false seata会默认不断重试 直到成功为止
      * @param context
      * @return
      */

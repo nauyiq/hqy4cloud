@@ -8,6 +8,7 @@ import com.hqy.storage.service.TccStorageService;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.Objects;
  * @date 2022/4/8 14:17
  */
 @Service
+@Slf4j
 public class StorageRemoteServiceImpl extends AbstractRPCService implements StorageRemoteService {
 
     @Resource
@@ -43,7 +45,7 @@ public class StorageRemoteServiceImpl extends AbstractRPCService implements Stor
     @Transactional(rollbackFor = Exception.class)
     public boolean modifyStorage(String storage) {
         String xid = RootContext.getXID();
-        System.out.println(xid);
+        log.info("xid = {}", xid);
         Storage bean = JsonUtil.toBean(storage, Storage.class);
         if (Objects.isNull(bean)) {
             return false;
