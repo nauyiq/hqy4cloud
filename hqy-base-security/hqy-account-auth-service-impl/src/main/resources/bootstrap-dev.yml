@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
   cloud:
     nacos:
       config:
@@ -14,7 +11,11 @@ spring:
           group: DEV_GROUP
           refresh: true
         extension-configs[1]:
-          data-id: db-config.yaml
+          data-id: db-app-config.yaml
+          group: DEV_GROUP
+          refresh: true
+        extension-configs[2]:
+          data-id: dev-config.yaml
           group: DEV_GROUP
           refresh: true
       discovery:

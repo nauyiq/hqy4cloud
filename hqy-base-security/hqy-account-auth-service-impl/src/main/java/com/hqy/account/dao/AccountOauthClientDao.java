@@ -1,6 +1,6 @@
 package com.hqy.account.dao;
 
-import com.hqy.account.entity.OauthClient;
+import com.hqy.account.entity.AccountOauthClient;
 import com.hqy.base.BaseDao;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 2022-03-16 14:51
  */
 @Repository
-public interface OauthClientDao extends BaseDao<OauthClient, String> {
+public interface AccountOauthClientDao extends BaseDao<AccountOauthClient, Long> {
 }

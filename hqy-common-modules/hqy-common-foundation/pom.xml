@@ -17,10 +17,10 @@
     <dependencies>
 
         <!-- spring data的redis操作 偏向crud-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--        </dependency>-->
 
         <!-- Springboot Redisson, Redisson redis客户端 偏向分布式-->
         <dependency>

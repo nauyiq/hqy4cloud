@@ -1,17 +1,24 @@
 logging:
   config: classpath:logback.xml
-server:
-  port: 8010
+
 encrypt:
   key-store:
     password: hongqy@2021
     alias: jwt
     secret: hongqy@2021
     location: classpath:jwt.jks
+
+server:
+  port: 8010
 spring:
   application:
     name: account-auth-service
   profiles:
     active: dev
 
-
+#暴露所有
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

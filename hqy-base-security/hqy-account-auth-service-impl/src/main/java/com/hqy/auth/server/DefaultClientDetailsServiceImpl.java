@@ -1,7 +1,7 @@
 package com.hqy.auth.server;
 
-import com.hqy.account.entity.OauthClient;
-import com.hqy.account.service.OauthClientService;
+import com.hqy.account.entity.AccountOauthClient;
+import com.hqy.account.service.AccountOauthClientService;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -20,22 +20,21 @@ import java.util.Objects;
 public class DefaultClientDetailsServiceImpl implements ClientDetailsService {
 
     @Resource
-    private OauthClientService oauthClientService;
+    private AccountOauthClientService accountOauthClientService;
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
 
-        OauthClient oauthClient = oauthClientService.queryById(clientId);
-        if (Objects.isNull(oauthClient)) {
+        AccountOauthClient accountOauthClient = accountOauthClientService.queryOne(new AccountOauthClient(clientId));
+        if (Objects.isNull(accountOauthClient)) {
             throw new NoSuchClientException("No client with requested id: " + clientId);
         }
-
-        BaseClientDetails clientDetails = new BaseClientDetails(oauthClient.getId(), oauthClient.getResourceIds(), oauthClient.getScope(),
-                oauthClient.getAuthorizedGrantTypes(), oauthClient.getAuthorities(), oauthClient.getWebServerRedirectUri());
-
-        clientDetails.setClientSecret(oauthClient.getClientSecret());
-        clientDetails.setAccessTokenValiditySeconds(oauthClient.getAccessTokenValidity());
-        clientDetails.setRefreshTokenValiditySeconds(oauthClient.getRefreshTokenValidity());
+        //Return Base implementation of
+        BaseClientDetails clientDetails = new BaseClientDetails(accountOauthClient.getClientId(), accountOauthClient.getResourceIds(), accountOauthClient.getScope(),
+                accountOauthClient.getAuthorizedGrantTypes(), accountOauthClient.getAuthorities(), accountOauthClient.getWebServerRedirectUri());
+        clientDetails.setClientSecret(accountOauthClient.getClientSecret());
+        clientDetails.setAccessTokenValiditySeconds(accountOauthClient.getAccessTokenValidity());
+        clientDetails.setRefreshTokenValiditySeconds(accountOauthClient.getRefreshTokenValidity());
         return clientDetails;
     }
 }
