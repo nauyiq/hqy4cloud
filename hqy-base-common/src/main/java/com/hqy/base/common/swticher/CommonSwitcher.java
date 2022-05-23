@@ -122,6 +122,12 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_THRIFT_RPC_COLLECT = new CommonSwitcher(252, "节点-是否启用RPC采集", true);
 
     /**
+     * 节点-是否禁用SpringBoot热部署 (默认 true)
+     */
+    public static final CommonSwitcher ENABLE_SPRING_BOOT_RESTART_DEVTOOLS = new CommonSwitcher(253, "节点-是否禁用Springboot热部署", true);
+
+
+    /**
      * 节点-是否启用spring容器 (是否是Spring项目)
      */
     public static final CommonSwitcher ENABLE_SPRING_CONTEXT = new CommonSwitcher(300, "节点-是否启用spring容器 (是否是Spring项目)", true);

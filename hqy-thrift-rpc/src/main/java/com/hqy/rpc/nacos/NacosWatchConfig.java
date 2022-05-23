@@ -42,15 +42,15 @@ public class NacosWatchConfig {
     @Bean
     @ConditionalOnMissingBean
     public NacosWatch nacosWatch(NacosDiscoveryProperties properties) {
-
-        //nacos客户端
+        //获取当前服务运行的上下文环境.
         String environment = EnvironmentConfig.getInstance().getEnvironment();
 
         //声明nacos节点 并且注册上下文到springContextHolder中.
         boolean result = clientWrapper.declareNodeRpcServer(environment, MicroServiceManager.getNodeType(nameEn));
-
         if (!result) {
-            log.warn("@@@ 声明当前nacos节点node信息 注册ProjectContext失败. nameEn:{}, env:{}", nameEn, environment);
+            log.error("@@@ 声明当前nacos节点node信息 注册ProjectContext失败. nameEn:{}, env:{}", nameEn, environment);
+            //直接结束当前进程.
+            System.exit(0);
         }
 
         //获取节点信息.

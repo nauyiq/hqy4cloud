@@ -23,7 +23,7 @@ public class AccountRegistryClient extends AbstractNacosClientWrapper {
     private static final Logger log = LoggerFactory.getLogger(AccountRegistryClient.class);
 
     @Override
-    public ClusterNode setProjectClusterNode() {
+    public ClusterNode registryProjectClusterNode() {
 
         //判断RPC服务是否启动
         ThriftServer tServer = SpringContextHolder.getBean(ThriftServer.class);

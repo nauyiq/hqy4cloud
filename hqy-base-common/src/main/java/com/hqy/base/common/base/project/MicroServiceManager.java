@@ -30,7 +30,7 @@ public class MicroServiceManager {
         PROJECT_NAME_MAP.put(MicroServiceConstants.MESSAGE_NETTY_SERVICE, ActuatorNodeEnum.PROVIDER);
 
         //transaction-test
-        PROJECT_NAME_MAP.put(MicroServiceConstants.TRANSACTION_ACCOUNT_SERVICE, ActuatorNodeEnum.PROVIDER);
+        PROJECT_NAME_MAP.put(MicroServiceConstants.DEMO_WALLET_SERVICE, ActuatorNodeEnum.PROVIDER);
         PROJECT_NAME_MAP.put(MicroServiceConstants.TRANSACTION_ORDER_SERVICE, ActuatorNodeEnum.PROVIDER);
         PROJECT_NAME_MAP.put(MicroServiceConstants.TRANSACTION_STORAGE_SERVICE, ActuatorNodeEnum.PROVIDER);
 

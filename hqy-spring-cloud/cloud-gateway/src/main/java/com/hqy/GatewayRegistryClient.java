@@ -21,14 +21,11 @@ import org.springframework.stereotype.Component;
 public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
 
     @Override
-    public ClusterNode setProjectClusterNode() {
-
-        GatewayThriftServer gatewayThriftServer = SpringContextHolder.getBean(GatewayThriftServer.class);
-
+    public ClusterNode registryProjectClusterNode() {
         //获取AbstractThriftServer中的节点uip信息
+        GatewayThriftServer gatewayThriftServer = SpringContextHolder.getBean(GatewayThriftServer.class);
         UsingIpPort usingIpPort = gatewayThriftServer.getUsingIpPort();
         AssertUtil.notNull(usingIpPort, "System error, Bind rpc port fail. please check thrift service");
-
 
         //定制化节点信息
         ClusterNode node = new ClusterNode();

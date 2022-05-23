@@ -21,6 +21,11 @@ public class Account extends BaseEntity<Long> {
     private String username;
 
     /**
+     * 盐
+     */
+    private String salt;
+
+    /**
      * 密码
      */
     private String password;
@@ -48,10 +53,11 @@ public class Account extends BaseEntity<Long> {
     }
 
 
-    public Account(String username, String password, String email) {
+    public Account(String username, String salt, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.salt = salt;
         Date now = new Date();
         super.setCreated(now);
         super.setUpdated(now);
@@ -88,5 +94,13 @@ public class Account extends BaseEntity<Long> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }

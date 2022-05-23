@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy-demo-modules</artifactId>
+        <groupId>com.hqy</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hqy-order-module</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <packaging>pom</packaging>
+
+    <description>模拟电商系统下单模块, 并且解决分布式下带来的各种问题方案.</description>
+
+    <modules>
+        <module>hqy-common-api</module>
+        <module>hqy-order-service</module>
+        <module>hqy-wallet-service</module>
+        <module>hqy-storage-service</module>
+    </modules>
+
+</project>

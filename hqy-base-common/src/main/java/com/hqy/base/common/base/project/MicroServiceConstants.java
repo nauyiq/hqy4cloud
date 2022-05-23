@@ -33,7 +33,7 @@ public class MicroServiceConstants {
 
     public static final String TRANSACTION_STORAGE_SERVICE = "transaction-storage-service";
 
-    public static final String TRANSACTION_ACCOUNT_SERVICE = "transaction-account-service";
+    public static final String DEMO_WALLET_SERVICE = "demo-wallet-service";
 
 
     /**

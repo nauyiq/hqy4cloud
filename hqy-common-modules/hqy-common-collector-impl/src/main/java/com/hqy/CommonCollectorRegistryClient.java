@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class CommonCollectorRegistryClient extends AbstractNacosClientWrapper {
 
     @Override
-    public ClusterNode setProjectClusterNode() {
+    public ClusterNode registryProjectClusterNode() {
         //判断RPC服务是否启动
         ThriftServer tServer = SpringContextHolder.getBean(ThriftServer.class);
         boolean running = tServer.isRunning();

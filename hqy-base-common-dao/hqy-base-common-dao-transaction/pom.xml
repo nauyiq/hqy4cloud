@@ -12,7 +12,6 @@
     <description>事务相关父模块</description>
     <modules>
         <module>hqy-common-dao-transaction-seata</module>
-        <module>hqy-common-dao-transaction-demo</module>
     </modules>
 
     <groupId>com.hqy.transaction</groupId>
