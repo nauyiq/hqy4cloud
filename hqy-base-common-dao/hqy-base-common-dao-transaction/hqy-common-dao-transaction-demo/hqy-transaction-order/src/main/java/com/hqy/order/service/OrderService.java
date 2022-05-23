@@ -42,12 +42,18 @@ public interface OrderService extends BaseTkService<Order, Long> {
     MessageResponse seataTccOrder(Long storageId, Integer count);
 
     /**
-     * 基于mq 本地消息表的 分布式事务下单
+     * 基于rabbitmq 的 本地消息表方案
+     * 本地消息表的核心思路就是将分布式事务拆分成本地事务进行处理，在该方案中主要有两种角色：事务主动方和事务被动方。
+     * 事务主动发起方需要额外新建事务消息表，并在本地事务中完成业务处理和记录事务消息，并轮询事务消息表的数据发送事务消息，事务被动方基于消息中间件消费事务消息表中的事务。
+     *
+     * 这样可以避免以下两种情况导致的数据不一致性：
+     * 业务处理成功、事务消息发送失败
+     * 业务处理失败、事务消息发送成功
      * @param storageId 库存id
      * @param count     数目
      * @return
      */
-    MessageResponse mqOrderDemo(Long storageId, Integer count);
+    MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count);
 
     /**
      * 基于kafka 实现本地消息表的 分布式事务下单demo

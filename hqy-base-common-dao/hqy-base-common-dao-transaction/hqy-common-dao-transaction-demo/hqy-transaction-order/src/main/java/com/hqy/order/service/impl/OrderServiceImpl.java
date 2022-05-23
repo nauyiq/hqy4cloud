@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -68,7 +69,6 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
     @Override
     @GlobalTransactional(name = "seataATOrder", rollbackFor = Exception.class)
     public MessageResponse seataATOrder(Long storageId, Integer count) {
-
         //seata事务在微服务进行传播 最主要的依赖就是全局事务id xid.
         log.info("Seata TM start global transaction, xid:{}", RootContext.getXID());
 
@@ -82,6 +82,7 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
 
         //下单
         Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
+        order.setId(ProjectSnowflakeIdWorker.getInstance().nextId());
         if (!insert(order)) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
@@ -125,77 +126,41 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
         long orderId = ProjectSnowflakeIdWorker.getInstance().nextId();
         order.setId(orderId);
-
-        order.setId(order.getId());
-        tccOderService.order(count, detail.totalMoney, account, storage,  order);
-
-        return new MessageResponse(true, CommonResultCode.SUCCESS.message, CommonResultCode.SUCCESS.code);
+        AssertUtil.isTrue(tccOderService.order(count, detail.totalMoney, account, storage,  order), "tcc order failure.");
+        return CommonResultCode.messageResponse();
     }
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public MessageResponse mqOrderDemo(Long storageId, Integer count) {
-        /*//获取账号信息.
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count) {
+        //校验订单
         Account account = getAccount();
-        //获取库存信息
         Storage storage = getStorage(storageId);
-        //判断是否可以下单
-        BigDecimal residue = account.getResidue();
-        BigDecimal price = storage.getPrice();
-        BigDecimal totalMoney = price.multiply(new BigDecimal(count));
-        if (residue.compareTo(totalMoney) < 0 || storage.getResidue() < count) {
-            return new MessageResponse(false, "Insufficient account balance.");
+        OrderDetailDTO detail = new OrderDetailDTO(account, storage, count, storage.getResidue());
+        if (!detail.enableOrder()) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
         //下单
-        Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
-        Long orderNum = insertReturnPk(order);
-        if (orderNum == null) {
-            return new MessageResponse(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message);
-        }
+        Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
+        order.setId(ProjectSnowflakeIdWorker.getInstance().nextId());
+        AssertUtil.isTrue(insert(order), "新增订单失败.");
 
-        //自定义消息id
+        //构建本地消息 往本地消息表生成一条记录
         String messageId = ProjectSnowflakeIdWorker.getInstance().nextId() + "";
-        //构建本地消息entity
-        //本地消息表存一条消息. 由于和下单是同个库 因此可以被同一个事务控制.
-        OrderMessageRecord orderMessageRecord = new OrderMessageRecord(orderNum, messageId, 0, false);
-        boolean preCommit = messageTransactionRecordService.preCommit(orderMessageRecord);
-        if (!preCommit) {
-            //直接抛出异常. 回滚事务
-            throw new MessageMqException("preCommit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
-        }
+        OrderMessageRecord orderMessageRecord = new OrderMessageRecord(order.getId(), messageId, 0, false);
+        RabbitmqMessageTransactionRecordServiceImpl service = SpringContextHolder.getBean(RabbitmqMessageTransactionRecordServiceImpl.class);
+
+        //断言是否预提交成功 --> 往本地消息表存一条数据
+        AssertUtil.isTrue(service.preCommit(orderMessageRecord), "preCommit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
         //将消息关联的库存信息放到redis
         LettuceRedis.getInstance().set(messageId, storage, BaseMathConstants.ONE_HOUR_4MILLISECONDS);
-        //投递消息到mq
-        boolean commit = messageTransactionRecordService.commit(messageId, true);
-        if (!commit) {
-            //直接抛出异常. 回滚事务
-            throw new MessageMqException("commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
-        }*/
-        return new MessageResponse(true, CommonResultCode.SUCCESS.message);
+        //断言发消息到rabbitmq是否成功
+        AssertUtil.isTrue(service.commit(messageId, true), "commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
+        return CommonResultCode.messageResponse();
     }
 
-    private Storage getStorage(Long storageId) {
-        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
-        String storageJson = storageRemoteService.getStorage(storageId);
-        return JsonUtil.toBean(storageJson, Storage.class);
-    }
 
-    private Account getAccount() {
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        String accountJson = accountRemoteService.getAccountById(1L);
-        return JsonUtil.toBean(accountJson, Account.class);
-    }
-
-    private boolean modifyStorage(Storage storage) {
-        StorageRemoteService service = RPCClient.getRemoteService(StorageRemoteService.class);
-        return service.modifyStorage(JsonUtil.toJson(storage));
-    }
-
-    private boolean modifyAccount(Account account) {
-        AccountRemoteService service = RPCClient.getRemoteService(AccountRemoteService.class);
-        return service.modifyAccount(JsonUtil.toJson(account));
-    }
 
 
     @Override
@@ -269,8 +234,30 @@ public class OrderServiceImpl extends BaseTkServiceImpl<Order, Long> implements 
         }
 
 
-
         return null;
     }
 
+
+
+    private Storage getStorage(Long storageId) {
+        StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
+        String storageJson = storageRemoteService.getStorage(storageId);
+        return JsonUtil.toBean(storageJson, Storage.class);
+    }
+
+    private Account getAccount() {
+        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
+        String accountJson = accountRemoteService.getAccountById(1L);
+        return JsonUtil.toBean(accountJson, Account.class);
+    }
+
+    private boolean modifyStorage(Storage storage) {
+        StorageRemoteService service = RPCClient.getRemoteService(StorageRemoteService.class);
+        return service.modifyStorage(JsonUtil.toJson(storage));
+    }
+
+    private boolean modifyAccount(Account account) {
+        AccountRemoteService service = RPCClient.getRemoteService(AccountRemoteService.class);
+        return service.modifyAccount(JsonUtil.toJson(account));
+    }
 }

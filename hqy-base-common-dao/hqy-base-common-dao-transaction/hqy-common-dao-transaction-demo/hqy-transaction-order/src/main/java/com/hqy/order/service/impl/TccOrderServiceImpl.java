@@ -17,6 +17,7 @@ import io.seata.core.context.RootContext;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -42,7 +43,7 @@ public class TccOrderServiceImpl implements TccOderService {
             CacheBuilder.newBuilder().initialCapacity(256).expireAfterAccess(1, TimeUnit.HOURS).build();
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean order(Integer count, BigDecimal totalMoney, Account account, Storage storage, Order order) {
 
         log.info("Tcc order, orderId:{}, xid:{}", order.getId(), RootContext.getXID());
@@ -51,7 +52,6 @@ public class TccOrderServiceImpl implements TccOderService {
         if (Boolean.TRUE.equals(BLANK_ROLLBACK_CACHE.getIfPresent(order.getId() + ""))) {
             return false;
         }
-
         //下单
         AssertUtil.isTrue(orderService.insert(order), "下单失败.");
 

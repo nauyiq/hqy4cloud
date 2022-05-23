@@ -3,6 +3,7 @@ package com.hqy.order.controller;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.order.service.OrderService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
  * @date 2022/4/11 14:52
  */
 @RestController
+@RequestMapping("/transaction")
 public class OrderController {
 
     @Resource
@@ -31,16 +33,9 @@ public class OrderController {
     }
 
 
-
-    @PostMapping("/mq/order")
-    public MessageResponse order(Long storageId, Integer count) {
-        if (storageId == null) {
-            storageId = 1L;
-        }
-        if (count == null || count <= 0) {
-            count = 1;
-        }
-        return orderService.mqOrderDemo(storageId, count);
+    @PostMapping("/rabbitmq/message/order")
+    public MessageResponse rabbitmqLocalMessageOrder() {
+        return orderService.rabbitmqLocalMessageOrder(1L, 3);
     }
 
 
