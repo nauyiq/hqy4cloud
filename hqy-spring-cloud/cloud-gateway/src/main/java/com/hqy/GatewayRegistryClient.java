@@ -2,11 +2,8 @@ package com.hqy;
 
 import com.hqy.base.common.base.lang.ActuatorNodeEnum;
 import com.hqy.base.common.base.project.MicroServiceConstants;
-import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.nacos.AbstractNacosClientWrapper;
 import com.hqy.rpc.regist.ClusterNode;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,16 +19,10 @@ public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
 
     @Override
     public ClusterNode registryProjectClusterNode() {
-        //获取AbstractThriftServer中的节点uip信息
-        GatewayThriftServer gatewayThriftServer = SpringContextHolder.getBean(GatewayThriftServer.class);
-        UsingIpPort usingIpPort = gatewayThriftServer.getUsingIpPort();
-        AssertUtil.notNull(usingIpPort, "System error, Bind rpc port fail. please check thrift service");
-
         //定制化节点信息
         ClusterNode node = new ClusterNode();
         node.setNameEn(MicroServiceConstants.GATEWAY);
         node.setName("全局网关服务");
-        node.setUip(usingIpPort);
         node.setActuatorNode(ActuatorNodeEnum.CONSUMER);
         return node;
     }

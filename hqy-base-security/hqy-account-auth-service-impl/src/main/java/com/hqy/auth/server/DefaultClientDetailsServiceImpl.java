@@ -1,7 +1,9 @@
 package com.hqy.auth.server;
 
 import com.hqy.account.entity.AccountOauthClient;
-import com.hqy.account.service.AccountOauthClientService;
+import com.hqy.account.service.AccountOauthClientTkService;
+import com.hqy.base.common.result.CommonResultCode;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -20,21 +22,26 @@ import java.util.Objects;
 public class DefaultClientDetailsServiceImpl implements ClientDetailsService {
 
     @Resource
-    private AccountOauthClientService accountOauthClientService;
+    private AccountOauthClientTkService accountOauthClientTkService;
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-
-        AccountOauthClient accountOauthClient = accountOauthClientService.queryOne(new AccountOauthClient(clientId));
+        AccountOauthClient accountOauthClient = accountOauthClientTkService.queryOne(new AccountOauthClient(clientId));
         if (Objects.isNull(accountOauthClient)) {
             throw new NoSuchClientException("No client with requested id: " + clientId);
         }
+
+        if (!accountOauthClient.getStatus()) {
+            throw new DisabledException("Oauth client disable, clientId : " + clientId);
+        }
+
         //Return Base implementation of
         BaseClientDetails clientDetails = new BaseClientDetails(accountOauthClient.getClientId(), accountOauthClient.getResourceIds(), accountOauthClient.getScope(),
                 accountOauthClient.getAuthorizedGrantTypes(), accountOauthClient.getAuthorities(), accountOauthClient.getWebServerRedirectUri());
         clientDetails.setClientSecret(accountOauthClient.getClientSecret());
         clientDetails.setAccessTokenValiditySeconds(accountOauthClient.getAccessTokenValidity());
         clientDetails.setRefreshTokenValiditySeconds(accountOauthClient.getRefreshTokenValidity());
+
         return clientDetails;
     }
 }

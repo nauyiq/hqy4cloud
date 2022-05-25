@@ -26,24 +26,23 @@ public class AccountRegistryClient extends AbstractNacosClientWrapper {
     public ClusterNode registryProjectClusterNode() {
 
         //判断RPC服务是否启动
-        ThriftServer tServer = SpringContextHolder.getBean(ThriftServer.class);
+       /* ThriftServer tServer = SpringContextHolder.getBean(ThriftServer.class);
         boolean running = tServer.isRunning();
         if (!running) {
             //如果没有扫描到server 手动启动一下
             tServer.start();
-        }
+        }*/
 
-        log.info("@@@ Get ThriftServer success, running:{}", running);
+      /*  log.info("@@@ Get ThriftServer success, running:{}", running);
 
         AccountThriftServer thriftServer = SpringContextHolder.getBean(AccountThriftServer.class);
         UsingIpPort usingIpPort = thriftServer.getUsingIpPort();
-        AssertUtil.notNull(usingIpPort, "System error, Bind rpc port fail. please check thrift service");
+        AssertUtil.notNull(usingIpPort, "System error, Bind rpc port fail. please check thrift service");*/
 
         //定制化节点信息
         ClusterNode node = new ClusterNode();
         node.setNameEn(MicroServiceConstants.ACCOUNT_SERVICE);
         node.setName("账号服务");
-        node.setUip(usingIpPort);
         node.setActuatorNode(ActuatorNodeEnum.PROVIDER);
         return node;
     }

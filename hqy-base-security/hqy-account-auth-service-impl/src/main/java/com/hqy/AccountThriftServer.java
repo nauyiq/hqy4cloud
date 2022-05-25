@@ -1,12 +1,12 @@
 package com.hqy;
 
-import com.hqy.account.service.AccountInfoService;
+import com.hqy.account.service.AccountRemoteThriftService;
 import com.hqy.base.common.rpc.api.RPCService;
 import com.hqy.rpc.api.AbstractThriftServer;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,10 +19,7 @@ public class AccountThriftServer extends AbstractThriftServer {
 
     @Override
     public List<RPCService> getServiceList4Register() {
-
-        List<RPCService> rpcServices = new ArrayList<>();
-        AccountInfoService accountInfoService = SpringContextHolder.getBean(AccountInfoService.class);
-        rpcServices.add(accountInfoService);
-        return rpcServices;
+        AccountRemoteThriftService accountRemoteThriftService = SpringContextHolder.getBean(AccountRemoteThriftService.class);
+        return Collections.singletonList(accountRemoteThriftService);
     }
 }

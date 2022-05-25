@@ -1,19 +1,18 @@
 package com.hqy.auth.server;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.hqy.auth.dto.SecurityUserDTO;
+import com.hqy.auth.dto.UserJwtPayloadDTO;
+import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 自定义用户身份验证转换器
@@ -29,11 +28,24 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
 
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
-        Map<String, Object> resultMap = new HashMap<>(16);
         String name = authentication.getName();
-        resultMap.put("username", name);
+        AssertUtil.notEmpty(name, "Invalid Authentication, name is empty.");
 
-        SecurityUserDTO securityUser;
+       SecurityUserDTO securityUser = getSecurityUserDTO(authentication, name);
+        if (Objects.isNull(securityUser)) {
+            return null;
+        }
+
+        return userConvertToMap(securityUser);
+    }
+
+    private Map<String, ?> userConvertToMap(SecurityUserDTO securityUser) {
+        UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(), securityUser.getPassword(), securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
+        return BeanUtil.beanToMap(userJwtPayloadDTO);
+    }
+
+    private SecurityUserDTO getSecurityUserDTO(Authentication authentication, String name) {
+        SecurityUserDTO securityUser = null;
         try {
             Object principal = authentication.getPrincipal();
             if (principal instanceof SecurityUserDTO) {
@@ -45,18 +57,11 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return null;
         }
 
-        resultMap.put("id", securityUser.getId());
-        resultMap.put("status", securityUser.getStatus());
-
-        //权限角色列表
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        if (CollectionUtils.isNotEmpty(authorities)) {
-            resultMap.put("authorities", AuthorityUtils.authorityListToSet(authorities));
-        }
-
-        return resultMap;
+        return securityUser;
     }
+
+
+
 }

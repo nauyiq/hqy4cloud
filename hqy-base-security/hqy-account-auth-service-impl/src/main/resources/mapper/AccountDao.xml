@@ -3,22 +3,18 @@
 
 <mapper namespace="com.hqy.account.dao.AccountDao">
 
-    <resultMap id="userInfoResultMap" type="com.hqy.auth.dto.UserInfoDTO">
-        <result column="id" property="id"/>
-        <result column="username" property="username"/>
-        <result column="password" property="password"/>
-        <result column="email" property="email"/>
-        <result column="status" property="status"/>
-        <collection property="roles" ofType="java.lang.String">
-            <result column="role"/>
-        </collection>
-    </resultMap>
-    
-    <select id="queryUserInfo" resultType="com.hqy.auth.dto.UserInfoDTO">
-        SELECT a.id,a.username,a.password,a.status,a.email,r.role
-        FROM t_account a
-        LEFT JOIN t_account_role r on a.id = r.account_id
-        WHERE a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail}
+
+    <select id="queryAccountByUsernameOrEmail" resultType="com.hqy.account.entity.Account">
+        SELECT
+            id,
+            password,
+            username,
+            email,
+            phone,
+            authorities,
+            status
+        from t_account
+        WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail}
     </select>
-    
+
 </mapper>

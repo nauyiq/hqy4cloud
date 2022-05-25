@@ -24,11 +24,6 @@ public class AccountProfile extends BaseEntity<Long> {
     private String avatar;
 
     /**
-     * 角色
-     */
-    private Integer role;
-
-    /**
      * 简介
      */
     private String intro;
@@ -55,13 +50,6 @@ public class AccountProfile extends BaseEntity<Long> {
         this.avatar = avatar;
     }
 
-    public Integer getRole() {
-        return role;
-    }
-
-    public void setRole(Integer role) {
-        this.role = role;
-    }
 
     public String getIntro() {
         return intro;

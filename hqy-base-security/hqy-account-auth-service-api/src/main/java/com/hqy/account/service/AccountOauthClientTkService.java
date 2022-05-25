@@ -7,5 +7,8 @@ import com.hqy.base.BaseTkService;
  * @author qiyuan.hong
  * @date 2022-03-16 14:52
  */
-public interface AccountOauthClientService extends BaseTkService<AccountOauthClient, Long> {
+public interface AccountOauthClientTkService extends BaseTkService<AccountOauthClient, Long> {
+
+
+
 }

@@ -30,10 +30,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class RequestUtil {
 
-    public static void main(String[] args) {
-        System.out.println(Md5Util.getStrMd5("hqy" + "hongqy@2021"));
-    }
-
     /**
      * 本地默认IPV4 ip
      */

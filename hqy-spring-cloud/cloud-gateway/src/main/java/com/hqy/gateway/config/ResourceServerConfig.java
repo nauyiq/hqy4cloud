@@ -2,11 +2,13 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
+import com.hqy.auth.access.server.GateWayWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.gateway.server.AuthorizationManager;
 import com.hqy.gateway.util.ResponseUtil;
+import com.hqy.util.AssertUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.SneakyThrows;
@@ -59,10 +61,9 @@ public class ResourceServerConfig {
                 .publicKey(rsaPublicKey());
         //自定义处理JWT请求头过期或签名错误的结果
         http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
-        //获取项目中的uri白名单
-        Set<String> whiteUri = SpringContextHolder.getProjectContextInfo().
-                getAttributeSetString(ProjectContextInfo.WHITE_URI_PROPERTIES_KEY);
 
+        //获取项目中的uri白名单
+        Set<String> whiteUri = GateWayWhiteListManager.getInstance().whiteList();
         if (CollectionUtils.isNotEmpty(whiteUri)) {
             //白名单配置
             http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();
@@ -88,8 +89,7 @@ public class ResourceServerConfig {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            MessageResponse code = new MessageResponse(false, CommonResultCode.LIMITED_AUTHORITY.message,
-                    CommonResultCode.LIMITED_AUTHORITY.code);
+            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
             DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
             return response.writeWith(Flux.just(buffer));
         });
@@ -105,8 +105,7 @@ public class ResourceServerConfig {
             log.warn("@@@ RestAuthenticationEntryPoint访问受限, e:{}", e.getMessage());
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = new MessageResponse(false, CommonResultCode.INVALID_ACCESS_TOKEN.message,
-                        CommonResultCode.INVALID_ACCESS_TOKEN.code);
+                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
@@ -115,24 +114,23 @@ public class ResourceServerConfig {
 
 
     /**
+     * @SneakyThrows可以用来偷偷抛出已检查的异常而不在方法的throws子句中实际声明这一点
      * 获取本地JWT公钥
      */
     @Bean
     @SneakyThrows
     public RSAPublicKey rsaPublicKey() {
-        try(InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("public.key")) {
-            if (inputStream == null) {
-                return null;
-            }
+        String fileName = "public.key";
+        try(InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
+            AssertUtil.notNull(inputStream, "Get resources public key failure, filename = " + fileName);
             String data = IoUtil.read(inputStream).toString();
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec((Base64.decode(data)));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return (RSAPublicKey)keyFactory.generatePublic(keySpec);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return null;
+            throw e;
         }
-
     }
 
 
@@ -151,6 +149,5 @@ public class ResourceServerConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
     }
-
 
 }

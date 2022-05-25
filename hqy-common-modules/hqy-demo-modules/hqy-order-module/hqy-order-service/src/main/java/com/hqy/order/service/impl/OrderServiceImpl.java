@@ -10,7 +10,6 @@ import com.hqy.common.entity.Wallet;
 import com.hqy.common.service.StorageRemoteService;
 import com.hqy.common.service.WalletRemoteService;
 import com.hqy.fundation.cache.redis.LettuceRedis;
-\\
 import com.hqy.order.service.OrderService;
 import com.hqy.order.service.OrderTkService;
 import com.hqy.order.service.TccOderService;

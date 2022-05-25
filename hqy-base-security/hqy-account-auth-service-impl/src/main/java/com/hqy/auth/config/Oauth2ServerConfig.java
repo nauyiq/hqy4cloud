@@ -1,6 +1,5 @@
 package com.hqy.auth.config;
 
-import com.hqy.auth.encoder.DefaultPasswordEncoder;
 import com.hqy.auth.server.CustomUserAuthenticationConverter;
 import com.hqy.auth.server.DefaultClientDetailsServiceImpl;
 import com.hqy.auth.server.JwtTokenEnhancer;
@@ -9,6 +8,7 @@ import org.springframework.cloud.bootstrap.encrypt.KeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -137,7 +137,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.allowFormAuthenticationForClients()
-                .passwordEncoder(SpringContextHolder.getBean(DefaultPasswordEncoder.class))
+                .passwordEncoder(SpringContextHolder.getBean(BCryptPasswordEncoder.class))
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("permitAll()")
                 .allowFormAuthenticationForClients();
@@ -147,7 +147,6 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     private AuthorizationServerTokenServices tokenServices(AuthorizationServerEndpointsConfigurer endpoints, TokenEnhancerChain enhancerChain) {
         DefaultClientDetailsServiceImpl  clientDetailsService =
                 SpringContextHolder.getBean(DefaultClientDetailsServiceImpl.class);
-
         DefaultTokenServices tokenServices = new DefaultTokenServices();
         //令牌存储策略
         tokenServices.setTokenStore(endpoints.getTokenStore());
@@ -155,9 +154,9 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
         tokenServices.setClientDetailsService(clientDetailsService);
         tokenServices.setTokenEnhancer(enhancerChain);
         //令牌有效期2小时
-        tokenServices.setAccessTokenValiditySeconds(7200);
+//        tokenServices.setAccessTokenValiditySeconds(7200);
         //refresh token有效期
-        tokenServices.setRefreshTokenValiditySeconds(7200 * 5);
+//        tokenServices.setRefreshTokenValiditySeconds(7200 * 5);
         tokenServices.setAuthenticationManager(authenticationManager);
 
         return tokenServices;

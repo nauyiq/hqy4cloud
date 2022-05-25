@@ -97,7 +97,7 @@ public interface BaseStringConstants {
         /**
          * JWT存储权限属性
          */
-        String JWT_AUTHORITIES_KEY = "authorities";
+        String JWT_AUTHORITIES_KEY = "token";
 
         /**
          * refresh_token

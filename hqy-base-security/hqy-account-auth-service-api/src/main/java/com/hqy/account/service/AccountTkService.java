@@ -1,15 +1,14 @@
-package com.hqy.account.dao;
+package com.hqy.account.service;
 
 import com.hqy.account.entity.Account;
-import com.hqy.base.BaseDao;
-import org.springframework.stereotype.Repository;
+import com.hqy.base.BaseTkService;
 
 /**
  * @author qiyuan.hong
- * @date 2022-03-10 21:42
+ * @date 2022-03-10 21:17
  */
-@Repository
-public interface AccountDao extends BaseDao<Account, Long> {
+public interface AccountTkService extends BaseTkService<Account, Long> {
+
 
 
     /**
@@ -18,4 +17,7 @@ public interface AccountDao extends BaseDao<Account, Long> {
      * @return                Account
      */
     Account queryAccountByUsernameOrEmail(String usernameOrEmail);
+
+
+
 }

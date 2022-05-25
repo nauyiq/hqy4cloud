@@ -74,7 +74,17 @@ public enum CommonResultCode {
     /**
      * 当前用户是禁用状态
      */
-    USER_DISABLED(2001, "The user disabled.")
+    USER_DISABLED(2001, "The user disabled."),
+
+    /**
+     * 用户名不能为空
+     */
+    USERNAME_EMPTY(2002, "The username cannot be empty."),
+
+    /**
+     * 用户名已经存在
+     */
+    USERNAME_EXIST(2003,"This username already exist.")
 
     ;
 

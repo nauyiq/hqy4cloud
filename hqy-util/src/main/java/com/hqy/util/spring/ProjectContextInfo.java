@@ -40,6 +40,11 @@ public class ProjectContextInfo implements Serializable {
     private static boolean justStarted = true;
 
     /**
+     * 是否使用Linux服务器支持的Epoll机制
+     */
+    private static Boolean isUseLinuxNativeEpoll;
+
+    /**
      * 项目名
      */
     private String nameEn;
@@ -84,11 +89,6 @@ public class ProjectContextInfo implements Serializable {
      * white白名单ip
      */
     public static final String WHITE_IP_PROPERTIES_KEY = "MANUAL_WHITE_IP";
-
-    /**
-     * white白名单uri
-     */
-    public static final String WHITE_URI_PROPERTIES_KEY = "MANUAL_WHITE_URI";
 
     /**
      * 手动黑名单列表
@@ -139,10 +139,7 @@ public class ProjectContextInfo implements Serializable {
         return justStarted;
     }
 
-    /**
-     * 是否使用Linux服务器支持的Epoll机制
-     */
-    private static Boolean isUseLinuxNativeEpoll;
+
 
     public static boolean isUseLinuxNativeEpoll() {
         if (Objects.nonNull(isUseLinuxNativeEpoll)) {
