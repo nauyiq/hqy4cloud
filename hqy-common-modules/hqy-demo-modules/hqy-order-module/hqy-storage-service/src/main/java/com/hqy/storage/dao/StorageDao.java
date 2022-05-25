@@ -1,7 +1,7 @@
 package com.hqy.storage.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.common.entity.Storage;
+import com.hqy.common.entity.storage.Storage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.hqy.common.entity;
+package com.hqy.common.entity.storage;
 
 import com.hqy.base.BaseEntity;
 import lombok.Data;
@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 public class Storage extends BaseEntity<Long> {
 
     private Long productId;
+
+    private String productName;
 
     private Integer storage;
 
@@ -56,5 +58,13 @@ public class Storage extends BaseEntity<Long> {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

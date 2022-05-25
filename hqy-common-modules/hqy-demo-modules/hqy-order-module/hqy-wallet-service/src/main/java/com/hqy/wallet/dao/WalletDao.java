@@ -1,7 +1,7 @@
 package com.hqy.wallet.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.common.entity.Wallet;
+import com.hqy.common.entity.account.Wallet;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -6,14 +6,12 @@ import com.facebook.swift.service.ThriftService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.rpc.api.RPCService;
 
-import java.math.BigDecimal;
-
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/8 11:09
  */
-@ThriftService(value = MicroServiceConstants.TRANSACTION_ORDER_SERVICE)
+@ThriftService(value = MicroServiceConstants.DEMO_ORDER_SERVICE)
 public interface OrderRemoteService extends RPCService {
 
 

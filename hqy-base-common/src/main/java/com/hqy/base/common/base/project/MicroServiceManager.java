@@ -31,8 +31,8 @@ public class MicroServiceManager {
 
         //transaction-test
         PROJECT_NAME_MAP.put(MicroServiceConstants.DEMO_WALLET_SERVICE, ActuatorNodeEnum.PROVIDER);
-        PROJECT_NAME_MAP.put(MicroServiceConstants.TRANSACTION_ORDER_SERVICE, ActuatorNodeEnum.PROVIDER);
-        PROJECT_NAME_MAP.put(MicroServiceConstants.TRANSACTION_STORAGE_SERVICE, ActuatorNodeEnum.PROVIDER);
+        PROJECT_NAME_MAP.put(MicroServiceConstants.DEMO_ORDER_SERVICE, ActuatorNodeEnum.PROVIDER);
+        PROJECT_NAME_MAP.put(MicroServiceConstants.DEMO_STORAGE_SERVICE, ActuatorNodeEnum.PROVIDER);
 
         SOCKET_CONTEXT_PATH_MAP.put(MicroServiceConstants.SocketContextPath.MESSAGE_SERVICE, MicroServiceConstants.MESSAGE_NETTY_SERVICE);
     }

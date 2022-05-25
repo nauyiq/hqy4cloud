@@ -5,7 +5,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.wallet.service.WalletTkService;
 import com.hqy.wallet.service.TccWalletService;
-import com.hqy.common.entity.Wallet;
+import com.hqy.common.entity.account.Wallet;
 import io.seata.core.context.RootContext;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import lombok.extern.slf4j.Slf4j;

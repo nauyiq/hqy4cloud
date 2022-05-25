@@ -2,7 +2,7 @@ package com.hqy.wallet.service.impl;
 
 import com.hqy.wallet.service.WalletTkService;
 import com.hqy.wallet.service.TccWalletService;
-import com.hqy.common.entity.Wallet;
+import com.hqy.common.entity.account.Wallet;
 import com.hqy.common.service.WalletRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;

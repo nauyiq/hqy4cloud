@@ -1,6 +1,6 @@
 package com.hqy.storage.service;
 
-import com.hqy.common.entity.Storage;
+import com.hqy.common.entity.storage.Storage;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.BusinessActionContextParameter;
 import io.seata.rm.tcc.api.LocalTCC;

@@ -1,6 +1,6 @@
 package com.hqy.storage.service.impl;
 
-import com.hqy.common.entity.Storage;
+import com.hqy.common.entity.storage.Storage;
 import com.hqy.common.service.StorageRemoteService;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.storage.service.StorageTkService;

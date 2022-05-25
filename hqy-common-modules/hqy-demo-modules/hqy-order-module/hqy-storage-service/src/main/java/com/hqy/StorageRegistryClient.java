@@ -38,7 +38,7 @@ public class StorageRegistryClient extends AbstractNacosClientWrapper {
 
         //定制化节点信息
         ClusterNode node = new ClusterNode();
-        node.setNameEn(MicroServiceConstants.TRANSACTION_STORAGE_SERVICE);
+        node.setNameEn(MicroServiceConstants.DEMO_STORAGE_SERVICE);
         node.setName("分布式事务demo-库存服务");
         node.setUip(usingIpPort);
         node.setActuatorNode(ActuatorNodeEnum.PROVIDER);

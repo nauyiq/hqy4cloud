@@ -1,7 +1,7 @@
 package com.hqy.order.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.common.entity.Order;
+import com.hqy.common.entity.order.Order;
 
 /**
  * tk service for order table

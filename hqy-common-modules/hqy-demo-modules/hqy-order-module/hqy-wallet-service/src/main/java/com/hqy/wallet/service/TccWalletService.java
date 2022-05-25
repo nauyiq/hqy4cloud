@@ -1,6 +1,6 @@
 package com.hqy.wallet.service;
 
-import com.hqy.common.entity.Wallet;
+import com.hqy.common.entity.account.Wallet;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.BusinessActionContextParameter;
 import io.seata.rm.tcc.api.LocalTCC;

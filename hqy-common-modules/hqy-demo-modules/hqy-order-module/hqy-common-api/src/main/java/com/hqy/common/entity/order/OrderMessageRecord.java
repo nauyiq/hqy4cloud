@@ -1,4 +1,4 @@
-package com.hqy.common.entity;
+package com.hqy.common.entity.order;
 
 import com.hqy.mq.common.transaction.entity.CommonMessageRecord;
 import com.hqy.mq.common.listener.payload.MessagePayload;

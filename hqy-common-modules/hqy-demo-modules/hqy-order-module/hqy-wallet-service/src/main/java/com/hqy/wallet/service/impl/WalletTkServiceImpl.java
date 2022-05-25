@@ -2,7 +2,7 @@ package com.hqy.wallet.service.impl;
 
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
-import com.hqy.common.entity.Wallet;
+import com.hqy.common.entity.account.Wallet;
 import com.hqy.wallet.dao.WalletDao;
 import com.hqy.wallet.service.WalletTkService;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.hqy.wallet.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.common.entity.OrderWallet;
+import com.hqy.common.entity.account.OrderWallet;
 
 /**
  *

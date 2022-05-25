@@ -12,7 +12,7 @@ import com.hqy.rpc.transaction.GlobalTransactionalThriftMethod;
  * @version 1.0
  * @date 2022/4/8 14:16
  */
-@ThriftService(MicroServiceConstants.TRANSACTION_STORAGE_SERVICE)
+@ThriftService(MicroServiceConstants.DEMO_STORAGE_SERVICE)
 public interface StorageRemoteService extends RPCService {
 
 

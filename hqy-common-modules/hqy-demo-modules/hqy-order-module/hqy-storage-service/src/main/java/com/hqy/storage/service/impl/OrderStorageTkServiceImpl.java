@@ -2,7 +2,7 @@ package com.hqy.storage.service.impl;
 
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
-import com.hqy.common.entity.OrderStorage;
+import com.hqy.common.entity.storage.OrderStorage;
 import com.hqy.storage.dao.OrderStorageDao;
 import com.hqy.storage.service.OrderStorageTkService;
 import org.springframework.stereotype.Service;

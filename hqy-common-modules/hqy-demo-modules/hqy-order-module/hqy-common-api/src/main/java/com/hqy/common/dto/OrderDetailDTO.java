@@ -1,7 +1,7 @@
 package com.hqy.common.dto;
 
-import com.hqy.common.entity.Wallet;
-import com.hqy.common.entity.Storage;
+import com.hqy.common.entity.account.Wallet;
+import com.hqy.common.entity.storage.Storage;
 
 import java.math.BigDecimal;
 

@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 分布式事务模拟下单方案落地.
+ * 模拟高并发 秒杀下单方案.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/11 14:52

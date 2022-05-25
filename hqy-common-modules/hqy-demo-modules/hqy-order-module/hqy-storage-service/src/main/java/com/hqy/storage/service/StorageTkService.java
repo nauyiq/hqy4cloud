@@ -1,7 +1,7 @@
 package com.hqy.storage.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.common.entity.Storage;
+import com.hqy.common.entity.storage.Storage;
 
 /**
  * @author qiyuan.hong

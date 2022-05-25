@@ -1,4 +1,4 @@
-package com.hqy.common.entity;
+package com.hqy.common.entity.account;
 
 import com.hqy.base.BaseEntity;
 

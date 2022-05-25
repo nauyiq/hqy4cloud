@@ -1,4 +1,4 @@
-package com.hqy.common.entity;
+package com.hqy.common.entity.storage;
 
 import com.hqy.base.BaseEntity;
 

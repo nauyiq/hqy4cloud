@@ -1,7 +1,7 @@
 package com.hqy.order.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.common.entity.Order;
+import com.hqy.common.entity.order.Order;
 import org.springframework.stereotype.Repository;
 
 /**
