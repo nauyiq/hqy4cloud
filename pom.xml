@@ -31,7 +31,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
-        <lombok.version>1.18.12</lombok.version>
         <mysql.version>5.1.47</mysql.version>
         <druid.version>1.1.16</druid.version>
         <springboot.druid.version>1.1.10</springboot.druid.version>
@@ -43,7 +42,8 @@
 <!--        <springboot.version>2.3.8.RELEASE</springboot.version>-->
 <!--        <springcloud.version>Hoxton.SR10</springcloud.version>-->
         <springcloud.version>2021.0.1</springcloud.version>
-        <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
+<!--        <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>-->
+        <springcloud.alibaba.version>2021.0.1.0</springcloud.alibaba.version>
         <hutool.version>5.6.3</hutool.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
@@ -279,7 +279,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -348,7 +347,12 @@
             <optional>true</optional>
         </dependency>
 
-
+        <!-- SpringCloud升级2010之后 spring.cloud.bootstrap.enabled默认设置为false不启用 若bootstrap配置不生效，加入以下依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
 
     </dependencies>

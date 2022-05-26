@@ -1,6 +1,7 @@
 package com.hqy.rpc.nacos;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.base.common.base.project.MicroServiceManager;
 import com.hqy.base.common.base.project.UsingIpPort;
@@ -41,7 +42,7 @@ public class NacosWatchConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public NacosWatch nacosWatch(NacosDiscoveryProperties properties) {
+    public NacosWatch nacosWatch(NacosServiceManager nacosServiceManager, NacosDiscoveryProperties properties) {
         //获取当前服务运行的上下文环境.
         String environment = EnvironmentConfig.getInstance().getEnvironment();
 
@@ -62,7 +63,7 @@ public class NacosWatchConfig {
         Map<String, String> metadata = properties.getMetadata();
         metadata.put(ProjectContextInfo.NODE_INFO, JsonUtil.toJson(clusterNode));
         properties.setMetadata(metadata);
-        return new NacosWatch(properties);
+        return new NacosWatch(nacosServiceManager, properties);
     }
 
 }
