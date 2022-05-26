@@ -13,6 +13,7 @@
         <skipTests>true</skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty.version>4.1.42.Final</netty.version>
+
     </properties>
 
     <version>0.0.1-SNAPSHOT</version>
@@ -104,7 +105,6 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-client</artifactId>
-            <version>3.4.3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -151,7 +151,7 @@
                         <Import-Package>
                             org.springframework.*;resolution:=optional,com.hazelcast.*;resolution:=optional,org.redisson.*;resolution:=optional,*
                         </Import-Package>
-                        <!--<Export-Package>
+                       <!-- <Export-Package>
                             test.hytto.gfw.socketio;version="${project.version}",
                             test.hytto.gfw.socketio.annotation;version="${project.version}",
                             test.hytto.gfw.socketio.listener;version="${project.version}",

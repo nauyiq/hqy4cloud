@@ -101,18 +101,19 @@ public abstract class AbstractRedisAdaptor implements RedisService {
 
     @Override
     public Set<String> scan(String matchKey) {
-        try {
-            return (Set<String>)redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
-                Set<String> keys = new HashSet<>();
-                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match("*" + matchKey + "*").count(1000).build());
-                while (cursor.hasNext()) {
-                    keys.add(new String(cursor.next()));
-                }
-                return keys;
-            });
-        } catch (Exception e) {
-            throw new RedisException("@@@ [scan] failure, matchKey: " + matchKey, e);
-        }
+//        try {
+//            return (Set<String>)redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
+//                Set<String> keys = new HashSet<>();
+//                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match("*" + matchKey + "*").count(1000).build());
+//                while (cursor.hasNext()) {
+//                    keys.add(new String(cursor.next()));
+//                }
+//                return keys;
+//            });
+//        } catch (Exception e) {
+//            throw new RedisException("@@@ [scan] failure, matchKey: " + matchKey, e);
+//        }
+        return null;
     }
 
     @Override

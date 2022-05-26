@@ -75,9 +75,13 @@
         </dependency>
 
         <!-- spring-cloud-security-oauth2 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
         <!-- spring-cloud-security-oauth2 -->
