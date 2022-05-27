@@ -14,7 +14,9 @@
         <module>hqy-netty</module>
         <module>hqy-util</module>
         <module>hqy-spring-cloud</module>
+        <!-- 公共依赖包 -->
         <module>hqy-base-common</module>
+        <!-- 数据库操作相关 -->
         <module>hqy-base-common-dao</module>
         <module>hqy-common-modules</module>
         <module>hqy-base-common-service</module>
@@ -26,11 +28,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hutool.version>5.6.3</hutool.version>
+        <servlet.version>3.1.0</servlet.version>
+        <swift.version>0.14.2</swift.version>
+        <thrift.version>0.9.3</thrift.version>
+        <nifty.version>0.23.0</nifty.version>
+        <guava.version>22.0</guava.version>
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
+        <log4j2.version>2.1</log4j2.version>
         <lombok.version>1.18.12</lombok.version>
         <mysql.version>5.1.47</mysql.version>
         <druid.version>1.1.16</druid.version>
@@ -42,17 +51,12 @@
         <springboot.version>2.3.8.RELEASE</springboot.version>
         <springcloud.version>Hoxton.SR10</springcloud.version>
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
-        <hutool.version>5.6.3</hutool.version>
-        <servlet.version>3.1.0</servlet.version>
-        <swift.version>0.14.2</swift.version>
-        <thrift.version>0.9.3</thrift.version>
-        <nifty.version>0.23.0</nifty.version>
-        <guava.version>22.0</guava.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <source.plugin.version>3.0.1</source.plugin.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <org.redisson.version>3.13.6</org.redisson.version>
+        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
         <seata.version>1.4.2</seata.version>
         <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
     </properties>
@@ -92,6 +96,13 @@
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
                 <version>${nacos.version}</version>
+            </dependency>
+
+            <!-- oauth2 -->
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${security-oauth2.version}</version>
             </dependency>
 
 
@@ -269,7 +280,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 

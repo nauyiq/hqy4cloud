@@ -1,6 +1,6 @@
 package com.hqy.gateway.server;
 
-import com.hqy.auth.access.server.GateWayWhiteListManager;
+import com.hqy.auth.access.server.AuthorizationWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -78,7 +78,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     }
 
     private boolean permitAll(String path) {
-        Set<String> whiteUri = GateWayWhiteListManager.getInstance().whiteList();
+        Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
         return whiteUri.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, path));
     }
 

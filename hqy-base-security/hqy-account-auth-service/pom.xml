@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-account-auth-service-impl</artifactId>
+    <artifactId>hqy-account-auth-service</artifactId>
 
     <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
 
@@ -56,17 +56,18 @@
             </exclusions>
         </dependency>
 
+        <!-- nacos-client 2.3 -->
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+        </dependency>
+
         <!-- hibenate-validator -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
-        <!-- nacos-client 2.3 -->
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-        </dependency>
 
         <!-- spring-security -->
         <dependency>
@@ -80,18 +81,30 @@
             <artifactId>spring-cloud-starter-oauth2</artifactId>
         </dependency>
 
-        <!-- spring-cloud-security-oauth2 -->
+        <!-- jwt -->
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
+            <artifactId>spring-security-jwt</artifactId>
+            <version>1.0.9.RELEASE</version>
         </dependency>
 
+        <!-- common-security -->
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-public-common-security</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
 
     </dependencies>
 
 
     <build>
-        <finalName>hqy-account-service-impl</finalName>
+        <finalName>hqy-account-service</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

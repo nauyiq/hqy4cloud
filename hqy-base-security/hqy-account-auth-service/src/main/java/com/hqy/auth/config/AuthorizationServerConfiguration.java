@@ -1,6 +1,5 @@
 package com.hqy.auth.config;
 
-import com.hqy.auth.server.CustomUserAuthenticationConverter;
 import com.hqy.auth.server.DefaultClientDetailsServiceImpl;
 import com.hqy.auth.server.JwtTokenEnhancer;
 import com.hqy.util.spring.SpringContextHolder;
@@ -16,9 +15,11 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.token.*;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.annotation.Resource;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 @Configuration
 @EnableAuthorizationServer
-public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
 
     @Resource
@@ -48,27 +49,8 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     private AuthenticationManager authenticationManager;
 
 
-    @Bean
-    public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
-            return new JwtTokenStore(jwtAccessTokenConverter);
-    }
 
-    /**
-     * jwt令牌转换器
-     * @param authenticationConverter 用户身份验证转换器
-     * @return JwtAccessTokenConverter
-     */
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(CustomUserAuthenticationConverter authenticationConverter) {
-        KeyPair keyPair = SpringContextHolder.getBean(KeyPair.class);
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setKeyPair(keyPair);
 
-        //配置自定义的CustomUserAuthenticationConverter
-        DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
-        accessTokenConverter.setUserTokenConverter(authenticationConverter);
-        return converter;
-    }
 
     @Bean
     public KeyProperties keyProperties(){

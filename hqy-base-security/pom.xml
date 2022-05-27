@@ -11,7 +11,7 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>hqy-account-auth-service-impl</module>
+        <module>hqy-account-auth-service</module>
         <module>hqy-account-auth-service-api</module>
         <module>hqy-public-common-security</module>
     </modules>

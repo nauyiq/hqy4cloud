@@ -78,14 +78,14 @@ public class HtmlCommonUtil {
         return HtmlUtils.htmlUnescape(s);
     }
 
-    public static final List<String> HACK_WORDS_IN_PARAM = new LinkedList<String>(Arrays.asList("javascript", "<script",
+    public static final List<String> HACK_WORDS_IN_PARAM = new LinkedList<>(Arrays.asList("javascript", "<script",
             "/etc/passwd", "../../", "sleep(", "location.href",
             "onpointer", "alert(",
             "onload=", "onloadend=", "onloadstart=",
             "onpageshow", "onerror=", "<svg ", "<iframe", "srcdoc=", "\"><", "\'><", "<x ", "atob("));
 
 
-    public static final List<String> HACK_WORDS_IN_URI = new LinkedList<String>(Arrays.asList("javascript", "WEB-INF", "web.xml",
+    public static final List<String> HACK_WORDS_IN_URI = new LinkedList<>(Arrays.asList("javascript", "WEB-INF", "web.xml",
             "/etc/passwd", "../../", "sleep(", "location.href", "onload", "onloadend", "onloadstart",
             "onpageshow", "onerror=", "<svg ", "/.svn/", "/.git/", "/.env/", ".yml", ".swf",
             ".sql", ".sql.gz", ".asp", ".aspx", ".php", ".rb", ".py", ".tar.gz", "/cgi-bin/",

@@ -2,15 +2,13 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
-import com.hqy.auth.access.server.GateWayWhiteListManager;
+import com.hqy.auth.access.server.AuthorizationWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.gateway.server.AuthorizationManager;
 import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.spring.ProjectContextInfo;
-import com.hqy.util.spring.SpringContextHolder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -63,7 +61,7 @@ public class ResourceServerConfig {
         http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
 
         //获取项目中的uri白名单
-        Set<String> whiteUri = GateWayWhiteListManager.getInstance().whiteList();
+        Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
         if (CollectionUtils.isNotEmpty(whiteUri)) {
             //白名单配置
             http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();
