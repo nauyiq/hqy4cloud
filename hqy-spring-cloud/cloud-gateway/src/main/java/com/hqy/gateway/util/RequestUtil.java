@@ -31,16 +31,6 @@ import java.util.regex.Pattern;
 public class RequestUtil {
 
     /**
-     * 本地默认IPV4 ip
-     */
-    private static final String IP_LOCAL = "127.0.0.1";
-
-    /**
-     * 本地默认IPV6 ip
-     */
-    private static final String IPV6_LOCAL = "0:0:0:0:0:0:0:1";
-
-    /**
      * ip长度最大值
      */
     private static final int IP_LEN = 15;
@@ -74,7 +64,7 @@ public class RequestUtil {
             ipAddress = Optional.ofNullable(request.getRemoteAddress())
                     .map(address -> address.getAddress().getHostAddress())
                     .orElse("");
-            if (IP_LOCAL.equals(ipAddress)|| IPV6_LOCAL.equals(ipAddress)) {
+            if (BaseStringConstants.INNER_IP.equals(ipAddress)|| BaseStringConstants.IPV6_LOCAL.equals(ipAddress)) {
                 // 根据网卡取本机配置的IP
                 try {
                     InetAddress inet = InetAddress.getLocalHost();

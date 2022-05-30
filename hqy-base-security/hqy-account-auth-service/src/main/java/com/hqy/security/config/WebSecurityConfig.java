@@ -62,18 +62,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    @Override
+    /*@Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(AuthorizationWhiteListManager.getInstance().endpoints().toArray(new String[0]));
         super.configure(web);
-    }
+    }*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable();
 
-        http.authorizeRequests()
+        http.authorizeRequests().antMatchers("/oauth/**", "/sms-code").permitAll()
+                .antMatchers("/webjars/**", "/doc.html", "/swagger-resources/**", "/v2/api-docs").permitAll()
                 .anyRequest().authenticated();
 //        http.formLogin().loginProcessingUrl(AuthorizationWhiteListManager.SecurityContext.LOGIN_PROCESSING_URL)
 //        http.formLogin().successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler);

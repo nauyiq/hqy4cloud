@@ -34,7 +34,7 @@ public class AuthorizationWhiteListManager {
 
         ENDPOINTS.addAll(Arrays.asList(
                 //Oauth2 Endpoint
-//                "/oauth/**", "/auth/**",
+                "/oauth/**", "/auth/**",
                 //端点监控
                 "/**/actuator/**", "/**/actuator/**/**", "/**/doc.html", "/doc.html",
                 //swagger

@@ -28,6 +28,11 @@ public interface BaseStringConstants {
     String INNER_IP = "127.0.0.1";
 
     /**
+     * 本地IPV6
+     */
+    String IPV6_LOCAL = "0:0:0:0:0:0:0:1";
+
+    /**
      * websocket
      */
     String WEBSOCKET = "websocket";
@@ -114,6 +119,16 @@ public interface BaseStringConstants {
          * 认证身份标识
          */
         String AUTHENTICATION_IDENTITY_KEY = "authenticationIdentity";
+
+        /**
+         * Oauth2模式
+         */
+        String GRANT_TYPE_KEY = "grant_type";
+
+        /**
+         * Oauth2 client_id
+         */
+        String CLIENT_ID = "client_id";
     }
 
 
@@ -143,11 +158,6 @@ public interface BaseStringConstants {
          * Upgrade
          */
         String UPGRADE = "Upgrade";
-
-        /**
-         * Authorization
-         */
-        String AUTHORIZATION = "Authorization";
 
 
     }

@@ -257,7 +257,7 @@ public class IpUtil {
 
 
     public static boolean isInnerIp(String ip) {
-        return "127.0.0.1".equals(ip);
+        return BaseStringConstants.INNER_IP.equals(ip);
     }
 
     /**

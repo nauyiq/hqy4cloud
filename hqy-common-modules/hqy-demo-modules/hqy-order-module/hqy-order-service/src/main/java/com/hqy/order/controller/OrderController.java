@@ -3,7 +3,7 @@ package com.hqy.order.controller;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.order.service.OrderService;
-import com.hqy.util.RequestUtil;
+import com.hqy.util.OauthRequestUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * 模拟高并发 秒杀下单方案.
@@ -27,11 +28,11 @@ public class OrderController {
 
     @PostMapping("/seata/at/order")
     public MessageResponse seataATOrder(HttpServletRequest request) {
-        String id = RequestUtil.getBizIdFromHttpRequestHeader(request);
-        if (StringUtils.isBlank(id)) {
+        Long id = OauthRequestUtil.idFromOauth2Request(request);
+        if (Objects.isNull(id)) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
         }
-        return orderService.seataATOrder(1L, 3, Long.parseLong(id));
+        return orderService.seataATOrder(1L, 3,  id);
     }
 
 

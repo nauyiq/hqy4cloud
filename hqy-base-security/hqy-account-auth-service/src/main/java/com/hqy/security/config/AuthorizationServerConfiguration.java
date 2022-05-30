@@ -3,16 +3,14 @@ package com.hqy.security.config;
 import com.hqy.security.core.client.SecurityClientDetailsServiceImpl;
 import com.hqy.security.server.PasswordEnhanceTokenGranter;
 import com.hqy.security.server.RedisAuthorizationCodeServer;
-import com.hqy.util.spring.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
@@ -28,9 +26,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +54,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private final RedisAuthorizationCodeServer redisAuthorizationCodeServer;
 
 
-
-
-
-
     /**
      * 客户端信息配置
      * @param clients
@@ -69,7 +61,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        SecurityClientDetailsServiceImpl clientDetailsService = SpringContextHolder.getBean(SecurityClientDetailsServiceImpl.class);
         clients.withClientDetails(clientDetailsService);
     }
 
@@ -126,7 +117,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .accessTokenConverter(jwtAccessTokenConverter)
                 .tokenEnhancer(tokenEnhancerChain)
                 .tokenGranter(new CompositeTokenGranter(tokenGranters))
-
                 .tokenServices(tokenServices(endpoints));
 
     }
@@ -136,15 +126,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      * @param security
      * @throws Exception
      */
-    /*@Override
+    @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security
-//                .allowFormAuthenticationForClients()
-//                .passwordEncoder(SpringContextHolder.getBean(BCryptPasswordEncoder.class))
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients();
-    }*/
+    }
 
 
 
@@ -161,7 +149,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setClientDetailsService(clientDetailsService);
         tokenServices.setTokenEnhancer(tokenEnhancerChain);
-
 
         /* refresh_token有两种使用方式：重复使用(true)、非重复使用(false)，默认为true
            1 重复使用：access_token过期刷新时， refresh_token过期时间未改变，仍以初次生成的时间为准

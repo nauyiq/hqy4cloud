@@ -2,6 +2,7 @@ package com.hqy.gateway.filter;
 
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.util.JsonUtil;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -32,25 +34,25 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String token = request.getHeaders().getFirst(BaseStringConstants.Headers.AUTHORIZATION);
-        if (StringUtils.isBlank(token)) {
+        String authorization = request.getHeaders().getFirst(BaseStringConstants.Auth.AUTHORIZATION_KEY);
+        if (StringUtils.isBlank(authorization) || !authorization.startsWith(BaseStringConstants.Auth.JWT_PREFIX)) {
+            return chain.filter(exchange);
+        } else if (authorization.startsWith(BaseStringConstants.Auth.BASIC_PREFIX)) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.debug("@@@ Token empty, uri = {}", request.getURI());
+                log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
             }
             return chain.filter(exchange);
         }
 
         try {
-            // 从token中解析用户信息并设置到Header中去
-            String realToken = token.replace(BaseStringConstants.Auth.JWT_PREFIX, Strings.EMPTY).replace(BaseStringConstants.Auth.JWT_PREFIX.toLowerCase(), Strings.EMPTY);
+            String realToken = authorization.replace(BaseStringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
             String payload = JWSObject.parse(realToken).getPayload().toString();
             if (StringUtils.isBlank(payload)) {
                 return chain.filter(exchange);
             } else {
-                //request写入JWT的载体信息
-                log.info("AuthGlobalFilter.filter() payload:{}", payload);
+                // 从token中解析用户信息并设置到Header中去
                 request = request.mutate().header(BaseStringConstants.Auth.JWT_PAYLOAD_KEY,
-                        payload, "UTF-8").build();
+                        URLEncoder.encode(payload, StandardCharsets.UTF_8.name())).build();
                 exchange = exchange.mutate().request(request).build();
             }
 

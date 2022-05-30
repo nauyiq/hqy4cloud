@@ -57,12 +57,12 @@ public class ResourceServerConfig {
          http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
                 //本地公钥
                 .publicKey(rsaPublicKey());
+
         //自定义处理JWT请求头过期或签名错误的结果
         http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
 
         //获取项目中的uri白名单
         Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
-        whiteUri.add("/oauth/token");
         if (CollectionUtils.isNotEmpty(whiteUri)) {
             //白名单配置
             http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();

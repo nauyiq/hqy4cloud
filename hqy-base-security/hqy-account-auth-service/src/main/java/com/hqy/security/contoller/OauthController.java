@@ -1,22 +1,20 @@
 package com.hqy.security.contoller;
 
-import cn.hutool.json.JSONUtil;
+import com.hqy.account.entity.Account;
+import com.hqy.account.service.AccountTkService;
+import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.bind.MessageResponse;
+import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.security.dto.OauthAccountDTO;
 import com.hqy.security.service.OauthAccountService;
+import com.hqy.util.OauthRequestUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.KeyPair;
-import java.security.Principal;
-import java.util.Map;
 
 /**
  * Oauth 相关接口
@@ -25,6 +23,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
+@RequestMapping("/oauth")
 public class OauthController {
 
     @Resource
@@ -32,6 +31,9 @@ public class OauthController {
 
     @Resource
     private OauthAccountService oauthAccountService;
+
+    @Resource
+    private AccountTkService accountTkService;
 
     /**
      * 获取RSA公钥接口
@@ -45,10 +47,19 @@ public class OauthController {
     }*/
 
 
-    @PostMapping("/oauth/registry")
+    @PostMapping("/registry")
     public MessageResponse registry(@RequestBody @Valid OauthAccountDTO account) {
         return oauthAccountService.registry(account);
     }
+
+
+    @GetMapping("/me")
+    public DataResponse currentUser(HttpServletRequest request) {
+        Long id = OauthRequestUtil.idFromOauth2Request(request);
+        Account account = accountTkService.queryById(id);
+        return CommonResultCode.dataResponse(true, CommonResultCode.SUCCESS, account);
+    }
+
 
     /*@PostMapping("/token")
     public Object postAccessToken(
