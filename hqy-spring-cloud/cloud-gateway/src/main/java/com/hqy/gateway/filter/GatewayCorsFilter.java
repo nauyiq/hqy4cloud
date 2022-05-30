@@ -27,7 +27,6 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     private static final String FAVICON_ICO = "/favicon.ico";
 
-    private static final int ORDER = 77;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -44,7 +43,7 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         }
 
         //如果是socket.io项目 则放开piling请求的cors 原因是在socket.io netty内部已经处理了cors
-        if (path.contains("/websocket") && request.getQueryParams().containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+        if (path.contains(BaseStringConstants.WEBSOCKET_PATH) && request.getQueryParams().containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
             return chain.filter(exchange);
         }
 
@@ -75,6 +74,6 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return ORDER;
+        return Integer.MAX_VALUE;
     }
 }

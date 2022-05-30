@@ -1,25 +1,22 @@
-package com.hqy.auth.server;
+package com.hqy.security.core.user;
 
 import com.hqy.account.entity.Account;
 import com.hqy.account.service.AccountTkService;
-import com.hqy.auth.dto.SecurityUserDTO;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.JsonUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -29,15 +26,12 @@ import java.util.Objects;
  * @date 2022/3/11 10:52
  */
 @Service
-public class AuthUserDetailServiceImpl implements UserDetailsService {
+@RequiredArgsConstructor
+public class SecurityUserDetailServiceImpl implements UserDetailsService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthUserDetailServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SecurityUserDetailServiceImpl.class);
 
-    @Resource
-    private AccountTkService accountTkService;
-
-    @Resource
-    private DefaultClientDetailsServiceImpl authClientDetailsService;
+    private final AccountTkService accountTkService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -54,22 +48,11 @@ public class AuthUserDetailServiceImpl implements UserDetailsService {
 
     private UserDetails getUserDetails(String username) {
         UserDetails userDetails = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.isNull(authentication)) {
-            //如果身份为空说明没有认证 则采用httpBasic认证 httpBasic中存储了client_id和client_secret，开始认证client_id和client_secret
-            ClientDetails clientDetails = authClientDetailsService.loadClientByClientId(username);
-            if (Objects.nonNull(clientDetails)) {
-                userDetails = new User(username, clientDetails.getClientSecret(), clientDetails.getAuthorities());
-            }
-        } else {
-            //查库
-            Account account = accountTkService.queryAccountByUsernameOrEmail(username);
-            if (Objects.nonNull(account)) {
-                userDetails = new SecurityUserDTO(account.getId(), account.getUsername(), account.getPassword(), account.getEmail() ,account.getStatus(), AuthorityUtils
-                        .commaSeparatedStringToAuthorityList(account.getAuthorities()));
-            }
+        Account account = accountTkService.queryAccountByUsernameOrEmail(username);
+        if (Objects.nonNull(account)) {
+            userDetails = new SecurityUser(account.getId(), account.getUsername(), account.getPassword(), account.getEmail() ,account.getStatus(), AuthorityUtils
+                    .commaSeparatedStringToAuthorityList(account.getAuthorities()));
         }
-
         return userDetails;
     }
 
@@ -88,6 +71,10 @@ public class AuthUserDetailServiceImpl implements UserDetailsService {
         if (!user.isEnabled()) {
             log.warn("[{}] -> user status is false.", JsonUtil.toJson(user));
             throw new DisabledException(CommonResultCode.USER_DISABLED.message);
+        } else if (!user.isAccountNonLocked()) {
+            throw new LockedException("该账号已被锁定!");
+        } else if (!user.isAccountNonExpired()) {
+            throw new AccountExpiredException("该账号已过期!");
         }
     }
 

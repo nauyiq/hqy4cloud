@@ -1,4 +1,4 @@
-package com.hqy.auth.dto;
+package com.hqy.security.dto;
 
 import lombok.ToString;
 import org.hibernate.validator.constraints.NotEmpty;

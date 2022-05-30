@@ -106,8 +106,7 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
         GatewayLoadBalanceStrategyContext.LoadBalance loadBalance =
                 GatewayLoadBalanceStrategyContext.LoadBalance.getLoadBalance(uri.getScheme());
         //选择负载均衡.
-        LoadBalancer<ServiceInstance> loadBalancer = GatewayLoadBalanceStrategyContext.
-                getLoadBalanceStrategy(loadBalance);
+        LoadBalancer<ServiceInstance> loadBalancer = GatewayLoadBalanceStrategyContext.getLoadBalanceStrategy(loadBalance);
         if (loadBalancer == null) {
             throw new NotFoundException("No loadbalancer available for " + uri.getScheme());
         }

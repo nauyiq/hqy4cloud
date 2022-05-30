@@ -1,11 +1,11 @@
-package com.hqy.auth.service.impl;
+package com.hqy.security.service.impl;
 
 import com.hqy.account.entity.Account;
 import com.hqy.account.entity.AccountOauthClient;
 import com.hqy.account.service.AccountOauthClientTkService;
 import com.hqy.account.service.AccountTkService;
-import com.hqy.auth.dto.OauthAccountDTO;
-import com.hqy.auth.service.OauthAccountService;
+import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.service.OauthAccountService;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;

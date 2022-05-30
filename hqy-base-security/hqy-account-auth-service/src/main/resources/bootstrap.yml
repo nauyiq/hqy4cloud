@@ -1,12 +1,12 @@
 logging:
   config: classpath:logback.xml
 
-encrypt:
-  key-store:
-    password: hongqy@2021
-    alias: jwt
-    secret: hongqy@2021
-    location: classpath:jwt.jks
+#encrypt:
+#  key-store:
+#    password: hongqy@2021
+#    alias: jwt
+#    secret: hongqy@2021
+#    location: classpath:jwt.jks
 
 server:
   port: 8010

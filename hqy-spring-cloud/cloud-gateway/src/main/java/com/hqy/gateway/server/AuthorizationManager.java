@@ -5,6 +5,7 @@ import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import reactor.core.publisher.Mono;
+import sun.security.krb5.internal.AuthContext;
 
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import java.util.Set;
  * @author qiyuan.hong
  * @date 2022-03-14 14:29
  */
+@Slf4j
 @Component
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
@@ -33,15 +36,15 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
         ServerHttpRequest request = authorizationContext.getExchange().getRequest();
+        //Option请求放行
         if (request.getMethod() == HttpMethod.OPTIONS) {
-            //Option请求放行
             return Mono.just(new AuthorizationDecision(true));
         }
 
         String path = request.getURI().getPath();
         String ipAddress = RequestUtil.getIpAddress(request);
 
-        //静态uri放行
+        //检验是否可以白名单path
         if (permitAll(path)) {
             return Mono.just(new AuthorizationDecision(true));
         }
@@ -50,8 +53,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         String token = request.getHeaders().getFirst(BaseStringConstants.Auth.AUTHORIZATION_KEY);
         if (StringUtils.isNotBlank(token) && StringUtils.startsWithIgnoreCase(token, BaseStringConstants.Auth.JWT_PREFIX) ) {
             //白名单ip无需鉴权 放行
-            Set<String> whiteIp =
-                    SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
+            Set<String> whiteIp = SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
             if (CollectionUtils.isNotEmpty(whiteIp)) {
                 for (String ip : whiteIp) {
                     if (ip.equals(ipAddress)) {
@@ -70,6 +72,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
                 .map(GrantedAuthority::getAuthority)
                 .any(authority -> {
                     //FIXME 获取用户角色 校验权限
+                    log.info("权限：{}", authority);
                     return true;
                 })
                 .map(AuthorizationDecision::new)

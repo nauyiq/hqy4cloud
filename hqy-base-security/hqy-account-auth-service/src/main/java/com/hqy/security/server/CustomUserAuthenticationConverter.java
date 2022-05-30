@@ -1,8 +1,9 @@
-package com.hqy.auth.server;
+package com.hqy.security.server;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.hqy.auth.dto.SecurityUserDTO;
-import com.hqy.auth.dto.UserJwtPayloadDTO;
+import com.hqy.security.core.user.SecurityUser;
+import com.hqy.security.dto.UserJwtPayloadDTO;
+import com.hqy.security.core.user.SecurityUserDetailServiceImpl;
 import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,18 +21,18 @@ import java.util.Objects;
  * @date 2022-03-11 23:32
  */
 @Slf4j
-@Component
+//@Component
 public class CustomUserAuthenticationConverter extends DefaultUserAuthenticationConverter {
 
     @Resource
-    private AuthUserDetailServiceImpl userDetailsService;
+    private SecurityUserDetailServiceImpl userDetailsService;
 
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
         String name = authentication.getName();
         AssertUtil.notEmpty(name, "Invalid Authentication, name is empty.");
 
-       SecurityUserDTO securityUser = getSecurityUserDTO(authentication, name);
+       SecurityUser securityUser = getSecurityUserDTO(authentication, name);
         if (Objects.isNull(securityUser)) {
             return null;
         }
@@ -39,21 +40,21 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
         return userConvertToMap(securityUser);
     }
 
-    private Map<String, ?> userConvertToMap(SecurityUserDTO securityUser) {
+    private Map<String, ?> userConvertToMap(SecurityUser securityUser) {
         UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(), securityUser.getPassword(), securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
         return BeanUtil.beanToMap(userJwtPayloadDTO);
     }
 
-    private SecurityUserDTO getSecurityUserDTO(Authentication authentication, String name) {
-        SecurityUserDTO securityUser = null;
+    private SecurityUser getSecurityUserDTO(Authentication authentication, String name) {
+        SecurityUser securityUser = null;
         try {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof SecurityUserDTO) {
-                securityUser = (SecurityUserDTO) principal;
+            if (principal instanceof SecurityUser) {
+                securityUser = (SecurityUser) principal;
             } else {
                 //refresh_token默认不去调用userDetailService获取用户信息，这里手动去调用 得到 securityUser
                 UserDetails userDetails = userDetailsService.loadUserByUsername(name);
-                securityUser = (SecurityUserDTO) userDetails;
+                securityUser = (SecurityUser) userDetails;
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

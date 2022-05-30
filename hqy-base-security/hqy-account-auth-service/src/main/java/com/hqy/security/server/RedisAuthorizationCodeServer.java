@@ -1,4 +1,4 @@
-package com.hqy.auth.server;
+package com.hqy.security.server;
 
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.fundation.cache.redis.LettuceRedis;

@@ -1,6 +1,5 @@
-package com.hqy.auth.dto;
+package com.hqy.security.core.user;
 
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -11,21 +10,12 @@ import java.util.Collection;
  * @version 1.0
  * @date 2022/3/11 14:44
  */
-@ToString
-public class SecurityUserDTO extends User {
+public class SecurityUser extends User {
 
     private static final long serialVersionUID = 5166170463969575324L;
 
-    public SecurityUserDTO(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-    }
 
-
-    public SecurityUserDTO(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-    }
-
-    public SecurityUserDTO(Long id, String username, String password, String email, boolean status, Collection<? extends GrantedAuthority> authorities) {
+    public SecurityUser(Long id, String username, String password, String email, boolean status, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.id = id;
         this.status = status;

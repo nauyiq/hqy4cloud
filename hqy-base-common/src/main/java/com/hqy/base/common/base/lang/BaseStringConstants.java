@@ -32,6 +32,12 @@ public interface BaseStringConstants {
      */
     String WEBSOCKET = "websocket";
 
+    /**
+     * /websocket
+     */
+    String WEBSOCKET_PATH = Symbol.INCLINED_ROD + WEBSOCKET;
+
+
     interface Auth {
 
         /**

@@ -1,6 +1,6 @@
-package com.hqy.auth.service;
+package com.hqy.security.service;
 
-import com.hqy.auth.dto.OauthAccountDTO;
+import com.hqy.security.dto.OauthAccountDTO;
 import com.hqy.base.common.bind.MessageResponse;
 
 /**

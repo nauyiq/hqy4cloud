@@ -14,7 +14,7 @@ public class AuthorizationWhiteListManager {
 
     private AuthorizationWhiteListManager() {}
 
-    private static AuthorizationWhiteListManager instance = null;
+    private static volatile AuthorizationWhiteListManager instance = null;
 
     private static final Set<String> ENDPOINTS = new CopyOnWriteArraySet<>();
 
@@ -34,7 +34,7 @@ public class AuthorizationWhiteListManager {
 
         ENDPOINTS.addAll(Arrays.asList(
                 //Oauth2 Endpoint
-                "/oauth/**", "/auth/**",
+//                "/oauth/**", "/auth/**",
                 //端点监控
                 "/**/actuator/**", "/**/actuator/**/**", "/**/doc.html", "/doc.html",
                 //swagger
@@ -55,12 +55,6 @@ public class AuthorizationWhiteListManager {
         ENDPOINTS.add(value);
     }
 
-
-    public static class SecurityContext {
-
-        public static final String LOGIN_PROCESSING_URL = "/user/login";
-
-    }
 
 
 

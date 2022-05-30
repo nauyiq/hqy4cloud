@@ -1,10 +1,9 @@
-package com.hqy.auth.config;
+package com.hqy.security.config;
 
 import com.hqy.auth.access.server.AuthorizationWhiteListManager;
-import com.hqy.auth.server.AuthUserDetailServiceImpl;
 import com.hqy.util.spring.SpringContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -32,30 +30,11 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /**
-     * 验证成功处理器
-     */
-    @Resource
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    /**
-     * 验证失败处理器
-     */
-    @Resource
-    private AuthenticationFailureHandler authenticationFailureHandler;
-
-
-    @Resource
-    private UserDetailsService userDetailsService;
-
-
-    /**
-     * 自定义异常处理端口 默认空
-     */
-    @Autowired(required = false)
-    private AuthenticationEntryPoint authenticationEntryPoint;
+    private final UserDetailsService userDetailsService;
 
 
     @Bean
@@ -63,20 +42,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    /**
-     * 全局用户信息
-     * @param auth 认证管理
-     * @throws Exception 用户认证异常信息
-     */
-    @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider()) ;
     }
 
     /**
@@ -87,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
+        // 是否隐藏用户不存在异常，默认:true-隐藏；false-抛出异常
         provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
@@ -104,17 +75,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .anyRequest().authenticated();
-        http.formLogin().loginProcessingUrl(AuthorizationWhiteListManager.SecurityContext.LOGIN_PROCESSING_URL)
-                        .successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler);
+//        http.formLogin().loginProcessingUrl(AuthorizationWhiteListManager.SecurityContext.LOGIN_PROCESSING_URL)
+//        http.formLogin().successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler);
 
         // 基于密码 等模式可以无session,不支持授权码模式
-        if (authenticationEntryPoint == null) {
+        /*if (authenticationEntryPoint == null) {
             http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         } else {
             // 授权码模式单独处理，需要session的支持，此模式可以支持所有oauth2的认证
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-        }
+        }*/
 
 
         http.headers().frameOptions().disable();
@@ -129,7 +100,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        DaoAuthenticationProvider daoAuthenticationProvider = SpringContextHolder.getBean(DaoAuthenticationProvider.class);
-        auth.authenticationProvider(daoAuthenticationProvider);
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 }

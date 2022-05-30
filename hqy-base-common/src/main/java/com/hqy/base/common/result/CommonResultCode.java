@@ -84,7 +84,12 @@ public enum CommonResultCode {
     /**
      * 用户名已经存在
      */
-    USERNAME_EXIST(2003,"This username already exist.")
+    USERNAME_EXIST(2003,"This username already exist."),
+
+    /**
+     * 错误的用户名或者密码
+     */
+    INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
 
     ;
 
