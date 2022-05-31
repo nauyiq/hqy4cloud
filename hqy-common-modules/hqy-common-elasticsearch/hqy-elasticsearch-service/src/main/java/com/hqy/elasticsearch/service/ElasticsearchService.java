@@ -1,6 +1,5 @@
 package com.hqy.elasticsearch.service;
 
-import com.hqy.elasticsearch.ElasticsearchFoundation;
 import com.hqy.base.common.result.PageResult;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.util.proxy.CommonBeanUtil;
@@ -37,6 +36,7 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -48,9 +48,9 @@ import java.util.concurrent.TimeUnit;
  * es工具类
  * 注意：这里所有的数据使用默认的文档类型_doc 在es8之后将会废弃type 因此不建议业务继续使用type
  * @author qy
- * @create 2021/9/13 22:38
+ * @date  2021/9/13 22:38
  */
-@Component
+@Service
 public class ElasticsearchService implements ElasticsearchFoundation {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchService.class);
@@ -231,7 +231,8 @@ public class ElasticsearchService implements ElasticsearchFoundation {
             GetRequest request = new GetRequest(index, id);
             GetResponse response = client.get(request, RequestOptions.DEFAULT);
             Map<String, Object> map = response.getSource();
-            map.put("id", response.getId()); //为返回的数据添加id
+            //为返回的数据添加id
+            map.put("id", response.getId());
             return map;
         } catch (Exception e) {
             log.error("[es] getDocument failure, index:{} id:{}.", index, id);

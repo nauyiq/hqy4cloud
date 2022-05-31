@@ -1,5 +1,8 @@
 package com.hqy.elasticsearch.config;
 
+import com.hqy.util.AssertUtil;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -14,21 +17,21 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * elasticsearch configuration.
  * @author qy
- * @create 2021/9/13 22:13
+ * @date  2021/9/13 22:13
  */
 @Configuration
+@RequiredArgsConstructor
 @EnableConfigurationProperties(ElasticsearchProperties.class)
 public class ElasticsearchConfig {
 
-    @Autowired
-    private ElasticsearchProperties elasticsearchProperties;
+    private final ElasticsearchProperties elasticsearchProperties;
 
     private final List<HttpHost> httpHosts = new ArrayList<>();
 
@@ -36,14 +39,13 @@ public class ElasticsearchConfig {
     @ConditionalOnMissingBean
     public RestHighLevelClient restHighLevelClient() {
         List<String> clusterNodes = elasticsearchProperties.getClusterNodes();
-        if (clusterNodes.isEmpty()) {
+        if (CollectionUtils.isEmpty(clusterNodes)) {
             throw new RuntimeException("[es] 集群节点不允许为空");
         }
         clusterNodes.forEach(node -> {
             try {
                 String[] parts = StringUtils.split(node, ":");
-                Assert.notNull(parts, "Must defined");
-                Assert.state(parts.length == 2, "Must be defined as 'host:port'");
+                AssertUtil.isTrue(parts.length == 2, "Must be defined as 'host:port'");
                 httpHosts.add(new HttpHost(parts[0], Integer.parseInt(parts[1]), elasticsearchProperties.getSchema()));
             } catch (Exception e) {
                 throw new IllegalStateException("Invalid ES nodes " + "property '" + node + "'", e);

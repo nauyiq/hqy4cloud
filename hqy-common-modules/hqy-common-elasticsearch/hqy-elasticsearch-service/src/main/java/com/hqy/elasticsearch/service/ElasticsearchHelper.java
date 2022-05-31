@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-09-14 18:33
+ * @date 2021-09-14 18:33
  */
 public enum ElasticsearchHelper {
 
@@ -63,10 +62,14 @@ public enum ElasticsearchHelper {
             throw new RuntimeException("设置高亮字段失败, SearchSourceBuilder is null or highlightField is empty.");
         }
         HighlightBuilder highlightBuilder = new HighlightBuilder();
-        highlightBuilder.field(highlightField); //高亮字段
-        highlightBuilder.requireFieldMatch(false); //多个高亮显示
-        highlightBuilder.preTags("<span style='color:red'>"); //标签前缀
-        highlightBuilder.postTags("</span>");//标签后缀
+        //高亮字段
+        highlightBuilder.field(highlightField);
+        //多个高亮显示
+        highlightBuilder.requireFieldMatch(false);
+        //标签前缀
+        highlightBuilder.preTags("<span style='color:red'>");
+        //标签后缀
+        highlightBuilder.postTags("</span>");
         sourceBuilder.highlighter(highlightBuilder);
         return sourceBuilder;
     }

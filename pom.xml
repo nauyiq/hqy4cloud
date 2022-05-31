@@ -21,7 +21,6 @@
         <module>hqy-common-modules</module>
         <module>hqy-base-common-service</module>
         <module>hqy-thrift-rpc</module>
-        <module>hqy-base-elasticsearch</module>
         <module>hqy-base-security</module>
         <module>hqy-base-mq</module>
     </modules>

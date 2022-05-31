@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
- * 模拟高并发 秒杀下单方案.
+ * 分布式事务下单 模拟
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/11 14:52

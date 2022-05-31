@@ -1,4 +1,4 @@
-package com.hqy.elasticsearch;
+package com.hqy.elasticsearch.service;
 
 import com.hqy.base.common.result.PageResult;
 import org.elasticsearch.action.search.SearchResponse;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * @author qy
- * @create 2021/9/13 23:31
+ * @date 2021/9/13 23:31
  */
 public interface ElasticsearchFoundation {
 

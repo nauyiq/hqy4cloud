@@ -3,23 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-parent</artifactId>
+        <artifactId>hqy-common-modules</artifactId>
         <groupId>com.hqy</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>common-module-elasticsearch</description>
+    <groupId>com.hqy.elasticsearch</groupId>
+
     <packaging>pom</packaging>
 
-    <artifactId>hqy-base-elasticsearch</artifactId>
+    <artifactId>hqy-common-elasticsearch</artifactId>
 
     <modules>
         <module>hqy-elasticsearch-demo</module>
-        <module>hqy-elasticsearch-api</module>
         <module>hqy-elasticsearch-service</module>
     </modules>
-
-
 
 
 </project>
