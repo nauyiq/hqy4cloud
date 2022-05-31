@@ -11,17 +11,25 @@
     <description>各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务</description>
 
     <modules>
+        <!-- netty相关模块 包括socket.io源码 -->
         <module>hqy-netty</module>
+        <!-- 全局的公共包模块 -->
         <module>hqy-util</module>
+        <!-- spring-cloud服务 -->
         <module>hqy-spring-cloud</module>
         <!-- 公共依赖包 -->
         <module>hqy-base-common</module>
         <!-- 数据库操作相关 -->
         <module>hqy-base-common-dao</module>
+        <!-- 公共模块 包括redis、采集服务、es等-->
         <module>hqy-common-modules</module>
+        <!-- 公共service -->
         <module>hqy-base-common-service</module>
+        <!-- 自定义thrift-rpc -->
         <module>hqy-thrift-rpc</module>
+        <!-- 安全模块 -->
         <module>hqy-base-security</module>
+        <!-- 消息队列模块 -->
         <module>hqy-base-mq</module>
     </modules>
 
@@ -57,7 +65,7 @@
         <org.redisson.version>3.13.6</org.redisson.version>
         <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
         <seata.version>1.4.2</seata.version>
-        <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
+        <nacos.version>2.0.3</nacos.version>
     </properties>
 
 
