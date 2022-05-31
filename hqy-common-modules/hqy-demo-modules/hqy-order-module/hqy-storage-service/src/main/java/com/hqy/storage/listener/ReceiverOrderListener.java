@@ -1,13 +1,13 @@
 package com.hqy.storage.listener;
 
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.order.OrderMessageRecord;
+import com.hqy.common.entity.storage.Storage;
+import com.hqy.common.service.OrderRemoteService;
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
-import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.OrderMessageRecord;
-import com.hqy.order.common.entity.Storage;
-import com.hqy.order.common.service.OrderRemoteService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.storage.service.StorageTkService;
 import com.hqy.util.JsonUtil;
@@ -65,8 +65,8 @@ public class ReceiverOrderListener extends AbstractRabbitListener<OrderMessageRe
                     }
 
                     //乐观锁 CAS 更新库存
-                    boolean casUpdate = storageTkService.casUpdate(productId, storage.getUsed() + count, storage.getResidue() - count, storage.getResidue());
-
+//                    boolean casUpdate = storageTkService.casUpdate(productId, storage.getUsed() + count, storage.getResidue() - count, storage.getResidue());
+                    boolean casUpdate = true;
                     int retryTime = 1;
                     if (!casUpdate) {
                         while (!casUpdate) {
@@ -77,8 +77,8 @@ public class ReceiverOrderListener extends AbstractRabbitListener<OrderMessageRe
                                 //如果更新失败 有可能是发生了并发问题 即库存数据变更了 重新读取库存
                                 Storage queryStorage = storageTkService.queryById(productId);
                                 //FIXME 正常来说应该重新判断下单条件...
-                                casUpdate = storageTkService.casUpdate
-                                        (productId, queryStorage.getUsed() + count, queryStorage.getResidue() - count, queryStorage.getResidue());
+//                                casUpdate = storageTkService.casUpdate
+//                                        (productId, queryStorage.getUsed() + count, queryStorage.getResidue() - count, queryStorage.getResidue());
                                 TimeUnit.MILLISECONDS.sleep(30);
                             } catch (Exception e) {
                                 log.error(e.getMessage(), e);

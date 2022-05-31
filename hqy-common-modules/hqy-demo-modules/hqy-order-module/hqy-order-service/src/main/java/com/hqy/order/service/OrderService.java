@@ -38,7 +38,7 @@ public interface OrderService {
      * @param count     数目
      * @return MessageResponse
      */
-    MessageResponse seataTccOrder(Long storageId, Integer count);
+    MessageResponse seataTccOrder(Long storageId, Integer count, Long accountId);
 
     /**
      * 基于rabbitmq 的 本地消息表方案
@@ -52,7 +52,7 @@ public interface OrderService {
      * @param count     数目
      * @return
      */
-    MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count);
+    MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count, Long accountId);
 
     /**
      * 基于kafka 实现本地消息表的 分布式事务下单demo

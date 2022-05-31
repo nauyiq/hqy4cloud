@@ -5,6 +5,8 @@ import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.exception.MessageMqException;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.common.dto.OrderDetailDTO;
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.order.OrderMessageRecord;
 import com.hqy.common.entity.storage.Storage;
 import com.hqy.common.entity.account.Wallet;
 import com.hqy.common.service.StorageRemoteService;
@@ -20,6 +22,7 @@ import com.hqy.util.identity.ProjectSnowflakeIdWorker;
 import com.hqy.util.spring.SpringContextHolder;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
@@ -37,13 +40,12 @@ import java.util.Date;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Resource
-    private OrderTkService orderTkService;
+    private final OrderTkService orderTkService;
 
-    @Resource
-    private TccOderService tccOderService;
+    private final TccOderService tccOderService;
 
 
 
@@ -73,41 +75,39 @@ public class OrderServiceImpl implements OrderService {
         //下单
         Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
         order.setId(ProjectSnowflakeIdWorker.getInstance().nextId());
-        if (!insert(order)) {
+        if (!orderTkService.insert(order)) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
         //RPC减库存
-        storage.setUsed(storage.getUsed() + count);
-        storage.setResidue(storage.getResidue() - count);
+        storage.setStorage(storage.getStorage() - count);
         if (!modifyStorage(storage)) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
 
         //RPC减账户余额
-        account.setUsed(account.getUsed().add(detail.totalMoney));
-        account.setResidue(account.getResidue().subtract(detail.totalMoney));
-        AssertUtil.isTrue(modifyAccount(account), "修改账户余额失败");
+        wallet.setMoney(wallet.getMoney().subtract(detail.totalMoney));
+        AssertUtil.isTrue(modifyAccount(wallet), "修改账户余额失败");
 
         //修改订单状态
         order.setId(order.getId());
         order.setStatus(true);
-        AssertUtil.isTrue(update(order), "修改订单状态失败");
+        AssertUtil.isTrue(orderTkService.update(order), "修改订单状态失败");
         return CommonResultCode.messageResponse();
     }
 
 
     @Override
     @GlobalTransactional(name = "seataTccOrder", rollbackFor = Exception.class)
-    public MessageResponse seataTccOrder(Long storageId, Integer count) {
+    public MessageResponse seataTccOrder(Long storageId, Integer count, Long accountId) {
 
         //seata事务在微服务进行传播 最主要的依赖就是全局事务id xid.
         log.info("Seata TM start global transaction, xid:{}", RootContext.getXID());
 
         //校验订单
-        Account account = getWallet();
+        Wallet wallet = getWallet(accountId);
         Storage storage = getStorage(storageId);
-        OrderDetailDTO detail = new OrderDetailDTO(account, storage, count, storage.getResidue());
+        OrderDetailDTO detail = new OrderDetailDTO(wallet, storage, count, storage.getStorage());
         if (!detail.enableOrder()) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
@@ -116,25 +116,25 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
         long orderId = ProjectSnowflakeIdWorker.getInstance().nextId();
         order.setId(orderId);
-        AssertUtil.isTrue(tccOderService.order(count, detail.totalMoney, account, storage,  order), "tcc order failure.");
+        AssertUtil.isTrue(tccOderService.order(count, detail.totalMoney, wallet, storage,  order), "tcc order failure.");
         return CommonResultCode.messageResponse();
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count) {
+    public MessageResponse rabbitmqLocalMessageOrder(Long storageId, Integer count, Long accountId) {
         //校验订单
-        Account account = getWallet();
+        /*Wallet wallet = getWallet(accountId);
         Storage storage = getStorage(storageId);
-        OrderDetailDTO detail = new OrderDetailDTO(account, storage, count, storage.getStorage());
+        OrderDetailDTO detail = new OrderDetailDTO(wallet, storage, count, storage.getStorage());
         if (!detail.enableOrder()) {
             return CommonResultCode.messageResponse(CommonResultCode.INVALID_DATA);
         }
         //下单
         Order order = new Order(1L, storageId, count, detail.totalMoney, false, new Date());
         order.setId(ProjectSnowflakeIdWorker.getInstance().nextId());
-        AssertUtil.isTrue(insert(order), "新增订单失败.");
+        AssertUtil.isTrue(orderTkService.insert(order), "新增订单失败.");
 
         //构建本地消息 往本地消息表生成一条记录
         String messageId = ProjectSnowflakeIdWorker.getInstance().nextId() + "";
@@ -146,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
         //将消息关联的库存信息放到redis
         LettuceRedis.getInstance().set(messageId, storage, BaseMathConstants.ONE_HOUR_4MILLISECONDS);
         //断言发消息到rabbitmq是否成功
-        AssertUtil.isTrue(service.commit(messageId, true), "commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
+        AssertUtil.isTrue(service.commit(messageId, true), "commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));*/
         return CommonResultCode.messageResponse();
     }
 
@@ -156,7 +156,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MessageResponse kafkaOrder(Long storageId, Integer count) {
-        //获取账号信息.
+        /*//获取账号信息.
         Account account = getWallet();
         //获取库存信息
         Storage storage = getStorage(storageId);
@@ -194,19 +194,15 @@ public class OrderServiceImpl implements OrderService {
         if (!commit) {
             //直接抛出异常. 回滚事务
             throw new MessageMqException("commit message failure. message: " + JsonUtil.toJson(orderMessageRecord));
-        }
+        }*/
         return new MessageResponse(true, CommonResultCode.SUCCESS.message);
 
     }
 
-
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MessageResponse rocketMqOrder(Long storageId, Integer count, Long accountId) {
-        //获取账号信息.
+    public MessageResponse rocketMqOrder(Long storageId, Integer count) {
+     /*   //获取账号信息.
         Account account = getWallet(accountId);
         //获取库存信息
         Storage storage = getStorage(storageId);
@@ -221,7 +217,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order(1L, storageId, count, totalMoney, false, new Date());
         if (!insert(order)) {
             return CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR_INSERT_FAIL);
-        }
+        }*/
 
 
         return null;
@@ -246,8 +242,8 @@ public class OrderServiceImpl implements OrderService {
         return service.modifyStorage(JsonUtil.toJson(storage));
     }
 
-    private boolean modifyAccount(Account account) {
-        AccountRemoteService service = RPCClient.getRemoteService(AccountRemoteService.class);
-        return service.modifyAccount(JsonUtil.toJson(account));
+    private boolean modifyAccount(Wallet wallet) {
+        WalletRemoteService service = RPCClient.getRemoteService(WalletRemoteService.class);
+        return service.modifyAccount(JsonUtil.toJson(wallet));
     }
 }

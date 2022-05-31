@@ -3,7 +3,7 @@ package com.hqy.storage.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.order.common.entity.Storage;
+import com.hqy.common.entity.storage.Storage;
 import com.hqy.storage.service.StorageTkService;
 import com.hqy.storage.service.TccStorageService;
 import com.hqy.util.AssertUtil;

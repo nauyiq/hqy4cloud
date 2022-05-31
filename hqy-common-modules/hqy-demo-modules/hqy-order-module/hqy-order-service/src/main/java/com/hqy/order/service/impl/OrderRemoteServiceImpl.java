@@ -1,12 +1,12 @@
 package com.hqy.order.service.impl;
 
-import com.hqy.order.common.entity.Account;
-import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.Storage;
-import com.hqy.order.common.service.AccountRemoteService;
-import com.hqy.order.common.service.OrderRemoteService;
-import com.hqy.order.common.service.StorageRemoteService;
-import com.hqy.order.service.OrderService;
+import com.hqy.common.entity.account.Wallet;
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.storage.Storage;
+import com.hqy.common.service.OrderRemoteService;
+import com.hqy.common.service.StorageRemoteService;
+import com.hqy.common.service.WalletRemoteService;
+import com.hqy.order.service.OrderTkService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.rpc.api.AbstractRPCService;
 import com.hqy.util.JsonUtil;
@@ -28,7 +28,7 @@ import java.util.Objects;
 public class OrderRemoteServiceImpl extends AbstractRPCService implements OrderRemoteService {
 
     @Resource
-    private OrderService orderService;
+    private OrderTkService orderService;
 
     @Override
     public String queryOrderById(Long orderId) {
@@ -56,20 +56,20 @@ public class OrderRemoteServiceImpl extends AbstractRPCService implements OrderR
         Storage storage = JsonUtil.toBean(storageJson, Storage.class);
 
         //减库存
-        storage.setUsed(storage.getUsed() + count);
-        storage.setResidue(storage.getResidue() - count);
+//        storage.setUsed(storage.getUsed() + count);
+//        storage.setResidue(storage.getResidue() - count);
 
         StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
         boolean modify =  storageRemoteService.modifyStorage(JsonUtil.toJson(storage));
         if (!modify) {
             throw new RuntimeException("@@@ 修改库存数目失败");
         }
-        Account account = JsonUtil.toBean(accountJson, Account.class);
+        Wallet account = JsonUtil.toBean(accountJson, Wallet.class);
         //减账户余额
         BigDecimal totalMoney = new BigDecimal(money);
-        account.setUsed(account.getUsed().add(totalMoney));
-        account.setResidue(account.getResidue().subtract(totalMoney));
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
+//        account.setUsed(account.getUsed().add(totalMoney));
+//        account.setResidue(account.getResidue().subtract(totalMoney));
+        WalletRemoteService accountRemoteService = RPCClient.getRemoteService(WalletRemoteService.class);
         modify = accountRemoteService.modifyAccount(JsonUtil.toJson(account));
         if (!modify) {
             throw new RuntimeException("@@@ 修改账户余额失败");

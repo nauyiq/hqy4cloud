@@ -1,7 +1,7 @@
 package com.hqy;
 
 import com.hqy.base.common.rpc.api.RPCService;
-import com.hqy.order.common.service.StorageRemoteService;
+import com.hqy.common.service.StorageRemoteService;
 import com.hqy.rpc.api.AbstractThriftServer;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.stereotype.Component;

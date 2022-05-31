@@ -1,8 +1,8 @@
 package com.hqy;
 
 import com.hqy.base.common.rpc.api.RPCService;
+import com.hqy.common.service.OrderRemoteService;
 import com.hqy.rpc.api.AbstractThriftServer;
-import com.hqy.order.common.service.OrderRemoteService;
 import com.hqy.util.spring.SpringContextHolder;
 import org.springframework.stereotype.Component;
 

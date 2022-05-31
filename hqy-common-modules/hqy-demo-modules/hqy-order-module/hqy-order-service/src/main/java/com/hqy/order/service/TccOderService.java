@@ -1,8 +1,8 @@
 package com.hqy.order.service;
 
-import com.hqy.order.common.entity.Account;
-import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.Storage;
+import com.hqy.common.entity.account.Wallet;
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.storage.Storage;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.BusinessActionContextParameter;
 import io.seata.rm.tcc.api.LocalTCC;
@@ -27,7 +27,7 @@ public interface TccOderService {
      * BusinessActionContextParameter注解 传递参数到二阶段中
      * @param count      下单数目
      * @param totalMoney 总额
-     * @param account    Account
+     * @param Wallet    Account
      * @param storage    Storage
      * @param order      Order
      * @return           是否下单成功
@@ -35,8 +35,8 @@ public interface TccOderService {
     @TwoPhaseBusinessAction(name = "order", commitMethod = "commitTcc", rollbackMethod = "cancel")
     boolean order(@BusinessActionContextParameter(paramName = "count" )Integer count,
                   @BusinessActionContextParameter(paramName = "totalMoney" )BigDecimal totalMoney,
-                  @BusinessActionContextParameter(paramName = "account" )Account account,
-                  @BusinessActionContextParameter(paramName = "storage" )Storage storage,
+                  @BusinessActionContextParameter(paramName = "account" )Wallet wallet,
+                  @BusinessActionContextParameter(paramName = "storage" ) Storage storage,
                   @BusinessActionContextParameter(paramName = "order" ) Order order);
 
 

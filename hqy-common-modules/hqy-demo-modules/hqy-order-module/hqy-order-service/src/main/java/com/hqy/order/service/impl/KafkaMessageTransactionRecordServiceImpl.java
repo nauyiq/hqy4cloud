@@ -1,9 +1,9 @@
 package com.hqy.order.service.impl;
 
 import com.hqy.base.BaseDao;
+import com.hqy.common.entity.order.OrderMessageRecord;
 import com.hqy.mq.common.MessageQueueType;
 import com.hqy.mq.common.transaction.service.impl.AbstractMessageTransactionRecordService;
-import com.hqy.order.common.entity.OrderMessageRecord;
 import com.hqy.order.dao.OrderMessageRecordDao;
 import org.springframework.stereotype.Service;
 

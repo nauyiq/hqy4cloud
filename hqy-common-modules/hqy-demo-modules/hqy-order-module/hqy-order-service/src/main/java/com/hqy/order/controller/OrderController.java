@@ -37,14 +37,22 @@ public class OrderController {
 
 
     @PostMapping("/seata/tcc/order")
-    public MessageResponse seataTccOrder() {
-        return orderService.seataTccOrder(1L, 3);
+    public MessageResponse seataTccOrder(HttpServletRequest request) {
+        Long id = OauthRequestUtil.idFromOauth2Request(request);
+        if (Objects.isNull(id)) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+        }
+        return orderService.seataTccOrder(1L, 3, id);
     }
 
 
     @PostMapping("/rabbitmq/message/order")
-    public MessageResponse rabbitmqLocalMessageOrder() {
-        return orderService.rabbitmqLocalMessageOrder(1L, 3);
+    public MessageResponse rabbitmqLocalMessageOrder(HttpServletRequest request) {
+        Long id = OauthRequestUtil.idFromOauth2Request(request);
+        if (Objects.isNull(id)) {
+            return CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+        }
+        return orderService.rabbitmqLocalMessageOrder(1L, 3, id);
     }
 
 

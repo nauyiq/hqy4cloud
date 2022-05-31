@@ -3,12 +3,12 @@ package com.hqy.order.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.order.common.entity.Account;
-import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.Storage;
-import com.hqy.order.common.service.AccountRemoteService;
-import com.hqy.order.common.service.StorageRemoteService;
-import com.hqy.order.service.OrderService;
+import com.hqy.common.entity.account.Wallet;
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.storage.Storage;
+import com.hqy.common.service.StorageRemoteService;
+import com.hqy.common.service.WalletRemoteService;
+import com.hqy.order.service.OrderTkService;
 import com.hqy.order.service.TccOderService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.util.AssertUtil;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class TccOrderServiceImpl implements TccOderService {
 
     @Resource
-    private OrderService orderService;
+    private OrderTkService orderService;
 
     /**
      * 用于标记某个订单在当前tcc事务中是否进行过空回滚 防止悬挂。
@@ -44,7 +44,7 @@ public class TccOrderServiceImpl implements TccOderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean order(Integer count, BigDecimal totalMoney, Account account, Storage storage, Order order) {
+    public boolean order(Integer count, BigDecimal totalMoney, Wallet account, Storage storage, Order order) {
 
         log.info("Tcc order, orderId:{}, xid:{}", order.getId(), RootContext.getXID());
 
@@ -57,16 +57,16 @@ public class TccOrderServiceImpl implements TccOderService {
 
         //减库存
         final String beforeStorage = JsonUtil.toJson(storage);
-        storage.setUsed(storage.getUsed() + count);
-        storage.setResidue(storage.getResidue() - count);
+//        storage.setUsed(storage.getUsed() + count);
+//        storage.setResidue(storage.getResidue() - count);
         StorageRemoteService storageRemoteService = RPCClient.getRemoteService(StorageRemoteService.class);
         AssertUtil.isTrue(storageRemoteService.tccModifyStorage(beforeStorage, JsonUtil.toJson(storage)), "@@@ 修改账户余额失败");
 
         //减账户余额
         final String beforeAccount = JsonUtil.toJson(account);
-        account.setUsed(account.getUsed().add(totalMoney));
-        account.setResidue(account.getResidue().subtract(totalMoney));
-        AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
+//        account.setUsed(account.getUsed().add(totalMoney));
+//        account.setResidue(account.getResidue().subtract(totalMoney));
+        WalletRemoteService accountRemoteService = RPCClient.getRemoteService(WalletRemoteService.class);
         AssertUtil.isTrue(accountRemoteService.tccModifyAccount(beforeAccount ,JsonUtil.toJson(account)), "@@@ 修改账户余额失败");
 
         return true;

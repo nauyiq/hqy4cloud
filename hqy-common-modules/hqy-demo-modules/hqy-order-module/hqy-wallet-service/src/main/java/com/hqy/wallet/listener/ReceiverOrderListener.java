@@ -1,15 +1,15 @@
 package com.hqy.wallet.listener;
 
-import com.hqy.wallet.service.WalletTkService;
+import com.hqy.common.entity.account.Wallet;
+import com.hqy.common.entity.order.Order;
+import com.hqy.common.entity.order.OrderMessageRecord;
+import com.hqy.common.service.OrderRemoteService;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
-import com.hqy.order.common.entity.Account;
-import com.hqy.order.common.entity.Order;
-import com.hqy.order.common.entity.OrderMessageRecord;
-import com.hqy.order.common.service.OrderRemoteService;
 import com.hqy.rpc.RPCClient;
 import com.hqy.util.JsonUtil;
+import com.hqy.wallet.service.WalletTkService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -53,7 +53,7 @@ public class ReceiverOrderListener extends AbstractRabbitListener<OrderMessageRe
                     Integer count = order.getCount();
 
 
-                    Account account = walletTkService.queryById(1L);
+                    Wallet account = walletTkService.queryById(1L);
                     //TODO 减账户余额 需要重新判断条件.
 
                     //TODO 减账户余额 需要重新判断条件.
