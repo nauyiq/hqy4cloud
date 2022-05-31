@@ -6,9 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * 启动类必须放在包com.hqy下 不然很多bean会扫描不到 导致程序启动抛出not found bean
  * 全局网关服务...启动类...
@@ -20,7 +17,6 @@ import java.util.Set;
 public class GatewayMain {
 
     public static void main(String[] args) {
-
         SpringApplication.run(GatewayMain.class, args);
         ProjectContextInfo.startPrintf();
     }

@@ -1,7 +1,9 @@
 logging:
   config: classpath:logback.xml
+
 server:
   port: 9527
+
 spring:
   profiles:
      active: dev

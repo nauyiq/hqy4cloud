@@ -1,8 +1,5 @@
 #开发环境
 spring:
-  config:
-    activate:
-      on-profile: dev
   cloud:
     nacos:
       config:

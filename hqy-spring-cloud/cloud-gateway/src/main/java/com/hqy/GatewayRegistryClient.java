@@ -22,7 +22,7 @@ public class GatewayRegistryClient extends AbstractNacosClientWrapper  {
         //定制化节点信息
         ClusterNode node = new ClusterNode();
         node.setNameEn(MicroServiceConstants.GATEWAY);
-        node.setName("全局网关服务");
+        node.setName("API-网关服务");
         node.setActuatorNode(ActuatorNodeEnum.CONSUMER);
         return node;
     }
