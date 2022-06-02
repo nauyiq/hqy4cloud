@@ -15,4 +15,3 @@ spring:
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
-

@@ -10,6 +10,9 @@ spring:
   application:
     name: gateway-service
   cloud:
+    sentinel:
+      transport:
+        dashboard: 120.76.65.160:8081 #sentinel控制台访问路径
     loadbalancer:
       ribbon:
         enabled: false
