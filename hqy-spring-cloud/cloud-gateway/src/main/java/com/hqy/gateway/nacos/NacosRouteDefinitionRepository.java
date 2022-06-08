@@ -5,6 +5,7 @@ import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,29 +28,34 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class NacosRouteDefinitionRepository implements RouteDefinitionRepository {
 
-    private static final String GATEWAY_ROUTE_DATA_ID = "gateway-route";
+    private final String gatewayRouteDataId;
 
-    private static final String GATEWAY_ROUTE_GROUP_ID = "DEV_GROUP";
+    private final String gatewayRouteGroup;
 
     private final ApplicationEventPublisher publisher;
 
     private final NacosConfigManager nacosConfigManager;
 
-    public NacosRouteDefinitionRepository(ApplicationEventPublisher publisher, NacosConfigProperties nacosConfigProperties) {
+    public NacosRouteDefinitionRepository(String gatewayRouteDataId, String gatewayRouteGroup, ApplicationEventPublisher publisher, NacosConfigProperties nacosConfigProperties) {
         this.publisher = publisher;
         nacosConfigManager = new NacosConfigManager(nacosConfigProperties);
+        this.gatewayRouteDataId = gatewayRouteDataId;
+        this.gatewayRouteGroup = gatewayRouteGroup;
+
         addListener();
     }
 
     @Override
     public Flux<RouteDefinition> getRouteDefinitions() {
         try {
-            String config = nacosConfigManager.getConfigService().getConfig(GATEWAY_ROUTE_DATA_ID, GATEWAY_ROUTE_GROUP_ID, 5000);
-            List<RouteDefinition> routeDefinitions;
+            String config = nacosConfigManager.getConfigService().getConfig(gatewayRouteDataId, gatewayRouteGroup, BaseMathConstants.ONE_SECONDS_4MILLISECONDS * 5);
+            List<RouteDefinition> routeDefinitions = new ArrayList<>();
             if (StringUtils.isNotBlank(config)) {
-                routeDefinitions = JsonUtil.toList(config, RouteDefinition.class);
-            } else {
-                routeDefinitions = new ArrayList<>();
+                try {
+                    routeDefinitions = JsonUtil.toList(config, RouteDefinition.class);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
             }
             return Flux.fromIterable(routeDefinitions);
         } catch (NacosException e) {
@@ -73,7 +79,7 @@ public class NacosRouteDefinitionRepository implements RouteDefinitionRepository
      */
     private void addListener() {
         try {
-            nacosConfigManager.getConfigService().addListener(GATEWAY_ROUTE_DATA_ID, GATEWAY_ROUTE_GROUP_ID, new Listener() {
+            nacosConfigManager.getConfigService().addListener(gatewayRouteDataId, gatewayRouteGroup, new Listener() {
                 @Override
                 public Executor getExecutor() {
                     return null;

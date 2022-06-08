@@ -42,6 +42,20 @@ public interface BaseStringConstants {
      */
     String WEBSOCKET_PATH = Symbol.INCLINED_ROD + WEBSOCKET;
 
+    /**
+     * 空
+     */
+    String EMPTY = "";
+
+    /**
+     * /favicon.ico
+     */
+    String FAVICON_ICO = "/favicon.ico";
+
+    /**
+     * default
+     */
+    String DEFAULT = "default";
 
     interface Auth {
 
@@ -194,6 +208,11 @@ public interface BaseStringConstants {
          * -
          */
         String RAIL = "-";
+
+        /**
+         * ,
+         */
+        String COMMA = ",";
     }
 
 

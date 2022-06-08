@@ -11,7 +11,24 @@ spring:
           data-id: redis-config.yaml
           group: DEV_GROUP
           refresh: true
+        extension-configs[1]:
+          data-id: cloud-gateway.yaml
+          group: DEV_GROUP
+          refresh: true
       discovery:
         namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: 120.76.65.160:8848
+
+    sentinel:
+      enabled: true
+      transport:
+        dashboard: 172.31.1.2:8080 #sentinel控制台访问路径
+
+# 支持动态路由
+gateway:
+  dynamicRoute:
+    dataId: gateway-routing.json
+    group: DEV_GROUP
+    enabled: true
+    type: nacos

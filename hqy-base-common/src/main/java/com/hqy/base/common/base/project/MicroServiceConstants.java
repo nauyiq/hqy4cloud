@@ -9,6 +9,7 @@ package com.hqy.base.common.base.project;
  */
 public class MicroServiceConstants {
 
+
     /**
      * 全局网关gateway服务
      */

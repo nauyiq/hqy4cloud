@@ -1,5 +1,6 @@
 package com.hqy.gateway.server;
 
+import com.hqy.access.flow.RedisFlowDTO;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.coll.service.CollPersistService;
@@ -7,8 +8,6 @@ import com.hqy.coll.struct.ThrottledIpBlockStruct;
 import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
-import com.hqy.gateway.flow.RedisFlowControlCenter;
-import com.hqy.gateway.flow.RedisFlowDTO;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.rpc.RPCClient;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +67,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
             public String getHeader(String header) {
                 List<String> headers = request.getHeaders().get(header);
                 if (CollectionUtils.isNotEmpty(headers)) {
-                    return StringUtils.join(headers, ",");
+                    return StringUtils.join(headers, BaseStringConstants.Symbol.COMMA);
                 }
-                return null;
+                return BaseStringConstants.EMPTY;
             }
 
             @Override
@@ -91,15 +90,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
     @Override
     public LimitResult limitValue(HttpRequestInfo request) {
 
-        //TODO 服务刚启动...根据环境进行放行规则...
-
-        //请求ip
         String requestIp = request.getRequestIp();
-        //请求url
-        String url = request.getRequestUrl();
-        if (StringUtils.isBlank(url)) {
-            url = request.getUri();
-        }
+        String url = StringUtils.isBlank(request.getRequestUrl()) ? request.getUri() : request.getRequestUrl();
         final String errMsg = "Too many requests from [requestIp=" + requestIp + ", url=" + url  + "] ";
 
         // 是否是人工指定的黑名单阻塞的ip
@@ -112,10 +104,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
             log.warn("@@@ BI BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
-
+        //是否校验请求中的xss 聚合浓缩黑客判定方法
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult;
-            //聚合浓缩黑客判定方法
             if (url.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
                 //有?就走正常的url校验
                 hackCheckLimitResult = checkHackAccess(request.getRequestParams(), requestIp, request.getUri(), url);
@@ -128,8 +119,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 return hackCheckLimitResult;
             }
         }
-
-        //TODO CHECK DB BUSY?
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             //未开启限流器
@@ -177,7 +166,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
     public LimitResult checkHackAccess(String requestParams, String requestIp, String uri, String urlOrQueryString) {
 
         //uri和请求参数的xss攻击校验
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() && Objects.nonNull(requestParams)) {
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             if (StringUtils.isNotBlank(requestParams)) {
                 boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
                 if (hackAccess) {

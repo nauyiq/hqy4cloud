@@ -7,6 +7,7 @@ import com.hqy.foundation.limit.LimitResult;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.gateway.util.ResponseUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -22,22 +23,17 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
-
 /**
- * 全球的http节流过滤器
+ * HTTP节流过滤器 判断当前请求是否是安全的、ip是否超限等。
  * @author qiyuan.hong
  * @date  2021-07-27 16:42
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
-    /**
-     * Http限流器组件
-     */
-    @Resource
-    private GatewayHttpThrottles httpThrottles;
+    private final GatewayHttpThrottles httpThrottles;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -47,40 +43,27 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         String uri = request.getURI().getPath();
         ServerHttpResponse httpResponse = exchange.getResponse();
 
-        //静态资源放行和option请求放行
-        if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS) {
+        // 静态资源 | option请求 | uri白名单
+        if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS || httpThrottles.isWhiteURI(uri)) {
             return chain.filter(exchange);
         }
 
-        // uri白名单方形
-        if (httpThrottles.isWhiteURI(uri)) {
-            return chain.filter(exchange);
-        }
-
-        //获取请求客户端的ip地址
         String requestIp = RequestUtil.getIpAddress(request);
         //如果是人工白名单则放行
         if (httpThrottles.isManualWhiteIp(requestIp)) {
             return chain.filter(exchange);
         }
 
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff() &&
-                HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
             //没有启用限流器...继续执行责任链 ->
             return chain.filter(exchange);
         } else {
             //获取限流结果
             LimitResult limitResult = httpThrottles.limitValue(request);
             if (limitResult.isNeedLimit()) {
-                //TODO 记录嫌疑ip
-                log.warn("### THROTTLE_HTTP_LIMIT_ERROR :{},{}", url, limitResult);
-                //TODO 记录嫌疑ip
-                //返回403 表示当前请求被封禁
-                String resultTip = limitResult.getTip();
-                if (StringUtils.isBlank(requestIp)) {
-                    resultTip = CommonResultCode.ILLEGAL_REQUEST_LIMITED.message;
-                }
-                MessageResponse response = new MessageResponse(false, resultTip, 403);
+                log.warn("### Throttle limit current request: {}, {}", url, limitResult);
+                String resultTip = StringUtils.isBlank(limitResult.getTip()) ? CommonResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
+                MessageResponse response = new MessageResponse(false, resultTip, HttpStatus.FORBIDDEN.value());
                 return Mono.defer(() -> {
                     DataBuffer buffer = ResponseUtil.outputBuffer(response, httpResponse, HttpStatus.FORBIDDEN);
                     return httpResponse.writeWith(Flux.just(buffer));

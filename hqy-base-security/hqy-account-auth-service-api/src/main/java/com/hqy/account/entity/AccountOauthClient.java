@@ -54,7 +54,7 @@ public class AccountOauthClient extends BaseEntity<Long> {
     /**
      * 设定客户端的access_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 12, 12小时).
      */
-    private Integer accessTokenValidity = 60 * 60;
+    private Integer accessTokenValidity = 60 * 60 * 4;
 
     /**
      * 设定客户端的refresh_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 24 * 30, 30天).

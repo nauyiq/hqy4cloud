@@ -1,4 +1,4 @@
-package com.hqy.gateway.exception;
+package com.hqy.gateway.server;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.hqy.base.common.result.CommonResultCode;

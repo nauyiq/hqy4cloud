@@ -1,8 +1,7 @@
-package com.hqy.gateway.flow;
+package com.hqy.access.flow;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * redis流量限流器的检测结果

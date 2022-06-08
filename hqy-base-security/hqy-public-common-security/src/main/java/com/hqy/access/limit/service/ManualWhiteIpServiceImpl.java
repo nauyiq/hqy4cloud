@@ -1,4 +1,4 @@
-package com.hqy.auth.access.service;
+package com.hqy.access.limit.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

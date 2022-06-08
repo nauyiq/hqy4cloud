@@ -51,6 +51,8 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
     public static final HttpGeneralSwitcher ENABLE_ACCOUNT_PASSWORD_ENCODER_ENCODE = new HttpGeneralSwitcher(154, "节点-是否启用MD5的PasswordEncoder的encode", true);
 
 
+
+
     protected HttpGeneralSwitcher(int id, String name, boolean status) {
         super(id, name, status);
     }

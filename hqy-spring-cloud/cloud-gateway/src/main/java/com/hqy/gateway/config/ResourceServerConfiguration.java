@@ -2,7 +2,7 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
-import com.hqy.auth.access.server.AuthorizationWhiteListManager;
+import com.hqy.auth.AuthorizationWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
@@ -46,7 +46,7 @@ import java.util.Set;
 @Slf4j
 @Configuration
 @EnableWebFluxSecurity
-public class ResourceServerConfig {
+public class ResourceServerConfiguration {
 
     @Resource
     private AuthorizationManager authorizationManager;

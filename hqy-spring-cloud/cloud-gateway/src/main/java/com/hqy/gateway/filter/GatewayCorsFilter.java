@@ -25,8 +25,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
-    private static final String FAVICON_ICO = "/favicon.ico";
-
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -35,9 +33,8 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
         ServerHttpResponse response = exchange.getResponse();
 
-
         //如果是/favicon.io的路径允许访问
-        if (FAVICON_ICO.equals(path)) {
+        if (BaseStringConstants.FAVICON_ICO.equals(path)) {
             response.setStatusCode(HttpStatus.OK);
             return Mono.empty();
         }

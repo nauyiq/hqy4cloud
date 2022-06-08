@@ -1,4 +1,4 @@
-package com.hqy.auth.access.server;
+package com.hqy.auth;
 
 import java.util.Arrays;
 import java.util.Set;

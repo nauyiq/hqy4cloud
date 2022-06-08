@@ -1,6 +1,7 @@
-package com.hqy.gateway.exception;
+package com.hqy.gateway.config;
 
-import org.springframework.beans.factory.ObjectProvider;
+import com.hqy.gateway.server.GatewayResponseExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,7 +15,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +23,7 @@ import java.util.List;
  * @date 2022/5/25 15:36
  */
 @Configuration
+@RequiredArgsConstructor
 @EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})
 public class GatewayExceptionConfiguration {
 
@@ -36,17 +37,6 @@ public class GatewayExceptionConfiguration {
 
     private final ServerCodecConfigurer serverCodecConfigurer;
 
-    public GatewayExceptionConfiguration(ServerProperties serverProperties,
-                                     ResourceProperties resourceProperties,
-                                     ObjectProvider<List<ViewResolver>> viewResolversProvider,
-                                     ServerCodecConfigurer serverCodecConfigurer,
-                                     ApplicationContext applicationContext) {
-        this.serverProperties = serverProperties;
-        this.applicationContext = applicationContext;
-        this.resourceProperties = resourceProperties;
-        this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
-        this.serverCodecConfigurer = serverCodecConfigurer;
-    }
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)

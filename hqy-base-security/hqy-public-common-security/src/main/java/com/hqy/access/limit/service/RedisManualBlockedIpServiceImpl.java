@@ -1,4 +1,4 @@
-package com.hqy.auth.access.service;
+package com.hqy.access.limit.service;
 
 import com.hqy.foundation.limit.service.ManualBlockedIpService;
 import com.hqy.fundation.cache.redis.LettuceStringRedis;

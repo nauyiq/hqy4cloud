@@ -1,4 +1,4 @@
-package com.hqy.auth.access.service;
+package com.hqy.access.limit.service;
 
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.foundation.limit.service.BiBlockedIpService;

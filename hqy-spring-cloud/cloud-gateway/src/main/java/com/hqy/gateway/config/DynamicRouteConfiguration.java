@@ -2,6 +2,7 @@ package com.hqy.gateway.config;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.hqy.gateway.nacos.NacosRouteDefinitionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "gateway.dynamicRoute", name = "enabled", havingValue = "true")
-public class DynamicRouteConfig {
+public class DynamicRouteConfiguration {
 
     @Resource
     private ApplicationEventPublisher publisher;
@@ -25,12 +26,18 @@ public class DynamicRouteConfig {
     @ConditionalOnProperty(prefix = "gateway.dynamicRoute", name = "type", havingValue = "nacos", matchIfMissing = true)
     public class NacosDynamicRoute{
 
+        @Value("${gateway.dynamicRoute.dataId:gateway-routing.json}")
+        private String dataId;
+
+        @Value("${gateway.dynamicRoute.group:DEV_GROUP}")
+        private String group;
+
         @Resource
         private NacosConfigProperties nacosConfigProperties;
 
         @Bean
         public NacosRouteDefinitionRepository repository() {
-            return new NacosRouteDefinitionRepository(publisher, nacosConfigProperties);
+            return new NacosRouteDefinitionRepository(dataId, group, publisher, nacosConfigProperties);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.hqy.gateway.server;
 
-import com.hqy.auth.access.server.AuthorizationWhiteListManager;
+import com.hqy.auth.AuthorizationWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -18,7 +18,6 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import reactor.core.publisher.Mono;
-import sun.security.krb5.internal.AuthContext;
 
 import java.util.Set;
 

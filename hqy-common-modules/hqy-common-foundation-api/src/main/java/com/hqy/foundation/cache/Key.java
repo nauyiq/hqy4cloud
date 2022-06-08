@@ -5,7 +5,7 @@ package com.hqy.foundation.cache;
  * @version 1.0
  * @date 2022/5/31 13:46
  */
-public interface Prefix {
+public interface Key {
 
     /**
      * 缓存过期时间, 单位秒
@@ -17,7 +17,7 @@ public interface Prefix {
      * 获取缓存的前缀
      * @return 缓存key 前缀
      */
-    String prefix();
+    String key();
 
 
 

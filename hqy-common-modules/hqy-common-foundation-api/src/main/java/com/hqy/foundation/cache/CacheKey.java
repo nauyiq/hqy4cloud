@@ -7,7 +7,7 @@ import com.hqy.base.common.base.lang.BaseStringConstants;
  * @version 1.0
  * @date 2022/5/31 13:46
  */
-public abstract class AbstractPrefix implements Prefix {
+public class CacheKey implements Key {
 
     /**
      * 过期时间 单位秒
@@ -17,15 +17,15 @@ public abstract class AbstractPrefix implements Prefix {
     /**
      * 前缀
      */
-    private final String prefix;
+    private final String key;
 
-    public AbstractPrefix(String prefix) {
-        this(0, prefix);
+    public CacheKey(String key) {
+        this(0, key);
     }
 
-    public AbstractPrefix(int expireSeconds, String prefix) {
+    public CacheKey(int expireSeconds, String key) {
         this.expireSeconds = expireSeconds;
-        this.prefix = prefix;
+        this.key = key;
     }
 
     @Override
@@ -34,8 +34,8 @@ public abstract class AbstractPrefix implements Prefix {
     }
 
     @Override
-    public String prefix() {
-       return getClass().getSimpleName().concat(BaseStringConstants.Symbol.COLON).concat(prefix);
+    public String key() {
+       return getClass().getSimpleName().concat(BaseStringConstants.Symbol.COLON).concat(key);
     }
 }
 
