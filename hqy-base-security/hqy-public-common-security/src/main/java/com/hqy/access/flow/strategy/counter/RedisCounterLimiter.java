@@ -18,7 +18,7 @@ public class RedisCounterLimiter extends AbstractCounterLimiter {
 
     public RedisCounterLimiter(long count) {
         super(count);
-        redisKey = new CacheKey(Integer.MAX_VALUE, RedisCounterLimiter.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)) {};
+        redisKey = new CacheKey(RedisCounterLimiter.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON), Integer.MAX_VALUE) {};
     }
 
     @Override

@@ -20,10 +20,10 @@ public class CacheKey implements Key {
     private final String key;
 
     public CacheKey(String key) {
-        this(0, key);
+        this(key, 0);
     }
 
-    public CacheKey(int expireSeconds, String key) {
+    public CacheKey(String key, int expireSeconds) {
         this.expireSeconds = expireSeconds;
         this.key = key;
     }

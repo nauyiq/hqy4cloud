@@ -1,6 +1,5 @@
 package com.hqy.access.flow.strategy.window;
 
-import com.alibaba.csp.sentinel.util.TimeUtil;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -17,11 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2022/6/7 10:50
  */
 @Slf4j
-public class GuavaFixedWindowsLimiter extends AbstractWindowLimiter {
+public class GuavaFixedTimeWindowsLimiter extends AbstractTimeWindowsLimiter {
 
     private final LoadingCache<Long, AtomicInteger> counter;
 
-    public GuavaFixedWindowsLimiter(long millisecondWindow, int threshold) {
+    public GuavaFixedTimeWindowsLimiter(long millisecondWindow, int threshold) {
         super(millisecondWindow, threshold);
         counter = CacheBuilder.newBuilder().expireAfterWrite( getSecondWindows() + 1, TimeUnit.SECONDS)
                 .build(new CacheLoader<Long, AtomicInteger>() {
@@ -35,7 +34,7 @@ public class GuavaFixedWindowsLimiter extends AbstractWindowLimiter {
 
     @Override
     protected long currentCount() {
-        long currentSecond = TimeUtil.currentTimeMillis() / 1000;
+        long currentSecond = currentTimeMillis() / 1000;
         try {
             return counter.get(currentSecond).getAndIncrement();
         } catch (ExecutionException e) {
@@ -45,7 +44,7 @@ public class GuavaFixedWindowsLimiter extends AbstractWindowLimiter {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        GuavaFixedWindowsLimiter limiter = new GuavaFixedWindowsLimiter(1L, 5);
+        GuavaFixedTimeWindowsLimiter limiter = new GuavaFixedTimeWindowsLimiter(1L, 5);
         for (int i = 0; i < 100; i++) {
             boolean limit = limiter.isLimit();
             if (limit) {

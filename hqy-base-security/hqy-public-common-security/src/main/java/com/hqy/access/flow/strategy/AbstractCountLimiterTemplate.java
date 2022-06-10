@@ -29,6 +29,7 @@ public abstract class AbstractCountLimiterTemplate implements RequestLimiterStra
 
 
 
+
     public AbstractCountLimiterTemplate(long count) {
         this.count = count;
         this.secondWindows = 0L;
