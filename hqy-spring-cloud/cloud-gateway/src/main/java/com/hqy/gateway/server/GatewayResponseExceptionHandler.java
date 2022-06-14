@@ -1,6 +1,7 @@
 package com.hqy.gateway.server;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.hqy.base.common.result.CommonResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,10 @@ public class GatewayResponseExceptionHandler extends DefaultErrorWebExceptionHan
     @Override
     protected Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
         Throwable error = super.getError(request);
+        if (error instanceof BlockException) {
+
+            return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.SYSTEM_BUSY));
+        }
         log.error(error.getMessage(), error);
         return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR));
     }

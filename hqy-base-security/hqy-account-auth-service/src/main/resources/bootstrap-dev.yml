@@ -1,26 +1,32 @@
+nacos:
+  server-addr: 120.76.65.160:8848
+  group: DEV_GROUP
+  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+
 spring:
   cloud:
     nacos:
       config:
-        server-addr: 120.76.65.160:8848
+        server-addr: ${nacos.server-addr}
         file-extension: yaml
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-        group: DEV_GROUP
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
         extension-configs[0]:
           data-id: redis-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
         extension-configs[1]:
           data-id: db-app-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
         extension-configs[2]:
           data-id: dev-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
       discovery:
-        server-addr: 120.76.65.160:8848
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-        ephemeral: false # false为永久实例，true表示临时实例
+        server-addr: ${nacos.server-addr}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
+        ephemeral: true # false为永久实例，true表示临时实例
 
 

@@ -22,22 +22,35 @@ spring:
           refresh: true
       discovery:
         namespace: ${nacos.namespace}
+        group: ${nacos.group}
         server-addr: ${nacos.server-addr}
-        ephemeral: false # false为永久实例，true表示临时实例
+        ephemeral: true # false为永久实例，true表示临时实例
 
     sentinel:
+      # 取消懒加载
+      eager: true
+      # 启用sentinel
       enabled: true
+      # sentinel控制台
       transport:
-        dashboard: 172.31.1.2:8080 #sentinel控制台访问路径
+        dashboard: 172.31.1.1:8080 #sentinel控制台访问路径
+        # sentinel控制台和服务端的交互端口 默认8719
+        port: 8719
+#      scg:
+#        fallback:
+#          mode: response
+#          response-body: '{"code":403,"mes":"限流了"}'
+#          response-status: 403
+      # sentinel加载nacos远程配置规则
       datasource:
-        flow:
-          nacos:
-            serverAddr: ${nacos.server-addr}
-            namespace: ${nacos.namespace}
-            groupId: ${nacos.group}
-            dataId: sentinel-gateway-flow
-            data-type: json
-            ruleType: flow
+#        flow:
+#          nacos:
+#            serverAddr: ${nacos.server-addr}
+#            namespace: ${nacos.namespace}
+#            groupId: ${nacos.group}
+#            dataId: sentinel-gateway-flow
+#            data-type: json
+#            ruleType: flow
         gw-flow:
           nacos:
             serverAddr: ${nacos.server-addr}
@@ -55,12 +68,10 @@ spring:
             data-type: json
             ruleType: gw-api-group
 
-
-
 # 支持动态路由
 gateway:
   dynamicRoute:
     dataId: gateway-routing.json
-    group: DEV_GROUP
+    group: ${nacos.group}
     enabled: true
     type: nacos

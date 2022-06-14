@@ -32,6 +32,7 @@ public enum CommonResultCode {
     ILLEGAL_REQUEST_LIMITED(9001, "Illegal Request, Limit a few minutes."),
 
 
+
     /**
      * 新增数据异常
      */
