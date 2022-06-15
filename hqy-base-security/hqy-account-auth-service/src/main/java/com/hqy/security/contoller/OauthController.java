@@ -1,11 +1,13 @@
 package com.hqy.security.contoller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.hqy.account.entity.Account;
 import com.hqy.account.service.AccountTkService;
 import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.server.SentinelOauthExceptionServer;
 import com.hqy.security.service.OauthAccountService;
 import com.hqy.util.OauthRequestUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +56,9 @@ public class OauthController {
 
 
     @GetMapping("/me")
+    @SentinelResource(value = "oauth-me",
+            blockHandler = "blockHandler", blockHandlerClass = SentinelOauthExceptionServer.Oauth2MeInterfaceHandler.class,
+            fallback = "fallbackHandler", fallbackClass = SentinelOauthExceptionServer.Oauth2MeInterfaceHandler.class)
     public DataResponse currentUser(HttpServletRequest request) {
         Long id = OauthRequestUtil.idFromOauth2Request(request);
         Account account = accountTkService.queryById(id);

@@ -31,6 +31,10 @@ public enum CommonResultCode {
      */
     ILLEGAL_REQUEST_LIMITED(9001, "Illegal Request, Limit a few minutes."),
 
+    /**
+     * 接口限流了
+     */
+    INTERFACE_LIMITED(9002, "Interface limited, please try again later."),
 
 
     /**

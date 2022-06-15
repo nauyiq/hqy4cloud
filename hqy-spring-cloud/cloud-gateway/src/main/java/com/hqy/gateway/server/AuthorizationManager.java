@@ -54,10 +54,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             //白名单ip无需鉴权 放行
             Set<String> whiteIp = SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
             if (CollectionUtils.isNotEmpty(whiteIp)) {
-                for (String ip : whiteIp) {
-                    if (ip.equals(ipAddress)) {
-                        return Mono.just(new AuthorizationDecision(true));
-                    }
+                if (whiteIp.stream().anyMatch(ipAddress::equals)) {
+                    return Mono.just(new AuthorizationDecision(true));
                 }
             }
         } else {

@@ -92,7 +92,7 @@ public interface BaseStringConstants {
         /**
          * JWT令牌前缀
          */
-        String JWT_PREFIX = "Bearer ";
+        String JWT_PREFIX = "bearer ";
 
         /**
          * Basic认证前缀

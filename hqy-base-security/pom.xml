@@ -14,6 +14,7 @@
         <module>hqy-account-auth-service</module>
         <module>hqy-account-auth-service-api</module>
         <module>hqy-public-common-security</module>
+        <module>hqy-public-common-alibaba-sentinel</module>
     </modules>
 
     <artifactId>hqy-base-security</artifactId>
