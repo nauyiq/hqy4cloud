@@ -1,5 +1,7 @@
 package com.hqy.util;
 
+import com.hqy.base.common.base.lang.BaseStringConstants;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -49,6 +51,15 @@ public class ReflectUtil {
             }
             return (Class<T>) actualTypeArguments[index];
         }
+    }
+
+    /**
+     * 根据class类名生成key前缀
+     * @param clazz Class
+     * @return key前缀
+     */
+    public static String genkeyPrefix(Class<?> clazz) {
+        return clazz.getSimpleName().concat(BaseStringConstants.Symbol.COLON);
     }
 
 

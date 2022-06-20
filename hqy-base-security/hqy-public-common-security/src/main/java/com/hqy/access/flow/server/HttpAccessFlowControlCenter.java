@@ -1,13 +1,12 @@
-package com.hqy.gateway.server;
+package com.hqy.access.flow.server;
 
-import com.hqy.access.flow.FlowControlConfig;
-import com.hqy.access.flow.MeasurementMinutes;
-import com.hqy.access.flow.RedisFlowController;
-import com.hqy.access.flow.RedisFlowDTO;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.access.flow.FlowResult;
+import com.hqy.access.flow.Measurement;
+import com.hqy.access.flow.strategy.AccessFlowController;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,33 +19,20 @@ import java.util.Objects;
  * @date 2021-08-04 14:14
  */
 @Slf4j
-public enum RedisFlowControlCenter {
+@Component
+public class HttpAccessFlowControlCenter {
 
-    /**
-     * 单例模式的对象
-     */
-    INSTANCE;
+    private final AccessFlowController getController;
 
-    /**
-     * get方法的请求流量控制器
-     */
-    private static RedisFlowController getController = null;
+    private final AccessFlowController postController;
 
-    /**
-     * post方法的请求流量控制器
-     */
-    private static RedisFlowController postController = null;
+    private final AccessFlowController uriController;
 
-    /**
-     * 默认限流配置
-     */
-    private static final FlowControlConfig DEFAULT_LOW_CONFIG = new FlowControlConfig();
-
-    public FlowControlConfig getProjectFlowControlConfig() {
-        //TODO 暂时所有项目返回默认配置 后续可以改造成根据项目返回配置
-        return DEFAULT_LOW_CONFIG;
+    public HttpAccessFlowControlCenter(FlowConfigProperties properties) {
+        this.getController = new AccessFlowController(properties.getGetLimitConfig());
+        this.postController = new AccessFlowController(properties.getPostLimitConfig());
+        this.uriController = new AccessFlowController(properties.getUriLimitConfig());
     }
-
 
     /**
      * 笼统的针对每个ip请求总数的超限判断.<br>
@@ -56,54 +42,40 @@ public enum RedisFlowControlCenter {
      * @param uri 请求uri
      * @return redis流量限流器的检测结果
      */
-    public RedisFlowDTO needLimitPerTimeWindow(String remoteIp, String method, String uri) {
+    public FlowResult needLimitPerTimeWindow(String remoteIp, String method, String uri) {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("needLimitPerMinute | {} |  {}", remoteIp, method);
         }
+
         if (HttpMethod.OPTIONS.matches(method) || HttpMethod.TRACE.matches(method) || HttpMethod.PATCH.matches(method)) {
             //非业务方法不限制
-            return new RedisFlowDTO(null, false, 0L, -1, 0);
+            return FlowResult.build();
         }
-        //笼统的针对每个ip的方法请求总数超限判断
-        FlowControlConfig config = getProjectFlowControlConfig();
         //根据请求方法和相应的 超限配置策略 获取到流量控制器
-        RedisFlowController redisFlowController = getRedisFlowController(config, HttpMethod.resolve(method));
-        if (Objects.isNull(redisFlowController)) {
+        AccessFlowController accessFlowController = getRedisFlowController(HttpMethod.resolve(method));
+        if (Objects.isNull(accessFlowController)) {
             //获取流量控制器失败...
             log.warn("### NO RedisFlowController config for request {}, remoteIp={} ", uri, remoteIp);
-            return new RedisFlowDTO(null, false, 0L, -1);
+            return FlowResult.build();
         }
-        //判断是否超限
-        String redisInnerKey = remoteIp.concat(BaseStringConstants.Symbol.COLON).concat(formatMinutes(config.getWindow()));
-        RedisFlowDTO flowDTO = redisFlowController.isOverLimit(redisInnerKey);
-        if(CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("[{}] Ip Rate Is Over Limit ? {}",remoteIp, flowDTO.toString());
+        FlowResult result = accessFlowController.isOverLimit(remoteIp);
+        if (result.isOverLimit()) {
+            result.setBlockSeconds(accessFlowController.getLimiter().getConfig().getBlockSeconds());
         }
-        if (flowDTO.getOverLimit()) {
-            flowDTO.setBlockSeconds(config.getBlockSeconds());
-        }
-        return flowDTO;
+        return result;
     }
 
 
     /**
      * 根据请求方法和相应的 超限配置策略 获取到流量控制器
-     * @param config 限流规则配置器
      * @param method http method
      * @return 流量控制器
      */
-    private RedisFlowController getRedisFlowController(FlowControlConfig config, HttpMethod method) {
+    private AccessFlowController getRedisFlowController(HttpMethod method) {
         if (HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method)) {
-            if (Objects.isNull(getController)) {
-                getController = new RedisFlowController(config.getMaxGet(), config.getExpireSeconds());
-            }
             return getController;
         }
-
         if (HttpMethod.POST.equals(method) || HttpMethod.PUT.equals(method) || HttpMethod.DELETE.equals(method)) {
-            if (Objects.isNull(postController)) {
-                postController = new RedisFlowController(config.getMaxPost(), config.getExpireSeconds());
-            }
             return postController;
         }
         return null;
@@ -114,15 +86,15 @@ public enum RedisFlowControlCenter {
      * @param mm 分钟
      * @return 分钟级别的字符串显示形式
      */
-    public static String formatMinutes(MeasurementMinutes mm) {
+    public static String formatMinutes(Measurement.MeasurementMinutes mm) {
         Date date = new Date();
         SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd:HH");;
         String tail = "";
 
-        if (mm == MeasurementMinutes.ONE_MINUTE) {
+        if (mm == Measurement.MeasurementMinutes.ONE_MINUTE) {
             //1分钟
             sdfDay = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
-        } else if (mm == MeasurementMinutes.FIVE_MINUTES) {
+        } else if (mm == Measurement.MeasurementMinutes.FIVE_MINUTES) {
             //5分钟
             int minute = Calendar.getInstance().get(Calendar.MINUTE);
             int m5 = minute / 10;
@@ -132,7 +104,7 @@ public enum RedisFlowControlCenter {
             } else {
                 tail = "-" + ((m5 * 10) + (mod5 < 5 ? 0 : 5));
             }
-        } else if (mm == MeasurementMinutes.TEN_MINUTES) {
+        } else if (mm == Measurement.MeasurementMinutes.TEN_MINUTES) {
             //10分钟
             int minute = Calendar.getInstance().get(Calendar.MINUTE);
             int m5 = minute / 10;
@@ -141,7 +113,7 @@ public enum RedisFlowControlCenter {
             } else {
                 tail = ":" + (m5 * 10);
             }
-        } else if (mm == MeasurementMinutes.THIRTY_MINUTES) {
+        } else if (mm == Measurement.MeasurementMinutes.THIRTY_MINUTES) {
             //半小时，30分钟
             int minute = Calendar.getInstance().get(Calendar.MINUTE);
             int m5 = minute / 30;

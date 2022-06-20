@@ -1,6 +1,6 @@
 package com.hqy.gateway.server;
 
-import com.hqy.auth.AuthorizationWhiteListManager;
+import com.hqy.access.auth.AuthorizationWhiteListManager;
 import com.hqy.base.common.base.lang.BaseStringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.ProjectContextInfo;

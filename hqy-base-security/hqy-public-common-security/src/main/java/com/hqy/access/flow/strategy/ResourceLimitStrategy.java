@@ -3,17 +3,19 @@ package com.hqy.access.flow.strategy;
 import com.alibaba.csp.sentinel.util.TimeUtil;
 
 /**
+ * 资源超限策略接口.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/6 16:01
  */
-public interface RequestLimiterStrategy {
+public interface ResourceLimitStrategy {
 
     /**
-     * 无状态 判断当前请求是否超限
-     * @return true 超限
+     * 判断当前资源是否访问超限。
+     * @param resource 资源
+     * @return         是否超限
      */
-    boolean isLimit();
+    boolean isOverLimit(String resource);
 
     /**
      * System.currentTimeMillis() 这个API在JVM的实现层面会调用gettimeofday()这个方法，会存在如下几个问题
