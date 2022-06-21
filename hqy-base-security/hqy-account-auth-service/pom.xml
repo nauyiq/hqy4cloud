@@ -5,7 +5,8 @@
     <parent>
         <artifactId>hqy-base-security</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,17 +14,12 @@
 
     <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <dependencies>
 
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-account-auth-service-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- 实时监控  spring-boot-starter-actuator-->
@@ -78,14 +74,14 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-public-common-security</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- sentinel-module -->
         <dependency>
             <groupId>com.hqy.security</groupId>
             <artifactId>hqy-public-common-alibaba-sentinel</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
 

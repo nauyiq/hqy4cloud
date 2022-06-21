@@ -5,7 +5,8 @@
     <parent>
         <artifactId>hqy-parent</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+        <version>${revision}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

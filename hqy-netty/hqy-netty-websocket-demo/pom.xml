@@ -5,12 +5,12 @@
     <parent>
         <artifactId>hqy-netty</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-netty-test</artifactId>
-
+    <artifactId>hqy-netty-websocket-demo</artifactId>
 
     <dependencies>
         <dependency>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-netty-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

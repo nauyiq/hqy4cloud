@@ -5,17 +5,12 @@
     <parent>
         <artifactId>hqy-demo-modules</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-order-module</artifactId>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <packaging>pom</packaging>
 
     <description>模拟电商系统下单模块, 并且解决分布式下带来的各种问题方案.</description>

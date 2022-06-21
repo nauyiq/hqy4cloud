@@ -5,30 +5,19 @@
     <parent>
         <artifactId>hqy-base-mq</artifactId>
         <groupId>com.hqy.mq</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>hqy-mq-rocketmq</artifactId>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.mq</groupId>
             <artifactId>hqy-base-mq-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
-
-        <!-- rocketmq-client -->
-        <!--<dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>4.9.3</version>
-        </dependency>-->
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>

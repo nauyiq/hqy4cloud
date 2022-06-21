@@ -5,19 +5,19 @@
     <parent>
         <artifactId>hqy-base-common-service</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <packaging>jar</packaging>
     <artifactId>hqy-common-service</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-common-foundation</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

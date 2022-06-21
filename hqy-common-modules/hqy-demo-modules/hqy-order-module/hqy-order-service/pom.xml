@@ -5,23 +5,20 @@
     <parent>
         <artifactId>hqy-order-module</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-order-service</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
 
     <dependencies>
 
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-common-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!--spring-cloud-alibaba-nacos-client-->
@@ -62,7 +59,7 @@
                     <artifactId>seata-spring-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -74,19 +71,19 @@
         <dependency>
             <groupId>com.hqy.mq</groupId>
             <artifactId>hqy-mq-rabbitmq</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.mq</groupId>
             <artifactId>hqy-mq-kafka</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.mq</groupId>
             <artifactId>hqy-mq-rocketmq</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>

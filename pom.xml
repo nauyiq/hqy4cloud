@@ -7,7 +7,7 @@
     <groupId>com.hqy</groupId>
     <artifactId>hqy-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <description>各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务</description>
 
     <modules>
@@ -34,38 +34,51 @@
     </modules>
 
     <properties>
+        <!-- project -->
+        <revision>1.0.0</revision>
+        <jdk.version>1.8</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <source.plugin.version>3.0.1</source.plugin.version>
+
+        <!-- spring-boot -->
+        <springboot.version>2.3.8.RELEASE</springboot.version>
+        <springcloud.version>Hoxton.SR10</springcloud.version>
+        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
+
+        <!-- alibaba -->
+        <nacos.version>2.0.3</nacos.version>
+        <seata.version>1.4.2</seata.version>
+        <druid.version>1.1.16</druid.version>
+        <springboot.druid.version>1.1.10</springboot.druid.version>
+        <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
+
+        <!-- dao -->
+        <mysql.version>5.1.47</mysql.version>
+        <tk.mybatis.version>2.1.2</tk.mybatis.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
+        <org.redisson.version>3.13.6</org.redisson.version>
+        <elasticsearch.version>7.14.0</elasticsearch.version>
+        <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
+
+        <!-- log -->
+        <log4j.version>1.2.17</log4j.version>
+        <log4j2.version>2.1</log4j2.version>
+        <org.slf4j.version>1.7.30</org.slf4j.version>
+
+        <!-- common -->
         <hutool.version>5.6.3</hutool.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
         <guava.version>22.0</guava.version>
-        <jdk.version>1.8</jdk.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
-        <log4j.version>1.2.17</log4j.version>
-        <log4j2.version>2.1</log4j2.version>
         <lombok.version>1.18.12</lombok.version>
-        <mysql.version>5.1.47</mysql.version>
-        <druid.version>1.1.16</druid.version>
-        <springboot.druid.version>1.1.10</springboot.druid.version>
-        <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
-        <org.slf4j.version>1.7.30</org.slf4j.version>
-        <tk.mybatis.version>2.1.2</tk.mybatis.version>
-        <pagehelper.version>5.1.2</pagehelper.version>
-        <springboot.version>2.3.8.RELEASE</springboot.version>
-        <springcloud.version>Hoxton.SR10</springcloud.version>
-        <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
-        <elasticsearch.version>7.14.0</elasticsearch.version>
-        <source.plugin.version>3.0.1</source.plugin.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
-        <org.redisson.version>3.13.6</org.redisson.version>
-        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
-        <seata.version>1.4.2</seata.version>
-        <nacos.version>2.0.3</nacos.version>
+
     </properties>
 
 
@@ -410,6 +423,62 @@
                     </archive>
                 </configuration>
             </plugin>
+
+           <!-- <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    &lt;!&ndash;是否更新pom文件，记得设置为true，不然无法更新module里的pom版本号&ndash;&gt;
+                    &lt;!&ndash;此处还有更高级的用法，具体下方的参考文档&ndash;&gt;
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+<!--                <version>${maven_flatten_version}</version>-->
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

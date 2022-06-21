@@ -5,22 +5,18 @@
     <parent>
         <artifactId>hqy-base-security</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-account-auth-service-api</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common-dao-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
 
@@ -35,7 +31,7 @@
                     <artifactId>hqy-common-collector-api</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>
