@@ -32,12 +32,6 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-thrift-rpc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

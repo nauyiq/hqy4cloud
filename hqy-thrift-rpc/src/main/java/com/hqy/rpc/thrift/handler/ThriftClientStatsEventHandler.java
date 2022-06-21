@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * Thrift 消费者生命周期视角。
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/24 16:44
@@ -114,14 +115,29 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
 
     @Override
     public void done(Object context, String methodName) {
+        ThriftContext thriftContext = (ThriftContext) context;
+        //获取rpc耗时
+        long costMillis = System.currentTimeMillis() - thriftContext.getStartTime();
+
+        //慢rpc和错rpc采集
+        if (thriftContext.isCollection() && EnvironmentConfig.getInstance().isRPCCollection()) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("@@@ Rpc Collection, method:{}, costMillis:{}", methodName, costMillis);
+            }
+
+
+
+        }
+
+
         super.done(context, methodName);
     }
 
 
     /**
      * 兼容客户端返回了null
-     * @param e
-     * @param context
+     * @param e        异常
+     * @param context   thrift 上下文
      */
     private void compatibilityServerReturnNull(Throwable e, ThriftContext context) {
         if (e instanceof InvocationTargetException && e.getCause() != null
@@ -147,7 +163,7 @@ public class ThriftClientStatsEventHandler extends ThriftClientEventHandler {
             }
             param.xid = xid;
         } else {
-            log.info("@@@ Current environment not support distributed transactional. methodName:{}.", methodName);
+            log.info("@@@ Current environment not support Seata distributed transactional. methodName:{}.", methodName);
         }
     }
 }

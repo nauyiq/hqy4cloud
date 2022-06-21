@@ -3,7 +3,6 @@ package com.hqy.rpc.thrift.ex;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.rpc.api.RPCService;
-import com.hqy.coll.service.CollPersistService;
 import com.hqy.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -12,10 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -33,16 +29,10 @@ public class RemoteContextChecker {
 
     public static final String IGNORE_COLLECT_KEY = "IGNORE_COLLECT";
 
-
     /**
      * 忽略异常采集的rpc方法集合
      */
     private static final Set<String> IGNORE_METHOD = new CopyOnWriteArraySet<>();
-
-
-
-
-
 
     /**
      * 忽略异常采集 某个rpc方法 .
@@ -78,8 +68,6 @@ public class RemoteContextChecker {
             log.error(e.getMessage(), e);
         }
     }
-
-
 
 
     /**

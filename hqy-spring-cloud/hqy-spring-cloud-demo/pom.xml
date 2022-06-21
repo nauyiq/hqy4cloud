@@ -18,8 +18,6 @@
         <module>alibaba-provider-demo</module>
         <module>cloud-common-data</module>
         <module>cloud-config</module>
-        <module>cloud-consumer-demo</module>
-        <module>cloud-provider-demo</module>
         <module>cloud-registry</module>
     </modules>
 
