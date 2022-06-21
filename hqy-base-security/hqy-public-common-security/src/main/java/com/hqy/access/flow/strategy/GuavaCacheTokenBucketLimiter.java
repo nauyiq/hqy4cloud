@@ -40,6 +40,7 @@ public class GuavaCacheTokenBucketLimiter extends AbstractLimiter {
             FlowLimitConfig config = super.getConfig();
             if (config.getWindows() != Measurement.Seconds.ONE_SECONDS) {
                 int count = config.getCount() / config.getWindows().seconds;
+                count = count <= 0 ? 1 : count;
                 limiter = RateLimiter.create(count);
             } else {
                 limiter = RateLimiter.create(config.getCount());

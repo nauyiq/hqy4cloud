@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.hqy.access.flow.server.FlowConfigProperties
+  com.hqy.access.flow.server.FlowConfigProperties,\
+  com.hqy.access.flow.server.HttpAccessFlowControlCenter

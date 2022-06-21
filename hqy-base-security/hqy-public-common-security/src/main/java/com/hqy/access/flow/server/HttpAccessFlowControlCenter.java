@@ -6,7 +6,6 @@ import com.hqy.access.flow.strategy.AccessFlowController;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,7 +18,6 @@ import java.util.Objects;
  * @date 2021-08-04 14:14
  */
 @Slf4j
-@Component
 public class HttpAccessFlowControlCenter {
 
     private final AccessFlowController getController;
@@ -52,7 +50,7 @@ public class HttpAccessFlowControlCenter {
             return FlowResult.build();
         }
         //根据请求方法和相应的 超限配置策略 获取到流量控制器
-        AccessFlowController accessFlowController = getRedisFlowController(HttpMethod.resolve(method));
+        AccessFlowController accessFlowController = getAccessFlowController(HttpMethod.resolve(method));
         if (Objects.isNull(accessFlowController)) {
             //获取流量控制器失败...
             log.warn("### NO RedisFlowController config for request {}, remoteIp={} ", uri, remoteIp);
@@ -71,7 +69,7 @@ public class HttpAccessFlowControlCenter {
      * @param method http method
      * @return 流量控制器
      */
-    private AccessFlowController getRedisFlowController(HttpMethod method) {
+    private AccessFlowController getAccessFlowController(HttpMethod method) {
         if (HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method)) {
             return getController;
         }

@@ -13,8 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 基于Redis的流量控制器
- * redis基于spring data redis的redisTemplate
+ * 流量访问控制器
  * @author qy
  * @date 2021-08-04 16:43
  */
@@ -59,24 +58,22 @@ public class AccessFlowController {
      */
     public FlowResult isOverLimit(String resource) {
         resource = genKey(resource);
-        boolean limiting = false;
         try {
-            limiting = getLimiter().isOverLimit(resource);
+            AbstractLimiter limiter = getLimiter();
+            if (limiter.isOverLimit(resource)) {
+                //如果首次超限 首次时间内放行 不封禁ip
+                String data = overLimitCache.getIfPresent(resource);
+                if (StringUtils.isNotBlank(data)) {
+                    return FlowResult.buildBlock(limiter.getConfig().getBlockSeconds());
+                }
+                overLimitCache.put(resource, resource);
+                return FlowResult.buildLimit();
+            }
         } catch (Exception e) {
-            //如果redis 有异常，catch住，当做未超限来处理.
+            //如果有异常，catch住，当做未超限来处理.
             log.error("流量控制组件:执行计数操作失败,无法执行计数", e);
         }
-        //判断是否大于阈值, 超过返回false
-        if (limiting) {
-            //如果首次超限 首次时间内放行 不封禁ip
-            String data = overLimitCache.getIfPresent(resource);
-            if (StringUtils.isNotBlank(data)) {
-                return new FlowResult(true, true);
-            }
-            overLimitCache.put(resource, resource);
-            return new FlowResult(true, false);
-        }
-        return new FlowResult(false, false);
+        return FlowResult.build();
     }
 
 

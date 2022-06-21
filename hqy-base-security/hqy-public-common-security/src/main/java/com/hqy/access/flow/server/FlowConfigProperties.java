@@ -14,11 +14,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "resource.limit")
 public class FlowConfigProperties {
 
-    private FlowLimitConfig getLimitConfig = new FlowLimitConfig(10, Measurement.Seconds.ONE_SECONDS);
+    public static final FlowLimitConfig DEFAULT_CONFIG = new FlowLimitConfig(10, Measurement.Seconds.ONE_SECONDS);
 
-    private FlowLimitConfig postLimitConfig = new FlowLimitConfig(5, Measurement.Seconds.ONE_MINUTES);
+    private FlowLimitConfig getLimitConfig = DEFAULT_CONFIG;
 
-    private FlowLimitConfig uriLimitConfig = new FlowLimitConfig(10, Measurement.Seconds.ONE_SECONDS);
+    private FlowLimitConfig postLimitConfig = new FlowLimitConfig(5, Measurement.Seconds.ONE_SECONDS);
+
+    private FlowLimitConfig uriLimitConfig = DEFAULT_CONFIG;
 
 
 }

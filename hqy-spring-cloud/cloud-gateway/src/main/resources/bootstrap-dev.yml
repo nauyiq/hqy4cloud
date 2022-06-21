@@ -71,3 +71,4 @@ gateway:
     group: ${nacos.group}
     enabled: true
     type: nacos
+
