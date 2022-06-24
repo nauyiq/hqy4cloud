@@ -28,8 +28,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-elasticsearch-api</artifactId>
+            <groupId>com.hqy.elasticsearch</groupId>
+            <artifactId>hqy-elasticsearch-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

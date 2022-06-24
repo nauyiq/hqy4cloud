@@ -1,6 +1,6 @@
 package com.hqy.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
@@ -21,11 +21,11 @@ public class ResponseUtil {
 
 
     public static void out(HttpServletResponse response,  DataResponse dataResponse) {
-        out(response, BaseStringConstants.APPLICATION_JSON_UTF_8, 200, dataResponse, null);
+        out(response, StringConstants.APPLICATION_JSON_UTF_8, 200, dataResponse, null);
     }
 
     public static void out(HttpServletResponse response, int statusCode, DataResponse dataResponse) {
-        out(response, BaseStringConstants.APPLICATION_JSON_UTF_8, statusCode, dataResponse, null);
+        out(response, StringConstants.APPLICATION_JSON_UTF_8, statusCode, dataResponse, null);
     }
 
 

@@ -1,6 +1,6 @@
 package com.hqy.security.server;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
@@ -32,6 +32,6 @@ public class RedisAuthorizationCodeServer extends RandomValueAuthorizationCodeSe
 
 
     private String redisKey(String code) {
-        return RedisAuthorizationCodeServer.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON).concat(code);
+        return RedisAuthorizationCodeServer.class.getSimpleName().concat(StringConstants.Symbol.COLON).concat(code);
     }
 }

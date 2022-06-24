@@ -1,7 +1,7 @@
 package com.hqy.gateway.server;
 
 import com.hqy.access.auth.AuthorizationWhiteListManager;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
@@ -49,8 +49,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         }
 
         // token必须以"bearer "为前缀
-        String token = request.getHeaders().getFirst(BaseStringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isNotBlank(token) && StringUtils.startsWithIgnoreCase(token, BaseStringConstants.Auth.JWT_PREFIX) ) {
+        String token = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
+        if (StringUtils.isNotBlank(token) && StringUtils.startsWithIgnoreCase(token, StringConstants.Auth.JWT_PREFIX) ) {
             //白名单ip无需鉴权 放行
             Set<String> whiteIp = SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
             if (CollectionUtils.isNotEmpty(whiteIp)) {

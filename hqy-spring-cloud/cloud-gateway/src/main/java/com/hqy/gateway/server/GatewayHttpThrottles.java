@@ -2,7 +2,7 @@ package com.hqy.gateway.server;
 
 import com.hqy.access.flow.FlowResult;
 import com.hqy.access.flow.server.HttpAccessFlowControlCenter;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.coll.struct.ThrottledIpBlockStruct;
@@ -73,9 +73,9 @@ public class GatewayHttpThrottles implements HttpThrottles {
             public String getHeader(String header) {
                 List<String> headers = request.getHeaders().get(header);
                 if (CollectionUtils.isNotEmpty(headers)) {
-                    return StringUtils.join(headers, BaseStringConstants.Symbol.COMMA);
+                    return StringUtils.join(headers, StringConstants.Symbol.COMMA);
                 }
-                return BaseStringConstants.EMPTY;
+                return StringConstants.EMPTY;
             }
 
             @Override
@@ -113,7 +113,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         //是否校验请求中的xss 聚合浓缩黑客判定方法
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult;
-            if (url.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
+            if (url.contains(StringConstants.Symbol.QUESTION_MARK)) {
                 //有?就走正常的url校验
                 hackCheckLimitResult = checkHackAccess(request.getRequestParams(), requestIp, request.getUri(), url);
             } else {
@@ -195,7 +195,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 }
             }
 
-            if (StringUtils.isNotBlank(uri) && !BaseStringConstants.Symbol.INCLINED_ROD.equals(uri)) {
+            if (StringUtils.isNotBlank(uri) && !StringConstants.Symbol.INCLINED_ROD.equals(uri)) {
                 boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (URI)!!!,{}, requestIp:{} ", uri, requestIp);

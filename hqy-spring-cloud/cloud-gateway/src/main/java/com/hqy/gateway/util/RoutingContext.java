@@ -1,6 +1,6 @@
 package com.hqy.gateway.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.foundation.limit.RoutingRule;
 import org.springframework.cloud.gateway.route.Route;
@@ -22,7 +22,7 @@ public class RoutingContext {
 
 
     static {
-        ROUTING_RULE_MAP.put(BaseStringConstants.DEFAULT, new RoutingRule(BaseStringConstants.DEFAULT, "/") {});
+        ROUTING_RULE_MAP.put(StringConstants.DEFAULT, new RoutingRule(StringConstants.DEFAULT, "/") {});
         ROUTING_RULE_MAP.put(MicroServiceConstants.ACCOUNT_SERVICE,  new RoutingRule(MicroServiceConstants.ACCOUNT_SERVICE, "/oauth/**") {});
     }
 
@@ -30,13 +30,13 @@ public class RoutingContext {
         //获取当前请求命中的路由对象
         Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         if (Objects.isNull(route)) {
-            return ROUTING_RULE_MAP.get(BaseStringConstants.DEFAULT);
+            return ROUTING_RULE_MAP.get(StringConstants.DEFAULT);
         }
         String routeId = route.getId();
         if (ROUTING_RULE_MAP.containsKey(routeId)) {
             return ROUTING_RULE_MAP.get(routeId);
         } else {
-            return ROUTING_RULE_MAP.get(BaseStringConstants.DEFAULT);
+            return ROUTING_RULE_MAP.get(StringConstants.DEFAULT);
         }
 
     }

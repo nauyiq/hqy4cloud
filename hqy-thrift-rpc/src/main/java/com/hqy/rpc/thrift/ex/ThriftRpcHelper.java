@@ -2,7 +2,7 @@ package com.hqy.rpc.thrift.ex;
 
 import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.regist.ClusterNode;
 import com.hqy.util.JsonUtil;
@@ -38,7 +38,7 @@ public class ThriftRpcHelper {
      */
     public static UsingIpPort convertHash(String hashFactor) {
         try {
-            String[] split = hashFactor.split(BaseStringConstants.Symbol.COLON);
+            String[] split = hashFactor.split(StringConstants.Symbol.COLON);
             int port = Integer.parseInt(split[1]);
             return new UsingIpPort(split[0], 0, port, 0);
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class ThriftRpcHelper {
     }
 
     public static String genHashFactor(String ip, String port) {
-        return ip.concat(BaseStringConstants.Symbol.COLON).concat(port);
+        return ip.concat(StringConstants.Symbol.COLON).concat(port);
     }
 
     /**

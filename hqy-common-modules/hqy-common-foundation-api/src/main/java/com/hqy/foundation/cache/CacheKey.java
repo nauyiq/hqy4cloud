@@ -1,6 +1,6 @@
 package com.hqy.foundation.cache;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 
 /**
  * @author qiyuan.hong
@@ -35,7 +35,7 @@ public class CacheKey implements Key {
 
     @Override
     public String key() {
-       return getClass().getSimpleName().concat(BaseStringConstants.Symbol.COLON).concat(key);
+       return getClass().getSimpleName().concat(StringConstants.Symbol.COLON).concat(key);
     }
 }
 

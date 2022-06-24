@@ -1,8 +1,7 @@
 package com.hqy.gateway.filter;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.util.JsonUtil;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -34,10 +33,10 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String authorization = request.getHeaders().getFirst(BaseStringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isBlank(authorization) || !authorization.startsWith(BaseStringConstants.Auth.JWT_PREFIX)) {
+        String authorization = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
+        if (StringUtils.isBlank(authorization) || !authorization.startsWith(StringConstants.Auth.JWT_PREFIX)) {
             return chain.filter(exchange);
-        } else if (authorization.startsWith(BaseStringConstants.Auth.BASIC_PREFIX)) {
+        } else if (authorization.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
             }
@@ -45,13 +44,13 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
         }
 
         try {
-            String realToken = authorization.replace(BaseStringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
+            String realToken = authorization.replace(StringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
             String payload = JWSObject.parse(realToken).getPayload().toString();
             if (StringUtils.isBlank(payload)) {
                 return chain.filter(exchange);
             } else {
                 // 从token中解析用户信息并设置到Header中去
-                request = request.mutate().header(BaseStringConstants.Auth.JWT_PAYLOAD_KEY,
+                request = request.mutate().header(StringConstants.Auth.JWT_PAYLOAD_KEY,
                         URLEncoder.encode(payload, StandardCharsets.UTF_8.name())).build();
                 exchange = exchange.mutate().request(request).build();
             }

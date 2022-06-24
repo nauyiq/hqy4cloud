@@ -2,7 +2,7 @@ package com.hqy.fundation.common.route;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +29,8 @@ public class LoadBalanceHashFactorManager {
 
 
     private static String genKey(String module, int hash) {
-        return SocketClusterStatus.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)
-                .concat(module).concat(BaseStringConstants.Symbol.COLON).concat(hash + "");
+        return SocketClusterStatus.class.getSimpleName().concat(StringConstants.Symbol.COLON)
+                .concat(module).concat(StringConstants.Symbol.COLON).concat(hash + "");
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.hqy.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
  * @version 1.0
  * @date 2022/4/21 15:19
  */
-public class ReflectUtil {
+public class ReflectClassUtil {
 
 
     /**
@@ -53,13 +53,28 @@ public class ReflectUtil {
         }
     }
 
+
+    public static String simpleClassName(Class<?> clazz) {
+        if (clazz == null) {
+            throw new NullPointerException("clazz");
+        }
+        String className = clazz.getName();
+        final int lastDotIdx = className.lastIndexOf(StringConstants.Symbol.POINT);
+        if (lastDotIdx > -1) {
+            return className.substring(lastDotIdx + 1);
+        }
+        return className;
+    }
+
+
+
     /**
      * 根据class类名生成key前缀
      * @param clazz Class
      * @return key前缀
      */
     public static String genkeyPrefix(Class<?> clazz) {
-        return clazz.getSimpleName().concat(BaseStringConstants.Symbol.COLON);
+        return clazz.getSimpleName().concat(StringConstants.Symbol.COLON);
     }
 
 

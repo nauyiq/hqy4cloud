@@ -5,57 +5,39 @@ package com.hqy.base.common.base.lang;
  * @author qiyuan.hong
  * @date 2022-02-15 23:23
  */
-public interface BaseStringConstants {
+public interface StringConstants {
 
-    /**
-     * 表示websocket 连接的id
-     */
     String UID = "uid";
 
-    /**
-     * 字符串unknown
-     */
     String UNKNOWN = "unknown";
 
-    /**
-     * application/json;charset=UTF-8
-     */
     String APPLICATION_JSON_UTF_8 = "application/json;charset=UTF-8";
 
-    /**
-     * 本地ip
-     */
     String INNER_IP = "127.0.0.1";
 
-    /**
-     * 本地IPV6
-     */
     String IPV6_LOCAL = "0:0:0:0:0:0:0:1";
 
-    /**
-     * websocket
-     */
     String WEBSOCKET = "websocket";
 
-    /**
-     * /websocket
-     */
     String WEBSOCKET_PATH = Symbol.INCLINED_ROD + WEBSOCKET;
 
-    /**
-     * 空
-     */
     String EMPTY = "";
 
-    /**
-     * /favicon.ico
-     */
     String FAVICON_ICO = "/favicon.ico";
 
-    /**
-     * default
-     */
     String DEFAULT = "default";
+
+    String OS_NAME_KEY = "os.name";
+
+    String OS_WINDOWS_PREFIX = "Windows";
+
+    String OS_WIN_PREFIX = "win";
+
+    String OS_ARCH_KEY = "os.arch";
+
+    String OS_ARCH_PREFIX = "aarch64";
+
+
 
     interface Auth {
 

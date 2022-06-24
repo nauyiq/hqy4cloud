@@ -1,7 +1,6 @@
 package com.hqy.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
-import lombok.SneakyThrows;
+import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -37,7 +36,7 @@ public class OauthRequestUtil {
      * @return oauth2授权模式
      */
     public static String requestGrantType(HttpServletRequest request) {
-        return request.getParameter(BaseStringConstants.Auth.GRANT_TYPE_KEY);
+        return request.getParameter(StringConstants.Auth.GRANT_TYPE_KEY);
     }
 
 
@@ -52,17 +51,17 @@ public class OauthRequestUtil {
      */
     public static String requestOauthClientId(HttpServletRequest request) {
         //从请求路径中获取
-        String clientId = request.getParameter(BaseStringConstants.Auth.CLIENT_ID);
+        String clientId = request.getParameter(StringConstants.Auth.CLIENT_ID);
         if (StringUtils.isNotEmpty(clientId)) {
             return clientId;
         }
         //从请求头获取
-        String basic = request.getHeader(BaseStringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isNotEmpty(basic) && basic.startsWith(BaseStringConstants.Auth.BASIC_PREFIX)) {
-            basic = basic.replace(BaseStringConstants.Auth.BASIC_PREFIX, Strings.EMPTY);
+        String basic = request.getHeader(StringConstants.Auth.AUTHORIZATION_KEY);
+        if (StringUtils.isNotEmpty(basic) && basic.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
+            basic = basic.replace(StringConstants.Auth.BASIC_PREFIX, Strings.EMPTY);
             String basicPlainText = new String(Base64.getDecoder().decode(basic.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
             //client:secret
-            clientId = basicPlainText.split(BaseStringConstants.Symbol.COLON)[0];
+            clientId = basicPlainText.split(StringConstants.Symbol.COLON)[0];
         }
         return clientId;
     }
@@ -100,7 +99,7 @@ public class OauthRequestUtil {
         if (request == null) {
             request = currentRequest();
         }
-        String payload = request.getHeader(BaseStringConstants.Auth.JWT_PAYLOAD_KEY);
+        String payload = request.getHeader(StringConstants.Auth.JWT_PAYLOAD_KEY);
         if (StringUtils.isEmpty(payload)) {
             return null;
         }

@@ -15,7 +15,7 @@
  */
 package com.hqy.socketio;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.commons.collections4.CollectionUtils;
@@ -92,14 +92,14 @@ public class HandshakeData implements Serializable {
         this.xdomain = xdomain;
 
         //解析参数里的token
-        if (urlParams.containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
-            this.token = urlParams.get(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN).get(0);
+        if (urlParams.containsKey(StringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+            this.token = urlParams.get(StringConstants.Auth.SOCKET_AUTH_TOKEN).get(0);
         } else {
             log.warn("@@@ Socket.io handshakeData token is empty.");
         }
         //解析参数里的bizId
-        if (urlParams.containsKey(BaseStringConstants.Auth.BIZ_ID)) {
-            List<String> bizIds = urlParams.get(BaseStringConstants.Auth.BIZ_ID);
+        if (urlParams.containsKey(StringConstants.Auth.BIZ_ID)) {
+            List<String> bizIds = urlParams.get(StringConstants.Auth.BIZ_ID);
             if (CollectionUtils.isNotEmpty(bizIds)) {
                 this.bizId = bizIds.get(0);
             }

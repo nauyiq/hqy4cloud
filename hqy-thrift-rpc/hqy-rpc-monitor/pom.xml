@@ -4,13 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>hqy-thrift-rpc</artifactId>
-        <groupId>com.hqy</groupId>
+        <groupId>com.hqy.rpc</groupId>
         <relativePath>../pom.xml</relativePath>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hqy.rpc</groupId>
     <artifactId>hqy-rpc-monitor</artifactId>
 
     <description>rpc监察者 用于提供者和消费者中的数据统计，比如调用频次，成功失败次数等信息。</description>

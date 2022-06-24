@@ -6,7 +6,7 @@ import com.hqy.access.flow.FlowLimitConfig;
 import com.hqy.access.flow.FlowResult;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.ReflectUtil;
+import com.hqy.util.ReflectClassUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AccessFlowController {
 
-    private static final String KEY_PREFIX_STRING = ReflectUtil.genkeyPrefix(AccessFlowController.class);
+    private static final String KEY_PREFIX_STRING = ReflectClassUtil.genkeyPrefix(AccessFlowController.class);
 
     private final AbstractLimiter localCacheLimiter;
 

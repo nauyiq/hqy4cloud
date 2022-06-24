@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.exception.PublishedException;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.netty.websocket.base.HandshakeData;
@@ -243,7 +243,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         // 如果HTTP解码失败，返回HTTP异常
         if (request.decoderResult().isFailure() ||
-                (!BaseStringConstants.WEBSOCKET.equals(request.headers().get(BaseStringConstants.Headers.UPGRADE)))) {
+                (!StringConstants.WEBSOCKET.equals(request.headers().get(StringConstants.Headers.UPGRADE)))) {
             debugPrint("handleHttpRequest", "HTTP解码失败");
             sendHttpResponse(ctx, request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;

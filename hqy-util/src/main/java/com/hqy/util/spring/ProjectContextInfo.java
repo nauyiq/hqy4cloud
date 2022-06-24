@@ -3,7 +3,7 @@ package com.hqy.util.spring;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.base.common.base.lang.ActuatorNodeEnum;
 import com.hqy.base.common.base.lang.BaseMathConstants;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.util.JsonUtil;
@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ProjectContextInfo implements Serializable {
 
-    @JsonIgnore
     private static final long serialVersionUID = -3512823069773039476L;
     /**
      * 系统启动时间
@@ -82,23 +81,22 @@ public class ProjectContextInfo implements Serializable {
     /**
      * nacos的注册元数据key
      */
-    @JsonIgnore
     public static final transient String NODE_INFO = "nodeInfo";
 
     /**
      * white白名单ip
      */
-    public static final String WHITE_IP_PROPERTIES_KEY = "MANUAL_WHITE_IP";
+    public static final transient String WHITE_IP_PROPERTIES_KEY = "MANUAL_WHITE_IP";
 
     /**
      * 手动黑名单列表
      */
-    public static final String MANUAL_BLOCKED_IP_KEY = "MANUAL_BLOCK_IP";
+    public static final transient String MANUAL_BLOCKED_IP_KEY = "MANUAL_BLOCK_IP";
 
     /**
      * bi分析黑名单列表
      */
-    public static final String BI_BLOCKED_IP_KEY = "BI_BLOCK_IP";
+    public static final transient String BI_BLOCKED_IP_KEY = "BI_BLOCK_IP";
 
 
     public ProjectContextInfo() {
@@ -140,19 +138,15 @@ public class ProjectContextInfo implements Serializable {
     }
 
 
-
     public static boolean isUseLinuxNativeEpoll() {
         if (Objects.nonNull(isUseLinuxNativeEpoll)) {
             return isUseLinuxNativeEpoll;
         }
-        String osName = System.getProperty("os.name");
-        String osArch = System.getProperty("os.arch");
-        //windows系统或者是arm系统
-        //使用标准的linux epoll机制
-        isUseLinuxNativeEpoll = !osName.startsWith("Windows") && !osArch.startsWith("aarch64");
-
-        log.info("\r\n##### initialize: isUseLinuxNativeEpoll ={}  \t ### ### ", isUseLinuxNativeEpoll);
-
+        String osName = System.getProperty(StringConstants.OS_NAME_KEY);
+        String osArch = System.getProperty(StringConstants.OS_ARCH_KEY);
+        //windows系统或者是arm系统 使用标准的linux epoll机制
+        isUseLinuxNativeEpoll = !osName.startsWith(StringConstants.OS_WINDOWS_PREFIX) && !osArch.startsWith(StringConstants.OS_ARCH_PREFIX);
+        log.info("@@@ Initialize isUseLinuxNativeEpoll:{}", isUseLinuxNativeEpoll);
         return isUseLinuxNativeEpoll;
     }
 
@@ -179,9 +173,9 @@ public class ProjectContextInfo implements Serializable {
 
 
     public String getNameWithIpPort() {
-        return nameEn.concat(BaseStringConstants.Symbol.AT)
+        return nameEn.concat(StringConstants.Symbol.AT)
                 .concat(this.getUip().getIp())
-                .concat(BaseStringConstants.Symbol.COLON)
+                .concat(StringConstants.Symbol.COLON)
                 .concat(this.getUip().getPort() + "");
     }
 

@@ -6,7 +6,7 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.MicroServiceManager;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.regist.ClusterNode;
@@ -119,7 +119,7 @@ public class NamingServiceClient {
             String active = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, "spring.profiles.active");
             if (StringUtils.isNotBlank(active)) {
                 serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.getYaml
-                        (ConfigurationContext.YamlEnum.BOOTSTRAP_YAML.fineName + BaseStringConstants.Symbol.RAIL + active), nacosAddressKey);
+                        (ConfigurationContext.YamlEnum.BOOTSTRAP_YAML.fineName + StringConstants.Symbol.RAIL + active), nacosAddressKey);
             } else {
                  serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, nacosAddressKey);
             }

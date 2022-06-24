@@ -1,7 +1,7 @@
 package com.hqy.ex;
 
 import com.hqy.base.common.base.lang.BaseMathConstants;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.socketio.SocketIOClient;
 import com.hqy.socketio.SocketIOServer;
@@ -29,7 +29,7 @@ public class NettyContextHelper {
     private NettyContextHelper() {}
 
     public static boolean isInnerIp(String ip) {
-        return BaseStringConstants.INNER_IP.equals(ip);
+        return StringConstants.INNER_IP.equals(ip);
     }
 
 
@@ -98,17 +98,17 @@ public class NettyContextHelper {
     public static String getRequestIp(FullHttpRequest request) {
         //一些 CDN 会在 CDN 回源请求加 HTTP 头信息，其中可能包含访客的“真实 IP ”。具体要看是哪家 CDN ，比如 Cloudflare 是 CF-Connecting-IP
         String cfIp = request.headers().get("cf-connecting-ip");
-        if (!isInnerIp(cfIp) && StringUtils.hasText(cfIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(cfIp)) {
+        if (!isInnerIp(cfIp) && StringUtils.hasText(cfIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(cfIp)) {
             return cfIp;
         }
         //一些 CDN 会在 CDN 回源请求加 HTTP 头信息，其中可能包含访客的“真实 IP ”。具体要看是哪家 CDN ，比如 Cloudflare 是 CF-Connecting-IP
         String srcIp = request.headers().get("X-Real-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.headers().get("x-forwarded-for");
-        if (StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             String[] ips = srcIp.split(",");
             for (String ip : ips) {
                 if (!isInnerIp(ip) && !"unknown".equalsIgnoreCase(ip)) {
@@ -118,22 +118,22 @@ public class NettyContextHelper {
         }
 
         srcIp = request.headers().get("Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.headers().get("WL-Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.headers().get("HTTP_CLIENT_IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.headers().get("HTTP_X_FORWARDED_FOR");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 

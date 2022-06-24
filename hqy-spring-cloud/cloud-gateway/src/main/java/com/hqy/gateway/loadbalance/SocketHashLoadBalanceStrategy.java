@@ -1,7 +1,7 @@
 
 package com.hqy.gateway.loadbalance;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.fundation.common.route.LoadBalanceHashFactorManager;
 import com.hqy.rpc.regist.ClusterNode;
@@ -61,7 +61,7 @@ public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalance
 
         ServerHttpRequest request = exchange.getRequest();
         //获取请求中的hash值
-        List<String> thisHash = request.getQueryParams().get(BaseStringConstants.Auth.SOCKET_MULTI_PARAM_KEY);
+        List<String> thisHash = request.getQueryParams().get(StringConstants.Auth.SOCKET_MULTI_PARAM_KEY);
         ServiceInstance instance = null;
         if (CollectionUtils.isEmpty(thisHash)) {
             //如果请求的hash值为空 返回一个无状态的实例

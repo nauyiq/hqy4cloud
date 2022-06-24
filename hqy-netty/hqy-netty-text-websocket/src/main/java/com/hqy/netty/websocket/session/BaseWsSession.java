@@ -1,6 +1,6 @@
 package com.hqy.netty.websocket.session;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.netty.http.FullHttpRequestProcessor;
 import com.hqy.netty.websocket.base.HandshakeData;
 import com.hqy.netty.websocket.base.enums.WsMessageType;
@@ -68,7 +68,7 @@ public abstract class BaseWsSession implements WsSession {
                 } else {
                     remoteIp = address.toString();
                 }
-                if (remoteIp.startsWith(BaseStringConstants.Symbol.INCLINED_ROD)) {
+                if (remoteIp.startsWith(StringConstants.Symbol.INCLINED_ROD)) {
                     //去掉开头的 ‘/'
                     remoteIp = remoteIp.substring(1);
                 }

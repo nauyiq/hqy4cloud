@@ -17,7 +17,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UsingIpPort implements Serializable {
 
-    @JsonIgnore
     private static final long serialVersionUID = 5671807921455826403L;
 
     /**

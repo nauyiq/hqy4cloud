@@ -9,9 +9,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
-    <artifactId>hqy-rpc-registry-api</artifactId>
 
+    <artifactId>hqy-rpc-registry-api</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>hqy-rpc-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

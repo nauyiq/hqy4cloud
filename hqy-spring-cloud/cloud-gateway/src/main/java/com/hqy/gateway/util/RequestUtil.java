@@ -2,8 +2,7 @@ package com.hqy.gateway.util;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;
-import com.hqy.base.common.base.lang.BaseStringConstants;
-import com.hqy.util.Md5Util;
+import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -49,22 +48,22 @@ public class RequestUtil {
      */
     public static String getIpAddress(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
-        String ipAddress = headers.getFirst(BaseStringConstants.Headers.X_FORWARDED_FOR);
+        String ipAddress = headers.getFirst(StringConstants.Headers.X_FORWARDED_FOR);
 
         //如果请求头x-forwarded-for 没有值则取Proxy-Client-IP
-        if (ipAddress == null || ipAddress.length() == 0 || BaseStringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
-            ipAddress = headers.getFirst(BaseStringConstants.Headers.PROXY_CLIENT_IP);
+        if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
+            ipAddress = headers.getFirst(StringConstants.Headers.PROXY_CLIENT_IP);
         }
         //如果请求头x-forwarded-for 没有值则取WL-Proxy-Client-IP
-        if (ipAddress == null || ipAddress.length() == 0 || BaseStringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
-            ipAddress = headers.getFirst(BaseStringConstants.Headers.WL_PROXY_CLIENT_IP);
+        if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
+            ipAddress = headers.getFirst(StringConstants.Headers.WL_PROXY_CLIENT_IP);
         }
 
-        if (ipAddress == null || ipAddress.length() == 0 || BaseStringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
             ipAddress = Optional.ofNullable(request.getRemoteAddress())
                     .map(address -> address.getAddress().getHostAddress())
                     .orElse("");
-            if (BaseStringConstants.INNER_IP.equals(ipAddress)|| BaseStringConstants.IPV6_LOCAL.equals(ipAddress)) {
+            if (StringConstants.INNER_IP.equals(ipAddress)|| StringConstants.IPV6_LOCAL.equals(ipAddress)) {
                 // 根据网卡取本机配置的IP
                 try {
                     InetAddress inet = InetAddress.getLocalHost();
@@ -129,8 +128,8 @@ public class RequestUtil {
      */
     public static boolean isStaticResourceOrHtml(String url) {
         String urlTempString = url.toLowerCase();
-        if (url.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
-            urlTempString = urlTempString.substring(0, urlTempString.indexOf(BaseStringConstants.Symbol.QUESTION_MARK));
+        if (url.contains(StringConstants.Symbol.QUESTION_MARK)) {
+            urlTempString = urlTempString.substring(0, urlTempString.indexOf(StringConstants.Symbol.QUESTION_MARK));
         }
         if (isStaticResource(urlTempString)) {
             return true;
@@ -175,15 +174,15 @@ public class RequestUtil {
     public static boolean isStaticResource(String url) {
         String urlTempString = url.toLowerCase();
 
-        if (url.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
-            urlTempString = urlTempString.substring(0, urlTempString.indexOf(BaseStringConstants.Symbol.QUESTION_MARK));
+        if (url.contains(StringConstants.Symbol.QUESTION_MARK)) {
+            urlTempString = urlTempString.substring(0, urlTempString.indexOf(StringConstants.Symbol.QUESTION_MARK));
         }
         final String key = "isStaticResource.".concat(urlTempString);
 
         Boolean flag = CACHE.get(key);
         if (flag == null) {
             try {
-                if (!urlTempString.startsWith(BaseStringConstants.Symbol.INCLINED_ROD)) {
+                if (!urlTempString.startsWith(StringConstants.Symbol.INCLINED_ROD)) {
                     // 如果不像是静态资源请求.....
                     URL netUrl = new URL(urlTempString);
                     urlTempString = netUrl.getPath();

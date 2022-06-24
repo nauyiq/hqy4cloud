@@ -1,6 +1,6 @@
 package com.hqy.netty.http;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
@@ -85,7 +85,7 @@ public class FullHttpRequestProcessor {
      * @param uri 请求uri
      */
     private void parseQueryString(String uri) {
-        if (!uri.contains(BaseStringConstants.Symbol.QUESTION_MARK)) {
+        if (!uri.contains(StringConstants.Symbol.QUESTION_MARK)) {
             log.info("@@@ FullHttpRequestProcessor.parseQueryString, uri not contain '?'. uri:{}", uri);
             return;
         }
@@ -152,7 +152,7 @@ public class FullHttpRequestProcessor {
     }
 
     private static boolean checkIpString(String ip) {
-        return StringUtils.isNotEmpty(ip) && !IpUtil.isInnerIp(ip) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(ip);
+        return StringUtils.isNotEmpty(ip) && !IpUtil.isInnerIp(ip) && !StringConstants.UNKNOWN.equalsIgnoreCase(ip);
     }
 
 
