@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface NotifyListener {
 
     /**
      * Triggered when a service change notification is received.
-     * @param urls The list of registered information
+     * @param metadata The list of registered information
      */
-    void notify(List<URL> urls);
+    void notify(List<Metadata> metadata);
 
 
 }

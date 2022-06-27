@@ -1,7 +1,7 @@
 package com.hqy.rpc.registry.client;
 
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.NotifyListener;
-import com.hqy.rpc.common.URL;
 
 /**
  * @author qiyuan.hong
@@ -13,31 +13,31 @@ public interface RegistryService {
 
     /**
      * Register data, such as : provider service, consumer address, route rule, override rule and other data.
-     * @param url Registration information
+     * @param metadata Registration information
      */
-    void register(URL url);
+    void register(Metadata metadata);
 
 
     /**
      * Unregister
-     * @param url Registration information
+     * @param metadata Registration information
      */
-    void unregister(URL url);
+    void unregister(Metadata metadata);
 
 
     /**
      * Subscribe to eligible registered data and automatically push when the registered data is changed.
-     * @param url       Subscription condition
+     * @param metadata  Subscription condition
      * @param listener  A listener of the change event
      */
-    void subscribe(URL url, NotifyListener listener);
+    void subscribe(Metadata metadata, NotifyListener listener);
 
 
     /**
      * Unsubscribe
-     * @param url      Subscription condition
+     * @param metadata Subscription condition
      * @param listener A listener of the change event
      */
-    void unsubscribe(URL url, NotifyListener listener);
+    void unsubscribe(Metadata metadata, NotifyListener listener);
 
 }

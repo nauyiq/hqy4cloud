@@ -1,8 +1,8 @@
 package com.hqy.rpc.registry.api.support;
 
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.rpc.registry.api.RegistryFactory;
-import com.hqy.rpc.common.URL;
 import com.hqy.util.spring.ProjectContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class AbstractRegistryFactory implements RegistryFactory {
 
 
     @Override
-    public Registry getRegistry(URL url) {
+    public Registry getRegistry(Metadata metadata) {
         return null;
     }
 }

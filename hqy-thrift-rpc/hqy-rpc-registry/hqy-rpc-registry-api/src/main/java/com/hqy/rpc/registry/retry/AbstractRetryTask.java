@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.retry;
 import com.hqy.foundation.timer.Timeout;
 import com.hqy.foundation.timer.Timer;
 import com.hqy.foundation.timer.TimerTask;
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +28,7 @@ public abstract class AbstractRetryTask implements TimerTask {
     /**
      * url for retry task
      */
-    protected final URL url;
+    protected final Metadata metadata;
 
     /**
      * registry for this task
@@ -58,15 +58,15 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     private volatile boolean cancel;
 
-    AbstractRetryTask(URL url, FailBackRegistry registry, String taskName) {
-        AssertUtil.isFalse(Objects.isNull(url) || StringUtils.isBlank(taskName), "Initial retry task failure. url or taskName error.");
+    AbstractRetryTask(Metadata metadata, FailBackRegistry registry, String taskName) {
+        AssertUtil.isFalse(Objects.isNull(metadata) || StringUtils.isBlank(taskName), "Initial retry task failure. url or taskName error.");
 
-        this.url = url;
+        this.metadata = metadata;
         this.registry = registry;
         this.taskName = taskName;
         cancel = false;
-        this.retryPeriod = url.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
-        this.retryTimes = url.getParameter(REGISTRY_RETRY_TIMES_KEY, DEFAULT_REGISTRY_RETRY_TIMES);
+        this.retryPeriod = metadata.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
+        this.retryTimes = metadata.getParameter(REGISTRY_RETRY_TIMES_KEY, DEFAULT_REGISTRY_RETRY_TIMES);
     }
 
 
@@ -96,14 +96,14 @@ public abstract class AbstractRetryTask implements TimerTask {
         }
         if (times > retryTimes) {
             // reach the most times of retry.
-            log.warn("Final failed to execute task {}, url {}, retry {} times.",  taskName, url, retryTimes);
+            log.warn("Final failed to execute task {}, url {}, retry {} times.",  taskName, metadata, retryTimes);
             return;
         }
 
         try {
-            doRetry(url, registry, timeout);
+            doRetry(metadata, registry, timeout);
         } catch (Throwable t) {
-            log.warn("Failed to execute task {}, url: {},  waiting for again, cause: {}", taskName, url, t.getMessage(), t);
+            log.warn("Failed to execute task {}, url: {},  waiting for again, cause: {}", taskName, metadata, t.getMessage(), t);
             // rePut this task when catch exception.
             rePut(timeout, retryPeriod);
         }
@@ -111,9 +111,9 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     /**
      * do retry.
-     * @param url       url information
+     * @param metadata       url information
      * @param registry  registry
      * @param timeout   timeout handler
      */
-    protected abstract void doRetry(URL url, FailBackRegistry registry, Timeout timeout);
+    protected abstract void doRetry(Metadata metadata, FailBackRegistry registry, Timeout timeout);
 }

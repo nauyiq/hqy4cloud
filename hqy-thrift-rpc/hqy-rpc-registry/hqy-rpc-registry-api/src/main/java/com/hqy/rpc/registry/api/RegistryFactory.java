@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
 
 /**
  * @author qiyuan.hong
@@ -11,9 +11,9 @@ public interface RegistryFactory {
 
     /**
      * Connect to the registry
-     * @param url Registry address, is not allowed to be empty
+     * @param metadata Registry address, is not allowed to be empty
      * @return    Registry reference, never return empty value
      */
-    Registry getRegistry(URL url);
+    Registry getRegistry(Metadata metadata);
 
 }

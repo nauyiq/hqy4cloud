@@ -1,59 +1,51 @@
 package com.hqy.rpc.common;
 
-import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/23 12:17
  */
-public class URL implements Serializable {
+public class Metadata implements Serializable {
 
     private static final long serialVersionUID = -2179067844822981338L;
 
-    private final URLAddress urlAddress;
+    private final Remote remote;
 
     private final Node node;
 
-    protected URL(URLAddress urlAddress) {
-        this(urlAddress, null);
-    }
-
-    protected URL(URLAddress urlAddress, Node node) {
-        this.urlAddress = urlAddress;
+    public Metadata(Remote remote, Node node) {
+        this.remote = remote;
         this.node = node;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("urlAddress", urlAddress)
-                .append("node", node.toString())
-                .toString();
-    }
-
     public String getHost() {
-        return urlAddress == null ? null : urlAddress.getHost();
+        return remote == null ? null : remote.getHost();
     }
 
     public int getPort() {
-        return urlAddress == null ? 0 : urlAddress.getPort();
+        return remote == null ? 0 : remote.getPort();
     }
 
+
     public int getParameter(String key, int defaultValue) {
-        Map<String, Object> metadata = node.getMetadata();
-        Object o = metadata.get(key);
+        Map<String, Object> ex = remote.getEx();
+        Object o = ex.get(key);
         if (o instanceof Integer) {
             return (Integer) o;
         } else {
             return defaultValue;
         }
+    }
 
+    public String getAddress() {
+        return remote.getAddress();
     }
 
 
@@ -61,7 +53,7 @@ public class URL implements Serializable {
         StringBuilder buf = new StringBuilder();
         String host;
         if (useIp) {
-            host = urlAddress.getIp();
+            host = remote.getIp();
         } else {
             host = getHost();
         }
@@ -88,16 +80,43 @@ public class URL implements Serializable {
         return buf.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        URL url = (URL) o;
-        return Objects.equal(urlAddress, url.urlAddress) && Objects.equal(node, url.node);
+    public Remote getRemote() {
+        return remote;
+    }
+
+    public Node getNode() {
+        return node;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(urlAddress, node);
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("remote", remote.toString())
+                .append("node", node.toString())
+                .toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())  {
+            return false;
+        }
+        Metadata metadata = (Metadata) o;
+        return Objects.equals(remote, metadata.remote) && Objects.equals(node, metadata.node);
+    }
+
+    private volatile transient int hashCodeCache = -1;
+
+    @Override
+    public int hashCode() {
+        if (hashCodeCache == -1) {
+            hashCodeCache = Objects.hash(remote, node);
+        }
+        return hashCodeCache;
+    }
+
+
 }

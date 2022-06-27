@@ -1,20 +1,19 @@
 package com.hqy.rpc.registry.node;
 
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
 
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/23 16:30
  */
-public interface NodeService {
+public interface MetaDataService {
 
     /**
-     * get url.
-     *
-     * @return url.
+     * get metadata
+     * @return Metadata
      */
-    URL getUrl();
+    Metadata getMetadata();
 
     /**
      * is available.

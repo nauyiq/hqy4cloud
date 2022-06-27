@@ -104,6 +104,11 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_CLUSTER_LIMITING_REQUEST_STATISTICS = new CommonSwitcher(216, "节点-是否采用集群限流统计计数方式", false);
 
     /**
+     * 节点-是否启用FailBack Registry重试检查，判断是否要跳过failBack
+     */
+    public static final CommonSwitcher ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK = new CommonSwitcher(217, "节点-是否启用FailBack Registry重试检查，判断是否要跳过failBack", true);
+
+    /**
      * 与sid有关（重联场景是生成新的sid)
      * 无用http长连接释放（短时间泄漏）
      * 场景：业务： 兼容忽略js前端框架层面的socketIO层面 多发一次无意义请求的返回开关   <br>

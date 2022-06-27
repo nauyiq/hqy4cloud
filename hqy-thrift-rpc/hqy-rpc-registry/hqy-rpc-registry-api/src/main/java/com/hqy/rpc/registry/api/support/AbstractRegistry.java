@@ -2,7 +2,8 @@ package com.hqy.rpc.registry.api.support;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.Node;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.util.AssertUtil;
@@ -26,191 +27,195 @@ public abstract class AbstractRegistry implements Registry {
     private static final Logger log = LoggerFactory.getLogger(AbstractRegistry.class);
 
     /**
-     * consumer registry url
+     * registry metadata
      */
-    private URL registryUrl;
+    private Metadata registryMetadata;
 
     /**
      * registry manager center
      */
     protected RegistryManager registryManager;
 
+    private final Set<Node> registeredNode = new ConcurrentHashSet<>();
+
     /**
-     * registry url set
+     * registry metadata set
      */
-    private final Set<URL> registered = new ConcurrentHashSet<>();
+    private final Set<Metadata> registered = new ConcurrentHashSet<>();
 
     /**
      * key:consumer url, value:subscribe listener list
      */
-    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Metadata, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     /**
      * key:consumer url, value: notify url list
      */
-    private final ConcurrentMap<URL, List<URL>> notified = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Metadata, List<Metadata>> notified = new ConcurrentHashMap<>();
 
 
-    public AbstractRegistry(URL url) {
-        setUrl(url);
+    public AbstractRegistry(Metadata metadata) {
+        setUrl(metadata);
         registryManager = ProjectContextInfo.getBean(RegistryManager.class);
     }
 
     @Override
-    public URL getUrl() {
-        return registryUrl;
+    public Metadata getMetadata() {
+        return registryMetadata;
     }
 
-    protected void setUrl(URL url) {
-        AssertUtil.notNull(url, "registry url is null.");
-        this.registryUrl = url;
+    protected void setUrl(Metadata metadata) {
+        AssertUtil.notNull(metadata, "registry url is null.");
+        this.registryMetadata = metadata;
     }
 
-    public Set<URL> getRegistered() {
+    public Set<Metadata> getRegistered() {
         return registered;
     }
 
-    public ConcurrentMap<URL, Set<NotifyListener>> getSubscribed() {
+    public ConcurrentMap<Metadata, Set<NotifyListener>> getSubscribed() {
         return subscribed;
     }
 
-    public ConcurrentMap<URL, List<URL>> getNotified() {
+    public ConcurrentMap<Metadata, List<Metadata>> getNotified() {
         return notified;
     }
 
     @Override
-    public void register(URL url) {
-        AssertUtil.notNull(url, "registry url is null.");
-        if (url.getPort() != 0) {
-            log.info("registry url: {}", url);
+    public void register(Metadata metadata) {
+        AssertUtil.notNull(metadata, "registry url is null.");
+        if (metadata.getPort() != 0) {
+            log.info("registry url: {}", metadata);
         }
-        registered.add(url);
+        registered.add(metadata);
+        registeredNode.add(metadata.getNode());
     }
 
     @Override
-    public void unregister(URL url) {
-        AssertUtil.notNull(url, "unregister url is null.");
-        if (url.getPort() != 0) {
-            log.info("unregister url: {}", url);
+    public void unregister(Metadata metadata) {
+        AssertUtil.notNull(metadata, "unregister url is null.");
+        if (metadata.getPort() != 0) {
+            log.info("unregister url: {}", metadata);
         }
-        registered.remove(url);
+        registered.remove(metadata);
+        registeredNode.remove(metadata.getNode());
     }
 
     @Override
-    public void subscribe(URL url, NotifyListener listener) {
-        AssertUtil.notNull(url, "subscribe url is null.");
-        AssertUtil.notNull(url, "subscribe listener is null.");
-        log.info("subscribe url: {}", url);
-        Set<NotifyListener> listeners = subscribed.computeIfAbsent(url, n -> new ConcurrentHashSet<>());
+    public void subscribe(Metadata metadata, NotifyListener listener) {
+        AssertUtil.notNull(metadata, "subscribe url is null.");
+        AssertUtil.notNull(metadata, "subscribe listener is null.");
+        log.info("subscribe metadata: {}", metadata);
+        Set<NotifyListener> listeners = subscribed.computeIfAbsent(metadata, n -> new ConcurrentHashSet<>());
         listeners.add(listener);
     }
 
     @Override
-    public void unsubscribe(URL url, NotifyListener listener) {
-        AssertUtil.notNull(url, "unsubscribe url is null.");
-        AssertUtil.notNull(url, "unsubscribe listener is null.");
-        log.info("unsubscribe url: {}", url);
-        Set<NotifyListener> listeners = subscribed.get(url);
+    public void unsubscribe(Metadata metadata, NotifyListener listener) {
+        AssertUtil.notNull(metadata, "unsubscribe metadata is null.");
+        AssertUtil.notNull(metadata, "unsubscribe listener is null.");
+        log.info("unsubscribe metadata: {}", metadata);
+        Set<NotifyListener> listeners = subscribed.get(metadata);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
         // do not forget remove notified
-        notified.remove(url);
+        notified.remove(metadata);
     }
 
     protected void recover() throws Exception {
         // register
-        Set<URL> recoverRegistered = new HashSet<>(getRegistered());
+        Set<Metadata> recoverRegistered = new HashSet<>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
             if (log.isInfoEnabled()) {
-                log.info("Recover register url {}", recoverRegistered);
+                log.info("Recover register metadata {}", recoverRegistered);
             }
-            for (URL url : recoverRegistered) {
-                register(url);
+            for (Metadata metadata : recoverRegistered) {
+                register(metadata);
             }
         }
 
         // subscribe
-        Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<>(getSubscribed());
+        Map<Metadata, Set<NotifyListener>> recoverSubscribed = new HashMap<>(getSubscribed());
         if (!recoverSubscribed.isEmpty()) {
             if (log.isInfoEnabled()) {
-                log.info("Recover subscribe url {}", recoverSubscribed.keySet());
+                log.info("Recover subscribe metadata {}", recoverSubscribed.keySet());
             }
-            for (Map.Entry<URL, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {
-                URL url = entry.getKey();
+            for (Map.Entry<Metadata, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {
+                Metadata metadata = entry.getKey();
                 for (NotifyListener listener : entry.getValue()) {
-                    subscribe(url, listener);
+                    subscribe(metadata, listener);
                 }
             }
         }
     }
 
-    protected void notify(List<URL> urls) {
-        if (CollectionUtils.isEmpty(urls)) {
+    protected void notify(List<Metadata> metadataList) {
+        if (CollectionUtils.isEmpty(metadataList)) {
             log.info("notify urls is empty.");
             return;
         }
-        Set<Map.Entry<URL, Set<NotifyListener>>> entries = getSubscribed().entrySet();
-        for (Map.Entry<URL, Set<NotifyListener>> entry : entries) {
-            URL url = entry.getKey();
+        Set<Map.Entry<Metadata, Set<NotifyListener>>> entries = getSubscribed().entrySet();
+        for (Map.Entry<Metadata, Set<NotifyListener>> entry : entries) {
+            Metadata metadata = entry.getKey();
             Set<NotifyListener> listeners = entry.getValue();
             if (CollectionUtils.isNotEmpty(listeners)) {
                 for (NotifyListener listener : listeners) {
                     try {
-                        notify(url, listener, urls);
+                        notify(metadata, listener, metadataList);
                     } catch (Throwable t) {
-                        log.error("Failed to notify registry event, urls: {}, cause: {}, {}", urls, t.getMessage(), t);
+                        log.error("Failed to notify registry event, urls: {}, cause: {}, {}", metadata, t.getMessage(), t);
                     }
                 }
             }
         }
     }
 
-    protected void notify(URL url, NotifyListener listener, List<URL> urls) {
-        AssertUtil.notNull(url, "notify url is null.");
+    protected void notify(Metadata metadata, NotifyListener listener, List<Metadata> metadataList) {
+        AssertUtil.notNull(metadata, "notify url is null.");
         AssertUtil.notNull(listener, "notify listener is null.");
-        if (CollectionUtils.isEmpty(urls)) {
-            log.warn("Ignore empty notify urls for subscribe url {}", url);
+        if (CollectionUtils.isEmpty(metadataList)) {
+            log.warn("Ignore empty notify urls for subscribe url {}", metadata);
             return;
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Notify urls for subscribe url {}, url size {}", url, urls.size());
+            log.info("Notify urls for subscribe url {}, url size {}", metadata, metadataList.size());
         }
-        listener.notify(urls);
-        notified.put(url, urls);
+        listener.notify(metadataList);
+        notified.put(metadata, metadataList);
     }
 
     @Override
     public void destroy() {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Destroy registry: {}", getUrl());
+            log.info("Destroy registry: {}", getMetadata());
         }
-        Set<URL> destroyRegistered = new HashSet<>(getRegistered());
+        Set<Metadata> destroyRegistered = new HashSet<>(getRegistered());
         if (!destroyRegistered.isEmpty()) {
-            for (URL url : destroyRegistered) {
+            for (Metadata metadata : destroyRegistered) {
                 try {
-                    unregister(url);
+                    unregister(metadata);
                     if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                        log.info("Destroy unregister url :{}", url);
+                        log.info("Destroy unregister url :{}", metadata);
                     }
                 } catch (Throwable t) {
-                    log.warn("Failed to unregister url " + url + " to registry " + getUrl() + " on destroy, cause: " + t.getMessage(), t);
+                    log.warn("Failed to unregister url " + metadata + " to registry " + getMetadata() + " on destroy, cause: " + t.getMessage(), t);
                 }
 
             }
         }
 
-        Map<URL, Set<NotifyListener>> destroySubscribed = new HashMap<>(getSubscribed());
+        Map<Metadata, Set<NotifyListener>> destroySubscribed = new HashMap<>(getSubscribed());
         if (!destroySubscribed.isEmpty()) {
-            for (Map.Entry<URL, Set<NotifyListener>> entry : destroySubscribed.entrySet()) {
-                URL url = entry.getKey();
+            for (Map.Entry<Metadata, Set<NotifyListener>> entry : destroySubscribed.entrySet()) {
+                Metadata metadata = entry.getKey();
                 for (NotifyListener notifyListener : entry.getValue()) {
                     try {
-                        unsubscribe(url, notifyListener);
+                        unsubscribe(metadata, notifyListener);
                         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                            log.info("Destroy unsubscribe url :{}", url);
+                            log.info("Destroy unsubscribe url :{}", metadata);
                         }
                     } catch (Throwable t) {
-                        log.warn("Failed to unsubscribe url " + url + " to registry " + getUrl() + " on destroy, cause: " + t.getMessage(), t);
+                        log.warn("Failed to unsubscribe url " + metadata + " to registry " + getMetadata() + " on destroy, cause: " + t.getMessage(), t);
                     }
                 }
             }

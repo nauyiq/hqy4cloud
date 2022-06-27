@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ *
  * @link org.apache.dubbo.common.timer
  *
  * A {@link Timer} optimized for approximated I/O timeout scheduling.
@@ -60,12 +61,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 2022/6/23 17:40
  */
 public class HashedWheelTimer implements Timer {
-
-    /**
-     * may be in spi?
-     */
-    public static final String NAME = "hased";
-
     private static final Logger log = LoggerFactory.getLogger(HashedWheelTimer.class);
 
     private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger();
@@ -219,6 +214,7 @@ public class HashedWheelTimer implements Timer {
 
         // Normalize ticksPerWheel to power of two and initialize the wheel.
         wheel = createWheel(ticksPerWheel);
+        // mask 用二进制表示 111111...； 用“与操作”计算wheel下标
         mask = wheel.length - 1;
 
         // Convert tickDuration to nanos.
@@ -404,7 +400,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     private final class Worker implements Runnable {
-        private final Set<Timeout> unprocessedTimeouts = new HashSet<Timeout>();
+        private final Set<Timeout> unprocessedTimeouts = new HashSet<>();
 
         private long tick;
 
@@ -518,7 +514,7 @@ public class HashedWheelTimer implements Timer {
                 }
 
                 try {
-                    Thread.sleep(sleepTimeMs);
+                    TimeUnit.MILLISECONDS.sleep(sleepTimeMs);
                 } catch (InterruptedException ignored) {
                     if (WORKER_STATE_UPDATER.get(HashedWheelTimer.this) == WORKER_STATE_SHUTDOWN) {
                         return Long.MIN_VALUE;

@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.client;
 
-import com.hqy.rpc.common.URL;
+import com.hqy.rpc.common.Metadata;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -23,16 +23,16 @@ public abstract class AbstractServerDiscoveryFactory implements ServerDiscoveryF
     }
 
     @Override
-    public ServerDiscovery gerServerDiscovery(URL registryUrl) {
-        String key = registryUrl.buildString(true);
-        return discoveries.computeIfAbsent(key, k -> createDiscovery(registryUrl));
+    public ServerDiscovery gerServerDiscovery(Metadata registryMetadata) {
+        String key = registryMetadata.buildString(true);
+        return discoveries.computeIfAbsent(key, k -> createDiscovery(registryMetadata));
     }
 
 
     /**
      * 交给子类工厂去创建客户端
-     * @param registryUrl 注册信息
+     * @param registryMetadata 注册信息
      * @return            客户端调用视角
      */
-    protected abstract ServerDiscovery createDiscovery(URL registryUrl);
+    protected abstract ServerDiscovery createDiscovery(Metadata registryMetadata);
 }

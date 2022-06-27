@@ -3,8 +3,8 @@ package com.hqy.rpc.registry.client;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.NodeActivityObserver;
-import com.hqy.rpc.common.URL;
 import com.hqy.rpc.registry.node.GrayWhitePub;
 import com.hqy.rpc.common.Node;
 import com.hqy.util.JsonUtil;
@@ -31,7 +31,7 @@ public abstract class AbstractServerDiscovery implements ServerDiscovery {
 
     protected final String serviceName;
     protected volatile boolean isClose;
-    protected URL registryURL;
+    protected Metadata registryMetadata;
     private int pointer;
 
     /**
