@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.registry.node.Node;
 
 import java.util.List;
 

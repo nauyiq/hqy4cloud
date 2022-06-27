@@ -10,7 +10,7 @@ import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.MicroServiceManager;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.registry.nacos.node.NacosNode;
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.registry.node.Node;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.config.ConfigurationContext;
 import com.hqy.util.spring.SpringContextHolder;
@@ -51,18 +51,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NamingServiceWrapper {
 
-    private static NamingService namingService = null;
+    private final NamingService namingService;
 
-    private static final NamingServiceWrapper INSTANCE = new NamingServiceWrapper();
+    public NamingServiceWrapper(NamingService namingService) {
+        this.namingService = namingService;
+    }
 
     /**
      * 关闭状态标记变量
      */
     private static boolean close = false;
-
-    private NamingServiceWrapper() {}
-
-    public static NamingServiceWrapper getInstance() {return INSTANCE;}
 
 
     /**

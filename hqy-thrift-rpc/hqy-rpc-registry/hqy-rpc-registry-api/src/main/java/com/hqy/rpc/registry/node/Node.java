@@ -1,4 +1,4 @@
-package com.hqy.rpc.common;
+package com.hqy.rpc.registry.node;
 
 import com.google.common.base.Objects;
 import com.hqy.base.common.base.lang.ActuatorNodeEnum;

@@ -2,7 +2,7 @@ package com.hqy.rpc.registry.nacos.node;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.base.Objects;
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.registry.node.Node;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;

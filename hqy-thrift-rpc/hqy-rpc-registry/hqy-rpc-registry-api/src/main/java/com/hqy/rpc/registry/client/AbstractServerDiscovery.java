@@ -6,7 +6,7 @@ import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.NodeActivityObserver;
 import com.hqy.rpc.registry.node.GrayWhitePub;
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.registry.node.Node;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;

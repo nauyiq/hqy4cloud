@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.api.support;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.rpc.common.Metadata;
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.registry.node.Node;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.util.AssertUtil;
