@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.api.support;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.foundation.timer.HashedWheelTimer;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.registry.node.Metadata;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.retry.FailRegisteredTask;
 import com.hqy.rpc.registry.retry.FailSubscribedTask;

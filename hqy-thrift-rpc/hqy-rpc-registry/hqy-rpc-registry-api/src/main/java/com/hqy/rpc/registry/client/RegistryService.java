@@ -1,7 +1,9 @@
 package com.hqy.rpc.registry.client;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.registry.node.Metadata;
 import com.hqy.rpc.registry.api.NotifyListener;
+
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -39,5 +41,14 @@ public interface RegistryService {
      * @param listener A listener of the change event
      */
     void unsubscribe(Metadata metadata, NotifyListener listener);
+
+
+    /**
+     * Query the registered data that matches the conditions. Corresponding to the push mode of the subscription, this is the pull mode and returns only one result.
+     * @param metadata Query condition
+     * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link com.hqy.rpc.registry.api.NotifyListener#notify(List)}.
+     * @see com.hqy.rpc.registry.api.NotifyListener#notify(List)
+     */
+    List<Metadata> lookup(Metadata metadata);
 
 }

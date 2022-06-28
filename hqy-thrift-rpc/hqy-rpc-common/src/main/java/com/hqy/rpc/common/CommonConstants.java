@@ -18,8 +18,7 @@ public interface CommonConstants {
      */
     int DEFAULT_REGISTRY_RETRY_PERIOD = DEFAULT_DELAY_NOTIFICATION_TIME;
 
-
-
+    String GROUP_KEY = "group";
 
 
 }

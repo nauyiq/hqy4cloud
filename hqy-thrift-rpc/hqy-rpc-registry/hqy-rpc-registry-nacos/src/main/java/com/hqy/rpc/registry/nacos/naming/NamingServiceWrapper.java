@@ -1,27 +1,13 @@
 package com.hqy.rpc.registry.nacos.naming;
 
-import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.base.common.base.project.MicroServiceManager;
-import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.registry.nacos.node.NacosNode;
-import com.hqy.rpc.registry.node.Node;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.config.ConfigurationContext;
-import com.hqy.util.spring.SpringContextHolder;
+import com.alibaba.nacos.api.naming.pojo.ListView;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * NamingService nacos服务包装类，
@@ -57,232 +43,50 @@ public class NamingServiceWrapper {
         this.namingService = namingService;
     }
 
-    /**
-     * 关闭状态标记变量
-     */
-    private static boolean close = false;
-
-
-    /**
-     * 获取NamingService对象
-     * @return NamingService
-     */
-    public static NamingService getNamingService() {
-        if (namingService == null && !close) {
-            synchronized (NamingServiceWrapper.class) {
-                if (namingService == null) {
-                    namingService = buildNamingService();
-                }
-            }
-        }
-        return namingService;
+    public String getServerStatus() {
+        return namingService.getServerStatus();
     }
 
-    /**
-     * 客户端是否关闭
-     * @return
-     */
-    public boolean status() {
-        return !close;
+    public void subscribe(String serviceName, EventListener eventListener) throws NacosException {
+        namingService.subscribe(serviceName, eventListener);
     }
 
-    /**
-     * 将状态标记为close
-     */
-    public void close() {
-        close = true;
-        try {
-            namingService.shutDown();
-            namingService = null;
-        } catch (NacosException e) {
-            log.error(e.getMessage(), e);
-        }
+    public void subscribe(String serviceName, String group, EventListener eventListener) throws NacosException {
+        namingService.subscribe(serviceName, group, eventListener);
     }
 
-    /**
-     * 获取NamingService
-     * @return NamingService
-     */
-    private static NamingService buildNamingService() {
+    public List<Instance> getAllInstances(String serviceName, String group) throws NacosException {
+        return namingService.getAllInstances(serviceName, group);
+    }
 
-        try {
-            NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
-            namingService = nacosDiscoveryProperties.namingServiceInstance();
-        } catch (Exception e) {
-            log.warn("@@@ Spring容器获取NamingService失败, 可以尝试通过非Spring容器手动加载NamingService");
-        }
+    public void registerInstance(String serviceName, String group, Instance instance) throws NacosException {
+        namingService.registerInstance(serviceName, group, instance);
+    }
 
-        if (namingService == null) {
-            //尝试通过Nacos提供的SDK获取NamingService
-            String serverAddress;
-            String nacosAddressKey = "spring.cloud.nacos.config.server-addr";
-            String active = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, "spring.profiles.active");
-            if (StringUtils.isNotBlank(active)) {
-                serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.getYaml
-                        (ConfigurationContext.YamlEnum.BOOTSTRAP_YAML.fineName + StringConstants.Symbol.RAIL + active), nacosAddressKey);
-            } else {
-                 serverAddress = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, nacosAddressKey);
-            }
-
-            if (StringUtils.isBlank(serverAddress)) {
-                log.warn("@@@ 从配置文件中:{} 获取nacos连接地址失败, 请检查配置文件等数据.", ConfigurationContext.YamlEnum.BOOTSTRAP_YAML);
-            } else {
-                try {
-                    namingService = NamingFactory.createNamingService(serverAddress);
-                } catch (NacosException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        }
-        AssertUtil.notNull(namingService, "Get NamingService failure, check service registration result.");
-        return namingService;
+    public void deregisterInstance(String serviceName, String group, String ip, int port) throws NacosException {
+        namingService.deregisterInstance(serviceName, group, ip, port);
     }
 
 
-    /**
-     * 加载所有服务在远程服务nacos中的实例
-     * @param healthy true表示健康的实例
-     * @return
-     */
-    public List<Node> loadAllProjectNodeInfo(boolean healthy) {
-        //加载所有服务在远程服务nacos中的实例
-        List<Node> nodes = new ArrayList<>();
-        Set<String> serviceEnNames = MicroServiceManager.getServiceEnNames(null);
-        for (String serviceEnName : serviceEnNames) {
-            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.info("@@@ LoadAllProjectNodeInfo, serviceName -> {}", serviceEnName);
-            }
-            try {
-                List<Instance> instances = NamingServiceWrapper.getInstance().selectInstances(serviceEnName, healthy);
-                if (CollectionUtils.isEmpty(instances)) {
-                    log.info("{} server instance is empty.", serviceEnName);
-                    continue;
-                }
-                for (Instance instance : instances) {
-                    nodes.add(NacosNode.instanceConvert(instance));
-                }
-            } catch (Exception e) {
-                log.error("@@@ loadAllProjectNodeInfo error, {}, {}", e.getClass().getName(), e.getMessage());
-            }
-        }
-        return nodes;
+    public void deregisterInstance(String serviceName, String group, Instance instance) throws NacosException {
+        namingService.deregisterInstance(serviceName, group, instance);
     }
 
-    /**
-     * 根据服务名加载所有的节点信息
-     * @param serviceName 服务名
-     * @param healthy 健康的
-     * @return 节点列表
-     */
-    public List<Node> loadProjectNodeInfo(String serviceName, boolean healthy) {
-        List<Node> nodes = new ArrayList<>();
-        //根据服务名获取远程服务nacos中的实例
-        try {
-            List<Instance> instances = NamingServiceWrapper.getNamingService().selectInstances(serviceName, healthy);
-            if (CollectionUtils.isEmpty(instances)) {
-                log.warn("@@@ The current [{}] instance list is empty, please checking node status.", serviceName);
-            } else {
-                nodes = instances.stream().map(NacosNode::instanceConvert).collect(Collectors.toList());
-            }
-
-        } catch (Exception e) {
-            log.error("@@@ loadProjectNodeInfo error, {}, {}", e.getClass().getName(), e.getMessage());
-        }
-        return nodes;
+    public ListView<String> getServicesOfServer(int pageNo, int pageSize, String parameter) throws NacosException {
+        return namingService.getServicesOfServer(pageNo, pageSize, parameter);
     }
 
-
-
-    /**
-     * 注册一个实例到服务。一个服务对应一个Service，一个服务可以有多个集群，一个集群可以有多个实例
-     * @param serviceName
-     * @param groupName
-     * @param ip
-     * @param port
-     * @throws NacosException
-     */
-    public void registerInstance(String serviceName, String groupName, String ip, int port) throws NacosException {
-        getNamingService().registerInstance(serviceName, groupName, ip, port);
+    public List<Instance> selectInstances(String serviceName, boolean healthy) throws NacosException {
+        return namingService.selectInstances(serviceName, healthy);
     }
 
-
-    /**
-     * 注册一个实例到服务。一个服务对应一个Service，一个服务可以有多个集群，一个集群可以有多个实例
-     * @param serviceName
-     * @param groupName
-     * @param instance
-     * @throws NacosException
-     */
-    public void registerInstance(String serviceName, String groupName, Instance instance) throws NacosException{
-        getNamingService().registerInstance(serviceName, groupName, instance);
+    public List<Instance> selectInstances(String serviceName, String group, boolean healthy) throws NacosException {
+        return namingService.selectInstances(serviceName, group, healthy);
     }
 
-
-    /**
-     * 删除服务下的一个实例。
-     * @param serviceName
-     * @param ip
-     * @param port
-     * @throws NacosException
-     */
-    void deregisterInstance(String serviceName, String ip, int port) throws NacosException{
-        getNamingService().deregisterInstance(serviceName, ip, port);
+    public void shutdown() throws NacosException {
+        this.namingService.shutDown();
     }
 
-
-    /**
-     ** 获取服务下的所有实例。
-     * @param serviceName
-     * @return
-     * @throws NacosException
-     */
-    List<Instance> getAllInstances(String serviceName) throws NacosException{
-        return getNamingService().getAllInstances(serviceName);
-    }
-
-
-    /**
-     ** 获取健康或不健康实例列表
-     * @param serviceName
-     * @param healthy
-     * @return 根据条件获取过滤后的实例列表。
-     * @throws NacosException
-     */
-    List<Instance> selectInstances(String serviceName, boolean healthy) throws NacosException{
-        return getNamingService().selectInstances(serviceName, healthy);
-    }
-
-
-    /**
-     ** 根据负载均衡算法随机获取一个健康实例。
-     * @param serviceName
-     * @return
-     * @throws NacosException
-     */
-    Instance selectOneHealthyInstance(String serviceName) throws NacosException{
-        return getNamingService().selectOneHealthyInstance(serviceName);
-    }
-
-
-    /**
-     ** 监听服务下的实例列表变化。
-     * @param serviceName
-     * @param listener
-     * @throws NacosException
-     */
-    void subscribe(String serviceName, EventListener listener) throws NacosException{
-        getNamingService().subscribe(serviceName, listener);
-    }
-
-
-    /**
-     ** 取消监听服务下的实例列表变化。
-     * @param serviceName
-     * @param listener
-     * @throws NacosException
-     */
-    void unsubscribe(String serviceName, EventListener listener) throws NacosException{
-        getNamingService().unsubscribe(serviceName, listener);
-    }
 
 }

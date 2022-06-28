@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.client;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.registry.node.Metadata;
 import com.hqy.rpc.registry.api.NodeActivityObserver;
 import com.hqy.rpc.registry.node.GrayWhitePub;
 import com.hqy.rpc.registry.node.Node;
@@ -168,7 +168,7 @@ public abstract class AbstractServerDiscovery implements ServerDiscovery {
         if (CollectionUtils.isEmpty(nodes)) {
             //从allNodes中挑选出符合 GrayWhitePub 条件的节点来
             for (Node node : allNodes) {
-                if (node.getPubValue() == pub.value) {
+                if (node.getPubMode() == pub.value) {
                     nodes.add(node);
                 }
             }
@@ -247,9 +247,9 @@ public abstract class AbstractServerDiscovery implements ServerDiscovery {
         List<Node> grayNodes = new ArrayList<>();
         List<Node> whiteNodes = new ArrayList<>();
         allNodes.forEach(node -> {
-            if (node.getPubValue() == GrayWhitePub.GRAY.value) {
+            if (node.getPubMode() == GrayWhitePub.GRAY.value) {
                 grayNodes.add(node);
-            } else if (node.getPubValue() == GrayWhitePub.WHITE.value) {
+            } else if (node.getPubMode() == GrayWhitePub.WHITE.value) {
                 whiteNodes.add(node);
             }
         });

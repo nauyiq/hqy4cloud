@@ -2,7 +2,7 @@ package com.hqy.rpc.registry.api.support;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.registry.node.Metadata;
 import com.hqy.rpc.registry.node.Node;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
@@ -36,12 +36,10 @@ public abstract class AbstractRegistry implements Registry {
      */
     protected RegistryManager registryManager;
 
-    private final Set<Node> registeredNode = new ConcurrentHashSet<>();
-
     /**
-     * registry metadata set
+     * registry node set.
      */
-    private final Set<Metadata> registered = new ConcurrentHashSet<>();
+    private final Set<Node> registered = new ConcurrentHashSet<>();
 
     /**
      * key:consumer url, value:subscribe listener list
@@ -68,7 +66,7 @@ public abstract class AbstractRegistry implements Registry {
         this.registryMetadata = metadata;
     }
 
-    public Set<Metadata> getRegistered() {
+    public Set<Node> getRegistered() {
         return registered;
     }
 
@@ -82,22 +80,18 @@ public abstract class AbstractRegistry implements Registry {
 
     @Override
     public void register(Metadata metadata) {
-        AssertUtil.notNull(metadata, "registry url is null.");
-        if (metadata.getPort() != 0) {
-            log.info("registry url: {}", metadata);
+        if (metadata == null || metadata.getNode() == null) {
+            throw new IllegalArgumentException("register metadata is null.");
         }
-        registered.add(metadata);
-        registeredNode.add(metadata.getNode());
+        registered.add(metadata.getNode());
     }
 
     @Override
     public void unregister(Metadata metadata) {
-        AssertUtil.notNull(metadata, "unregister url is null.");
-        if (metadata.getPort() != 0) {
-            log.info("unregister url: {}", metadata);
+        if (metadata == null || metadata.getNode() == null) {
+            throw new IllegalArgumentException("register metadata is null.");
         }
-        registered.remove(metadata);
-        registeredNode.remove(metadata.getNode());
+        registered.remove(metadata.getNode());
     }
 
     @Override
@@ -124,13 +118,13 @@ public abstract class AbstractRegistry implements Registry {
 
     protected void recover() throws Exception {
         // register
-        Set<Metadata> recoverRegistered = new HashSet<>(getRegistered());
+        Set<Node> recoverRegistered = new HashSet<>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
             if (log.isInfoEnabled()) {
                 log.info("Recover register metadata {}", recoverRegistered);
             }
-            for (Metadata metadata : recoverRegistered) {
-                register(metadata);
+            for (Node node : recoverRegistered) {
+                register(new Metadata(registryMetadata.getConnectionInfo(), node));
             }
         }
 
@@ -189,16 +183,17 @@ public abstract class AbstractRegistry implements Registry {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("Destroy registry: {}", getMetadata());
         }
-        Set<Metadata> destroyRegistered = new HashSet<>(getRegistered());
+        Set<Node> destroyRegistered = new HashSet<>(getRegistered());
         if (!destroyRegistered.isEmpty()) {
-            for (Metadata metadata : destroyRegistered) {
+            for (Node node : destroyRegistered) {
                 try {
+                    Metadata metadata = new Metadata(registryMetadata.getConnectionInfo(), node);
                     unregister(metadata);
                     if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                         log.info("Destroy unregister url :{}", metadata);
                     }
                 } catch (Throwable t) {
-                    log.warn("Failed to unregister url " + metadata + " to registry " + getMetadata() + " on destroy, cause: " + t.getMessage(), t);
+                    log.warn("Failed to unregister node " + node + " to registry " + getMetadata() + " on destroy, cause: " + t.getMessage(), t);
                 }
 
             }

@@ -1,6 +1,6 @@
-package com.hqy.rpc.registry.node;
+package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.registry.node.Metadata;
 
 /**
  * @author qiyuan.hong
@@ -17,7 +17,6 @@ public interface MetaDataService {
 
     /**
      * is available.
-     *
      * @return available.
      */
     boolean isAvailable();
