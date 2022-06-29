@@ -16,7 +16,7 @@
 
     <description>引入Thrift源码, 自定义RPC框架</description>
     <modules>
-        <module>thrift-rpc-core</module>
+        <module>thrift-rpc</module>
         <module>hqy-rpc-monitor</module>
         <module>hqy-rpc-common</module>
         <module>hqy-rpc-registry</module>

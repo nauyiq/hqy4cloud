@@ -7,7 +7,7 @@ import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.rpc.registry.nacos.naming.NamingServiceWrapper;
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

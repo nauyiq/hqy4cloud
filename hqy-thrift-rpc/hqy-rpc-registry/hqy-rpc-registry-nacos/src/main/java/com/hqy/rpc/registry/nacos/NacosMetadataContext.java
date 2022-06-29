@@ -1,7 +1,7 @@
 package com.hqy.rpc.registry.nacos;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.rpc.registry.node.Node;
+import com.hqy.rpc.common.Node;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 

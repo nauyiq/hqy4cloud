@@ -3,8 +3,8 @@ package com.hqy.rpc.registry.client;
 import com.hqy.base.common.base.lang.Prioritized;
 import com.hqy.base.common.base.project.UsingIpPort;
 import com.hqy.rpc.registry.api.NodeActivityObserver;
-import com.hqy.rpc.registry.node.Node;
-import com.hqy.rpc.registry.node.GrayWhitePub;
+import com.hqy.rpc.common.Node;
+import com.hqy.rpc.common.GrayWhitePub;
 
 import java.util.List;
 

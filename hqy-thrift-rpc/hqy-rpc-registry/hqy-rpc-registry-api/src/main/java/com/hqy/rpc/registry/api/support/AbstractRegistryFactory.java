@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api.support;
 
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.rpc.registry.api.RegistryFactory;
 import com.hqy.util.spring.ProjectContextInfo;

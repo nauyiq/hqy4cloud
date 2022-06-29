@@ -78,7 +78,7 @@
         <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
-
+        <javassist.version>3.28.0-GA</javassist.version>
     </properties>
 
 
@@ -288,6 +288,12 @@
                 <groupId>io.seata</groupId>
                 <artifactId>seata-core</artifactId>
                 <version>${seata.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
             </dependency>
 
         </dependencies>

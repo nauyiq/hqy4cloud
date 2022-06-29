@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.client;
 
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.Metadata;
 
 /**
  * The factory to create {@link ServerDiscovery}

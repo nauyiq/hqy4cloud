@@ -1,6 +1,7 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.MetaDataService;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.client.RegistryService;
 
 import static com.hqy.rpc.common.CommonConstants.*;

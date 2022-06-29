@@ -19,6 +19,12 @@
             <artifactId>hqy-base-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+
     </dependencies>
 
 

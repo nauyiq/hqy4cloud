@@ -8,7 +8,7 @@ import com.hqy.mq.common.transaction.service.MessageTransactionService;
 import com.hqy.mq.common.transaction.stategy.DeliveryMessageContext;
 import com.hqy.mq.common.transaction.stategy.DeliveryMessageStrategy;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.ReflectClassUtil;
+import com.hqy.util.ReflectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public abstract class AbstractMessageTransactionRecordService<T extends CommonMe
     @SuppressWarnings("unchecked")
     public boolean commit(String messageId, boolean commit) {
         //获取到泛型的类型
-        Class<? extends CommonMessageRecord> targetGenericClass = ReflectClassUtil.getTargetGenericClass(getClass(), 0);
+        Class<? extends CommonMessageRecord> targetGenericClass = ReflectUtils.getTargetGenericClass(getClass(), 0);
         T t;
         try {
             t = (T) targetGenericClass.newInstance();

@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.retry;
 import com.hqy.foundation.timer.Timeout;
 import com.hqy.foundation.timer.Timer;
 import com.hqy.foundation.timer.TimerTask;
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;

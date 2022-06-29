@@ -5,7 +5,7 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.hqy.foundation.common.StringConstantFieldValuePredicate;
-import com.hqy.rpc.registry.node.Metadata;
+import com.hqy.rpc.common.Metadata;
 import com.hqy.rpc.registry.nacos.naming.NamingServiceWrapper;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;

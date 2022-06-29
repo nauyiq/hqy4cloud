@@ -1,7 +1,7 @@
 package com.hqy.foundation.timer;
 
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.util.ReflectClassUtil;
+import com.hqy.util.ReflectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -393,7 +393,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     private static void reportTooManyInstances() {
-        String resourceType = ReflectClassUtil.simpleClassName(HashedWheelTimer.class);
+        String resourceType = ReflectUtils.simpleClassName(HashedWheelTimer.class);
         log.error("You are creating too many " + resourceType + " instances. " +
                 resourceType + " is a shared resource that must be reused across the JVM," +
                 "so that only a few instances are created.");
@@ -635,7 +635,7 @@ public class HashedWheelTimer implements Timer {
         public String toString() {
             final long currentTime = System.nanoTime();
             long remaining = deadline - currentTime + timer.startTime;
-            String simpleClassName = ReflectClassUtil.simpleClassName(this.getClass());
+            String simpleClassName = ReflectUtils.simpleClassName(this.getClass());
 
             StringBuilder buf = new StringBuilder(192)
                     .append(simpleClassName)
