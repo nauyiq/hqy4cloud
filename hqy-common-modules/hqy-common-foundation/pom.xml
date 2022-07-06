@@ -32,7 +32,7 @@
         <!-- thrift-rpc 提供rpc服务 -->
         <dependency>
             <groupId>com.hqy.rpc</groupId>
-            <artifactId>hqy-thrift-rpc</artifactId>
+            <artifactId>hqy-rpc</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

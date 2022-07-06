@@ -26,7 +26,7 @@
         <!-- 公共service -->
         <module>hqy-base-common-service</module>
         <!-- 自定义thrift-rpc -->
-        <module>hqy-thrift-rpc</module>
+        <module>hqy-rpc</module>
         <!-- 安全模块 -->
         <module>hqy-base-security</module>
         <!-- 消息队列模块 -->
