@@ -26,6 +26,12 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 
     </dependencies>
 

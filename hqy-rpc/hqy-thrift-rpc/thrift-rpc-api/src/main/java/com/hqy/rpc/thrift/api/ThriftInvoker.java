@@ -2,9 +2,13 @@ package com.hqy.rpc.thrift.api;
 
 import com.facebook.nifty.client.FramedClientConnector;
 import com.hqy.rpc.api.Invocation;
+import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.api.protocol.AbstractInvoker;
+import com.hqy.rpc.common.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * @author qiyuan.hong
@@ -17,7 +21,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
 
 
 
-    public ThriftInvoker() {
+    public ThriftInvoker(Class<T> serviceType, Metadata metadata, ) {
 
     }
 
