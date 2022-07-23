@@ -21,9 +21,8 @@ import com.facebook.nifty.core.TChannelBufferOutputTransport;
 import com.facebook.nifty.duplex.TProtocolPair;
 import com.facebook.nifty.duplex.TTransportPair;
 import com.facebook.swift.codec.ThriftCodecManager;
-import com.facebook.swift.service.metadata.ThriftServiceMetadata;
-import facebook.nifty.client.*;
 import com.facebook.swift.service.metadata.ThriftMethodMetadata;
+import com.facebook.swift.service.metadata.ThriftServiceMetadata;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -134,9 +133,7 @@ public class ThriftClientManager implements Closeable {
         return connectFuture;
     }
 
-    public <T, C extends NiftyClientChannel> ListenableFuture<T> createClient(
-            NiftyClientConnector<C> connector,
-            Class<T> type) {
+    public <T, C extends NiftyClientChannel> ListenableFuture<T> createClient(NiftyClientConnector<C> connector, Class<T> type) {
         return createClient(
                 connector,
                 type,

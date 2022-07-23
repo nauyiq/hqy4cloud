@@ -43,29 +43,24 @@ public class FramedClientConnector extends AbstractClientConnector<FramedClientC
     // The client expects to see only the message *without* any framing, this strips it off
     private static final int INITIAL_BYTES_TO_STRIP = LENGTH_FIELD_LENGTH;
 
-    public FramedClientConnector(InetSocketAddress address)
-    {
+    public FramedClientConnector(InetSocketAddress address) {
         this(address, defaultProtocolFactory());
     }
 
-    public FramedClientConnector(HostAndPort address)
-    {
+    public FramedClientConnector(HostAndPort address) {
         this(address, defaultProtocolFactory());
     }
 
-    public FramedClientConnector(InetSocketAddress address, TDuplexProtocolFactory protocolFactory)
-    {
+    public FramedClientConnector(InetSocketAddress address, TDuplexProtocolFactory protocolFactory) {
         super(address, protocolFactory);
     }
 
-    public FramedClientConnector(HostAndPort address, TDuplexProtocolFactory protocolFactory)
-    {
+    public FramedClientConnector(HostAndPort address, TDuplexProtocolFactory protocolFactory) {
         super(toSocketAddress(address), protocolFactory);
     }
 
     @Override
-    public FramedClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig)
-    {
+    public FramedClientChannel newThriftClientChannel(Channel nettyChannel, NettyClientConfig clientConfig) {
         FramedClientChannel channel = new FramedClientChannel(nettyChannel, clientConfig.getTimer(), getProtocolFactory());
         ChannelPipeline cp = nettyChannel.getPipeline();
         TimeoutHandler.addToPipeline(cp);
@@ -74,8 +69,7 @@ public class FramedClientConnector extends AbstractClientConnector<FramedClientC
     }
 
     @Override
-    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig)
-    {
+    public ChannelPipelineFactory newChannelPipelineFactory(final int maxFrameSize, NettyClientConfig clientConfig) {
         return new ChannelPipelineFactory() {
             @Override
             public ChannelPipeline getPipeline()

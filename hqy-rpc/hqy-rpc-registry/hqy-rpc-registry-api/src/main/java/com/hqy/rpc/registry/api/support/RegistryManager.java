@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api.support;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class RegistryManager {
         }
 
         @Override
-        public Metadata getMetadata() {
+        public RPCModel getModel() {
             return null;
         }
 
@@ -70,27 +70,27 @@ public class RegistryManager {
         }
 
         @Override
-        public void register(Metadata metadata) {
+        public void register(RPCModel metadata) {
 
         }
 
         @Override
-        public void unregister(Metadata metadata) {
+        public void unregister(RPCModel metadata) {
 
         }
 
         @Override
-        public void subscribe(Metadata metadata, NotifyListener listener) {
+        public void subscribe(RPCModel metadata, NotifyListener listener) {
 
         }
 
         @Override
-        public void unsubscribe(Metadata metadata, NotifyListener listener) {
+        public void unsubscribe(RPCModel metadata, NotifyListener listener) {
 
         }
 
         @Override
-        public List<Metadata> lookup(Metadata metadata) {
+        public List<RPCModel> lookup(RPCModel metadata) {
             return null;
         }
     };

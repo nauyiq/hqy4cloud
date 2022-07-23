@@ -1,6 +1,7 @@
 package com.hqy.rpc.common;
 
 /**
+ * CloseableService.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/5 11:29

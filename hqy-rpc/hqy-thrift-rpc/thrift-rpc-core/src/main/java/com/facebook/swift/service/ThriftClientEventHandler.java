@@ -43,4 +43,14 @@ public abstract class ThriftClientEventHandler {
 
     public void done(Object context, String methodName) {
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

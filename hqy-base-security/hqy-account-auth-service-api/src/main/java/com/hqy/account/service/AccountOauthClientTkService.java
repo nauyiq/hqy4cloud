@@ -10,5 +10,4 @@ import com.hqy.base.BaseTkService;
 public interface AccountOauthClientTkService extends BaseTkService<AccountOauthClient, Long> {
 
 
-
 }

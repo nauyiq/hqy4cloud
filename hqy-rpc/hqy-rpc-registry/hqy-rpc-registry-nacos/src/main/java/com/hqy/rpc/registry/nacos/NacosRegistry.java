@@ -1,26 +1,25 @@
 package com.hqy.rpc.registry.nacos;
 
 import cn.hutool.core.map.MapUtil;
+import com.alibaba.nacos.api.common.Constants;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.base.common.base.lang.exception.RpcException;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.RegistryNotifier;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.rpc.registry.nacos.naming.NamingServiceWrapper;
-import com.hqy.rpc.registry.nacos.util.NacosInstanceManageUtil;
+import com.hqy.rpc.registry.nacos.util.NacosInstanceUtils;
 import com.hqy.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-
-import static com.hqy.rpc.registry.nacos.node.NacosNode.getGroup;
 
 /**
  * Nacos {@link Registry}
@@ -34,91 +33,95 @@ public class NacosRegistry extends FailBackRegistry {
     private static final String UP = "UP";
 
     private final NamingServiceWrapper namingService;
-    private final Map<Metadata, EventListener> nacosListeners = MapUtil.newConcurrentHashMap();
+    private final Map<RPCModel, EventListener> nacosListeners = MapUtil.newConcurrentHashMap();
 
 
-    public NacosRegistry(Metadata metadata, NamingServiceWrapper namingService) {
-        super(metadata);
+    public NacosRegistry(RPCModel rpcModel, NamingServiceWrapper namingService) {
+        super(rpcModel);
         this.namingService = namingService;
     }
 
 
     @Override
     public String getServiceNameEn() {
-        return getRegistryMetadata().getServiceName();
+        return getRegistryRpcContext().getName();
     }
 
     @Override
-    public List<Metadata> lookup(Metadata metadata) {
-        AssertUtil.notNull(metadata, "Failed execute to lookup, metadata is null.");
-        AssertUtil.notEmpty(metadata.getServiceName(), "Failed execute to lookup, serviceName is empty.");
+    public List<RPCModel> lookup(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "Failed execute to lookup, rpcContext is null.");
+        AssertUtil.notEmpty(rpcModel.getName(), "Failed execute to lookup, serviceName is empty.");
         try {
-            List<Instance> instances = namingService.selectInstances(metadata.getServiceName(), true);
-            return MetadataContext.instancesConvert(getRegistryMetadata().getConnectionInfo(), instances);
+            List<Instance> instances = namingService.selectInstances(rpcModel.getName(), true);
+            return NacosInstanceUtils.instancesConvert(getRegistryRpcContext().getRegistryInfo(), instances);
         } catch (Throwable t) {
-            throw new RpcException("Failed to lookup " + metadata + " from nacos " + getRegistryMetadata() + ", cause: " + t.getMessage(), t);
+            throw new RpcException("Failed to lookup " + rpcModel + " from nacos " + getRegistryRpcContext() + ", cause: " + t.getMessage(), t);
         }
     }
 
     @Override
-    public void doRegister(Metadata metadata) {
-        AssertUtil.notNull(metadata, "Nacos Registry register failed, metadata is null.");
+    public void doRegister(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "Nacos Registry register failed, rpcContext is null.");
         try {
-            String serviceName = metadata.getServiceName();
-            Instance instance = createInstance(metadata);
-            namingService.registerInstance(serviceName, getGroup(metadata.getNode()), instance);
+            String serviceName = rpcModel.getName();
+            Instance instance = createInstance(rpcModel);
+            namingService.registerInstance(serviceName, getGroup(rpcModel), instance);
         } catch (Throwable cause) {
-            throw new RpcException("Failed to register to nacos " + getRegistryMetadata() + ", cause: " + cause.getMessage(), cause);
+            throw new RpcException("Failed to register to nacos " + getRegistryRpcContext() + ", cause: " + cause.getMessage(), cause);
         }
     }
 
+    private String getGroup(RPCModel rpcModel) {
+        return rpcModel.getParameter(rpcModel.getParameter(Constants.GROUP), Constants.DEFAULT_GROUP);
+    }
+
     @Override
-    public void doUnregister(Metadata metadata) {
-        AssertUtil.notNull(metadata, "Nacos Registry unregister failed, metadata is null.");
+    public void doUnregister(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "Nacos Registry unregister failed, rpcContext is null.");
         try {
-            String serviceName = metadata.getServiceName();
-            Instance instance = createInstance(metadata);
-            namingService.deregisterInstance(serviceName, getGroup(metadata.getNode()), instance);
+            String serviceName = rpcModel.getName();
+            Instance instance = createInstance(rpcModel);
+            namingService.deregisterInstance(serviceName, getGroup(rpcModel), instance);
         } catch (Throwable cause) {
-            throw new RpcException("Failed to unregister to nacos " + getRegistryMetadata() + ", cause: " + cause.getMessage(), cause);
+            throw new RpcException("Failed to unregister to nacos " + getRegistryRpcContext() + ", cause: " + cause.getMessage(), cause);
         }
     }
 
     @Override
-    public void doSubscribe(Metadata metadata, NotifyListener listener) {
-        String serviceName = metadata.getServiceName();
+    public void doSubscribe(RPCModel rpcModel, NotifyListener listener) {
+        String serviceName = rpcModel.getName();
         try {
             List<Instance> instances = new LinkedList<>(namingService.selectInstances(serviceName, true));
-            NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, instances);
-            notifySubscriber(metadata, instances, listener);
-            subscribeEventListener(serviceName, metadata, listener);
+//            NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, instances);
+            notifySubscriber(rpcModel, instances, listener);
+            subscribeEventListener(serviceName, rpcModel, listener);
         } catch (Throwable t) {
-            throw new RpcException("Failed to subscribe " + metadata + " to nacos " + getRegistryMetadata() + ", cause: " + t.getMessage(), t);
+            throw new RpcException("Failed to subscribe " + rpcModel + " to nacos " + getRegistryRpcContext() + ", cause: " + t.getMessage(), t);
         }
     }
 
     @Override
-    public void doUnsubscribe(Metadata metadata, NotifyListener listener) {
-        String serviceName = metadata.getServiceName();
+    public void doUnsubscribe(RPCModel rpcModel, NotifyListener listener) {
+        String serviceName = rpcModel.getName();
         try {
-            EventListener eventListener = nacosListeners.get(metadata);
+            EventListener eventListener = nacosListeners.get(rpcModel);
             if (Objects.nonNull(eventListener)) {
                 namingService.unsubscribe(serviceName, eventListener);
             }
         } catch (Throwable t) {
-            throw new RpcException("Failed to doUnsubscribe " + metadata + " to nacos " + getRegistryMetadata() + ", cause: " + t.getMessage(), t);
+            throw new RpcException("Failed to doUnsubscribe " + rpcModel + " to nacos " + getRegistryRpcContext() + ", cause: " + t.getMessage(), t);
         }
     }
 
     @Override
-    protected void notify(Metadata metadata, NotifyListener listener, List<Metadata> metadataList) {
-        AssertUtil.notNull(metadata, "Metadata is null.");
+    protected void notify(RPCModel rpcModel, NotifyListener listener, List<RPCModel> rpcModels) {
+        AssertUtil.notNull(rpcModel, "Metadata is null.");
         AssertUtil.notNull(listener, "NotifyListener is null.");
         try {
-            doNotify(metadata, listener, metadataList);
+            doNotify(rpcModel, listener, rpcModels);
         } catch (Throwable t) {
             // Record a failed registration request to a failed list
-            log.error("Failed to notify addresses for subscribe " + metadata + ", cause: " + t.getMessage(), t);
+            log.error("Failed to notify addresses for subscribe " + rpcModel + ", cause: " + t.getMessage(), t);
         }
     }
 
@@ -128,25 +131,25 @@ public class NacosRegistry extends FailBackRegistry {
         return UP.equals(namingService.getServerStatus());
     }
 
-    private void subscribeEventListener(String serviceName, Metadata metadata, NotifyListener listener) throws NacosException {
-        EventListener eventListener = nacosListeners.computeIfAbsent(metadata, k -> new NacosRegistryListener(serviceName, metadata, listener));
+    private void subscribeEventListener(String serviceName, RPCModel rpcModel, NotifyListener listener) throws NacosException {
+        EventListener eventListener = nacosListeners.computeIfAbsent(rpcModel, k -> new NacosRegistryListener(serviceName, rpcModel, listener));
         namingService.subscribe(serviceName, eventListener);
     }
 
     /**
      * Notify the Enabled {@link Instance instances} to subscriber.
-     * @param metadata  {@link Metadata}
+     * @param rpcModel  {@link RPCModel}
      * @param instances {@link NotifyListener}
      * @param listener  {@link Instance}
      */
-    private void notifySubscriber(Metadata metadata, List<Instance> instances, NotifyListener listener) {
+    private void notifySubscriber(RPCModel rpcModel, List<Instance> instances, NotifyListener listener) {
         List<Instance> enabledInstances = new LinkedList<>(instances);
         if (enabledInstances.size() > 0) {
             //  Instances
             filterEnabledInstances(enabledInstances);
         }
-        List<Metadata> metadataList = MetadataContext.instancesConvert(metadata.getConnectionInfo(), instances);
-        NacosRegistry.this.notify(metadata, listener, metadataList);
+        List<RPCModel> rpcModels = NacosInstanceUtils.instancesConvert(rpcModel.getRegistryInfo(), instances);
+        NacosRegistry.this.notify(rpcModel, listener, rpcModels);
     }
 
     private void filterEnabledInstances(Collection<Instance> instances) {
@@ -158,17 +161,18 @@ public class NacosRegistry extends FailBackRegistry {
         collection.removeIf(data -> !filter.accept(data));
     }
 
-    private Instance createInstance(Metadata metadata) {
+    private Instance createInstance(RPCModel rpcModel) throws Exception {
         Instance instance = new Instance();
-        instance.setIp(metadata.getHost());
-        instance.setPort(metadata.getPort());
-        instance.setMetadata(MetadataContext.buildMetadata(metadata.getNode()));
+        instance.setServiceName(rpcModel.getName());
+        instance.setIp(rpcModel.getHost());
+        instance.setPort(rpcModel.getPort());
+        instance.setMetadata(NacosInstanceUtils.buildMetadata(rpcModel));
         return instance;
     }
 
     private class NacosRegistryListener implements EventListener {
 
-        private final Metadata consumerMetadata;
+        private final RPCModel rpcModel;
 
         private final String serviceName;
 
@@ -176,15 +180,15 @@ public class NacosRegistry extends FailBackRegistry {
 
         private final RegistryNotifier<List<Instance>> notifier;
 
-        public NacosRegistryListener(String serviceName, Metadata consumerMetadata, NotifyListener listener) {
-            this.consumerMetadata = consumerMetadata;
+        public NacosRegistryListener(String serviceName, RPCModel rpcModel, NotifyListener listener) {
+            this.rpcModel = rpcModel;
             this.serviceName = serviceName;
             this.notifyListener = listener;
-            this.notifier = new RegistryNotifier<List<Instance>>(getMetadata(), NacosRegistry.this.getNotifyDelay()) {
+            this.notifier = new RegistryNotifier<List<Instance>>(getModel(), NacosRegistry.this.getNotifyDelay()) {
                 @Override
                 protected void doNotify(List<Instance> rawAddresses) {
-                    NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, rawAddresses);
-                    NacosRegistry.this.notifySubscriber(consumerMetadata, rawAddresses, listener);
+//                    NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, rawAddresses);
+                    NacosRegistry.this.notifySubscriber(rpcModel, rawAddresses, listener);
                 }
             };
         }
@@ -202,12 +206,12 @@ public class NacosRegistry extends FailBackRegistry {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             NacosRegistryListener that = (NacosRegistryListener) o;
-            return Objects.equals(consumerMetadata, that.consumerMetadata) && Objects.equals(serviceName, that.serviceName) && Objects.equals(notifyListener, that.notifyListener);
+            return Objects.equals(rpcModel, that.rpcModel) && Objects.equals(serviceName, that.serviceName) && Objects.equals(notifyListener, that.notifyListener);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(consumerMetadata, serviceName, notifyListener);
+            return Objects.hash(rpcModel, serviceName, notifyListener);
         }
     }
 

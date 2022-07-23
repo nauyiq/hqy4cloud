@@ -6,7 +6,7 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.hqy.foundation.common.StringConstantFieldValuePredicate;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.nacos.naming.NamingServiceWrapper;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.spring.SpringContextHolder;
@@ -29,7 +29,8 @@ public class NacosNamingServiceUtils {
 
     private static final Logger log = LoggerFactory.getLogger(NacosNamingServiceUtils.class);
 
-    public static NamingServiceWrapper createNamingService(Metadata connectionMetadata) {
+    public static NamingServiceWrapper createNamingService(RPCModel rpcModel) {
+
         NamingService namingService = null;
         try {
             NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
@@ -42,7 +43,7 @@ public class NacosNamingServiceUtils {
             return new NamingServiceWrapper(namingService);
         }
 
-        Properties nacosProperties = buildNacosProperties(connectionMetadata);
+        Properties nacosProperties = buildNacosProperties(rpcModel);
         try {
             namingService = NacosFactory.createNamingService(nacosProperties);
         } catch (NacosException e) {
@@ -52,35 +53,34 @@ public class NacosNamingServiceUtils {
         return new NamingServiceWrapper(namingService);
     }
 
-    private static Properties buildNacosProperties(Metadata connectionMetadata) {
-        AssertUtil.notNull(connectionMetadata, "Fail build nacos properties, connection metadata is null.");
+    private static Properties buildNacosProperties(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "Fail build nacos properties, connection rpcContext is null.");
         Properties properties = new Properties();
-        setServerAddress(connectionMetadata, properties);
-        setProperties(connectionMetadata, properties);
+        setServerAddress(rpcModel, properties);
+        setProperties(rpcModel, properties);
         return properties;
     }
 
-    private static void setServerAddress(Metadata connectionMetadata, Properties properties) {
-        String serverAddressBuilder = connectionMetadata.getHost() + ':' + connectionMetadata.getPort();
-        properties.put(SERVER_ADDR, serverAddressBuilder);
+    private static void setServerAddress(RPCModel rpcModel, Properties properties) {
+        properties.put(SERVER_ADDR, rpcModel.getRegistryAddress());
     }
 
-    private static void setProperties(Metadata connectionMetadata, Properties properties) {
-        putPropertyIfAbsent(connectionMetadata, properties, NACOS_NAMING_LOG_NAME, null);
-        Map<String, String> parameters = connectionMetadata.getParameters(StringConstantFieldValuePredicate.of(PropertyKeyConst.class));
+    private static void setProperties(RPCModel rpcModel, Properties properties) {
+        putPropertyIfAbsent(rpcModel, properties, NACOS_NAMING_LOG_NAME, null);
+        Map<String, String> parameters = rpcModel.getParameters(StringConstantFieldValuePredicate.of(PropertyKeyConst.class));
         // Put all parameters
         properties.putAll(parameters);
-        if (StringUtils.isNotEmpty(connectionMetadata.getUsername())){
-            properties.put(USERNAME, connectionMetadata.getUsername());
+        if (StringUtils.isNotEmpty(rpcModel.getUsername())){
+            properties.put(USERNAME, rpcModel.getUsername());
         }
-        if (StringUtils.isNotEmpty(connectionMetadata.getPassword())){
-            properties.put(PASSWORD, connectionMetadata.getPassword());
+        if (StringUtils.isNotEmpty(rpcModel.getPassword())){
+            properties.put(PASSWORD, rpcModel.getPassword());
         }
-        putPropertyIfAbsent(connectionMetadata, properties, NAMING_LOAD_CACHE_AT_START, "true");
+        putPropertyIfAbsent(rpcModel, properties, NAMING_LOAD_CACHE_AT_START, "true");
     }
 
-    private static void putPropertyIfAbsent(Metadata connectionMetadata, Properties properties, String propertyName, String defaultValue) {
-        String propertyValue = connectionMetadata.getParameter(propertyName);
+    private static void putPropertyIfAbsent(RPCModel rpcModel, Properties properties, String propertyName, String defaultValue) {
+        String propertyValue = rpcModel.getParameter(propertyName);
         if (StringUtils.isNotBlank(propertyValue)) {
             properties.put(propertyName, propertyValue);
         } else {

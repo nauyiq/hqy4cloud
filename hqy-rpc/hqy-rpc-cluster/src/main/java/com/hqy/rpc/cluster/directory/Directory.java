@@ -1,11 +1,10 @@
 package com.hqy.rpc.cluster.directory;
 
 import com.hqy.base.common.base.lang.exception.RpcException;
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.cluster.router.RouterChain;
 import com.hqy.rpc.common.CloseableService;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -27,12 +26,18 @@ public interface Directory<T> extends CloseableService {
     Class<T> getInterface();
 
     /**
+     * get provider rpc service name
+     * @return provider service name.
+     */
+    String getProviderServiceName();
+
+    /**
      * Based on the incoming Invocation request, Filter the self-maintained Invoker collection and return the eligible Invoker collection
-     * @param invocation     Invocation request
+     * @param rpcModel     rpcContext
      * @return               invokers
      * @throws RpcException  RpcException
      */
-    List<Invoker<T>> list(Invocation invocation) throws RpcException;
+    List<Invoker<T>> list(RPCModel rpcModel) throws RpcException;
 
     /**
      * get list invokers, include all invokers from registry
@@ -41,10 +46,10 @@ public interface Directory<T> extends CloseableService {
     List<Invoker<T>> getAllInvokers();
 
     /**
-     * get rpc consumer metadata
+     * get rpc consumer model
      * @return metadata
      */
-    Metadata consumerMetadata();
+    RPCModel getConsumerModel();
 
 
     /**

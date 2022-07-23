@@ -1,6 +1,6 @@
 package com.hqy.rpc.cluster.router;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 
 /**
  * abstract Router.
@@ -8,15 +8,15 @@ import com.hqy.rpc.common.Metadata;
  * @version 1.0
  * @date 2022/6/30 17:28
  */
-public abstract class AbstractRouter implements Router {
+public abstract class AbstractRouter<T> implements Router<T> {
 
     protected static final transient String FORCE_KEY = "force";
-    protected Metadata metadata;
+    protected RPCModel rpcModel;
     protected int priority;
 
     @Override
-    public Metadata getMetadata() {
-        return metadata;
+    public RPCModel getContext() {
+        return rpcModel;
     }
 
     @Override
@@ -25,7 +25,7 @@ public abstract class AbstractRouter implements Router {
     }
 
     @Override
-    public int compareTo(Router o) {
+    public int compareTo(Router<T> o) {
         return Integer.compare(this.getPriority(), o.getPriority());
     }
 }

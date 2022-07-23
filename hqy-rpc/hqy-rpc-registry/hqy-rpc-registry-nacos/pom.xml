@@ -5,8 +5,8 @@
     <parent>
         <artifactId>hqy-rpc-registry</artifactId>
         <groupId>com.hqy.rpc</groupId>
-        <version>1.0.0</version>
-<!--        <relativePath>../../pom.xml</relativePath>-->
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,11 +14,31 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
+        <!--SpringCloud ailibaba nacos -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba.nacos</groupId>
+                    <artifactId>nacos-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>hqy-rpc-registry-api</artifactId>
-            <version>1.0.0</version>
+            <version>${project.parent.version}</version>
+<!--            <version>1.0.0</version>-->
         </dependency>
+
     </dependencies>
 
 </project>

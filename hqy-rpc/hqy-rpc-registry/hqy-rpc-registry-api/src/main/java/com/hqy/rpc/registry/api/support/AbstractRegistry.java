@@ -2,12 +2,10 @@ package com.hqy.rpc.registry.api.support;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.rpc.common.Metadata;
-import com.hqy.rpc.common.Node;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.spring.ProjectContextInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,186 +27,183 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * registry metadata
      */
-    private Metadata registryMetadata;
+    private RPCModel registryRpcModel;
 
     /**
      * registry node set.
      */
-    private final Set<Node> registered = new ConcurrentHashSet<>();
+    private final Set<RPCModel> registered = new ConcurrentHashSet<>();
 
     /**
      * key:consumer url, value:subscribe listener list
      */
-    private final ConcurrentMap<Metadata, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RPCModel, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     /**
      * key:consumer url, value: notify url list
      */
-    private final ConcurrentMap<Metadata, List<Metadata>> notified = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RPCModel, List<RPCModel>> notified = new ConcurrentHashMap<>();
 
 
-    public AbstractRegistry(Metadata metadata) {
-        setMetadata(metadata);
+    public AbstractRegistry(RPCModel rpcModel) {
+        setMetadata(rpcModel);
     }
 
-    public Metadata getRegistryMetadata() {
-        return registryMetadata;
+    public RPCModel getRegistryRpcContext() {
+        return registryRpcModel;
     }
 
-    protected void setMetadata(Metadata metadata) {
-        AssertUtil.notNull(metadata, "registry url is null.");
-        this.registryMetadata = metadata;
+    protected void setMetadata(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "registry rpcContext is null.");
+        this.registryRpcModel = rpcModel;
     }
 
-    public Set<Node> getRegistered() {
+    public Set<RPCModel> getRegistered() {
         return registered;
     }
 
-    public ConcurrentMap<Metadata, Set<NotifyListener>> getSubscribed() {
+    public ConcurrentMap<RPCModel, Set<NotifyListener>> getSubscribed() {
         return subscribed;
     }
 
-    public ConcurrentMap<Metadata, List<Metadata>> getNotified() {
+    public ConcurrentMap<RPCModel, List<RPCModel>> getNotified() {
         return notified;
     }
 
     @Override
-    public Metadata getMetadata() {
-        return registryMetadata;
+    public RPCModel getModel() {
+        return registryRpcModel;
     }
 
     @Override
-    public void register(Metadata metadata) {
-        if (metadata == null || metadata.getNode() == null) {
-            throw new IllegalArgumentException("register metadata is null.");
+    public void register(RPCModel rpcModel) {
+        if (rpcModel == null) {
+            throw new IllegalArgumentException("register rpcContext is null.");
         }
-        registered.add(metadata.getNode());
+        registered.add(rpcModel);
     }
 
     @Override
-    public void unregister(Metadata metadata) {
-        if (metadata == null || metadata.getNode() == null) {
-            throw new IllegalArgumentException("register metadata is null.");
-        }
-        registered.remove(metadata.getNode());
+    public void unregister(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "register rpcContext is null.");
+        registered.remove(rpcModel);
     }
 
     @Override
-    public void subscribe(Metadata metadata, NotifyListener listener) {
-        AssertUtil.notNull(metadata, "subscribe url is null.");
-        AssertUtil.notNull(metadata, "subscribe listener is null.");
-        log.info("subscribe metadata: {}", metadata);
-        Set<NotifyListener> listeners = subscribed.computeIfAbsent(metadata, n -> new ConcurrentHashSet<>());
+    public void subscribe(RPCModel rpcModel, NotifyListener listener) {
+        AssertUtil.notNull(rpcModel, "subscribe url is null.");
+        AssertUtil.notNull(rpcModel, "subscribe listener is null.");
+        log.info("subscribe rpcContext: {}", rpcModel);
+        Set<NotifyListener> listeners = subscribed.computeIfAbsent(rpcModel, n -> new ConcurrentHashSet<>());
         listeners.add(listener);
     }
 
     @Override
-    public void unsubscribe(Metadata metadata, NotifyListener listener) {
-        AssertUtil.notNull(metadata, "unsubscribe metadata is null.");
-        AssertUtil.notNull(metadata, "unsubscribe listener is null.");
-        log.info("unsubscribe metadata: {}", metadata);
-        Set<NotifyListener> listeners = subscribed.get(metadata);
+    public void unsubscribe(RPCModel rpcModel, NotifyListener listener) {
+        AssertUtil.notNull(rpcModel, "unsubscribe rpcContext is null.");
+        AssertUtil.notNull(rpcModel, "unsubscribe listener is null.");
+        log.info("unsubscribe rpcContext: {}", rpcModel);
+        Set<NotifyListener> listeners = subscribed.get(rpcModel);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
         // do not forget remove notified
-        notified.remove(metadata);
+        notified.remove(rpcModel);
     }
 
     protected void recover() throws Exception {
         // register
-        Set<Node> recoverRegistered = new HashSet<>(getRegistered());
+        Set<RPCModel> recoverRegistered = new HashSet<>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
             if (log.isInfoEnabled()) {
                 log.info("Recover register metadata {}", recoverRegistered);
             }
-            for (Node node : recoverRegistered) {
-                register(new Metadata(registryMetadata.getConnectionInfo(), node));
+            for (RPCModel rpcModel : recoverRegistered) {
+                register(rpcModel);
             }
         }
 
         // subscribe
-        Map<Metadata, Set<NotifyListener>> recoverSubscribed = new HashMap<>(getSubscribed());
+        Map<RPCModel, Set<NotifyListener>> recoverSubscribed = new HashMap<>(getSubscribed());
         if (!recoverSubscribed.isEmpty()) {
             if (log.isInfoEnabled()) {
                 log.info("Recover subscribe metadata {}", recoverSubscribed.keySet());
             }
-            for (Map.Entry<Metadata, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {
-                Metadata metadata = entry.getKey();
+            for (Map.Entry<RPCModel, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {
+                RPCModel rpcModel = entry.getKey();
                 for (NotifyListener listener : entry.getValue()) {
-                    subscribe(metadata, listener);
+                    subscribe(rpcModel, listener);
                 }
             }
         }
     }
 
-    protected void notify(List<Metadata> metadataList) {
-        if (CollectionUtils.isEmpty(metadataList)) {
+    protected void notify(List<RPCModel> rpcModels) {
+        if (CollectionUtils.isEmpty(rpcModels)) {
             log.info("notify urls is empty.");
             return;
         }
-        Set<Map.Entry<Metadata, Set<NotifyListener>>> entries = getSubscribed().entrySet();
-        for (Map.Entry<Metadata, Set<NotifyListener>> entry : entries) {
-            Metadata metadata = entry.getKey();
+        Set<Map.Entry<RPCModel, Set<NotifyListener>>> entries = getSubscribed().entrySet();
+        for (Map.Entry<RPCModel, Set<NotifyListener>> entry : entries) {
+            RPCModel rpcModel = entry.getKey();
             Set<NotifyListener> listeners = entry.getValue();
             if (CollectionUtils.isNotEmpty(listeners)) {
                 for (NotifyListener listener : listeners) {
                     try {
-                        notify(metadata, listener, metadataList);
+                        notify(rpcModel, listener, rpcModels);
                     } catch (Throwable t) {
-                        log.error("Failed to notify registry event, urls: {}, cause: {}, {}", metadata, t.getMessage(), t);
+                        log.error("Failed to notify registry event, urls: {}, cause: {}, {}", rpcModel, t.getMessage(), t);
                     }
                 }
             }
         }
     }
 
-    protected void notify(Metadata metadata, NotifyListener listener, List<Metadata> metadataList) {
-        AssertUtil.notNull(metadata, "notify url is null.");
+    protected void notify(RPCModel rpcModel, NotifyListener listener, List<RPCModel> rpcModels) {
+        AssertUtil.notNull(rpcModel, "notify rpcContext is null.");
         AssertUtil.notNull(listener, "notify listener is null.");
-        if (CollectionUtils.isEmpty(metadataList)) {
-            log.warn("Ignore empty notify urls for subscribe url {}", metadata);
+        if (CollectionUtils.isEmpty(rpcModels)) {
+            log.warn("Ignore empty notify rpcContexts for subscribe url {}", rpcModel);
             return;
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Notify urls for subscribe url {}, url size {}", metadata, metadataList.size());
+            log.info("Notify urls for subscribe rpcContexts {}, url size {}", rpcModel, rpcModels.size());
         }
-        listener.notify(metadataList);
-        notified.put(metadata, metadataList);
+        listener.notify(rpcModels);
+        notified.put(rpcModel, rpcModels);
     }
 
     @Override
     public void destroy() {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Destroy registry: {}", getRegistryMetadata());
+            log.info("Destroy registry: {}", getRegistryRpcContext());
         }
-        Set<Node> destroyRegistered = new HashSet<>(getRegistered());
+        Set<RPCModel> destroyRegistered = new HashSet<>(getRegistered());
         if (!destroyRegistered.isEmpty()) {
-            for (Node node : destroyRegistered) {
+            for (RPCModel rpcModel : destroyRegistered) {
                 try {
-                    Metadata metadata = new Metadata(registryMetadata.getConnectionInfo(), node);
-                    unregister(metadata);
+                    unregister(rpcModel);
                     if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                        log.info("Destroy unregister url :{}", metadata);
+                        log.info("Destroy unregister url :{}", rpcModel);
                     }
                 } catch (Throwable t) {
-                    log.warn("Failed to unregister node " + node + " to registry " + getRegistryMetadata() + " on destroy, cause: " + t.getMessage(), t);
+                    log.warn("Failed to unregister rpcContext " + rpcModel + " to registry " + getRegistryRpcContext() + " on destroy, cause: " + t.getMessage(), t);
                 }
 
             }
         }
 
-        Map<Metadata, Set<NotifyListener>> destroySubscribed = new HashMap<>(getSubscribed());
+        Map<RPCModel, Set<NotifyListener>> destroySubscribed = new HashMap<>(getSubscribed());
         if (!destroySubscribed.isEmpty()) {
-            for (Map.Entry<Metadata, Set<NotifyListener>> entry : destroySubscribed.entrySet()) {
-                Metadata metadata = entry.getKey();
+            for (Map.Entry<RPCModel, Set<NotifyListener>> entry : destroySubscribed.entrySet()) {
+                RPCModel rpcModel = entry.getKey();
                 for (NotifyListener notifyListener : entry.getValue()) {
                     try {
-                        unsubscribe(metadata, notifyListener);
+                        unsubscribe(rpcModel, notifyListener);
                         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                            log.info("Destroy unsubscribe url :{}", metadata);
+                            log.info("Destroy unsubscribe url :{}", rpcModel);
                         }
                     } catch (Throwable t) {
-                        log.warn("Failed to unsubscribe url " + metadata + " to registry " + getRegistryMetadata() + " on destroy, cause: " + t.getMessage(), t);
+                        log.warn("Failed to unsubscribe url " + rpcModel + " to registry " + getRegistryRpcContext() + " on destroy, cause: " + t.getMessage(), t);
                     }
                 }
             }

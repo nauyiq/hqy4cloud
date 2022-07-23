@@ -2,10 +2,9 @@ package com.hqy.rpc.cluster.directory;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.base.common.base.lang.exception.RpcException;
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.cluster.router.RouterChain;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
     protected final String providerServiceName;
     private volatile boolean destroyed = false;
-    protected volatile Metadata consumerMetadata;
+    protected volatile RPCModel consumerContext;
     protected RouterChain<T> routerChain;
 
     /**
@@ -74,21 +73,21 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private final int reconnectTaskPeriod;
 
 
-    public AbstractDirectory(String providerServiceName, Metadata metadata) {
-        this(providerServiceName, metadata, null);
+    public AbstractDirectory(String providerServiceName, RPCModel rpcModel) {
+        this(providerServiceName, rpcModel, null);
     }
 
-    public AbstractDirectory(String providerServiceName, Metadata metadata, RouterChain<T> routerChain) {
-        AssertUtil.notNull(metadata, "metadata is null.");
+    public AbstractDirectory(String providerServiceName, RPCModel rpcModel, RouterChain<T> routerChain) {
+        AssertUtil.notNull(rpcModel, "metadata is null.");
         this.providerServiceName = providerServiceName;
-        this.consumerMetadata = metadata;
+        this.consumerContext = rpcModel;
         setRouterChain(routerChain);
         connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("thrift-connectivity-scheduler", true));
         reconnectTaskTryCount = DEFAULT_RECONNECT_TASK_TRY_COUNT;
         reconnectTaskPeriod = DEFAULT_RECONNECT_TASK_PERIOD;
     }
 
-    protected void setInvokers(List<Invoker<T>> invokers) {
+    public void setInvokers(List<Invoker<T>> invokers) {
         this.invokers = invokers;
         refreshInvokerInternal();
         this.invokersInitialized = true;
@@ -178,7 +177,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
                     for (Invoker<T> tInvoker : needDeleteList) {
                         if (invokers.contains(tInvoker)) {
                             addValidInvoker(tInvoker);
-                            log.info("Recover service address: " + tInvoker.getMetadata() + "  from invalid list.");
+                            log.info("Recover service address: " + tInvoker.getModel() + "  from invalid list.");
                         }
                         invokersToReconnect.remove(tInvoker);
                     }
@@ -196,14 +195,12 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         }
     }
 
-
-
     @Override
     public void addDisabledInvoker(Invoker<T> invoker) {
         if (invokers.contains(invoker)) {
             disabledInvokers.add(invoker);
             removeValidInvoker(invoker);
-            log.info("Disable service address: " + invoker.getMetadata() + ".");
+            log.info("Disable service address: " + invoker.getModel() + ".");
         }
     }
 
@@ -216,6 +213,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         return routerChain;
     }
 
+    @Override
     public String getProviderServiceName() {
         return providerServiceName;
     }
@@ -243,11 +241,10 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
 
     @Override
-    public List<Invoker<T>> list(Invocation invocation) throws RpcException {
+    public List<Invoker<T>> list(RPCModel context) throws RpcException {
         if (destroyed) {
             throw new RpcException("Directory of type " + this.getClass().getSimpleName() +  " already destroyed for service " + getProviderServiceName() + " from registry.");
         }
-
         List<Invoker<T>> availableInvokers;
         // use clone to avoid being modified at doList().
         if (invokersInitialized) {
@@ -256,14 +253,14 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
             availableInvokers = new ArrayList<>(invokers);
         }
 
-        List<Invoker<T>> routedResult = doList(availableInvokers, invocation);
+        List<Invoker<T>> routedResult = doList(availableInvokers);
         if (routedResult.isEmpty()) {
             log.warn("No provider available after connectivity filter for the service " + getProviderServiceName()
                     + " All validInvokers' size: " + validInvokers.size()
                     + " All routed invokers' size: " + routedResult.size()
                     + " All invokers' size: " + invokers.size()
-                    + " from registry " + consumerMetadata().getConnectionHost()
-                    + " on the consumer " + consumerMetadata().getHost()
+                    + " from registry " + getConsumerModel().getServerAddress()
+                    + " on the consumer " + getConsumerModel().getHost()
                     + ".");
         }
 
@@ -290,7 +287,12 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         }
     }
 
-    protected abstract List<Invoker<T>> doList(List<Invoker<T>> availableInvokers, Invocation invocation);
+    /**
+     * choose conditional invokers.
+     * @param availableInvokers invokers {@link Invoker}
+     * @return                  match condition invokers.
+     */
+    protected abstract List<Invoker<T>> doList(List<Invoker<T>> availableInvokers);
 
 
 }

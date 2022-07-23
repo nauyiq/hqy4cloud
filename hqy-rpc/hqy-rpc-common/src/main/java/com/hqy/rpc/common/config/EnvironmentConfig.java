@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 /**
  * 系统初始化的时候 记录下当前环境信息<br>
  * @author qy

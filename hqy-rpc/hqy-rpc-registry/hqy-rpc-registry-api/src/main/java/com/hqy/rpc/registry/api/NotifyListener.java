@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface NotifyListener {
 
     /**
      * Triggered when a service change notification is received.
-     * @param metadata The list of registered information
+     * @param rpcModels The list of registered information
      */
-    void notify(List<Metadata> metadata);
+    void notify(List<RPCModel> rpcModels);
 
 
 }

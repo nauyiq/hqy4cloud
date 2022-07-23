@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,12 @@ public abstract class RegistryNotifier<T> {
 
     private T rawAddresses;
 
-    public RegistryNotifier(Metadata metadata, long delayTime) {
-        this(metadata, delayTime, null);
+    public RegistryNotifier(RPCModel rpcModel, long delayTime) {
+        this(rpcModel, delayTime, null);
     }
 
 
-    public RegistryNotifier(Metadata metadata, long delayTime, ScheduledExecutorService scheduler) {
+    public RegistryNotifier(RPCModel rpcModel, long delayTime, ScheduledExecutorService scheduler) {
         this.delayTime = delayTime;
         if (scheduler == null) {
             this.scheduler = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("thrift-registry-notification"));

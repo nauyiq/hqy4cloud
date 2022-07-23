@@ -16,8 +16,9 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.rpc</groupId>
-            <artifactId>hqy-rpc-common</artifactId>
+            <artifactId>hqy-rpc-api</artifactId>
             <version>${project.parent.version}</version>
+<!--            <version>1.0.0</version>-->
         </dependency>
     </dependencies>
 

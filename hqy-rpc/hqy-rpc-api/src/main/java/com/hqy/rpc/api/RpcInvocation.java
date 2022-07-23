@@ -1,6 +1,7 @@
 package com.hqy.rpc.api;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,69 +17,81 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RpcInvocation implements Invocation, Serializable {
     private static final long serialVersionUID = -1549902387737186173L;
 
-    private transient Invoker<?> invoker;
+    private final transient Invoker<?> invoker;
 
-    private transient Class<?> returnType;
+    private final transient Class<?> returnType;
 
-    private transient Type[] returnTypes;
+    private final transient Class<?>[] returnTypes;
 
-    private String methodName;
+    private final String methodName;
 
-    private String interfaceName;
+    private final String serviceName;
 
-    private transient Class<?>[] parameterTypes;
+    private final transient Class<?>[] parameterTypes;
 
-    private Object[] arguments;
+    private final Object[] arguments;
 
     private Map<String, Object> attachments;
 
     private final transient Lock attachmentLock = new ReentrantLock();
 
+    private transient Method method;
 
-    private final transient InvokerCallback invokerCallback;
+    private transient InvokeMode invokeMode;
 
-    private final transient String hashFactor;
+    private final InvocationCallback invocationCallback;
 
-    public RpcInvocation(InvokerCallback invokerCallback, String hashFactor) {
-        this.invokerCallback = invokerCallback;
-        this.hashFactor = hashFactor;
+    public RpcInvocation(Invoker<?> invoker, Method method, Object[] args) {
+        this(invoker, null, method, args, InvokeMode.SYNC, null);
     }
 
-    public static Invocation createInvocation(InvokerCallback invokerCallback, String hashFactor) {
-        return new RpcInvocation(invokerCallback, hashFactor);
+    public RpcInvocation(Invoker<?> invoker, InvocationCallback invocationCallback, Method method, Object[] args) {
+        this(invoker, invocationCallback, method, args, InvokeMode.SYNC, null);
     }
 
-
-    public void setInvoker(Invoker<?> invoker) {
+    public RpcInvocation(Invoker<?> invoker, InvocationCallback invocationCallback, Method method, Object[] args, InvokeMode invokeMode, Map<String, Object> attachments) {
         this.invoker = invoker;
+        this.invocationCallback = invocationCallback;
+        this.method = method;
+        this.arguments = args;
+        this.attachments = attachments;
+        this.serviceName = invoker.getInterface().getSimpleName();
+        this.returnType = method.getReturnType();
+        this.returnTypes = method.getParameterTypes();
+        this.parameterTypes = method.getParameterTypes();
+        this.methodName = method.getName();
+        this.invokeMode = invokeMode;
     }
 
-    public void setReturnType(Class<?> returnType) {
-        this.returnType = returnType;
+
+    public Type getReturnType() {
+        return returnType;
     }
 
-    public void setReturnTypes(Type[] returnTypes) {
-        this.returnTypes = returnTypes;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public void setParameterTypes(Class<?>[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public void setArguments(Object[] arguments) {
-        this.arguments = arguments;
+    public Type[] getReturnTypes() {
+        return returnTypes;
     }
 
     public void setAttachments(Map<String, Object> attachments) {
         this.attachments = attachments;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public void setInvokeMode(InvokeMode invokeMode) {
+        this.invokeMode = invokeMode;
+    }
+
+    @Override
+    public InvocationCallback getInvocationCallback() {
+        return invocationCallback;
+    }
+
+    @Override
+    public Method getMethod() {
+        return method;
     }
 
     @Override
@@ -88,7 +101,7 @@ public class RpcInvocation implements Invocation, Serializable {
 
     @Override
     public String getServiceName() {
-        return interfaceName;
+        return serviceName;
     }
 
     @Override
@@ -102,18 +115,13 @@ public class RpcInvocation implements Invocation, Serializable {
     }
 
     @Override
-    public InvokerCallback getInvokerCallback() {
-        return invokerCallback;
-    }
-
-    @Override
-    public String getHashFactor() {
-        return hashFactor;
-    }
-
-    @Override
     public Invoker<?> getInvoker() {
         return invoker;
+    }
+
+    @Override
+    public InvokeMode getInvokeMode() {
+        return invokeMode;
     }
 
     public void addObjectAttachmentsIfAbsent(Map<String, Object> attachments) {
@@ -142,8 +150,6 @@ public class RpcInvocation implements Invocation, Serializable {
             attachmentLock.unlock();
         }
     }
-
-
 
 
 }

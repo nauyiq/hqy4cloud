@@ -14,16 +14,16 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>hqy-rpc-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>hqy-rpc-cluster</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

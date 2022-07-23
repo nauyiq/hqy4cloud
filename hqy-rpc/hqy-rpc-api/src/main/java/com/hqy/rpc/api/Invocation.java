@@ -1,5 +1,7 @@
 package com.hqy.rpc.api;
 
+import java.lang.reflect.Method;
+
 /**
  *
  * @author qiyuan.hong
@@ -19,6 +21,12 @@ public interface Invocation {
      * @return  service interface name
      */
     String getServiceName();
+
+    /**
+     * return rpc method
+     * @return {@link Method}
+     */
+    Method getMethod();
 
     /**
      * get the invoker in current context.
@@ -42,15 +50,16 @@ public interface Invocation {
     Object[] getArguments();
 
     /**
-     * return rpc invokerCallback
-     * @return {@link InvokerCallback}
+     * get invoker mode
+     * @return {@link InvokeMode}
      */
-    InvokerCallback getInvokerCallback();
+    InvokeMode getInvokeMode();
 
     /**
-     *
-     * @return
+     * get invocationCallback.
+     * @return {@link InvocationCallback}
      */
-    String getHashFactor();
+    InvocationCallback getInvocationCallback();
+
 
 }

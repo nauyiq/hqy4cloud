@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * spring容器加强类
@@ -22,6 +23,8 @@ public class SpringContextHolder implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     private static ProjectContextInfo contextInfo = new ProjectContextInfo();
+
+    private static final AtomicBoolean REGISTRY_PROJECT_CONTEXT = new AtomicBoolean(false);
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -115,7 +118,12 @@ public class SpringContextHolder implements ApplicationContextAware {
     public static void registerContextInfo(ProjectContextInfo info) {
         if (Objects.nonNull(info)) {
             contextInfo = info;
+            REGISTRY_PROJECT_CONTEXT.compareAndSet(false, true);
         }
+    }
+
+    public static boolean isRegistryContextInfo() {
+        return REGISTRY_PROJECT_CONTEXT.get();
     }
 
 

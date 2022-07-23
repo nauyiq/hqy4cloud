@@ -1,11 +1,14 @@
 package com.hqy.rpc.thrift.proxy;
 
 import com.hqy.rpc.api.Invoker;
+import com.hqy.rpc.api.RpcInvocation;
+import com.hqy.rpc.api.InvocationCallback;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
+ * Dynamic proxy obj.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/29 14:09
@@ -13,15 +16,17 @@ import java.lang.reflect.Method;
 public class DynamicInvokerInvocationHandler<T> implements InvocationHandler {
 
     private final Invoker<T> invoker;
+    private final InvocationCallback invocationCallback;
 
     private static final String TOSTRING_METHOD_NAME = "toString";
     private static final String HASHCODE_METHOD_NAME = "hashCode";
     private static final String EQUALS_METHOD_NAME = "equals";
-    private static final String DESTROY_METHOD_NAME = "$destroy";
+    private static final String DESTROY_METHOD_NAME = "destroy";
 
 
-    public DynamicInvokerInvocationHandler(Invoker<T> invoker) {
+    public DynamicInvokerInvocationHandler(Invoker<T> invoker, InvocationCallback invocationCallback) {
         this.invoker = invoker;
+        this.invocationCallback = invocationCallback;
     }
 
     @Override
@@ -33,21 +38,30 @@ public class DynamicInvokerInvocationHandler<T> implements InvocationHandler {
         Class<?>[] parameterTypes = method.getParameterTypes();
 
         if (parameterTypes.length == 0) {
-            if (TOSTRING_METHOD_NAME.equals(methodName)) {
-                return invoker.toString();
-            } else if (DESTROY_METHOD_NAME.equals(methodName)) {
-                invoker.destroy();
-                return null;
-            } else if (HASHCODE_METHOD_NAME.equals(methodName)) {
-                return invoker.hashCode();
+            switch (methodName) {
+                case TOSTRING_METHOD_NAME:
+                    return invoker.toString();
+                case DESTROY_METHOD_NAME:
+                    invoker.destroy();
+                    return null;
+                case HASHCODE_METHOD_NAME:
+                    return invoker.hashCode();
+                default:
+                    throw new UnsupportedOperationException();
             }
         } else if (parameterTypes.length == 1 && EQUALS_METHOD_NAME.equals(methodName)) {
             return invoker.equals(args[0]);
         }
 
+        RpcInvocation rpcInvocation;
+        if (invocationCallback == null) {
+            rpcInvocation = new RpcInvocation(invoker, method, args);
+        } else {
+            rpcInvocation = new RpcInvocation(invoker, invocationCallback, method, args);
+        }
 
-
-
-        return null;
+        return invoker.invoke(rpcInvocation);
     }
+
+
 }

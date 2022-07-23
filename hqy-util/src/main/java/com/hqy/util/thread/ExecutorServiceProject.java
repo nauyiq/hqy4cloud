@@ -180,6 +180,10 @@ public abstract class ExecutorServiceProject {
      */
     public static final int PRIORITY_LOW = 7;
 
+    public ExecutorService getExecutorService() {
+        return EXECUTOR_SERVICE;
+    }
+
     public void execute(Runnable runnable) {
         execute(runnable, PRIORITY_DEFAULT);
     }

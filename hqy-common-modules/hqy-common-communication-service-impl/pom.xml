@@ -25,12 +25,6 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-        <!--SpringCloud ailibaba nacos -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
         <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -53,12 +47,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-util</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>

@@ -13,26 +13,12 @@
     <artifactId>thrift-rpc-client</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>com.hqy.rpc</groupId>
-            <artifactId>hqy-rpc-cluster</artifactId>
+            <artifactId>thrift-rpc-handler</artifactId>
             <version>${project.parent.version}</version>
+<!--            <version>1.0.0</version>-->
         </dependency>
-
-        <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>hqy-rpc-registry-nacos</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>thrift-rpc-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-
     </dependencies>
 
 

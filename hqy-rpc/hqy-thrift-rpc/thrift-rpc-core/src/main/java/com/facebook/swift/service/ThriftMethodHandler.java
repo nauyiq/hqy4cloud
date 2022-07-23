@@ -32,8 +32,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.hqy.foundation.common.thread.ProjectThreadLocalContext;
-import com.hqy.rpc.thrift.RemoteExParam;
+import com.hqy.rpc.core.ThriftRequestPram;
 import com.hqy.util.ArgsUtil;
 import com.hqy.util.identity.ProjectSnowflakeIdWorker;
 import org.apache.thrift.TApplicationException;
@@ -197,17 +196,7 @@ public class ThriftMethodHandler {
 
     private Object[] addExParam2Args(Object[] args) {
         try {
-            Long rootId = ProjectThreadLocalContext.ROOT_ID.get();
-            if (rootId == null) {
-                rootId = 0L;
-            }
-            Long parentId = ProjectThreadLocalContext.PARENT_ID.get();
-            if (parentId == null) {
-
-                parentId = 0L;
-            }
-            long childId = ProjectSnowflakeIdWorker.getInstance().nextId();
-            RemoteExParam appendArg = new RemoteExParam(rootId.toString(), parentId.toString(), childId + "", oneway);
+            ThriftRequestPram appendArg = new ThriftRequestPram();
             args = ArgsUtil.addArg(args, appendArg);
 
         } catch (Exception ex) {
@@ -288,7 +277,7 @@ public class ThriftMethodHandler {
     public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originThriftFieldMetadata, ThriftCodecManager codecManager) {
         short parameterId = (short) (originThriftFieldMetadata.size() + 1);
         String parameterName = "remoteExParam";
-        Type parameterType = RemoteExParam.class;
+        Type parameterType = ThriftRequestPram.class;
         ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originThriftFieldMetadata.size(), parameterType);
         ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);
         return new ThriftFieldMetadata(

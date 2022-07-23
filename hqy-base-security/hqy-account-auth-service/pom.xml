@@ -20,6 +20,24 @@
             <groupId>com.hqy</groupId>
             <artifactId>hqy-account-auth-service-api</artifactId>
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 实时监控  spring-boot-starter-actuator-->
@@ -28,19 +46,20 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!--SpringCloud ailibaba nacos 移除原本的1.0使用http通讯的nacos客户端 -->
+        <!-- rpc-server starter -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-nacos-springboot-server-starter</artifactId>
+            <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-client</artifactId>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
-        <!-- spring-cloud-nacos-config 移除原本的1.0使用http通讯的nacos客户端 -->
+        <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -52,10 +71,9 @@
             </exclusions>
         </dependency>
 
-        <!-- nacos-client 2.3 -->
         <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
         <!-- spring-security -->
@@ -78,11 +96,17 @@
         </dependency>
 
         <!-- sentinel-module -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.hqy.security</groupId>
             <artifactId>hqy-public-common-alibaba-sentinel</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
             <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>-->
 
 
     </dependencies>
@@ -90,18 +114,18 @@
 
     <build>
         <finalName>hqy-account-service</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>*.properties</include>
-                    <include>*.yml</include>
-                    <include>*.jks</include>
-                </includes>
-            </resource>
-        </resources>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>false</filtering>-->
+<!--                <includes>-->
+<!--                    <include>**/*.xml</include>-->
+<!--                    <include>*.properties</include>-->
+<!--                    <include>*.yml</include>-->
+<!--                    <include>*.jks</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
+<!--        </resources>-->
 
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->

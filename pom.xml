@@ -377,6 +377,22 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.lua</include>
+                    <include>*.properties</include>
+                    <include>*.yml</include>
+                    <include>*.key</include>
+                    <include>**/*.factories</include>
+                    <include>*.jks</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -386,6 +402,9 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <excludes>
+                        <exclude>**/apache/bval/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 

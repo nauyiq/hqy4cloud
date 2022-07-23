@@ -1,7 +1,7 @@
 package com.hqy.rpc.registry.retry;
 
 import com.hqy.foundation.timer.Timeout;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.util.AssertUtil;
@@ -17,15 +17,15 @@ public final class FailUnsubscribedTask extends AbstractRetryTask {
 
     private final NotifyListener listener;
 
-    public FailUnsubscribedTask(Metadata metadata, FailBackRegistry registry, NotifyListener listener) {
-        super(metadata, registry, NAME);
+    public FailUnsubscribedTask(RPCModel rpcModel, FailBackRegistry registry, NotifyListener listener) {
+        super(rpcModel, registry, NAME);
         AssertUtil.notNull(listener, "listener cat not be null.");
         this.listener = listener;
     }
 
     @Override
-    protected void doRetry(Metadata metadata, FailBackRegistry registry, Timeout timeout) {
-        registry.doUnsubscribe(metadata, listener);
-        registry.removeFailUnsubscribedTask(metadata, listener);
+    protected void doRetry(RPCModel rpcModel, FailBackRegistry registry, Timeout timeout) {
+        registry.doUnsubscribe(rpcModel, listener);
+        registry.removeFailUnsubscribedTask(rpcModel, listener);
     }
 }

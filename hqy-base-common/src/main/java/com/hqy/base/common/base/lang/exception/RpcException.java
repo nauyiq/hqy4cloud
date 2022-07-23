@@ -22,6 +22,8 @@ public class RpcException extends RuntimeException{
     public static final int ROUTER_CACHE_NOT_BUILD = 10;
     public static final int METHOD_NOT_FOUND = 11;
     public static final int VALIDATION_EXCEPTION = 12;
+    public static final int NO_PROVIDER_EXCEPTION = 13;
+    public static final int LEGITIMATE_EXCEPTION = 14;
     private static final long serialVersionUID = -2907275534434683708L;
 
     /**

@@ -52,14 +52,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
-public class ThriftServer implements Closeable
-{
+public class ThriftServer implements Closeable {
 
-    public static final ImmutableMap<String,TDuplexProtocolFactory> DEFAULT_PROTOCOL_FACTORIES = ImmutableMap.of(
+    public static final ImmutableMap<String, TDuplexProtocolFactory> DEFAULT_PROTOCOL_FACTORIES = ImmutableMap.of(
             "binary", TDuplexProtocolFactory.fromSingleFactory(new TBinaryProtocol.Factory()),
             "compact", TDuplexProtocolFactory.fromSingleFactory(new TCompactProtocol.Factory())
     );
-    public static final ImmutableMap<String,ThriftFrameCodecFactory> DEFAULT_FRAME_CODEC_FACTORIES = ImmutableMap.of(
+    public static final ImmutableMap<String, ThriftFrameCodecFactory> DEFAULT_FRAME_CODEC_FACTORIES = ImmutableMap.of(
             "buffered", (ThriftFrameCodecFactory) new DefaultThriftFrameCodecFactory(),
             "framed", (ThriftFrameCodecFactory) new DefaultThriftFrameCodecFactory()
     );
@@ -86,18 +85,15 @@ public class ThriftServer implements Closeable
 
     private State state = State.NOT_STARTED;
 
-    public ThriftServer(NiftyProcessor processor)
-    {
+    public ThriftServer(NiftyProcessor processor) {
         this(processor, new ThriftServerConfig());
     }
 
-    public ThriftServer(NiftyProcessor processor, ThriftServerConfig config)
-    {
+    public ThriftServer(NiftyProcessor processor, ThriftServerConfig config) {
         this(processor, config, new NiftyTimer("thrift"));
     }
 
-    public ThriftServer(NiftyProcessor processor, ThriftServerConfig config, Timer timer)
-    {
+    public ThriftServer(NiftyProcessor processor, ThriftServerConfig config, Timer timer) {
         this(processor, config, timer, DEFAULT_FRAME_CODEC_FACTORIES, DEFAULT_PROTOCOL_FACTORIES, DEFAULT_WORKER_EXECUTORS, DEFAULT_SECURITY_FACTORY);
     }
 
@@ -108,16 +104,15 @@ public class ThriftServer implements Closeable
             Map<String, ThriftFrameCodecFactory> availableFrameCodecFactories,
             Map<String, TDuplexProtocolFactory> availableProtocolFactories,
             Map<String, ExecutorService> availableWorkerExecutors,
-            NiftySecurityFactory securityFactory)
-    {
+            NiftySecurityFactory securityFactory) {
         this(
-            processor,
-            config,
-            timer,
-            availableFrameCodecFactories,
-            availableProtocolFactories,
-            availableWorkerExecutors,
-            new NiftySecurityFactoryHolder(securityFactory));
+                processor,
+                config,
+                timer,
+                availableFrameCodecFactories,
+                availableProtocolFactories,
+                availableWorkerExecutors,
+                new NiftySecurityFactoryHolder(securityFactory));
     }
 
     @Inject
@@ -128,16 +123,13 @@ public class ThriftServer implements Closeable
             Map<String, ThriftFrameCodecFactory> availableFrameCodecFactories,
             Map<String, TDuplexProtocolFactory> availableProtocolFactories,
             @ThriftServerWorkerExecutor Map<String, ExecutorService> availableWorkerExecutors,
-            NiftySecurityFactoryHolder securityFactoryHolder)
-    {
+            NiftySecurityFactoryHolder securityFactoryHolder) {
         checkNotNull(availableFrameCodecFactories, "availableFrameCodecFactories cannot be null");
         checkNotNull(availableProtocolFactories, "availableProtocolFactories cannot be null");
 
-        NiftyProcessorFactory processorFactory = new NiftyProcessorFactory()
-        {
+        NiftyProcessorFactory processorFactory = new NiftyProcessorFactory() {
             @Override
-            public NiftyProcessor getProcessor(TTransport transport)
-            {
+            public NiftyProcessor getProcessor(TTransport transport) {
                 return processor;
             }
         };
@@ -158,21 +150,21 @@ public class ThriftServer implements Closeable
         ioThreads = config.getIoThreadCount();
 
         serverChannelFactory = new NioServerSocketChannelFactory(new NioServerBossPool(acceptorExecutor, acceptorThreads, ThreadNameDeterminer.CURRENT),
-                                                                 new NioWorkerPool(ioExecutor, ioThreads, ThreadNameDeterminer.CURRENT));
+                new NioWorkerPool(ioExecutor, ioThreads, ThreadNameDeterminer.CURRENT));
 
         ThriftServerDef thriftServerDef = ThriftServerDef.newBuilder()
-                                                         .name("thrift")
-                                                         .listen(configuredPort)
-                                                         .limitFrameSizeTo((int) config.getMaxFrameSize().toBytes())
-                                                         .clientIdleTimeout(config.getIdleConnectionTimeout())
-                                                         .withProcessorFactory(processorFactory)
-                                                         .limitConnectionsTo(config.getConnectionLimit())
-                                                         .thriftFrameCodecFactory(availableFrameCodecFactories.get(transportName))
-                                                         .protocol(availableProtocolFactories.get(protocolName))
-                                                         .withSecurityFactory(securityFactoryHolder.niftySecurityFactory)
-                                                         .using(workerExecutor)
-                                                         .taskTimeout(config.getTaskExpirationTimeout())
-                                                         .build();
+                .name("thrift")
+                .listen(configuredPort)
+                .limitFrameSizeTo((int) config.getMaxFrameSize().toBytes())
+                .clientIdleTimeout(config.getIdleConnectionTimeout())
+                .withProcessorFactory(processorFactory)
+                .limitConnectionsTo(config.getConnectionLimit())
+                .thriftFrameCodecFactory(availableFrameCodecFactories.get(transportName))
+                .protocol(availableProtocolFactories.get(protocolName))
+                .withSecurityFactory(securityFactoryHolder.niftySecurityFactory)
+                .using(workerExecutor)
+                .taskTimeout(config.getTaskExpirationTimeout())
+                .build();
 
         NettyServerConfigBuilder nettyServerConfigBuilder = NettyServerConfig.newBuilder();
 
@@ -189,8 +181,7 @@ public class ThriftServer implements Closeable
     /**
      * A ThriftServer constructor that takes raw Netty configuration parameters
      */
-    public ThriftServer(NettyServerConfig nettyServerConfig, ThriftServerDef thriftServerDef)
-    {
+    public ThriftServer(NettyServerConfig nettyServerConfig, ThriftServerDef thriftServerDef) {
         configuredPort = thriftServerDef.getServerPort();
         workerExecutor = thriftServerDef.getExecutor();
         acceptorExecutor = nettyServerConfig.getBossExecutor();
@@ -198,24 +189,21 @@ public class ThriftServer implements Closeable
         ioExecutor = nettyServerConfig.getWorkerExecutor();
         ioThreads = nettyServerConfig.getWorkerThreadCount();
         serverChannelFactory = new NioServerSocketChannelFactory(new NioServerBossPool(acceptorExecutor, acceptorThreads, ThreadNameDeterminer.CURRENT),
-                                                                 new NioWorkerPool(ioExecutor, ioThreads, ThreadNameDeterminer.CURRENT));
+                new NioWorkerPool(ioExecutor, ioThreads, ThreadNameDeterminer.CURRENT));
         transport = new NettyServerTransport(thriftServerDef, nettyServerConfig, allChannels);
     }
 
     @Managed
-    public Integer getPort()
-    {
+    public Integer getPort() {
         if (configuredPort != 0) {
             return configuredPort;
-        }
-        else {
+        } else {
             return getBoundPort();
         }
     }
 
     @Managed
-    public int getWorkerThreads()
-    {
+    public int getWorkerThreads() {
         if (workerExecutor instanceof ThreadPoolExecutor) {
             return ((ThreadPoolExecutor) workerExecutor).getPoolSize();
         }
@@ -226,13 +214,11 @@ public class ThriftServer implements Closeable
         return 0;
     }
 
-    public Executor getWorkerExecutor()
-    {
+    public Executor getWorkerExecutor() {
         return workerExecutor;
     }
 
-    private int getBoundPort()
-    {
+    private int getBoundPort() {
         // If the server was configured to bind to port 0, a random port will actually be bound instead
         SocketAddress socketAddress = transport.getServerChannel().getLocalAddress();
         if (socketAddress instanceof InetSocketAddress) {
@@ -245,14 +231,12 @@ public class ThriftServer implements Closeable
     }
 
     @Managed
-    public int getAcceptorThreads()
-    {
+    public int getAcceptorThreads() {
         return acceptorThreads;
     }
 
     @Managed
-    public int getIoThreads()
-    {
+    public int getIoThreads() {
         return ioThreads;
     }
 
@@ -261,8 +245,7 @@ public class ThriftServer implements Closeable
     }
 
     @PostConstruct
-    public synchronized ThriftServer start()
-    {
+    public synchronized ThriftServer start() {
         checkState(state != State.CLOSED, "Thrift server is closed");
         if (state == State.NOT_STARTED) {
             transport.start(serverChannelFactory);
@@ -273,8 +256,7 @@ public class ThriftServer implements Closeable
 
     @PreDestroy
     @Override
-    public synchronized void close()
-    {
+    public synchronized void close() {
         if (state == State.CLOSED) {
             return;
         }
@@ -282,8 +264,7 @@ public class ThriftServer implements Closeable
         if (state == State.RUNNING) {
             try {
                 transport.stop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Thread.currentThread().interrupt();
             }
         }
@@ -295,8 +276,7 @@ public class ThriftServer implements Closeable
                 shutdownExecutor((ExecutorService) workerExecutor, "workerExecutor");
             }
             shutdownChannelFactory(serverChannelFactory, acceptorExecutor, ioExecutor, allChannels);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Thread.currentThread().interrupt();
         }
 
@@ -307,17 +287,15 @@ public class ThriftServer implements Closeable
      * Do not use this class. It is only used to workaround Guice not having @Inject(optional=true) for constructor
      * arguments. The class is public because it's used in ThriftServerModule, which is in a different package.
      */
-    public static class NiftySecurityFactoryHolder
-    {
-        @Inject(optional = true) public NiftySecurityFactory niftySecurityFactory = new NiftyNoOpSecurityFactory();
+    public static class NiftySecurityFactoryHolder {
+        @Inject(optional = true)
+        public NiftySecurityFactory niftySecurityFactory = new NiftyNoOpSecurityFactory();
 
         @Inject
-        public NiftySecurityFactoryHolder()
-        {
+        public NiftySecurityFactoryHolder() {
         }
 
-        public NiftySecurityFactoryHolder(NiftySecurityFactory niftySecurityFactory)
-        {
+        public NiftySecurityFactoryHolder(NiftySecurityFactory niftySecurityFactory) {
             this.niftySecurityFactory = niftySecurityFactory;
         }
     }

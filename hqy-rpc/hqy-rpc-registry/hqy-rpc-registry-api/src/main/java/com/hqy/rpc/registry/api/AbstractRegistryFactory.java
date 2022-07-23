@@ -1,6 +1,6 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.support.RegistryManager;
 import com.hqy.util.AssertUtil;
 import org.slf4j.Logger;
@@ -19,15 +19,15 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
 
 
     @Override
-    public Registry getRegistry(Metadata metadata) {
-        AssertUtil.notNull(metadata, "Failed execute to getRegistry, metadata is null.");
+    public Registry getRegistry(RPCModel rpcModel) {
+        AssertUtil.notNull(rpcModel, "Failed execute to getRegistry, rpcContext is null.");
 
         Registry defaultNopRegistry = RegistryManager.getInstance().getDefaultNopRegistryIfDestroyed();
         if (defaultNopRegistry != null) {
             return defaultNopRegistry;
         }
         Registry registry;
-        String serviceName = metadata.getServiceName();
+        String registryAddress = rpcModel.getRegistryAddress();
         RegistryManager.getInstance().getRegistryLock().lock();
         try {
             //double check
@@ -35,13 +35,13 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             if (defaultNopRegistry != null) {
                 return defaultNopRegistry;
             }
-            registry = RegistryManager.getInstance().getRegistry(serviceName);
+            registry = RegistryManager.getInstance().getRegistry(registryAddress);
             if (registry != null) {
                 return registry;
             }
-            registry = createRegistry(metadata);
+            registry = createRegistry(rpcModel);
         } catch (Throwable t) {
-            log.error("Failed execute to create registry. metadata {}", metadata);
+            log.error("Failed execute to create registry. rpcContext {}", rpcModel);
             throw new RuntimeException("Can not create Registry.");
         } finally {
             // Release the lock
@@ -49,7 +49,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
         }
 
         if (registry != null) {
-            RegistryManager.getInstance().putRegistry(serviceName, registry);
+            RegistryManager.getInstance().putRegistry(registryAddress, registry);
         }
 
         return registry;
@@ -57,8 +57,8 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
 
     /**
      * create registry
-     * @param metadata metadata.
-     * @return         com.hqy.rpc.common.Metadata
+     * @param rpcModel metadata.
+     * @return           {@link RPCModel}
      */
-    protected abstract Registry createRegistry(Metadata metadata);
+    protected abstract Registry createRegistry(RPCModel rpcModel);
 }

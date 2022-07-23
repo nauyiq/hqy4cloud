@@ -1,9 +1,8 @@
 package com.hqy.rpc.cluster.loadbalance;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 
 import java.util.List;
 import java.util.Map;
@@ -23,13 +22,12 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
      * 每个 Invoker 都有一个 current 值，初始值为自身权重。在每个 Invoker 中current = current + weight。遍历完 Invoker 后，current 最大的那个 Invoker 就是本次选中的 Invoker。
      * 选中 Invoker 后，将本次 current 值计算current = current - totalWeight。
      * @param invokers   invokers
-     * @param metadata   refer metadata
-     * @param invocation invocation
+     * @param rpcModel   refer rpcContext
      * @param <T>
      * @return
      */
     @Override
-    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, Metadata metadata, Invocation invocation) {
+    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RPCModel rpcModel) {
         String key = invokers.get(0).getInterface().getSimpleName();
 
         int totalWeight = 0;
@@ -39,7 +37,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         WeightedRoundRobin selectedRoundRobin = null;
         for (Invoker<T> invoker : invokers) {
             // invoker weight roundRobin.
-            int weight = getWeight(invoker, invocation);
+            int weight = getWeight(invoker);
             WeightedRoundRobin weightedRoundRobin = interfacesWeight.computeIfAbsent(key, k -> {
                 WeightedRoundRobin roundRobin = new WeightedRoundRobin();
                 roundRobin.setWeight(weight);

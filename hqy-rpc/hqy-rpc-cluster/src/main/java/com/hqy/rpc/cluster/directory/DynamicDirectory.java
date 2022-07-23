@@ -1,12 +1,11 @@
 package com.hqy.rpc.cluster.directory;
 
 import com.hqy.base.common.base.lang.exception.RpcException;
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.cluster.router.RouterFactory;
 import com.hqy.rpc.cluster.router.gray.GrayModeRouterFactory;
 import com.hqy.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
 import com.hqy.util.AssertUtil;
@@ -28,11 +27,9 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     private static final Logger log = LoggerFactory.getLogger(DynamicDirectory.class);
 
-    protected List<RouterFactory> routerFactories;
+    protected List<RouterFactory<T>> routerFactories;
 
     protected final Class<T> serviceType;
-
-    protected final Metadata consumerMetadata;
 
     protected volatile boolean forbidden = false;
 
@@ -46,16 +43,16 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     /**
      * Initialization at construction time, assertion not null, and always assign not null value
      */
-    protected volatile Metadata subscribeMetadata;
+    protected volatile RPCModel subscribeContext;
 
 
-    public DynamicDirectory(String providerServiceName, Metadata consumerMetadata, Class<T> serviceType) {
-        this(providerServiceName, consumerMetadata, serviceType, Arrays.asList(new GrayModeRouterFactory(), new HashFactorRouterFactory()));
+    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType) {
+        this(providerServiceName, rpcModel, serviceType, Arrays.asList(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>()));
     }
 
-    public DynamicDirectory(String providerServiceName, Metadata consumerMetadata, Class<T> serviceType, List<RouterFactory> routerFactories) {
-        super(providerServiceName, consumerMetadata);
-        this.consumerMetadata = consumerMetadata;
+    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, List<RouterFactory<T>> routerFactories) {
+        super(providerServiceName, rpcModel);
+        this.consumerContext = rpcModel;
         this.serviceType = serviceType;
         setRouterFactories(routerFactories);
         this.registry = setRegistry();
@@ -64,7 +61,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     }
 
     @Override
-    protected List<Invoker<T>> doList(List<Invoker<T>> availableInvokers, Invocation invocation) {
+    protected List<Invoker<T>> doList(List<Invoker<T>> availableInvokers) {
 
         if (forbidden && shouldFailFast) {
             // 1. No service provider 2. Service providers are disabled
@@ -75,9 +72,9 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
 
         try {
-            return routerChain.route(consumerMetadata(), availableInvokers, invocation);
+            return routerChain.route(getConsumerModel(), availableInvokers);
         } catch (Throwable t) {
-            log.error("Failed to execute router: " + consumerMetadata() + ", cause: " + t.getMessage(), t);
+            log.error("Failed to execute router: " + getConsumerModel() + ", cause: " + t.getMessage(), t);
             return Collections.emptyList();
         }
 
@@ -92,18 +89,18 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
                 && getValidInvokers().stream().anyMatch(Invoker::isAvailable);
     }
 
-    public void subscribe(Metadata metadata) {
-        setSubscribeMetadata(metadata);
-        registry.subscribe(metadata, this);
+    public void subscribe(RPCModel rpcModel) {
+        setSubscribeContext(rpcModel);
+        registry.subscribe(rpcModel, this);
     }
 
-    public void unSubscribe(Metadata metadata) {
-        setSubscribeMetadata(null);
-        registry.unsubscribe(metadata, this);
+    public void unSubscribe(RPCModel rpcModel) {
+        setSubscribeContext(null);
+        registry.unsubscribe(rpcModel, this);
     }
 
-    public Metadata getSubscribeMetadata() {
-        return subscribeMetadata;
+    public RPCModel getSubscribeContext() {
+        return subscribeContext;
     }
 
     @Override
@@ -112,23 +109,23 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
             return;
         }
 
-        Metadata metadata = consumerMetadata();
+        RPCModel rpcModel = getConsumerModel();
         try {
-            if (metadata != null && registry != null && registry.isAvailable()) {
-                registry.unregister(metadata);
+            if (rpcModel != null && registry != null && registry.isAvailable()) {
+                registry.unregister(rpcModel);
             }
         } catch (Throwable t) {
-            log.warn("unexpected error when unregister service " + metadata.getServiceName() + " from registry: " + registry.getMetadata(), t);
+            log.warn("unexpected error when unregister service " + rpcModel.getName() + " from registry: " + registry.getModel(), t);
         }
 
         // unsubscribe.
-        Metadata subscribeMetadata = getSubscribeMetadata();
+        RPCModel subscribeContext = getSubscribeContext();
         try {
-            if (subscribeMetadata != null && registry != null && registry.isAvailable()) {
-                registry.unsubscribe(subscribeMetadata, this);
+            if (subscribeContext != null && registry != null && registry.isAvailable()) {
+                registry.unsubscribe(subscribeContext, this);
             }
         } catch (Throwable t) {
-            log.warn("unexpected error when unsubscribe service " + subscribeMetadata.getServiceName() + " from registry: " + registry.getMetadata(), t);
+            log.warn("unexpected error when unsubscribe service " + subscribeContext.getName() + " from registry: " + registry.getModel(), t);
         }
 
         synchronized (this) {
@@ -154,16 +151,16 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     }
 
     @Override
-    public Metadata consumerMetadata() {
-        return consumerMetadata;
+    public RPCModel getConsumerModel() {
+        return consumerContext;
     }
 
-    public void setRouterFactories(List<RouterFactory> routerFactories) {
+    public void setRouterFactories(List<RouterFactory<T>> routerFactories) {
         this.routerFactories = routerFactories;
     }
 
-    public void setSubscribeMetadata(Metadata subscribeMetadata) {
-        this.subscribeMetadata = subscribeMetadata;
+    public void setSubscribeContext(RPCModel subscribeContext) {
+        this.subscribeContext = subscribeContext;
     }
 
     /**
@@ -173,4 +170,8 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     public abstract Registry setRegistry();
 
     protected abstract void destroyAllInvokers();
+
+    protected synchronized void invokersChanged() {
+        refreshInvoker();
+    }
 }

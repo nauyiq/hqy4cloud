@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.api.support;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.foundation.timer.HashedWheelTimer;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.retry.FailRegisteredTask;
 import com.hqy.rpc.registry.retry.FailSubscribedTask;
@@ -32,9 +32,9 @@ public abstract class FailBackRegistry extends AbstractRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(FailBackRegistry.class);
 
-    private final Map<Metadata, FailRegisteredTask> failRegistered = MapUtil.newConcurrentHashMap();
+    private final Map<RPCModel, FailRegisteredTask> failRegistered = MapUtil.newConcurrentHashMap();
 
-    private final Map<Metadata, FailUnRegisteredTask> failUnRegistered = MapUtil.newConcurrentHashMap();
+    private final Map<RPCModel, FailUnRegisteredTask> failUnRegistered = MapUtil.newConcurrentHashMap();
 
     private final Map<Holder, FailSubscribedTask> failSubscribed = MapUtil.newConcurrentHashMap();
 
@@ -44,71 +44,71 @@ public abstract class FailBackRegistry extends AbstractRegistry {
 
     private final HashedWheelTimer retryTimer;
 
-    public FailBackRegistry(Metadata metadata) {
-        super(metadata);
-        this.retryPeriod = metadata.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
+    public FailBackRegistry(RPCModel rpcModel) {
+        super(rpcModel);
+        this.retryPeriod = rpcModel.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
         retryTimer = new HashedWheelTimer(new DefaultThreadFactory("ThriftRegistryRetryTimer"), retryPeriod, TimeUnit.MINUTES, 128);
     }
 
 
-    public void addFailedRegistered(Metadata metadata) {
-        FailRegisteredTask failRegisteredTask = failRegistered.get(metadata);
+    public void addFailedRegistered(RPCModel rpcModel) {
+        FailRegisteredTask failRegisteredTask = failRegistered.get(rpcModel);
         if (Objects.nonNull(failRegisteredTask)) {
             return;
         }
-        FailRegisteredTask newTask = new FailRegisteredTask(metadata, this);
-        failRegisteredTask = failRegistered.putIfAbsent(metadata, newTask);
+        FailRegisteredTask newTask = new FailRegisteredTask(rpcModel, this);
+        failRegisteredTask = failRegistered.putIfAbsent(rpcModel, newTask);
         if (Objects.isNull(failRegisteredTask)) {
             // never has a retry task. then start a new task for retry.
             retryTimer.newTimeout(newTask, retryPeriod, TimeUnit.MILLISECONDS);
         }
     }
 
-    public void removeFailedRegistered(Metadata metadata) {
-        FailRegisteredTask task = failRegistered.remove(metadata);
+    public void removeFailedRegistered(RPCModel rpcModel) {
+        FailRegisteredTask task = failRegistered.remove(rpcModel);
         if (Objects.nonNull(task)) {
             task.cancel();
         }
     }
 
-    public void removeFailedRegisteredTask(Metadata metadata) {
-        failRegistered.remove(metadata);
+    public void removeFailedRegisteredTask(RPCModel rpcModel) {
+        failRegistered.remove(rpcModel);
     }
 
 
-    public void addFailedUnregistered(Metadata metadata) {
-        FailUnRegisteredTask failUnRegisteredTask = failUnRegistered.get(metadata);
+    public void addFailedUnregistered(RPCModel rpcModel) {
+        FailUnRegisteredTask failUnRegisteredTask = failUnRegistered.get(rpcModel);
         if (Objects.nonNull(failUnRegisteredTask)) {
             return;
         }
-        FailUnRegisteredTask newTask = new FailUnRegisteredTask(metadata, this);
-        failUnRegisteredTask = failUnRegistered.putIfAbsent(metadata, newTask);
+        FailUnRegisteredTask newTask = new FailUnRegisteredTask(rpcModel, this);
+        failUnRegisteredTask = failUnRegistered.putIfAbsent(rpcModel, newTask);
         if (Objects.isNull(failUnRegisteredTask)) {
             // never has a retry task. then start a new task for retry.
             retryTimer.newTimeout(newTask, retryPeriod, TimeUnit.MILLISECONDS);
         }
     }
 
-    public void removeFailedUnRegistered(Metadata metadata) {
-        FailUnRegisteredTask task = failUnRegistered.get(metadata);
+    public void removeFailedUnRegistered(RPCModel rpcModel) {
+        FailUnRegisteredTask task = failUnRegistered.get(rpcModel);
         if (Objects.nonNull(task)) {
             task.cancel();
         }
     }
 
-    public void removeFailedUnRegisteredTask(Metadata metadata) {
-        failUnRegistered.get(metadata);
+    public void removeFailedUnRegisteredTask(RPCModel rpcModel) {
+        failUnRegistered.get(rpcModel);
     }
 
 
 
-    public void addFailSubscribed(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void addFailSubscribed(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         FailSubscribedTask failSubscribedTask = failSubscribed.get(holder);
         if (Objects.nonNull(failSubscribedTask)) {
             return;
         }
-        FailSubscribedTask newTask = new FailSubscribedTask(metadata, this, listener);
+        FailSubscribedTask newTask = new FailSubscribedTask(rpcModel, this, listener);
         failSubscribedTask = failSubscribed.putIfAbsent(holder, newTask);
         if (Objects.isNull(failSubscribedTask)) {
             // never has a retry task. then start a new task for retry.
@@ -116,28 +116,28 @@ public abstract class FailBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void removeFailSubscribed(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void removeFailSubscribed(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         FailSubscribedTask failSubscribedTask = failSubscribed.remove(holder);
         if (Objects.nonNull(failSubscribedTask)) {
             failSubscribedTask.cancel();
         }
-        removeFailUnsubscribed(metadata, listener);
+        removeFailUnsubscribed(rpcModel, listener);
     }
 
-    public void removeFailSubscribedTask(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void removeFailSubscribedTask(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         failSubscribed.remove(holder);
     }
 
 
-    public void addFailUnsubscribed(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void addFailUnsubscribed(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         FailUnsubscribedTask failUnsubscribedTask = failUnsubscribed.get(holder);
         if (Objects.nonNull(failUnsubscribedTask)) {
             return;
         }
-        FailUnsubscribedTask newTask = new FailUnsubscribedTask(metadata, this, listener);
+        FailUnsubscribedTask newTask = new FailUnsubscribedTask(rpcModel, this, listener);
         failUnsubscribedTask = failUnsubscribed.putIfAbsent(holder, newTask);
         if (Objects.isNull(failUnsubscribedTask)) {
             // never has a retry task. then start a new task for retry.
@@ -145,25 +145,25 @@ public abstract class FailBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void removeFailUnsubscribed(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void removeFailUnsubscribed(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         FailUnsubscribedTask failUnsubscribedTask = failUnsubscribed.get(holder);
         if (Objects.nonNull(failUnsubscribedTask)) {
             failUnsubscribedTask.cancel();
         }
     }
 
-    public void removeFailUnsubscribedTask(Metadata metadata, NotifyListener listener) {
-        Holder holder = new Holder(metadata, listener);
+    public void removeFailUnsubscribedTask(RPCModel rpcModel, NotifyListener listener) {
+        Holder holder = new Holder(rpcModel, listener);
         failUnsubscribed.remove(holder);
     }
 
 
-    public Map<Metadata, FailRegisteredTask> getFailRegistered() {
+    public Map<RPCModel, FailRegisteredTask> getFailRegistered() {
         return failRegistered;
     }
 
-    public Map<Metadata, FailUnRegisteredTask> getFailUnRegistered() {
+    public Map<RPCModel, FailUnRegisteredTask> getFailUnRegistered() {
         return failUnRegistered;
     }
 
@@ -176,217 +176,217 @@ public abstract class FailBackRegistry extends AbstractRegistry {
     }
 
     @Override
-    public void register(Metadata metadata) {
-        super.register(metadata);
-        removeFailedRegistered(metadata);
-        removeFailedUnRegistered(metadata);
+    public void register(RPCModel rpcModel) {
+        super.register(rpcModel);
+        removeFailedRegistered(rpcModel);
+        removeFailedUnRegistered(rpcModel);
 
         try {
             // Sending a registration request to the server side
-            doRegister(metadata);
+            doRegister(rpcModel);
         } catch (Throwable t) {
             // If the startup detection is opened, the Exception is thrown directly
             Throwable throwable = t;
-            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && metadata.getPort() != 0;
+            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && rpcModel.getPort() != 0;
             boolean skipFailBack = throwable instanceof SkipFailBackWrapperException;
             if (check || skipFailBack) {
                 if (skipFailBack) {
                     throwable = throwable.getCause();
                 }
-                throw new IllegalStateException("Failed to register " + metadata + " to registry " + getRegistryMetadata().getAddress() + ", cause: " + throwable.getMessage(), throwable);
+                throw new IllegalStateException("Failed to register " + rpcModel + " to registry " + getRegistryRpcContext().getRegistryInfo() + ", cause: " + throwable.getMessage(), throwable);
             } else {
-                log.error("Failed to register " + metadata + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
+                log.error("Failed to register " + rpcModel + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailedRegistered(metadata);
+            addFailedRegistered(rpcModel);
         }
     }
 
     @Override
-    public void reExportRegister(Metadata metadata) {
-        super.register(metadata);
-        removeFailedRegistered(metadata);
-        removeFailedUnRegistered(metadata);
+    public void reExportRegister(RPCModel rpcModel) {
+        super.register(rpcModel);
+        removeFailedRegistered(rpcModel);
+        removeFailedUnRegistered(rpcModel);
 
         try {
             // Sending a registration request to the server side
-            doRegister(metadata);
+            doRegister(rpcModel);
         } catch (Throwable t) {
             if (!(t instanceof SkipFailBackWrapperException)) {
-                throw new IllegalStateException("Failed to register (re-export) " + metadata + " to registry " + getRegistryMetadata().getAddress() + ", cause: " + t.getMessage(), t);
+                throw new IllegalStateException("Failed to register (re-export) " + rpcModel + " to registry " + getRegistryRpcContext().getRegistryAddress() + ", cause: " + t.getMessage(), t);
             }
         }
     }
 
 
     @Override
-    public void unregister(Metadata metadata) {
-        super.unregister(metadata);
-        removeFailedRegistered(metadata);
-        removeFailedUnRegistered(metadata);
+    public void unregister(RPCModel rpcModel) {
+        super.unregister(rpcModel);
+        removeFailedRegistered(rpcModel);
+        removeFailedUnRegistered(rpcModel);
 
         try {
             // Sending a cancellation request to the server side
-            doUnregister(metadata);
+            doUnregister(rpcModel);
         } catch (Throwable t) {
             // If the startup detection is opened, the Exception is thrown directly
             Throwable throwable = t;
-            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && metadata.getPort() != 0;
+            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && rpcModel.getPort() != 0;
             boolean skipFailBack = throwable instanceof SkipFailBackWrapperException;
 
             if (check || skipFailBack) {
                 if (skipFailBack) {
                     throwable = t.getCause();
                 }
-                throw new IllegalStateException("Failed to unregister " + metadata + " to registry " + getRegistryMetadata().getAddress() + ", cause: " + throwable.getMessage(), throwable);
+                throw new IllegalStateException("Failed to unregister " + rpcModel + " to registry " + getRegistryRpcContext().getRegistryAddress() + ", cause: " + throwable.getMessage(), throwable);
             } else {
-                log.error("Failed to unregister " + metadata + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
+                log.error("Failed to unregister " + rpcModel + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailedUnregistered(metadata);
+            addFailedUnregistered(rpcModel);
         }
     }
 
 
     @Override
-    public void reExportUnregister(Metadata metadata) {
-        super.unregister(metadata);
-        removeFailedRegistered(metadata);
-        removeFailedUnRegistered(metadata);
+    public void reExportUnregister(RPCModel rpcModel) {
+        super.unregister(rpcModel);
+        removeFailedRegistered(rpcModel);
+        removeFailedUnRegistered(rpcModel);
 
         try {
             // Sending a cancellation request to the server side
-            doUnregister(metadata);
+            doUnregister(rpcModel);
         } catch (Exception e) {
             if (!(e instanceof SkipFailBackWrapperException)) {
-                throw new IllegalStateException("Failed to unregister(re-export) " + metadata + " to registry " + getRegistryMetadata().getAddress() + ", cause: " + e.getMessage(), e);
+                throw new IllegalStateException("Failed to unregister(re-export) " + rpcModel + " to registry " + getRegistryRpcContext().getRegistryAddress() + ", cause: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
-    public void subscribe(Metadata metadata, NotifyListener listener) {
-        super.subscribe(metadata, listener);
-        removeFailSubscribed(metadata, listener);
+    public void subscribe(RPCModel rpcModel, NotifyListener listener) {
+        super.subscribe(rpcModel, listener);
+        removeFailSubscribed(rpcModel, listener);
 
         try {
             // Sending a subscription request to the server side
-            doSubscribe(metadata, listener);
+            doSubscribe(rpcModel, listener);
         } catch (Throwable t) {
             // If the startup detection is opened, the Exception is thrown directly
             Throwable throwable = t;
-            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && metadata.getPort() != 0;
+            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && rpcModel.getPort() != 0;
             boolean skipFailBack = throwable instanceof SkipFailBackWrapperException;
 
             if (check || skipFailBack) {
                 if (skipFailBack) {
                     throwable = t.getCause();
                 }
-                throw new IllegalStateException("Failed to subscribe " + metadata + ", cause: " + throwable.getMessage(), throwable);
+                throw new IllegalStateException("Failed to subscribe " + rpcModel + ", cause: " + throwable.getMessage(), throwable);
             } else {
-                log.error("Failed to subscribe " + metadata + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
+                log.error("Failed to subscribe " + rpcModel + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailSubscribed(metadata, listener);
+            addFailSubscribed(rpcModel, listener);
         }
     }
 
     @Override
-    public void unsubscribe(Metadata metadata, NotifyListener listener) {
-        super.unsubscribe(metadata, listener);
-        removeFailUnsubscribed(metadata, listener);
+    public void unsubscribe(RPCModel rpcModel, NotifyListener listener) {
+        super.unsubscribe(rpcModel, listener);
+        removeFailUnsubscribed(rpcModel, listener);
 
         try {
             // Sending a canceling subscription request to the server side
-            doUnsubscribe(metadata, listener);
+            doUnsubscribe(rpcModel, listener);
         } catch (Throwable t) {
             // If the startup detection is opened, the Exception is thrown directly
             Throwable throwable = t;
-            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && metadata.getPort() != 0;
+            boolean check = CommonSwitcher.ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK.isOn() && rpcModel.getPort() != 0;
             boolean skipFailBack = throwable instanceof SkipFailBackWrapperException;
 
             if (check || skipFailBack) {
                 if (skipFailBack) {
                     throwable = t.getCause();
                 }
-                throw new IllegalStateException("Failed to unsubscribe " + metadata + " to registry " + getRegistryMetadata().getAddress() + ", cause: " + throwable.getMessage(), throwable);
+                throw new IllegalStateException("Failed to unsubscribe " + rpcModel + " to registry " + getRegistryRpcContext().getRegistryAddress() + ", cause: " + throwable.getMessage(), throwable);
             } else {
-                log.error("Failed to unsubscribe " + metadata + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
+                log.error("Failed to unsubscribe " + rpcModel + ", waiting for retry, cause: " + throwable.getMessage(), throwable);
             }
 
             // Record a failed registration request to a failed list, retry regularly
-            addFailUnsubscribed(metadata, listener);
+            addFailUnsubscribed(rpcModel, listener);
         }
     }
 
 
     @Override
-    protected void notify(Metadata metadata, NotifyListener listener, List<Metadata> metadataList) {
-        AssertUtil.notNull(metadata, "FailBackRegistry notify url is null.");
+    protected void notify(RPCModel rpcModel, NotifyListener listener, List<RPCModel> rpcModels) {
+        AssertUtil.notNull(rpcModel, "FailBackRegistry notify url is null.");
         AssertUtil.notNull(listener, "FailBackRegistry notify listener is null.");
 
         try {
-            doNotify(metadata, listener, metadataList);
+            doNotify(rpcModel, listener, rpcModels);
         } catch (Throwable t) {
-            log.error("Failed to notify addresses for subscribe " + metadata + ", cause: " + t.getMessage(), t);
+            log.error("Failed to notify addresses for subscribe " + rpcModel + ", cause: " + t.getMessage(), t);
         }
     }
 
-    protected void doNotify(Metadata metadata, NotifyListener listener, List<Metadata> metadataList) {
-        super.notify(metadata, listener, metadataList);
+    protected void doNotify(RPCModel rpcModel, NotifyListener listener, List<RPCModel> rpcModels) {
+        super.notify(rpcModel, listener, rpcModels);
     }
 
     /**
      * retry register template method.
-     * @param metadata registry information
+     * @param rpcModel registry information
      */
-    public abstract void doRegister(Metadata metadata);
+    public abstract void doRegister(RPCModel rpcModel);
 
     /**
      * retry unRegistry template method.
-     * @param metadata unRegistry information
+     * @param rpcModel unRegistry information
      */
-    public abstract void doUnregister(Metadata metadata);
+    public abstract void doUnregister(RPCModel rpcModel);
 
     /**
      * retry subscribe template method.
-     * @param metadata      subscribe information
+     * @param rpcModel      subscribe information
      * @param listener notify listener
      */
-    public abstract void doSubscribe(Metadata metadata, NotifyListener listener);
+    public abstract void doSubscribe(RPCModel rpcModel, NotifyListener listener);
 
     /**
      * retry unsubscribe template method.
-     * @param metadata       unsubscribe information
+     * @param rpcModel       unsubscribe information
      * @param listener  notify listener
      */
-    public abstract void doUnsubscribe(Metadata metadata, NotifyListener listener);
+    public abstract void doUnsubscribe(RPCModel rpcModel, NotifyListener listener);
 
 
     static class Holder {
-        private final Metadata metadata;
+        private final RPCModel rpcModel;
 
         private final NotifyListener notifyListener;
 
-        public Holder(Metadata metadata, NotifyListener listener) {
-            AssertUtil.isTrue(Objects.nonNull(metadata) && Objects.nonNull(listener), "url or listener is null.");
-            this.metadata = metadata;
+        public Holder(RPCModel rpcModel, NotifyListener listener) {
+            AssertUtil.isTrue(Objects.nonNull(rpcModel) && Objects.nonNull(listener), "url or listener is null.");
+            this.rpcModel = rpcModel;
             this.notifyListener = listener;
         }
 
         @Override
         public int hashCode() {
-            return metadata.hashCode() + notifyListener.hashCode();
+            return rpcModel.hashCode() + notifyListener.hashCode();
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof Holder) {
                 Holder h = (Holder) obj;
-                return this.metadata.equals(h.metadata) && this.notifyListener.equals(h.notifyListener);
+                return this.rpcModel.equals(h.rpcModel) && this.notifyListener.equals(h.notifyListener);
             } else {
                 return false;
             }

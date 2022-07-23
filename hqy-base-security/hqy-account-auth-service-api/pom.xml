@@ -11,26 +11,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-account-auth-service-api</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
+
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-base-common-dao-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
-
-        <!-- 公共基础服务, rpc, redis -->
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-foundation</artifactId>
-            <!-- api模块不要调用api调用 不然很容易造成循环依赖. 建议相应的impl模块根据业务再集成collector-api模块 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-common-collector-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

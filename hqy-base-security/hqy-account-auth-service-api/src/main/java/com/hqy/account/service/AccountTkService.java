@@ -9,8 +9,6 @@ import com.hqy.base.BaseTkService;
  */
 public interface AccountTkService extends BaseTkService<Account, Long> {
 
-
-
     /**
      * 根据用户名或者邮箱查询账号信息
      * @param usernameOrEmail 用户名或邮箱

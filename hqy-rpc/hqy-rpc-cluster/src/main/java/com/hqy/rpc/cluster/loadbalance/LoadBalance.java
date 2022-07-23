@@ -1,9 +1,8 @@
 package com.hqy.rpc.cluster.loadbalance;
 
 
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 
 import java.util.List;
 
@@ -17,11 +16,10 @@ public interface LoadBalance {
 
     /**
      * select one invoker in list.
-     * @param invokers   invokers
-     * @param metadata   refer metadata
-     * @param invocation invocation
-     * @return selected invoker.
+     * @param invokers    invokers
+     * @param rpcModel  refer rpcContext
+     * @return            selected invoker.
      */
-    <T> Invoker<T> select(List<Invoker<T>> invokers, Metadata metadata, Invocation invocation);
+    <T> Invoker<T> select(List<Invoker<T>> invokers, RPCModel rpcModel);
 
 }

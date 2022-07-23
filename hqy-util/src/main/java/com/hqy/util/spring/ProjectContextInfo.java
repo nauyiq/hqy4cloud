@@ -170,11 +170,9 @@ public class ProjectContextInfo implements Serializable {
         }
     }
 
-
-
     public String getNameWithIpPort() {
         return nameEn.concat(StringConstants.Symbol.AT)
-                .concat(this.getUip().getIp())
+                .concat(this.getUip().getHostAddr())
                 .concat(StringConstants.Symbol.COLON)
                 .concat(this.getUip().getPort() + "");
     }

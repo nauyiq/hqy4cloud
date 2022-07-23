@@ -1,8 +1,7 @@
 package com.hqy.rpc.cluster.loadbalance;
 
-import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCModel;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,14 +24,13 @@ public class RandomLoadBalance extends AbstractLoadBalance {
     /**
      * Select one invoker between a list using a random criteria
      * @param invokers List of possible invokers
-     * @param metadata metadata
-     * @param invocation Invocation
+     * @param rpcModel rpcContext
      * @return The selected invoker
      */
     @Override
-    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, Metadata metadata, Invocation invocation) {// Number of invokers
+    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RPCModel rpcModel) {// Number of invokers
         int length = invokers.size();
-        if (!needWeightLoadBalance(invokers,invocation)){
+        if (!needWeightLoadBalance(invokers)){
             return invokers.get(ThreadLocalRandom.current().nextInt(length));
         }
 
@@ -43,7 +41,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
         // The sum of weights
         int totalWeight = 0;
         for (int i = 0; i < length; i++) {
-            int weight = getWeight(invokers.get(i), invocation);
+            int weight = getWeight(invokers.get(i));
             // Sum
             totalWeight += weight;
             // save for later use
@@ -66,10 +64,10 @@ public class RandomLoadBalance extends AbstractLoadBalance {
         return invokers.get(ThreadLocalRandom.current().nextInt(length));
     }
 
-    private <T> boolean needWeightLoadBalance(List<Invoker<T>> invokers, Invocation invocation) {
+    private <T> boolean needWeightLoadBalance(List<Invoker<T>> invokers) {
         Invoker<T> invoker = invokers.get(0);
-        Metadata metadata = invoker.getMetadata();
-        int weight = metadata.getWeight();
+        RPCModel rpcModel = invoker.getModel();
+        int weight = rpcModel.getWeight();
         return weight != 0;
     }
 }

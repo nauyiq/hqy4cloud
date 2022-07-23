@@ -12,5 +12,23 @@
 
     <artifactId>thrift-rpc-server</artifactId>
 
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>hqy-rpc-registry-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-handler</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+
+    </dependencies>
 
 </project>

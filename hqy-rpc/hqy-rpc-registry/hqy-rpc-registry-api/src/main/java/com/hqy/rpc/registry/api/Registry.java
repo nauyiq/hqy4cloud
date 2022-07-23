@@ -1,11 +1,12 @@
 package com.hqy.rpc.registry.api;
 
-import com.hqy.rpc.common.MetaDataService;
-import com.hqy.rpc.common.Metadata;
-import com.hqy.rpc.registry.client.RegistryService;
+import com.hqy.rpc.api.service.RPCModelService;
+import com.hqy.rpc.common.support.RPCModel;
+import com.hqy.rpc.registry.RegistryService;
 import com.hqy.util.AssertUtil;
 
-import static com.hqy.rpc.common.CommonConstants.*;
+import static com.hqy.rpc.common.CommonConstants.DEFAULT_DELAY_NOTIFICATION_TIME;
+import static com.hqy.rpc.common.CommonConstants.REGISTRY_DELAY_NOTIFICATION_KEY;
 
 /**
  * 注册中心
@@ -13,18 +14,22 @@ import static com.hqy.rpc.common.CommonConstants.*;
  * @version 1.0
  * @date 2022/6/23 16:24
  */
-public interface Registry extends RegistryService, MetaDataService {
+public interface Registry extends RegistryService, RPCModelService {
 
     /**
      * 返回当前节点注册到注册中心的名称
-     * @return
+     * @return application name.
      */
     String getServiceNameEn();
 
+    /**
+     * get registry address.
+     * @return registry address.
+     */
     default String getRegistryAddress() {
-        Metadata metadata = getMetadata();
-        AssertUtil.notNull(metadata, "Registry metadata is null.");
-        return metadata.getAddress();
+        RPCModel rpcModel = getModel();
+        AssertUtil.notNull(rpcModel, "Registry rpcContext is null.");
+        return rpcModel.getRegistryAddress();
     }
 
 
@@ -33,23 +38,23 @@ public interface Registry extends RegistryService, MetaDataService {
      * @return 延迟通知时间
      */
     default int getNotifyDelay() {
-        return getMetadata().getParameter(REGISTRY_DELAY_NOTIFICATION_KEY, DEFAULT_DELAY_NOTIFICATION_TIME);
+        return getModel().getParameter(REGISTRY_DELAY_NOTIFICATION_KEY, DEFAULT_DELAY_NOTIFICATION_TIME);
     }
 
     /**
      * not retry register when register throw exception.
-     * @param metadata register information
+     * @param rpcModel register information
      */
-    default void reExportRegister(Metadata metadata) {
-        register(metadata);
+    default void reExportRegister(RPCModel rpcModel) {
+        register(rpcModel);
     }
 
     /**
      * not retry unregister when unregister throw exception.
-     * @param metadata unregister information
+     * @param rpcModel unregister information
      */
-    default void reExportUnregister(Metadata metadata) {
-        unregister(metadata);
+    default void reExportUnregister(RPCModel rpcModel) {
+        unregister(rpcModel);
     }
 
 

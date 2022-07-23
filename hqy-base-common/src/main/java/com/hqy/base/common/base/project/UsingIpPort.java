@@ -1,8 +1,7 @@
 package com.hqy.base.common.base.project;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -12,8 +11,6 @@ import java.io.Serializable;
  * @date  2021-08-13 10:02
  */
 @Data
-@ToString
-@NoArgsConstructor
 public class UsingIpPort implements Serializable {
 
     private static final long serialVersionUID = 5671807921455826403L;
@@ -21,7 +18,7 @@ public class UsingIpPort implements Serializable {
     /**
      * 服务进程ip
      */
-    private String ip;
+    private String hostAddr;
 
     /**
      * 服务端口
@@ -31,37 +28,39 @@ public class UsingIpPort implements Serializable {
     /**
      * rpc端口 -1表示没有注册rpc服务
      */
-    private int rpcPort = -1;
-
-    /**
-     * 环境
-     */
-    private String env;
+    private int rpcPort;
 
     /**
      * 服务进程编号
      */
-    private int index;
+    private int pid;
 
     /**
      * socket端口 -1表示没有注册socket服务
      */
-    private int socketPort = -1;
+    private int socketPort;
 
-
-    public UsingIpPort(String ip, int port, int rpcPort, int index) {
-        this.ip = ip;
+    public UsingIpPort(String hostAddr, int port, int rpcPort, int pid) {
+        this.hostAddr = hostAddr;
         this.port = port;
         this.rpcPort = rpcPort;
-        this.index = index;
+        this.pid = pid;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("ip", hostAddr)
+                .append("port", port)
+                .toString();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + index;
-        result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+        result = prime * result + pid;
+        result = prime * result + ((hostAddr == null) ? 0 : hostAddr.hashCode());
         result = prime * result + port;
         return result;
     }
@@ -78,14 +77,14 @@ public class UsingIpPort implements Serializable {
             return false;
         }
         UsingIpPort other = (UsingIpPort) obj;
-        if (index != other.index) {
+        if (pid != other.pid) {
             return false;
         }
-        if (ip == null) {
-            if (other.ip != null) {
+        if (hostAddr == null) {
+            if (other.hostAddr != null) {
                 return false;
             }
-        } else if (!ip.equals(other.ip)) {
+        } else if (!hostAddr.equals(other.hostAddr)) {
             return false;
         }
         return port == other.port;

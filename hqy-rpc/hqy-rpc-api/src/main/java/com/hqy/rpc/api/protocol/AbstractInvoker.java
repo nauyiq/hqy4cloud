@@ -1,23 +1,21 @@
 package com.hqy.rpc.api.protocol;
 
 import cn.hutool.core.map.MapUtil;
-import com.alibaba.nacos.common.utils.ArrayUtils;
-import com.hqy.base.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.base.common.base.lang.exception.RpcException;
 import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.api.RpcInvocation;
-import com.hqy.rpc.common.Metadata;
+import com.hqy.rpc.common.support.RPCContext;
+import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This Invoker works on Consumer side.
@@ -35,50 +33,55 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     private final Class<T> type;
 
     /**
-     *  provider metadata
+     *  rpc model
      */
-    private final Metadata metadata;
+    private final RPCModel rpcModel;
+
+    /**
+     * consumer rpc model.
+     */
+    private final RPCModel consumerModel;
 
     /**
      * {@link Invoker} default attachment
      */
     private final Map<String, Object> attachment;
 
-
     /**
-     * {@link Metadata} available
+     * {@link RPCModel} available
      */
     private volatile boolean available = true;
 
     /**
-     * {@link Metadata} destroy
+     * {@link RPCModel} destroy
      */
     private boolean destroyed = false;
 
-    public AbstractInvoker(Class<T> type, Metadata metadata) {
-        this(type, metadata, (Map<String, Object>) null);
+    public AbstractInvoker(Class<T> type, RPCModel model, RPCModel consumerModel) {
+        this(type, model, consumerModel, (Map<String, Object>) null);
     }
 
-    public AbstractInvoker(Class<T> type, Metadata metadata, String[] keys) {
-        this(type, metadata, convertAttachment(metadata, keys));
+    public AbstractInvoker(Class<T> type, RPCModel model, RPCModel consumerModel, String[] keys) {
+        this(type, model, consumerModel, convertAttachment(model, keys));
     }
 
-    public AbstractInvoker(Class<T> type, Metadata metadata, Map<String, Object> attachment) {
+    public AbstractInvoker(Class<T> type, RPCModel context, RPCModel consumerModel, Map<String, Object> attachment) {
         AssertUtil.notNull(type, "Service type should not be null.");
-        AssertUtil.notNull(metadata, "Service metadata should not be null.");
+        AssertUtil.notNull(context, "Service context should not be null.");
         this.type = type;
-        this.metadata = metadata;
-        this.attachment =  attachment == null ? null : Collections.unmodifiableMap(attachment);
+        this.rpcModel = context;
+        this.consumerModel = consumerModel;
+        this.attachment = attachment == null ? null : Collections.unmodifiableMap(attachment);
     }
 
 
-    private static Map<String, Object> convertAttachment(Metadata metadata, String[] keys) {
+    private static Map<String, Object> convertAttachment(RPCModel rpcModel, String[] keys) {
         if (ArrayUtils.isEmpty(keys)) {
             return null;
         }
         Map<String, Object> attachment = new HashMap<>(keys.length);
         for (String key : keys) {
-            String value = metadata.getParameter(key);
+            String value = rpcModel.getParameter(key);
             if (value != null && value.length() > 0) {
                 attachment.put(key, value);
             }
@@ -91,9 +94,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         if (isDestroyed()) {
            log.warn("Invoker for service " + this + " on consumer " + IpUtil.getHostAddress() + " is destroyed, this invoker should not be used any longer");
         }
-
         RpcInvocation rpcInvocation = (RpcInvocation) invocation;
-
         // prepare rpc invocation
         prepareInvocation(rpcInvocation);
 
@@ -103,10 +104,31 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
 
 
     private void prepareInvocation(RpcInvocation rpcInvocation) {
-        rpcInvocation.setInvoker(this);
-
+        try {
+            doPrepareInvoke(rpcInvocation);
+            //create this rpc request context.
+            createRpcContext(rpcInvocation);
+        } catch (Throwable t) {
+            log.warn("Prepare invoke happen error, cause {}", t.getMessage(), t);
+        }
         addInvocationAttachments(rpcInvocation);
     }
+
+    private void createRpcContext(RpcInvocation rpcInvocation) {
+        RPCContext rpcContext = RPCContext.builder()
+                .rpcModel(getConsumerModel())
+                .serviceClass(getInterface())
+                .caller(getConsumerModel().getName())
+                .provider(getModel().getName())
+                .consumerAddress(getConsumerModel().getServerAddress())
+                .providerAddress(getModel().getServerAddress())
+                .method(rpcInvocation.getMethodName())
+                .arguments(rpcInvocation.getArguments())
+                .parameterTypes(rpcInvocation.getParameterTypes())
+                .request(this).build();
+        RPCContext.setRpcContext(rpcContext);
+    }
+
 
     private void addInvocationAttachments(RpcInvocation rpcInvocation) {
         // invoker attachment
@@ -115,21 +137,19 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         }
     }
 
-    private Object doInvokeAndReturn(RpcInvocation rpcInvocation) {
-        Object result = null;
+    private Object doInvokeAndReturn(RpcInvocation rpcInvocation) throws RpcException {
         try {
-            result = doInvoke(rpcInvocation);
-        } catch (InvocationTargetException e) {
-
-        } catch (NoAvailableProviderException e) {
-
-        } catch (ExecutionException e) {
-
-        } catch (Throwable t) {
-
+            return doInvoke(rpcInvocation);
+        } catch (RpcException cause) {
+            log.warn(cause.getMessage());
+            throw cause;
+        } finally {
+            releaseRpcContext();
         }
+    }
 
-        return result;
+    private void releaseRpcContext() {
+        RPCContext.removeRpcContext();
     }
 
     @Override
@@ -138,8 +158,8 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     }
 
     @Override
-    public Metadata getMetadata() {
-        return metadata;
+    public RPCModel getModel() {
+        return rpcModel;
     }
 
     @Override
@@ -155,7 +175,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
 
     @Override
     public String toString() {
-        return getInterface() + " -> " + (getMetadata() == null ? "" : getMetadata().getAddress());
+        return getInterface() + " -> " + (getModel() == null ? "" : getModel().getServerAddress());
     }
 
 
@@ -168,8 +188,24 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         this.available = available;
     }
 
+    @Override
+    public RPCModel getConsumerModel() {
+        return consumerModel;
+    }
+
     /**
      * Specific implementation of the {@link #invoke(Invocation)} method
+     * @param invocation    {@link RpcInvocation}
+     * @return               rpc result.
+     * @throws RpcException  exception.
      */
-    protected abstract Object doInvoke(Invocation invocation) throws Throwable;
+    protected abstract Object doInvoke(Invocation invocation) throws RpcException;
+
+
+    /**
+     * prepare invoke.
+     * @param rpcInvocation {@link RpcInvocation}
+     * @throws RpcException exception.
+     */
+    protected abstract void doPrepareInvoke(RpcInvocation rpcInvocation) throws RpcException;
 }

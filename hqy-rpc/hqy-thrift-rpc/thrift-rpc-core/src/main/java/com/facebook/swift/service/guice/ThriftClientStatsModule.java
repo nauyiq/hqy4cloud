@@ -22,7 +22,6 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import facebook.swift.service.*;
 import org.weakref.jmx.guice.ExportBinder;
 import org.weakref.jmx.guice.MapObjectNameFunction;
 
