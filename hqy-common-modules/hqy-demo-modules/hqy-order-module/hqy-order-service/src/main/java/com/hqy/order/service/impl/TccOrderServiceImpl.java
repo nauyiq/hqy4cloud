@@ -10,7 +10,7 @@ import com.hqy.common.service.StorageRemoteService;
 import com.hqy.common.service.WalletRemoteService;
 import com.hqy.order.service.OrderTkService;
 import com.hqy.order.service.TccOderService;
-import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import io.seata.core.context.RootContext;

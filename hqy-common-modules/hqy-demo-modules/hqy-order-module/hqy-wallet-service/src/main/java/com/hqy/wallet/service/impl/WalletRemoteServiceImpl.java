@@ -1,11 +1,11 @@
 package com.hqy.wallet.service.impl;
 
-import com.hqy.wallet.service.WalletTkService;
-import com.hqy.wallet.service.TccWalletService;
 import com.hqy.common.entity.account.Wallet;
 import com.hqy.common.service.WalletRemoteService;
-import com.hqy.rpc.api.AbstractRPCService;
+import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.util.JsonUtil;
+import com.hqy.wallet.service.TccWalletService;
+import com.hqy.wallet.service.WalletTkService;
 import io.seata.core.context.RootContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

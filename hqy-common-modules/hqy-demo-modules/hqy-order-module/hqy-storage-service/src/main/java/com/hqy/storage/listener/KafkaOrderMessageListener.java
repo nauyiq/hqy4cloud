@@ -6,7 +6,7 @@ import com.hqy.common.entity.storage.Storage;
 import com.hqy.common.service.OrderRemoteService;
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.mq.kafka.config.KafkaTransactionalInitialConfiguration;
-import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.storage.service.StorageTkService;
 import com.hqy.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;

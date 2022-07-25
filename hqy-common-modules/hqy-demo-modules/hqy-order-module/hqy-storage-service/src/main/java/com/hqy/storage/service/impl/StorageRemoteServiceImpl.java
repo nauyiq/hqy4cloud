@@ -2,7 +2,7 @@ package com.hqy.storage.service.impl;
 
 import com.hqy.common.entity.storage.Storage;
 import com.hqy.common.service.StorageRemoteService;
-import com.hqy.rpc.api.AbstractRPCService;
+import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.storage.service.StorageTkService;
 import com.hqy.storage.service.TccStorageService;
 import com.hqy.util.JsonUtil;

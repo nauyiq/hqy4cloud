@@ -8,7 +8,7 @@ import com.hqy.fundation.cache.redis.LettuceRedis;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
-import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.storage.service.StorageTkService;
 import com.hqy.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;

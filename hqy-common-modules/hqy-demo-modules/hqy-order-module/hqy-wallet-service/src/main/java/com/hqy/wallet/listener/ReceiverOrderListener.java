@@ -7,7 +7,7 @@ import com.hqy.common.service.OrderRemoteService;
 import com.hqy.mq.rabbitmq.config.RabbitTransactionMessageRecordConfiguration;
 import com.hqy.mq.rabbitmq.listener.AbstractRabbitListener;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
-import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.util.JsonUtil;
 import com.hqy.wallet.service.WalletTkService;
 import lombok.extern.slf4j.Slf4j;
