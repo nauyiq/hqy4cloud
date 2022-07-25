@@ -31,6 +31,16 @@ public interface Client {
      */
     <T> T getRemoteService(Class<T> serviceClass) throws RpcException;
 
+
+    /**
+     * Get application services : All services exposed to the RPC interface can be invoked as if they were local methods
+     * @param serviceClass rpc provider service class.
+     * @param application  application.name
+     * @return             rpc provider service proxy.
+     * @throws RpcException
+     */
+    <T> T getApplicationService(Class<T> serviceClass, String application) throws RpcException;
+
     /**
      * Get remote services: All services exposed to the RPC interface can be invoked as if they were local methods
      * @param serviceClass  rpc provider service class.

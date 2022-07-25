@@ -149,13 +149,14 @@ public class ThriftServerWrapper implements RPCServer {
         //netty thread pool.
         ExecutorService boos = Executors.newFixedThreadPool(boosThreadCount, new NamedThreadFactory(EVENT_LOOP_BOSS_POOL_NAME));
         ExecutorService worker = Executors.newFixedThreadPool(workerThreadCount, new NamedThreadFactory(EVENT_LOOP_WORKER_POOL_NAME));
+        ExecutorService logicWorker = Executors.newFixedThreadPool(workerThreadCount, new NamedThreadFactory(EVENT_LOOP_WORKER_POOL_NAME));
         final NettyServerConfig serverConfig = NettyServerConfig.newBuilder().setBossThreadExecutor(boos)
                                                                                 .setBossThreadCount(boosThreadCount)
                                                                                 .setWorkerThreadExecutor(worker)
                                                                                 .setWorkerThreadCount(workerThreadCount).build();
         // register rpc interface services.
         ThriftServiceProcessor processor = new ThriftServiceProcessor(new ThriftCodecManager(), serverThriftEventHandlers, getRegistryRpcServices());
-        ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor).using(worker).using(worker).build();
+        ThriftServerDef serverDef = ThriftServerDef.newBuilder().listen(rpcPort).withProcessor(processor).using(logicWorker).build();
 
         //thrift rpc server.
         return new ThriftServer(serverConfig, serverDef);

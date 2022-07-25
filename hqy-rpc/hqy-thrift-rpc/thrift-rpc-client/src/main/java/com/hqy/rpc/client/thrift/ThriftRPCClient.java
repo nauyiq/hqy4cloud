@@ -35,14 +35,14 @@ import static com.hqy.rpc.common.CommonConstants.RPC_CLIENT_WORKER_THREAD_COUNTS
 public abstract class ThriftRPCClient extends AbstractClient {
     private static final Logger log = LoggerFactory.getLogger(ThriftRPCClient.class);
 
-    private final ThriftClientManagerWrapper clientManager;
+    private volatile ThriftClientManagerWrapper clientManager;
     private final RegistryFactory registryFactory;
 
     public ThriftRPCClient(RegistryFactory registryFactory) {
         super(new JdkProxyFactory());
         this.registryFactory = registryFactory;
-        this.clientManager = initClientFactory();
     }
+
 
     @Override
     protected <T> Directory<T> createDirectory(Class<T> serviceClass) {
@@ -52,6 +52,13 @@ public abstract class ThriftRPCClient extends AbstractClient {
     @Override
     protected <T> Directory<T> createDirectory(Class<T> serviceClass, String application) {
         RPCModel context = getConsumerRpcModel();
+        if (clientManager == null) {
+            synchronized (this.registryFactory) {
+                if (clientManager == null) {
+                    this.clientManager = initClientFactory();
+                }
+            }
+        }
         return new ThriftDynamicDirectory<>(application, context, serviceClass, clientManager, registryFactory);
     }
 
@@ -80,7 +87,7 @@ public abstract class ThriftRPCClient extends AbstractClient {
     private CollectionClientEventHandler createCollectionClientEventHandler(RPCModel rpcModel) {
         //common-collector default monitor server.
         String application = rpcModel.getParameter(CommonConstants.THRIFT_MONITOR_APPLICATION_NAME, MicroServiceConstants.COMMON_COLLECTOR);
-        ThriftMonitorFactory thriftMonitorFactory = new ThriftMonitorFactory(getProxyFactory(), this);
+        ThriftMonitorFactory thriftMonitorFactory = new ThriftMonitorFactory(this);
         Monitor monitor = thriftMonitorFactory.getMonitor(RPCModel.setApplication(application));
         return new CollectionClientEventHandler(monitor);
     }

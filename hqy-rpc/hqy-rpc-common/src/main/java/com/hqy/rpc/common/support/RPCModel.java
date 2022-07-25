@@ -9,6 +9,7 @@ import com.hqy.rpc.common.CommonConstants;
 import com.hqy.rpc.common.PubMode;
 import com.hqy.rpc.common.transaction.TransactionContext;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,6 +242,16 @@ public class RPCModel extends Parameters implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("serverPort", serverPort)
+                .append("registryInfo", registryInfo)
+                .append("serverAddress", serverAddress)
+                .append("createTimestamp", createTimestamp)
+                .toString();
+    }
 
     @Override
     public boolean equals(Object o) {

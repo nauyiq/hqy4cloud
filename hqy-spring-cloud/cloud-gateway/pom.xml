@@ -21,18 +21,6 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--spring-cloud-alibaba-nacos-client-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-client</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!--spring-cloud-alibaba-nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -50,7 +38,6 @@
             <artifactId>nacos-client</artifactId>
         </dependency>
 
-
         <!--spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -63,19 +50,6 @@
             <artifactId>spring-cloud-starter-dubbo</artifactId>
         </dependency>-->
 
-        <!--gateway服务不提供持久化服务-->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-collector-api</artifactId>
-            <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-common-dao-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-public-common-security</artifactId>
@@ -83,6 +57,10 @@
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.hqy</groupId>
+                    <artifactId>hqy-base-common-dao-api</artifactId>
                 </exclusion>
             </exclusions>
             <version>${project.parent.version}</version>
@@ -131,18 +109,18 @@
     <build>
         <finalName>hqy-gateway-service</finalName>
         <resources>
-            <resource>
+<!--            <resource>-->
                 <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>*.properties</include>
-                    <include>*.yml</include>
-                    <include>*.key</include>
-                    <include>**/*.factories</include>
-                </includes>
-            </resource>
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>false</filtering>-->
+<!--                <includes>-->
+<!--                    <include>**/*.xml</include>-->
+<!--                    <include>*.properties</include>-->
+<!--                    <include>*.yml</include>-->
+<!--                    <include>*.key</include>-->
+<!--                    <include>**/*.factories</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
         </resources>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->

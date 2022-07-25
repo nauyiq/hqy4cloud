@@ -10,7 +10,7 @@ import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
-import com.hqy.rpc.RPCClient;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -172,7 +172,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     // 纳入黑名单，访问限制!!!!
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+//                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessParam)", requestParams);

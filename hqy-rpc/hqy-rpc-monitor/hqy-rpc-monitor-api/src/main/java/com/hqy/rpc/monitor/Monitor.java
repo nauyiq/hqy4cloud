@@ -9,7 +9,7 @@ import com.hqy.rpc.api.service.RPCModelService;
  * @version 1.0
  * @date 2022/7/18 9:36
  */
-public interface Monitor extends RPCModelService, MonitorService {
+public interface Monitor extends MonitorService {
 
 
 }

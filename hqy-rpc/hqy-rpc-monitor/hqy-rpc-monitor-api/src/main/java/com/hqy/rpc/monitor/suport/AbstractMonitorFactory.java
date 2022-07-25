@@ -32,10 +32,9 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
      *  The monitor centers Map<MonitorServerAddress, Registry>
      */
     private static final Map<String, Monitor> MONITORS = MapUtil.newConcurrentHashMap(2);
-    private static final Map<String, Future<Monitor>> FUTURES = MapUtil.newConcurrentHashMap(2);
-
-    private static final ExecutorService MONITOR_EXECUTOR = new ThreadPoolExecutor(0, 10, 60L,
-            TimeUnit.SECONDS, new SynchronousQueue<>(), new NamedThreadFactory("RPC-MONITOR-CENTER", true));
+//    private static final Map<String, Future<Monitor>> FUTURES = MapUtil.newConcurrentHashMap(2);
+//    private static final ExecutorService MONITOR_EXECUTOR = new ThreadPoolExecutor(0, 10, 60L,
+//            TimeUnit.SECONDS, new SynchronousQueue<>(), new NamedThreadFactory("RPC-MONITOR-CENTER", true));
 
     public static Collection<Monitor> getMonitor() {
         return Collections.unmodifiableCollection(MONITORS.values());
@@ -45,33 +44,33 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
     public Monitor getMonitor(RPCModel rpcModel) {
         String key = rpcModel.toServiceString();
         Monitor monitor = MONITORS.get(key);
-        Future<Monitor> future = FUTURES.get(key);
-        if (monitor != null || future != null) {
+//        Future<Monitor> future = FUTURES.get(key);
+        if (monitor != null) {
             return monitor;
         }
 
         LOCK.lock();
         try {
             monitor = MONITORS.get(key);
-            future = FUTURES.get(key);
-            if (monitor != null || future != null) {
+//            future = FUTURES.get(key);
+            if (monitor != null) {
                 return monitor;
             }
 
-            final RPCModel monitorRpcModel = rpcModel;
-            future = MONITOR_EXECUTOR.submit(() -> {
+//            final RPCModel monitorRpcModel = rpcModel;
+//            future = MONITOR_EXECUTOR.submit(() -> {
                 try {
-                    Monitor m = createMonitor(monitorRpcModel);
+                    Monitor m = createMonitor(rpcModel);
                     MONITORS.put(key, m);
-                    FUTURES.remove(key);
+//                    FUTURES.remove(key);
                     return m;
                 } catch (Throwable e) {
-                    log.warn("Create monitor failed, monitor data will not be collected until you fix this problem. monitorRpcModel: " + monitorRpcModel, e);
+                    log.warn("Create monitor failed, monitor data will not be collected until you fix this problem. monitorRpcModel: " + rpcModel, e);
                     return null;
                 }
-            });
-            FUTURES.put(key, future);
-            return null;
+//            });
+//            FUTURES.put(key, future);
+//            return future.get();
         } finally {
             LOCK.unlock();
         }

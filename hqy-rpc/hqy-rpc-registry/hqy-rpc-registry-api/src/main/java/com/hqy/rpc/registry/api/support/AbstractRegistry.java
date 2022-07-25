@@ -163,7 +163,6 @@ public abstract class AbstractRegistry implements Registry {
         AssertUtil.notNull(listener, "notify listener is null.");
         if (CollectionUtils.isEmpty(rpcModels)) {
             log.warn("Ignore empty notify rpcContexts for subscribe url {}", rpcModel);
-            return;
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("Notify urls for subscribe rpcContexts {}, url size {}", rpcModel, rpcModels.size());

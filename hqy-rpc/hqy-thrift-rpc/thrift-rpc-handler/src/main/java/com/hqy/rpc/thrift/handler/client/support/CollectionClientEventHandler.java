@@ -30,7 +30,7 @@ public class CollectionClientEventHandler implements ThriftContextClientHandleSe
     @Override
     public void doDone(ThriftContext thriftContext, String methodName) {
         ThriftContextClientHandleService.super.doDone(thriftContext, methodName);
-        if (monitor == null || !monitor.isAvailable()) {
+        if (monitor == null) {
             log.warn("Failed execute to do collection from client handler, monitor disabled.");
             return;
         }

@@ -4,24 +4,23 @@ import cn.hutool.core.map.MapUtil;
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
 import com.facebook.swift.service.ThriftMethodHandler;
-import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.rpc.api.Invoker;
+import com.hqy.rpc.client.thrift.ThriftNiftyFramedClientUtils;
 import com.hqy.rpc.client.thrift.support.ThriftClientManagerWrapper;
 import com.hqy.rpc.common.RPCServerAddress;
-import com.hqy.rpc.client.thrift.ThriftNiftyFramedClientUtils;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.jboss.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base key{@link RPCServerAddress} for pooled Object factory.
@@ -40,11 +39,15 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
 
     private final ThriftClientManagerWrapper clientManagerWrapper;
 
-    public ThriftClientTargetBaseKeyedFactory(Class<T> rpcInterfaceClass, List<Invoker<T>> invokers, ThriftClientManagerWrapper clientManagerWrapper) {
+    public ThriftClientTargetBaseKeyedFactory(Class<T> rpcInterfaceClass, ThriftClientManagerWrapper clientManagerWrapper) {
         this.rpcInterfaceClass = rpcInterfaceClass;
         this.clientManagerWrapper = clientManagerWrapper;
+    }
+
+    public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
         this.framedClientConnectorMap = iniFramedClientConnectorMap(invokers);
     }
+
 
     private Map<RPCServerAddress, FramedClientConnector> iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
         if (CollectionUtils.isEmpty(invokers)) {
@@ -56,11 +59,7 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
             FramedClientConnector framedClientConnector = ThriftNiftyFramedClientUtils.createFramedClientConnector(serverAddress);
             map.put(serverAddress, framedClientConnector);
         }
-        return framedClientConnectorMap;
-    }
-
-    public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
-        this.framedClientConnectorMap = iniFramedClientConnectorMap(invokers);
+        return map;
     }
 
     public String gerServiceInfo(T service) {

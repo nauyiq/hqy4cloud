@@ -25,15 +25,11 @@ import java.util.Map;
 public final class ThriftRequestPram {
 
     @ThriftField(1)
-    public final Map<String, String> pram;
+    public Map<String, String> pram = MapUtil.newHashMap();
 
     public ThriftRequestPram() {
-        pram = MapUtil.newHashMap();
     }
 
-    public ThriftRequestPram(Map<String, String> pram) {
-        this.pram = pram;
-    }
 
     public String getParameter(String key) {
         return getParameter(key, StringConstants.EMPTY);

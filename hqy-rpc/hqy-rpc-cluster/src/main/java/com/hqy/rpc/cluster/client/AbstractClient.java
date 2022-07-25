@@ -71,6 +71,12 @@ public abstract class AbstractClient implements Client {
     }
 
     @Override
+    public <T> T getApplicationService(Class<T> serviceClass, String application) throws RpcException {
+        Invoker<T> remoteInvoker = getRemoteInvoker(serviceClass, application);
+        return proxyFactory.getProxy(remoteInvoker, null);
+    }
+
+    @Override
     public <T> Invoker<T> getRemoteInvoker(Class<T> serviceClass, String application) {
         //interface name
         String serviceClassName = serviceClass.getName();

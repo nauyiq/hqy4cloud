@@ -25,16 +25,16 @@ public class ThriftMonitorServiceImpl implements ThriftMonitorService {
 
     @Override
     public void collectRpcFlow(ThriftRpcFlowStruct struct) {
-
+        log.info("1");
     }
 
     @Override
     public void collectRpcFlowList(List<ThriftRpcFlowStruct> structs) {
-
+        log.info("2");
     }
 
     @Override
     public void collectRpcException(ThriftRpcExceptionStruct struct) {
-
+        log.info("1");
     }
 }

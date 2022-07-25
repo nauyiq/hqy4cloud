@@ -2,7 +2,8 @@ package com.hqy.rpc.monitor.thrift;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.rpc.api.Invoker;
+import com.hqy.rpc.api.ProxyFactory;
+import com.hqy.rpc.cluster.client.Client;
 import com.hqy.rpc.common.CommonConstants;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.common.threadpool.FrameworkExecutorRepository;
@@ -15,7 +16,6 @@ import com.hqy.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import com.hqy.rpc.thrift.struct.ThriftRpcFlowStruct;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
-import com.hqy.util.thread.ExecutorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +43,11 @@ public class ThriftMonitor implements Monitor {
 
     private static final Logger log = LoggerFactory.getLogger(ThriftMonitor.class);
 
-    private final Invoker<ThriftMonitorService> monitorInvoker;
-
-    private final ThriftMonitorService monitorService;
+    private final Client client;
 
     private final ExecutorService exceptionExecutorService;
+
+    private final RPCModel rpcModel;
 
     private final ScheduledFuture<?> sendFuture;
 
@@ -59,14 +59,14 @@ public class ThriftMonitor implements Monitor {
 
     private final int maxWarn;
 
-    public ThriftMonitor(Invoker<ThriftMonitorService> monitorInvoker, ThriftMonitorService monitorService) {
-        this.monitorInvoker = monitorInvoker;
-        this.monitorService = monitorService;
+    public ThriftMonitor(Client client, RPCModel rpcModel) {
+        this.client = client;
+        this.rpcModel = rpcModel;
         ScheduledExecutorService executorService = FrameworkExecutorRepository.getInstance().getSharedScheduledExecutor();
         this.exceptionExecutorService = FrameworkExecutorRepository.getInstance().getSharedExecutor();
-        this.maxWarn = monitorInvoker.getModel().getParameter(RPC_MONITOR_WARNING_KEY, DEFAULT_MONITOR_WARNING_KEY);
+        this.maxWarn = rpcModel.getParameter(RPC_MONITOR_WARNING_KEY, DEFAULT_MONITOR_WARNING_KEY);
         // The time interval for timer <b>scheduledExecutorService</b> to send data
-        this.monitorInterval = monitorInvoker.getModel().getParameter(MONITOR_SEND_DATA_INTERVAL_KEY, DEFAULT_MONITOR_SEND_DATA_INTERVAL);
+        this.monitorInterval = rpcModel.getParameter(MONITOR_SEND_DATA_INTERVAL_KEY, DEFAULT_MONITOR_SEND_DATA_INTERVAL);
         // collect timer for collecting statistics data
         this.sendFuture = executorService.scheduleWithFixedDelay(() -> {
             try {
@@ -118,6 +118,10 @@ public class ThriftMonitor implements Monitor {
             } while (!reference.compareAndSet(current, update));
         }
         //send to collect
+        if (structs.isEmpty()) {
+            return;
+        }
+        ThriftMonitorService monitorService = client.getApplicationService(ThriftMonitorService.class, rpcModel.getName());
         monitorService.collectRpcFlowList(structs);
     }
 
@@ -182,6 +186,7 @@ public class ThriftMonitor implements Monitor {
             do {
                 exceptionExecutorService.submit(() -> {
                     //collect exception rpc.
+                    ThriftMonitorService monitorService = client.getApplicationService(ThriftMonitorService.class, rpcModel.getName());
                     monitorService.collectRpcException(new ThriftRpcExceptionStruct(rpcEventType,
                              data.getStartMillis(),
                              data.getCaller(),
@@ -210,27 +215,6 @@ public class ThriftMonitor implements Monitor {
             eventType = data.getCostMillis() > slowRpcTimeMillis ? SLOW_RPC : NORMAL_RPC;
         }
         return eventType;
-    }
-
-
-    @Override
-    public boolean isAvailable() {
-        return monitorInvoker.isAvailable();
-    }
-
-    @Override
-    public void destroy() {
-        try {
-            ExecutorUtil.cancelScheduledFuture(sendFuture);
-        } catch (Throwable t) {
-            log.error("Unexpected error occur at cancel sender timer, cause: " + t.getMessage(), t);
-        }
-        monitorInvoker.destroy();
-    }
-
-    @Override
-    public RPCModel getModel() {
-        return monitorInvoker.getModel();
     }
 
 

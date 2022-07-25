@@ -20,14 +20,24 @@
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-nacos-springboot-api-starter</artifactId>
             <version>${project.parent.version}</version>
-<!--            <version>1.0.0</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-server</artifactId>
             <version>${project.parent.version}</version>
-<!--            <version>1.0.0</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

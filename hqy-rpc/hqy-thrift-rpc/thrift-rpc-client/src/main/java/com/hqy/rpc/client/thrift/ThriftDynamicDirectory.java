@@ -26,32 +26,39 @@ import java.util.stream.Collectors;
  */
 public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
 
-    private final RegistryFactory factory;
-
     private final MultiplexThriftClientTargetPooled<T> pooled;
 
     private static final Logger log = LoggerFactory.getLogger(ThriftDynamicDirectory.class);
 
     public ThriftDynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper, RegistryFactory factory) {
-        super(providerServiceName, rpcModel, serviceType);
-        this.factory = factory;
-        //subscribe and notify.
-        synchronized (this.factory) {
+        super(providerServiceName, rpcModel, serviceType, factory);
+        //invokers pooled.
+        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, serviceType, clientManagerWrapper);
+        //must final init invokers
+        synchronized (getFactory()) {
             log.info("Start new ThriftDynamicDirectory, notify and subscribe.");
             try {
-                factory.getRegistry(consumerContext).subscribe(consumerContext, this);
+                subscribeAndNotify(providerServiceName, factory);
             } catch (Throwable t) {
                 log.warn("Failed execute to registry subscribe,  metadata {} from registry {}", consumerContext,  factory.getRegistry(consumerContext));
             }
         }
-        //invokers pooled.
-        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, serviceType, getInvokers(), clientManagerWrapper);
+
     }
 
-    @Override
-    public Registry setRegistry() {
-        return factory.getRegistry(getConsumerModel());
+    private void subscribeAndNotify(String providerServiceName, RegistryFactory factory) {
+        Registry registry = factory.getRegistry(consumerContext);
+        //create provider rpc model.
+        //does not represent a specific remote service
+        RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerContext.getRegistryInfo(), null);
+        //query rpc provider instance from registry.
+        List<RPCModel> rpcModels = registry.lookup(rpcModel);
+        //notify.
+        notify(rpcModels);
+        //do subscribe.
+        registry.subscribe(rpcModel, this);
     }
+
 
     @Override
     public void notify(List<RPCModel> rpcModels) {

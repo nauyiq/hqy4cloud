@@ -11,9 +11,9 @@ public interface RegistryFactory {
 
     /**
      * Connect to the registry
-     * @param metadata  Registry address, is not allowed to be empty
+     * @param rpcModel  Registry address, is not allowed to be empty
      * @return          Registry reference, never return empty value
      */
-    Registry getRegistry(RPCModel context);
+    Registry getRegistry(RPCModel rpcModel);
 
 }

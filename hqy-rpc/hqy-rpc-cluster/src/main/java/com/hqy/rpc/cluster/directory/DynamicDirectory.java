@@ -8,6 +8,7 @@ import com.hqy.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
+import com.hqy.rpc.registry.api.RegistryFactory;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +34,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     protected volatile boolean forbidden = false;
 
-    protected Registry registry;
+    private final RegistryFactory factory;
 
     /**
      * Should continue route if directory is empty
@@ -46,17 +47,17 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     protected volatile RPCModel subscribeContext;
 
 
-    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType) {
-        this(providerServiceName, rpcModel, serviceType, Arrays.asList(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>()));
+    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory) {
+        this(providerServiceName, rpcModel, serviceType, registryFactory, Arrays.asList(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>()));
     }
 
-    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, List<RouterFactory<T>> routerFactories) {
-        super(providerServiceName, rpcModel);
+    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory, List<RouterFactory<T>> routerFactories) {
+        super(providerServiceName, serviceType, rpcModel);
         this.consumerContext = rpcModel;
         this.serviceType = serviceType;
         setRouterFactories(routerFactories);
-        this.registry = setRegistry();
-        AssertUtil.notNull(registry, "Registry is null, please check status of Directory.");
+        this.factory = registryFactory;
+        AssertUtil.notNull(getRegistry(), "Registry is null, please check status of Directory.");
         shouldFailFast = true;
     }
 
@@ -66,7 +67,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         if (forbidden && shouldFailFast) {
             // 1. No service provider 2. Service providers are disabled
             throw new RpcException(RpcException.FORBIDDEN_EXCEPTION, "No provider available from registry " +
-                    registry.getRegistryAddress() + " for service " + registry.getServiceNameEn() + " on consumer " +
+                    getRegistry().getRegistryAddress() + " for service " + getProviderServiceName() + " on consumer " +
                     IpUtil.getHostAddress() +
                     ", please check status of providers(disabled, not registered or in blacklist).");
         }
@@ -91,12 +92,12 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     public void subscribe(RPCModel rpcModel) {
         setSubscribeContext(rpcModel);
-        registry.subscribe(rpcModel, this);
+        getRegistry().subscribe(rpcModel, this);
     }
 
     public void unSubscribe(RPCModel rpcModel) {
         setSubscribeContext(null);
-        registry.unsubscribe(rpcModel, this);
+        getRegistry().unsubscribe(rpcModel, this);
     }
 
     public RPCModel getSubscribeContext() {
@@ -110,6 +111,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
 
         RPCModel rpcModel = getConsumerModel();
+        Registry registry = getRegistry();
         try {
             if (rpcModel != null && registry != null && registry.isAvailable()) {
                 registry.unregister(rpcModel);
@@ -139,6 +141,10 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
     }
 
+    public RegistryFactory getFactory() {
+        return factory;
+    }
+
 
     @Override
     public Class<T> getInterface() {
@@ -163,11 +169,9 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         this.subscribeContext = subscribeContext;
     }
 
-    /**
-     * child class implement build Registry
-     * @return Registry
-     */
-    public abstract Registry setRegistry();
+    public Registry getRegistry() {
+        return factory.getRegistry(getConsumerModel());
+    }
 
     protected abstract void destroyAllInvokers();
 

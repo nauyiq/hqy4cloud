@@ -276,7 +276,7 @@ public class ThriftMethodHandler {
 
     public static ThriftFieldMetadata injectGeneralParamFieldMetadata(List<ThriftFieldMetadata> originThriftFieldMetadata, ThriftCodecManager codecManager) {
         short parameterId = (short) (originThriftFieldMetadata.size() + 1);
-        String parameterName = "remoteExParam";
+        String parameterName = "thriftRequestPram";
         Type parameterType = ThriftRequestPram.class;
         ThriftInjection parameterInjection = new ThriftParameterInjection(parameterId, parameterName, originThriftFieldMetadata.size(), parameterType);
         ThriftType thriftType = codecManager.getCatalog().getThriftType(parameterType);

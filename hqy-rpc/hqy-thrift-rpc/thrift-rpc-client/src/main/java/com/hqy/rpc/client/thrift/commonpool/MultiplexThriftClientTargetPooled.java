@@ -33,17 +33,25 @@ public class MultiplexThriftClientTargetPooled<T> {
     private final GenericKeyedObjectPoolConfig<T> config;
 
 
-    public MultiplexThriftClientTargetPooled(RPCModel rpcModel, Class<T> serviceType, List<Invoker<T>> invokers, ThriftClientManagerWrapper clientManagerWrapper) {
+    public MultiplexThriftClientTargetPooled(RPCModel rpcModel, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper) {
         AssertUtil.notNull(rpcModel, "RPCContext should not be null.");
         AssertUtil.notNull(serviceType, "Rpc interface class type should not be null.");
         AssertUtil.notNull(clientManagerWrapper, "ThriftClientManagerWrapper should not be null.");
-        this.factory = new ThriftClientTargetBaseKeyedFactory<>(serviceType, invokers, clientManagerWrapper);
+        this.factory = new ThriftClientTargetBaseKeyedFactory<>(serviceType, clientManagerWrapper);
         this.config = initializeObjectPoolConfig(rpcModel);
         this.pool = new GenericKeyedObjectPool<>(factory, config);
+    }
+
+
+
+    public void refreshObjectPooled(List<Invoker<T>> invokers) {
+        close();
+        pool = new GenericKeyedObjectPool<>(factory, config);
         initializeObjectPooled(invokers);
     }
 
     public synchronized void initializeObjectPooled(List<Invoker<T>> invokers) {
+        factory.refreshFramedClientConnectorMap(invokers);
         for (Invoker<T> invoker : invokers) {
             try {
                 pool.addObject(invoker.getModel().getServerAddress());
@@ -51,13 +59,6 @@ public class MultiplexThriftClientTargetPooled<T> {
                 log.warn("Failed execute to add object. cause {}", e.getMessage());
             }
         }
-    }
-
-    public void refreshObjectPooled(List<Invoker<T>> invokers) {
-        close();
-        pool = new GenericKeyedObjectPool<>(factory, config);
-        initializeObjectPooled(invokers);
-        factory.refreshFramedClientConnectorMap(invokers);
     }
 
 

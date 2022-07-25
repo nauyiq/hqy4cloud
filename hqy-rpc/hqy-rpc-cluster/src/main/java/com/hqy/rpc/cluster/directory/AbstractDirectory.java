@@ -73,8 +73,8 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private final int reconnectTaskPeriod;
 
 
-    public AbstractDirectory(String providerServiceName, RPCModel rpcModel) {
-        this(providerServiceName, rpcModel, null);
+    public AbstractDirectory(String providerServiceName, Class<T> serviceClass, RPCModel rpcModel) {
+        this(providerServiceName, rpcModel, RouterChain.buildChain(serviceClass, rpcModel));
     }
 
     public AbstractDirectory(String providerServiceName, RPCModel rpcModel, RouterChain<T> routerChain) {
@@ -266,6 +266,9 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
         return Collections.unmodifiableList(routedResult);
     }
+
+
+
 
     public List<Invoker<T>> getInvokers() {
         return invokers;

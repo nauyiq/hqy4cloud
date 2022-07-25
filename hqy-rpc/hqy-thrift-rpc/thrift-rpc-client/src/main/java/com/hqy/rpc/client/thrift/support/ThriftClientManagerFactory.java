@@ -23,7 +23,8 @@ public class ThriftClientManagerFactory {
         ThriftCodecManager codecManager = new ThriftCodecManager();
         NettyClientConfig config = NettyClientConfig.newBuilder().setWorkerThreadCount(workerThreadCount).build();
         NiftyClient client = new NiftyClient(config);
-        return new ThriftClientManagerWrapper(new ThriftClientManager(codecManager, client, Collections.singleton(new ThriftContextClientEventHandler(services))));
+        ThriftClientManager thriftClientManager = new ThriftClientManager(codecManager, client, Collections.singleton(new ThriftContextClientEventHandler(services)));
+        return new ThriftClientManagerWrapper(thriftClientManager);
     }
 
 

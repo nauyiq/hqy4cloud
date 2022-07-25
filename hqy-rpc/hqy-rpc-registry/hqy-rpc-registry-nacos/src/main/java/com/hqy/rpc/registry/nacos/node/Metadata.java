@@ -8,6 +8,7 @@ import com.hqy.rpc.common.PubMode;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.util.JsonUtil;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -71,6 +72,18 @@ public class Metadata implements Serializable {
                 .put(RPC_SERVER_ADDR, JsonUtil.toJson(getRpcServerAddress()))
                 .put(ACTUATOR_TYPE, actuatorType.name()).build();
 
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("weight", weight)
+                .append("pubNode", pubNode)
+                .append("serverStartTimestamp", serverStartTimestamp)
+                .append("rpcServerAddress", rpcServerAddress)
+                .append("hashFactor", hashFactor)
+                .append("actuatorType", actuatorType)
+                .toString();
     }
 
     public int getPubNode() {

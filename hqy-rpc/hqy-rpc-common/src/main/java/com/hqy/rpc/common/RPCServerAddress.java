@@ -19,20 +19,23 @@ public class RPCServerAddress implements Serializable {
     /**
      * rpc server binding port.
      */
-    private final int port;
+    private int port;
 
     /**
      * rpc server binding hostAddr (local ip).
      */
-    private final String hostAddr;
+    private String hostAddr;
 
     /**
      * program id
      */
-    private final transient int pid;
+    private transient int pid;
 
     public static RPCServerAddress createConsumerRpcServer() {
         return new RPCServerAddress(IpUtil.getHostAddress(), NetUtils.getProgramId());
+    }
+
+    public RPCServerAddress() {
     }
 
     public RPCServerAddress(int port, String hostAddr, int pid) {

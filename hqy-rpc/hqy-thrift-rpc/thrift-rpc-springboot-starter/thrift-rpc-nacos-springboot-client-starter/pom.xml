@@ -5,7 +5,6 @@
     <parent>
         <artifactId>thrift-rpc-springboot-starter</artifactId>
         <groupId>com.hqy.rpc</groupId>
-<!--        <version>1.0.0</version>-->
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -19,15 +18,25 @@
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-nacos-springboot-api-starter</artifactId>
-<!--            <version>1.0.0</version>-->
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-client</artifactId>
-<!--            <version>1.0.0</version>-->
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
