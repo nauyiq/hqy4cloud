@@ -2,15 +2,18 @@ package com.hqy.account.entity;
 
 import com.hqy.base.BaseEntity;
 import com.hqy.util.ValidationUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Table;
 import java.util.Date;
 
 /**
+ * 账户表 t_account
  * @author qiyuan.hong
  * @date 2022-03-10 21:12
  */
+@Slf4j
 @Table(name = "t_account")
 public class Account extends BaseEntity<Long> {
 
@@ -30,9 +33,9 @@ public class Account extends BaseEntity<Long> {
     private String email;
 
     /**
-     * 盐
+     * 指定客户端所拥有的权限值
      */
-    private String salt;
+    private String authorities;
 
     /**
      * 状态
@@ -44,7 +47,7 @@ public class Account extends BaseEntity<Long> {
     }
 
     public Account(String usernameOrEmail) {
-        if (ValidationUtil.validateEmail(email)) {
+        if (ValidationUtil.validateEmail(usernameOrEmail)) {
             this.email = usernameOrEmail;
         } else {
             this.username = usernameOrEmail;
@@ -52,14 +55,24 @@ public class Account extends BaseEntity<Long> {
     }
 
 
-    public Account(String username, String password, String salt, String email) {
+    public Account(String username, String password, String email, String authorities) {
         this.username = username;
         this.password = password;
-        this.salt = salt;
         this.email = email;
+        this.authorities = authorities;
         Date now = new Date();
         super.setCreated(now);
         super.setUpdated(now);
+    }
+
+    public Account(long id, String username, String password) {
+        log.info("@@@ Create account entity, id:{}, username:{}", id, username);
+        Date now = new Date();
+        super.setId(id);
+        super.setCreated(now);
+        super.setUpdated(now);
+        this.username = username;
+        this.password = password;
     }
 
     public Boolean getStatus() {
@@ -86,13 +99,6 @@ public class Account extends BaseEntity<Long> {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
 
     public String getEmail() {
         return email;
@@ -100,5 +106,13 @@ public class Account extends BaseEntity<Long> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
     }
 }

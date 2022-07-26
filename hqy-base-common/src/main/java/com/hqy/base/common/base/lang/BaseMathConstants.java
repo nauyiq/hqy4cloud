@@ -13,9 +13,14 @@ public interface BaseMathConstants {
     int POINTER = 999999;
 
     /**
+     * 一秒 毫秒单位
+     */
+    long ONE_SECONDS_4MILLISECONDS = 1000;
+
+    /**
      * 一分钟 毫秒单位
      */
-    long ONE_MINUTES_4MILLISECONDS = 60 * 1000;
+    long ONE_MINUTES_4MILLISECONDS = 60 * ONE_SECONDS_4MILLISECONDS;
 
     /**
      * 一小时 毫秒单位

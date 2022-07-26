@@ -137,17 +137,17 @@ public class ConfigurationContext {
         /**
          * bootstrap-dev.yml
          */
-        BOOTSTRAP_DEV_YAML("bootstrap.yml"),
+        BOOTSTRAP_DEV_YAML("bootstrap-dev.yml"),
 
         /**
          * bootstrap-test.yml
          */
-        BOOTSTRAP_TEST_YAML("bootstrap.yml"),
+        BOOTSTRAP_TEST_YAML("bootstrap-test.yml"),
 
         /**
          * bootstrap-prod.yml
          */
-        BOOTSTRAP_PROD_YAML("bootstrap.yml"),
+        BOOTSTRAP_PROD_YAML("bootstrap-prod.yml"),
 
         ;
 

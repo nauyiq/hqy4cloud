@@ -1,10 +1,10 @@
 package com.hqy.fundation.spring.event;
 
-import com.hqy.foundation.service.ExceptionCollectionService;
 import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.coll.service.ExceptionCollectionService;
 import com.hqy.foundation.common.enums.ExceptionLevel;
-import com.hqy.rpc.RPCClient;
-import com.hqy.rpc.regist.EnvironmentConfig;
+import com.hqy.rpc.common.config.EnvironmentConfig;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.ExecutorServiceProject;
 import com.hqy.util.thread.ParentExecutorService;
@@ -28,26 +28,26 @@ public class ExceptionCollectorUtils {
 
     private ExceptionCollectorUtils() {}
 
-    private static Set<String> ignoreExStackPackage = new HashSet<>();
+    private static final Set<String> IGNORE_EX_STACK_PACKAGE = new HashSet<>();
 
     static {
-        ignoreExStackPackage.add("org.springframework.web.method.support");
-        ignoreExStackPackage.add("org.apache.tomcat.util.threads");
-        ignoreExStackPackage.add("org.apache.coyote");
-        ignoreExStackPackage.add("org.apache.catalina");
-        ignoreExStackPackage.add("org.springframework.web.filter");
-        ignoreExStackPackage.add("org.springframework.web.servlet.mvc");
-        ignoreExStackPackage.add("org.springframework.security.web");
-        ignoreExStackPackage.add("org.springframework.beans");
-        ignoreExStackPackage.add("org.springframework.transaction");
-        ignoreExStackPackage.add("org.springframework.aop.framework");
-        ignoreExStackPackage.add("org.apache.tomcat.util.net");
-        ignoreExStackPackage.add("io.netty.channel");
-        ignoreExStackPackage.add("org.springframework.aop");
-        ignoreExStackPackage.add("org.hibernate");
-        ignoreExStackPackage.add("com.alibaba.druid");
-        ignoreExStackPackage.add("com.mysql.jdbc");
-        ignoreExStackPackage.add("io.netty.handler.codec.http.websocketx.CorruptedWebSocketFrameException");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.web.method.support");
+        IGNORE_EX_STACK_PACKAGE.add("org.apache.tomcat.util.threads");
+        IGNORE_EX_STACK_PACKAGE.add("org.apache.coyote");
+        IGNORE_EX_STACK_PACKAGE.add("org.apache.catalina");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.web.filter");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.web.servlet.mvc");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.security.web");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.beans");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.transaction");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.aop.framework");
+        IGNORE_EX_STACK_PACKAGE.add("org.apache.tomcat.util.net");
+        IGNORE_EX_STACK_PACKAGE.add("io.netty.channel");
+        IGNORE_EX_STACK_PACKAGE.add("org.springframework.aop");
+        IGNORE_EX_STACK_PACKAGE.add("org.hibernate");
+        IGNORE_EX_STACK_PACKAGE.add("com.alibaba.druid");
+        IGNORE_EX_STACK_PACKAGE.add("com.mysql.jdbc");
+        IGNORE_EX_STACK_PACKAGE.add("io.netty.handler.codec.http.websocketx.CorruptedWebSocketFrameException");
     }
 
 
@@ -124,7 +124,7 @@ public class ExceptionCollectorUtils {
         StackTraceElement[] stackTrace = e.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTrace) {
             String className = stackTraceElement.getClassName();
-            if (ignoreExStackPackage.stream().noneMatch(className::startsWith)) {
+            if (IGNORE_EX_STACK_PACKAGE.stream().noneMatch(className::startsWith)) {
                 list.add(stackTraceElement);
             }
         }

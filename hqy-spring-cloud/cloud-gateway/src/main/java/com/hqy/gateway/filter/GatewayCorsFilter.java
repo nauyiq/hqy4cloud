@@ -1,6 +1,6 @@
 package com.hqy.gateway.filter;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -25,9 +25,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
-    private static final String FAVICON_ICO = "/favicon.ico";
-
-    private static final int ORDER = 77;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -36,15 +33,14 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
         ServerHttpResponse response = exchange.getResponse();
 
-
         //如果是/favicon.io的路径允许访问
-        if (FAVICON_ICO.equals(path)) {
+        if (StringConstants.FAVICON_ICO.equals(path)) {
             response.setStatusCode(HttpStatus.OK);
             return Mono.empty();
         }
 
         //如果是socket.io项目 则放开piling请求的cors 原因是在socket.io netty内部已经处理了cors
-        if (path.contains("/websocket") && request.getQueryParams().containsKey(BaseStringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+        if (path.contains(StringConstants.WEBSOCKET_PATH) && request.getQueryParams().containsKey(StringConstants.Auth.SOCKET_AUTH_TOKEN)) {
             return chain.filter(exchange);
         }
 
@@ -75,6 +71,6 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return ORDER;
+        return Integer.MAX_VALUE;
     }
 }

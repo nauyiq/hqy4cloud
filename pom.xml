@@ -7,54 +7,78 @@
     <groupId>com.hqy</groupId>
     <artifactId>hqy-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <description>各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务</description>
 
     <modules>
+        <!-- netty相关模块 包括socket.io源码 -->
         <module>hqy-netty</module>
+        <!-- 全局的公共包模块 -->
         <module>hqy-util</module>
+        <!-- spring-cloud服务 -->
         <module>hqy-spring-cloud</module>
+        <!-- 公共依赖包 -->
         <module>hqy-base-common</module>
+        <!-- 数据库操作相关 -->
         <module>hqy-base-common-dao</module>
+        <!-- 公共模块 包括redis、采集服务、es等-->
         <module>hqy-common-modules</module>
+        <!-- 公共service -->
         <module>hqy-base-common-service</module>
-        <module>hqy-thrift-rpc</module>
-        <module>hqy-base-elasticsearch</module>
+        <!-- 自定义thrift-rpc -->
+        <module>hqy-rpc</module>
+        <!-- 安全模块 -->
         <module>hqy-base-security</module>
+        <!-- 消息队列模块 -->
         <module>hqy-base-mq</module>
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- project -->
+        <revision>1.0.0</revision>
         <jdk.version>1.8</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <junit.version>4.12</junit.version>
-        <log4j.version>1.2.17</log4j.version>
-        <lombok.version>1.18.12</lombok.version>
-        <mysql.version>5.1.47</mysql.version>
-        <druid.version>1.1.16</druid.version>
-        <springboot.druid.version>1.1.10</springboot.druid.version>
-        <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
-        <org.slf4j.version>1.7.30</org.slf4j.version>
-        <tk.mybatis.version>2.1.2</tk.mybatis.version>
-        <pagehelper.version>5.1.2</pagehelper.version>
+        <source.plugin.version>3.0.1</source.plugin.version>
+
+        <!-- spring-boot -->
         <springboot.version>2.3.8.RELEASE</springboot.version>
         <springcloud.version>Hoxton.SR10</springcloud.version>
+        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
+
+        <!-- alibaba -->
+        <nacos.version>2.0.3</nacos.version>
+        <seata.version>1.4.2</seata.version>
+        <druid.version>1.1.16</druid.version>
+        <springboot.druid.version>1.1.10</springboot.druid.version>
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
+
+        <!-- dao -->
+        <mysql.version>5.1.47</mysql.version>
+        <tk.mybatis.version>2.1.2</tk.mybatis.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
+        <org.redisson.version>3.13.6</org.redisson.version>
+        <elasticsearch.version>7.14.0</elasticsearch.version>
+        <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
+
+        <!-- log -->
+        <log4j.version>1.2.17</log4j.version>
+        <log4j2.version>2.1</log4j2.version>
+        <org.slf4j.version>1.7.30</org.slf4j.version>
+
+        <!-- common -->
         <hutool.version>5.6.3</hutool.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
         <guava.version>22.0</guava.version>
-        <elasticsearch.version>7.14.0</elasticsearch.version>
-        <source.plugin.version>3.0.1</source.plugin.version>
+        <junit.version>4.12</junit.version>
+        <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
-        <org.redisson.version>3.13.6</org.redisson.version>
-        <seata.version>1.4.2</seata.version>
-        <nacos.version>2.0.3</nacos.version> <!--   修改spring-cloud-alibaba-dependencies nacos版本, 改用2.0.3   -->
+        <javassist.version>3.28.0-GA</javassist.version>
     </properties>
 
 
@@ -92,6 +116,13 @@
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
                 <version>${nacos.version}</version>
+            </dependency>
+
+            <!-- oauth2 -->
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${security-oauth2.version}</version>
             </dependency>
 
 
@@ -259,6 +290,12 @@
                 <version>${seata.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -269,8 +306,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -317,10 +352,10 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -342,6 +377,22 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.lua</include>
+                    <include>*.properties</include>
+                    <include>*.yml</include>
+                    <include>*.key</include>
+                    <include>**/*.factories</include>
+                    <include>*.jks</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -351,6 +402,9 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <excludes>
+                        <exclude>**/apache/bval/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -393,6 +447,35 @@
                     </archive>
                 </configuration>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+<!--                <version>${maven_flatten_version}</version>-->
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

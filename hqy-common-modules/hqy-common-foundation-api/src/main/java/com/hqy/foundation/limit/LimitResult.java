@@ -111,7 +111,7 @@ public class LimitResult {
 
         ;
 
-        public int code;
+        public final int code;
 
         ReasonEnum(int code) {
             this.code = code;

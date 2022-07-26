@@ -1,13 +1,14 @@
 
 package com.hqy.gateway.loadbalance;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.foundation.util.SocketHashFactorUtils;
 import com.hqy.fundation.common.route.LoadBalanceHashFactorManager;
-import com.hqy.rpc.regist.ClusterNode;
-import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
+import com.hqy.rpc.common.RPCServerAddress;
+import com.hqy.rpc.registry.nacos.node.Metadata;
+import com.hqy.rpc.registry.nacos.util.NacosInstanceUtils;
 import com.hqy.util.JsonUtil;
-import com.hqy.util.spring.ProjectContextInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -36,7 +38,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
  * @date 2022/3/25 17:41
  */
 @SuppressWarnings("deprecation")
-public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalancer {
+public class SocketHashLoadBalanceStrategy extends ServiceInstanceLoadBalancer {
 
     private static final Logger log = LoggerFactory.getLogger(SocketHashLoadBalanceStrategy.class);
 
@@ -61,7 +63,7 @@ public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalance
 
         ServerHttpRequest request = exchange.getRequest();
         //获取请求中的hash值
-        List<String> thisHash = request.getQueryParams().get(BaseStringConstants.Auth.SOCKET_MULTI_PARAM_KEY);
+        List<String> thisHash = request.getQueryParams().get(StringConstants.Auth.SOCKET_MULTI_PARAM_KEY);
         ServiceInstance instance = null;
         if (CollectionUtils.isEmpty(thisHash)) {
             //如果请求的hash值为空 返回一个无状态的实例
@@ -73,7 +75,7 @@ public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalance
             }
             //获取socket.io项目端口
             int socketPort = getSocketPort(serviceInstance);
-            instance = ThriftRpcHelper.copy(socketPort, serviceInstance);
+            instance = copy(socketPort, serviceInstance);
 
         } else {
             String hash = thisHash.get(0);
@@ -85,9 +87,9 @@ public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalance
             for (ServiceInstance serviceInstance : instances) {
                 //获取socket.io项目端口
                 int socketPort = getSocketPort(serviceInstance);
-                String hashFactor = ThriftRpcHelper.genHashFactor(serviceInstance.getHost(), socketPort + "");
+                String hashFactor = SocketHashFactorUtils.genHashFactor(serviceInstance.getHost(), socketPort);
                 if (queryHashFactor.equals(hashFactor)) {
-                    instance = ThriftRpcHelper.copy(socketPort, serviceInstance);
+                    instance = copy(socketPort, serviceInstance);
                     break;
                 }
             }
@@ -96,11 +98,22 @@ public class SocketHashLoadBalanceStrategy implements ServiceInstanceLoadBalance
     }
 
     private int getSocketPort(ServiceInstance serviceInstance) {
-        String nodeInfo = serviceInstance.getMetadata().get(ProjectContextInfo.NODE_INFO);
-        ClusterNode node = JsonUtil.toBean(nodeInfo, ClusterNode.class);
-        return node.getUip().getSocketPort();
+        Map<String, String> metadata = serviceInstance.getMetadata();
+        if (metadata == null || metadata.isEmpty()) {
+            //Gets socket.io server port failure, should not find it from nacos metadata.
+            return 0;
+        }
+        try {
+            Metadata nacosMetadata = NacosInstanceUtils.toMetadataFromMap(metadata);
+            if (nacosMetadata == null) {
+                return 0;
+            }
+            RPCServerAddress rpcServerAddress = nacosMetadata.getRpcServerAddress();
+            return rpcServerAddress.getPort();
+        } catch (Throwable t) {
+            log.warn("Failed execute to map convert to Metadata. map:{}.", JsonUtil.toJson(metadata));
+            return 0;
+        }
     }
-
-
 }
 

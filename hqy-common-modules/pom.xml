@@ -5,7 +5,8 @@
     <parent>
         <artifactId>hqy-parent</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,6 +19,8 @@
         <module>hqy-common-communication-service-impl</module>
         <module>hqy-data-structures-and-algorithms</module>
         <module>hqy-common-foundation-api</module>
+        <module>hqy-common-elasticsearch</module>
+        <module>hqy-demo-modules</module>
     </modules>
 
     <artifactId>hqy-common-modules</artifactId>

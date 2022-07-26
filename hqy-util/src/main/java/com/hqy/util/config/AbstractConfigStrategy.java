@@ -1,6 +1,6 @@
 package com.hqy.util.config;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public abstract class AbstractConfigStrategy implements AbstractStrategyProcesso
     public void loadConfigFile() {
         InputStream inputStream = null;
         try {
-            File externalFile = new File(configPath + BaseStringConstants.Symbol.INCLINED_ROD + propertyName);
+            File externalFile = new File(configPath + StringConstants.Symbol.INCLINED_ROD + propertyName);
             if (externalFile.exists()) {
                 log.info("@@@ 加载外部配置文件:{}", externalFile.getAbsolutePath());
                 inputStream = new FileInputStream(externalFile);

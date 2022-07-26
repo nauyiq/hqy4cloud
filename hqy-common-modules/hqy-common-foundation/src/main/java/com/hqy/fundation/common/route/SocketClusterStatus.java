@@ -1,6 +1,5 @@
 package com.hqy.fundation.common.route;
 
-import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -36,7 +35,7 @@ public class SocketClusterStatus implements Serializable {
     private boolean enableMultiWsNode = false;
 
 
-    private String contextPath = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
+    private String contextPath = "/socket";
 
     public SocketClusterStatus() {
     }

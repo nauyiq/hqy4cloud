@@ -5,7 +5,8 @@
     <parent>
         <artifactId>hqy-common-modules</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <description>公共的通讯服务, 比如短信,邮箱等通讯服务</description>
@@ -13,6 +14,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy-common-communication-service-impl</artifactId>
+    <packaging>jar</packaging>
 
 
     <dependencies>
@@ -20,13 +22,7 @@
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-common-communication-service-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!--SpringCloud ailibaba nacos -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!--nacos-config-->
@@ -51,12 +47,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-util</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

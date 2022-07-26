@@ -5,12 +5,13 @@
     <parent>
         <artifactId>hqy-spring-cloud</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cloud-gateway</artifactId>
-
+    <packaging>jar</packaging>
     <description>全局网关-采用oauth2,统一校验认证和鉴权,RPC的调用者视角</description>
 
     <dependencies>
@@ -18,18 +19,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-
-        <!--spring-cloud-alibaba-nacos-client-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-client</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!--spring-cloud-alibaba-nacos-config-->
@@ -49,7 +38,6 @@
             <artifactId>nacos-client</artifactId>
         </dependency>
 
-
         <!--spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -62,23 +50,20 @@
             <artifactId>spring-cloud-starter-dubbo</artifactId>
         </dependency>-->
 
-        <!--gateway服务不提供持久化服务-->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-collector-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>hqy-public-common-security</artifactId>
             <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.hqy</groupId>
                     <artifactId>hqy-base-common-dao-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-public-common-security</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- OAuth2资源服务器-->
@@ -86,26 +71,36 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-resource-server</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>8.16</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- sentinel整合gateway -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-loadbalancer</artifactId>
+            <groupId>com.hqy.security</groupId>
+            <artifactId>hqy-public-common-alibaba-sentinel</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>
@@ -114,17 +109,18 @@
     <build>
         <finalName>hqy-gateway-service</finalName>
         <resources>
-            <resource>
+<!--            <resource>-->
                 <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>*.properties</include>
-                    <include>*.yml</include>
-                    <include>*.key</include>
-                </includes>
-            </resource>
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>false</filtering>-->
+<!--                <includes>-->
+<!--                    <include>**/*.xml</include>-->
+<!--                    <include>*.properties</include>-->
+<!--                    <include>*.yml</include>-->
+<!--                    <include>*.key</include>-->
+<!--                    <include>**/*.factories</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
         </resources>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->

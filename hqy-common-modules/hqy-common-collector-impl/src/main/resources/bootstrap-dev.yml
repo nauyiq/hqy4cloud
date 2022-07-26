@@ -1,29 +1,41 @@
+nacos:
+  server-addr: 120.76.65.160:8848
+  group: DEV_GROUP
+  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+
 #开发环境
 spring:
-  config:
-    activate:
-      on-profile: dev
   cloud:
     nacos:
       config:
-        server-addr: 120.76.65.160:8848
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
         file-extension: yaml
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-        group: DEV_GROUP
         extension-configs[0]:
           data-id: redis-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
         extension-configs[1]:
           data-id: db-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
         extension-configs[2]:
           data-id: rabbitmq-config.yaml
-          group: DEV_GROUP
+          group: ${nacos.group}
           refresh: true
       discovery:
         ephemeral: false # false为永久实例，true表示临时实例
-        server-addr: 120.76.65.160:8848
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
 
+    sentinel:
+      # 取消懒加载
+      eager: true
+      # 启用sentinel
+      enabled: true
+      # sentinel控制台
+      transport:
+        dashboard: 172.0.0.1:8080 #sentinel控制台访问路径
+        # sentinel控制台和服务端的交互端口 默认8719
+        port: 8719

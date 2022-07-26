@@ -5,22 +5,38 @@
     <parent>
         <artifactId>hqy-common-modules</artifactId>
         <groupId>com.hqy</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>通用化的基础模块, 比如提供全局的redis操作、 rpc操作、采集服务等</description>
+    <description>通用化的基础模块, 比如提供全局的redis操作、采集服务等</description>
 
     <artifactId>hqy-common-foundation</artifactId>
 
     <dependencies>
 
         <!-- spring data的redis操作 偏向crud-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- 采集服务api -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-collector-api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
+
+        <!-- client-starter -->
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 
         <!-- Springboot Redisson, Redisson redis客户端 偏向分布式-->
         <dependency>
@@ -28,36 +44,23 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- thrift-rpc 提供rpc服务 -->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-thrift-rpc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- 采集服务api -->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-collector-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
         <!-- 公共基础api module -->
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-common-foundation-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- start web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- hibenate-validator -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
     </dependencies>

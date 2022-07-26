@@ -9,6 +9,7 @@ package com.hqy.base.common.base.project;
  */
 public class MicroServiceConstants {
 
+
     /**
      * 全局网关gateway服务
      */
@@ -29,11 +30,12 @@ public class MicroServiceConstants {
      */
     public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
 
-    public static final String TRANSACTION_ORDER_SERVICE = "transaction-order-service";
 
-    public static final String TRANSACTION_STORAGE_SERVICE = "transaction-storage-service";
+    public static final String DEMO_ORDER_SERVICE = "demo-order-service";
 
-    public static final String TRANSACTION_ACCOUNT_SERVICE = "transaction-account-service";
+    public static final String DEMO_STORAGE_SERVICE = "demo-storage-service";
+
+    public static final String DEMO_WALLET_SERVICE = "demo-wallet-service";
 
 
     /**

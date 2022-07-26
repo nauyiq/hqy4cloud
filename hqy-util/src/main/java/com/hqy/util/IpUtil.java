@@ -1,6 +1,6 @@
 package com.hqy.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.enums.CountryEnum;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -176,22 +177,22 @@ public class IpUtil {
 
         }
         srcIp = request.getHeader("Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("WL-Proxy-Client-IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("HTTP_CLIENT_IP");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
 
         srcIp = request.getHeader("HTTP_X_FORWARDED_FOR");
-        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !BaseStringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
+        if (!isInnerIp(srcIp) && StringUtils.hasText(srcIp) && !StringConstants.UNKNOWN.equalsIgnoreCase(srcIp)) {
             return srcIp;
         }
         return request.getRemoteAddr();
@@ -257,7 +258,7 @@ public class IpUtil {
 
 
     public static boolean isInnerIp(String ip) {
-        return "127.0.0.1".equals(ip);
+        return StringConstants.INNER_IP.equals(ip);
     }
 
     /**
@@ -287,5 +288,19 @@ public class IpUtil {
     public static String getCloudFlareCountry(HttpServletRequest request) {
         return request.getHeader("cf-ipcountry");
     }
+
+    /**
+     *
+     * @param hostName hostName
+     * @return ip address or hostName if UnknownHostException
+     */
+    public static String getIpByHost(String hostName) {
+        try {
+            return InetAddress.getByName(hostName).getHostAddress();
+        } catch (UnknownHostException e) {
+            return hostName;
+        }
+    }
+
 
 }

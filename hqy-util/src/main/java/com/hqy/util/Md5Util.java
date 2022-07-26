@@ -1,6 +1,8 @@
 package com.hqy.util;
 
 import com.auth0.jwt.internal.org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,8 @@ import java.util.Random;
 public class Md5Util {
 
     private static final Logger log = LoggerFactory.getLogger(Md5Util.class);
+
+    private static final String SALT = "qaJs4D7FdQLBag7x";
 
     private Md5Util() {
     }
@@ -63,6 +67,9 @@ public class Md5Util {
      * @return
      */
     public static String getSaltMd5(String password, String salt) {
+        if (StringUtils.isBlank(salt)) {
+            salt = SALT;
+        }
         password = md5Hex(password + salt);
         char[] cs = new char[48];
         for (int i = 0; i < 48; i += 3) {
@@ -93,18 +100,7 @@ public class Md5Util {
      * @return 盐
      */
     public static String getSalt() {
-        // 生成一个16位的随机数
-        Random random = new Random();
-        StringBuilder sBuilder = new StringBuilder(16);
-        sBuilder.append(random.nextInt(99999999)).append(random.nextInt(99999999));
-        int len = sBuilder.length();
-        if (len < 16) {
-            for (int i = 0; i < 16 - len; i++) {
-                sBuilder.append("0");
-            }
-        }
-        // 生成最终的加密盐
-        return sBuilder.toString();
+        return RandomStringUtils.randomAlphanumeric(16);
     }
 
     /**
@@ -121,6 +117,11 @@ public class Md5Util {
             log.error(e.getMessage(), e);
             return "";
         }
+    }
+
+    public static void main(String[] args) {
+        String hqy = getStrMd5("hqy");
+        System.out.println(hqy);
     }
 
 

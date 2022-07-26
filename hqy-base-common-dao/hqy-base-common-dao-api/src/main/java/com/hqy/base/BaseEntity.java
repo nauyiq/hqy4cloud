@@ -14,7 +14,7 @@ import java.util.Date;
  * @date 2022/3/1 17:39
  */
 @Data
-public class BaseEntity<PK> implements Serializable {
+public abstract class BaseEntity<PK> implements Serializable {
 
     /**
      * 主键：id
@@ -37,6 +37,12 @@ public class BaseEntity<PK> implements Serializable {
     }
 
     public BaseEntity(Date date) {
+        this.created = date;
+        this.updated = date;
+    }
+
+    public BaseEntity(PK id, Date date) {
+        this.id = id;
         this.created = date;
         this.updated = date;
     }

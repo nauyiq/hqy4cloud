@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy-order-module</artifactId>
+        <groupId>com.hqy</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hqy-common-api</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <!-- 公共基础服务, rpc, redis -->
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-foundation</artifactId>
+            <!-- api模块不要调用api调用 不然很容易造成循环依赖. 建议相应的impl模块根据业务再集成collector-api模块 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.hqy</groupId>
+                    <artifactId>hqy-common-collector-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.redisson</groupId>
+                    <artifactId>redisson-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common-dao-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.mq</groupId>
+            <artifactId>hqy-base-mq-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+    </dependencies>
+
+
+
+</project>

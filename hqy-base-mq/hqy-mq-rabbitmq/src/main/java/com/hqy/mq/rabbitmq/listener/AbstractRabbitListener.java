@@ -1,7 +1,7 @@
 package com.hqy.mq.rabbitmq.listener;
 
 import com.hqy.base.common.exception.MessageMqException;
-import com.hqy.mq.common.listener.payload.RabbitPayload;
+import com.hqy.mq.common.listener.payload.MessagePayload;
 import com.hqy.mq.rabbitmq.config.RabbitmqAutoConfiguration;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
 import com.hqy.util.AssertUtil;
@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2022/5/6 17:15
  */
 @Component
-public abstract class AbstractRabbitListener<T extends RabbitPayload> {
+public abstract class AbstractRabbitListener<T extends MessagePayload> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractRabbitListener.class);
 

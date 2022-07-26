@@ -2,9 +2,9 @@ package com.hqy.fundation.common.route;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.redis.LettuceStringRedis;
-import com.hqy.rpc.thrift.ex.ThriftRpcHelper;
+import com.hqy.rpc.common.CommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,8 @@ public class LoadBalanceHashFactorManager {
 
 
     private static String genKey(String module, int hash) {
-        return SocketClusterStatus.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)
-                .concat(module).concat(BaseStringConstants.Symbol.COLON).concat(hash + "");
+        return SocketClusterStatus.class.getSimpleName().concat(StringConstants.Symbol.COLON)
+                .concat(module).concat(StringConstants.Symbol.COLON).concat(hash + "");
     }
 
     /**
@@ -46,7 +46,7 @@ public class LoadBalanceHashFactorManager {
             hashFactor = LettuceStringRedis.getInstance().get(key);
             if (StringUtils.isBlank(hashFactor)) {
                 log.warn("@@@ Not found hashFactor, module:{}, hash:{}", module, hash);
-                hashFactor = ThriftRpcHelper.DEFAULT_HASH_FACTOR;
+                hashFactor = CommonConstants.DEFAULT_HASH_FACTOR;
             } else {
                 HASH_CACHE.put(key, hashFactor);
             }

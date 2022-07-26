@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy-thrift-rpc</artifactId>
+        <groupId>com.hqy.rpc</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>thrift-rpc-handler</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>hqy-rpc-thrift-monitor</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>hqy-rpc-common</artifactId>
+            <version>${project.parent.version}</version>
+<!--            <version>1.0.0</version>-->
+        </dependency>
+    </dependencies>
+
+</project>

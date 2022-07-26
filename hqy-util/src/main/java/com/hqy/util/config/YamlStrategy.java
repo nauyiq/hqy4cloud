@@ -1,6 +1,6 @@
 package com.hqy.util.config;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class YamlStrategy extends AbstractConfigStrategy {
                 Object val = entry.getValue();
                 String newStr;
                 if (StringUtils.isNotEmpty(keyStr)) {
-                    newStr = keyStr + BaseStringConstants.Symbol.POINT + key;
+                    newStr = keyStr + StringConstants.Symbol.POINT + key;
                 } else {
                     newStr = key;
                 }

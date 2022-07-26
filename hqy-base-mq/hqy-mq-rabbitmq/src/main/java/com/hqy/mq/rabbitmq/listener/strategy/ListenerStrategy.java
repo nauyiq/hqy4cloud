@@ -1,6 +1,6 @@
 package com.hqy.mq.rabbitmq.listener.strategy;
 
-import com.hqy.mq.common.listener.payload.RabbitPayload;
+import com.hqy.mq.common.listener.payload.MessagePayload;
 
 /**
  * Listen for rabbitmq strategy.
@@ -8,7 +8,7 @@ import com.hqy.mq.common.listener.payload.RabbitPayload;
  * @version 1.0
  * @date 2022/5/6 17:17
  */
-public interface ListenerStrategy<T extends RabbitPayload> {
+public interface ListenerStrategy<T extends MessagePayload> {
 
     /**
      * Listen for the execution action of the message.

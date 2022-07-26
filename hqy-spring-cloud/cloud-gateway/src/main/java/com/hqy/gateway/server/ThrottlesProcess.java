@@ -1,7 +1,7 @@
 package com.hqy.gateway.server;
 
-import com.hqy.auth.access.service.ManualWhiteIpServiceImpl;
-import com.hqy.auth.access.service.RedisManualBlockedIpServiceImpl;
+import com.hqy.access.limit.service.ManualWhiteIpServiceImpl;
+import com.hqy.access.limit.service.RedisManualBlockedIpServiceImpl;
 import com.hqy.foundation.limit.service.BiBlockedIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;

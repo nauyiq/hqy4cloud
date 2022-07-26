@@ -2,9 +2,8 @@ package com.hqy.fundation.common.route;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.redis.LettuceRedis;
-import com.hqy.fundation.cache.redis.LettuceStringRedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +26,8 @@ public class SocketClusterStatusManager {
             CacheBuilder.newBuilder().initialCapacity(1024).expireAfterAccess(10L, TimeUnit.MINUTES).build();
 
     private static String genKey(String env, String module) {
-        return SocketClusterStatus.class.getSimpleName().concat(BaseStringConstants.Symbol.COLON)
-                .concat(env).concat(BaseStringConstants.Symbol.COLON).concat(module);
+        return SocketClusterStatus.class.getSimpleName().concat(StringConstants.Symbol.COLON)
+                .concat(env).concat(StringConstants.Symbol.COLON).concat(module);
     }
 
     /**

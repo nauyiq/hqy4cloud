@@ -2,7 +2,7 @@
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
     <!-- ConsoleAppender：把日志输出到控制台 -->
-    <appender name="stdout" class="com.hqy.fundation.common.logback.ConsoleAppender">
+    <appender name="stdout" class="com.hqy.foundation.common.logback.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
             <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->

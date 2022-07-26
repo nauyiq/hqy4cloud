@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.DeserializationFeature;
 import com.auth0.jwt.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import com.hqy.base.common.base.lang.BaseMathConstants;
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -50,8 +50,8 @@ public class JwtUtil {
             final JWTSigner signer = new JWTSigner(SECRET);
             final Map<String, Object> claims = new HashMap<>(6);
             String jsonString = objectMapper.writeValueAsString(object);
-            claims.put(BaseStringConstants.Auth.JWT_PAYLOAD_KEY, jsonString);
-            claims.put(BaseStringConstants.Auth.JWT_EXP, System.currentTimeMillis() + maxAge);
+            claims.put(StringConstants.Auth.JWT_PAYLOAD_KEY, jsonString);
+            claims.put(StringConstants.Auth.JWT_EXP, System.currentTimeMillis() + maxAge);
             return signer.sign(claims);
         } catch (Exception e) {
             return null;
@@ -71,9 +71,9 @@ public class JwtUtil {
             if (claims == null || claims.isEmpty()) {
                 return false;
             }
-            if (claims.containsKey(BaseStringConstants.Auth.JWT_EXP) &&
-                    claims.containsKey(BaseStringConstants.Auth.JWT_PAYLOAD_KEY)) {
-                long exp = (Long) claims.get(BaseStringConstants.Auth.JWT_EXP);
+            if (claims.containsKey(StringConstants.Auth.JWT_EXP) &&
+                    claims.containsKey(StringConstants.Auth.JWT_PAYLOAD_KEY)) {
+                long exp = (Long) claims.get(StringConstants.Auth.JWT_EXP);
                 long currentTimeMillis = System.currentTimeMillis();
                 return exp > currentTimeMillis;
             }
@@ -93,10 +93,10 @@ public class JwtUtil {
         final JWTVerifier verifier = new JWTVerifier(SECRET);
         try {
             final Map<String, Object> claims = verifier.verify(jwt);
-            if (claims.containsKey(BaseStringConstants.Auth.JWT_EXP) && claims.containsKey(BaseStringConstants.Auth.JWT_PAYLOAD_KEY)) {
-                long exp = (long) claims.get(BaseStringConstants.Auth.JWT_EXP);
+            if (claims.containsKey(StringConstants.Auth.JWT_EXP) && claims.containsKey(StringConstants.Auth.JWT_PAYLOAD_KEY)) {
+                long exp = (long) claims.get(StringConstants.Auth.JWT_EXP);
                 if (exp > System.currentTimeMillis()) {
-                    String json = (String) claims.get(BaseStringConstants.Auth.JWT_PAYLOAD_KEY);
+                    String json = (String) claims.get(StringConstants.Auth.JWT_PAYLOAD_KEY);
                     return objectMapper.readValue(json, clazz);
                 }
             }

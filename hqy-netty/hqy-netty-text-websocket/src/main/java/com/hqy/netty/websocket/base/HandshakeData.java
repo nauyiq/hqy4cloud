@@ -1,6 +1,6 @@
 package com.hqy.netty.websocket.base;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +28,7 @@ public class HandshakeData {
         if (Objects.isNull(params)) {
             return null;
         }
-        return params.get(BaseStringConstants.UID);
+        return params.get(StringConstants.UID);
     }
 
 

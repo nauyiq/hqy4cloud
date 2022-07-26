@@ -25,6 +25,8 @@ public class CommonDateUtil {
      */
     public static final DateFormat TIME_MINUTE_FORMAT = new SimpleDateFormat("hh-MM-dd HH:mm");
 
+    public static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("hh-MM-dd HH:mm:ss");
+
     /**
      * 时间 转 HH:mm格式
      * @param date

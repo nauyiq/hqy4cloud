@@ -1,0 +1,63 @@
+nacos:
+  server-addr: 120.76.65.160:8848
+  group: DEV_GROUP
+  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server-addr}
+        file-extension: yaml
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        extension-configs[0]:
+          data-id: redis-config.yaml
+          group: ${nacos.group}
+          refresh: true
+        extension-configs[1]:
+          data-id: db-app-config.yaml
+          group: ${nacos.group}
+          refresh: true
+        extension-configs[2]:
+          data-id: dev-config.yaml
+          group: ${nacos.group}
+          refresh: true
+      discovery:
+        server-addr: ${nacos.server-addr}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
+        ephemeral: true # false为永久实例，true表示临时实例
+
+#    sentinel:
+#      # 取消懒加载
+#      eager: true
+#      # 启用sentinel
+#      enabled: true
+#      # sentinel控制台
+#      transport:
+#        dashboard: 172.31.1.1:8080 #sentinel控制台访问路径
+#        # sentinel控制台和服务端的交互端口 默认8719
+#        port: 8720
+      # sentinel加载nacos远程配置规则
+#      datasource:
+#        flow:
+#          nacos:
+#            serverAddr: 120.76.65.160:8848
+#            namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+#            groupId: DEV_GROUP
+#            dataId: sentinel-default-app-flow
+#            dataType: json
+#            ruleType: flow
+#        degrade:
+#          nacos:
+#            serverAddr: ${nacos.server-addr}
+#            dataId: ${spring.application.name}-degrade-rules
+#            groupId: DEV_GROUP
+#            namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+#            dataType: json
+#            ruleType: degrade
+
+
+
+

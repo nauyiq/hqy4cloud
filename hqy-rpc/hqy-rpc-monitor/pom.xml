@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy-rpc</artifactId>
+        <groupId>com.hqy.rpc</groupId>
+        <relativePath>../pom.xml</relativePath>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>hqy-rpc-monitor-api</module>
+        <module>hqy-rpc-thrift-monitor</module>
+    </modules>
+
+
+    <artifactId>hqy-rpc-monitor</artifactId>
+
+    <description>rpc监察者 用于提供者和消费者中的数据统计，比如调用频次，成功失败次数等信息。</description>
+
+
+
+
+</project>

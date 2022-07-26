@@ -1,6 +1,6 @@
 package com.hqy.gateway.util;
 
-import com.hqy.base.common.base.lang.BaseStringConstants;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.util.JsonUtil;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class ResponseUtil {
      */
     public static DataBuffer outputBuffer(MessageResponse code, ServerHttpResponse response, HttpStatus status) {
         byte[] bytes = JsonUtil.toJson(code).getBytes(StandardCharsets.UTF_8);
-        response.getHeaders().add(BaseStringConstants.Headers.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        response.getHeaders().add(StringConstants.Headers.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatusCode(status);
         return response.bufferFactory().wrap(bytes);
     }
