@@ -13,9 +13,9 @@
     <modules>
         <!-- netty相关模块 包括socket.io源码 -->
         <module>hqy-netty</module>
-        <!-- 全局的公共包模块 -->
+        <!-- 工具包模块 -->
         <module>hqy-util</module>
-        <!-- spring-cloud服务 -->
+        <!-- gateway module and demo module.-->
         <module>hqy-spring-cloud</module>
         <!-- 公共依赖包 -->
         <module>hqy-base-common</module>
@@ -25,7 +25,7 @@
         <module>hqy-common-modules</module>
         <!-- 公共service -->
         <module>hqy-base-common-service</module>
-        <!-- 自定义thrift-rpc -->
+        <!-- rpc module -->
         <module>hqy-rpc</module>
         <!-- 安全模块 -->
         <module>hqy-base-security</module>
@@ -40,7 +40,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <source.plugin.version>3.0.1</source.plugin.version>
+        <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
         <!-- spring-boot -->
         <springboot.version>2.3.8.RELEASE</springboot.version>
@@ -79,6 +81,7 @@
         <quartz.version>2.3.0</quartz.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <javassist.version>3.28.0-GA</javassist.version>
+        <common.collection4.version>4.4</common.collection4.version>
     </properties>
 
 
@@ -322,7 +325,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
+            <version>${common.collection4.version}</version>
         </dependency>
 
         <dependency>
@@ -397,7 +400,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven.compiler.plugin}</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -452,8 +455,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-<!--                <version>${maven_flatten_version}</version>-->
-                <version>1.1.0</version>
+                <version>${flatten.maven.plugin}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
