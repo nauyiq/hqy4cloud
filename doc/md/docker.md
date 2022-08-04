@@ -8,8 +8,6 @@ typora-copy-images-to: images
 
 ![1659086996048](images/1659086996048.png)
 
-
-
 ![docker命令图](images/docker命令图.png)
 
 

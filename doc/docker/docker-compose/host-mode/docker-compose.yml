@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  redis:
+    hostname: redis
+    container_name: redis
+    restart: always
+    image: redis
+    command: ["redis-server","/etc/redis/redis.conf"]
+    environment:
+      - TZ=Asia/Shanghai
+    network_mode: host
+    ports:
+      - 6379:6379
+    volumes:
+      - /usr/local/redis/data:/data
+      - /usr/local/redis/logs:/logs
+      - /usr/local/redis/redis.conf:/etc/redis/redis.conf
+
+  nacos:
+    hostname: nacos
+    container_name: nacos2.0.3
+    image: nacos/nacos-server:2.0.3
+    restart: always
+    network_mode: host
+    ports:
+      - 8848:8848
+      - 9948:9948
+      - 9949:9949
+    privileged: true
+    environment:
+      NACIS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN_EXPIRE_SECONDS: 18000
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      JVM_MS: 128m
+      JVM_MMS: 128m
+      MODE: standalone
+      NACOS_REPLICAS: 1
+      PREFER_HOST_MODE: hostname
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: 192.168.191.113
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: hongqy@2021
+    volumes:
+      - /usr/local/nacos/logs:/home/nacos/logs
+      - /usr/local/nacos/conf:/home/nacos/conf
+      - /usr/local/nacos/data:/home/nacos/data
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
