@@ -6,18 +6,18 @@ ARG SERVICE_JAR="hqy-common-collector-service.jar"
 
 # set environment
 ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
-    JAVA_HOME="/usr/java/jdk1.8.0_291" \
+    JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
     JAVA="${JAVA_HOME}/bin/java" \
     JAVA_OPT_EXT="${JAVA_OPT_EXT}" \
     TIME_ZONE="Asia/Shanghai"
 
 WORKDIR $BASE_DIR
-ADD target/classes/logback.xml target/logback.xml
-ADD target/lib target/lib
-ADD target/$SERVICE_JAR targer/$SERVICE_JAR
+ADD ./target/classes/logback.xml target/logback.xml
+ADD ./target/lib target/lib
+ADD ./target/$SERVICE_JAR target/$SERVICE_JAR
 RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
-ADD ../../doc/docker/start.sh bin/start.sh
+ADD bin/start.sh bin/start.sh
 RUN mkdir -p init.d
 
 RUN mkdir -p logs \
@@ -25,6 +25,8 @@ RUN mkdir -p logs \
     && touch sys.out
 
 RUN chmod +x bin/start.sh
+RUN chmod 777 target/*
+
 
 EXPOSE 8888
 
