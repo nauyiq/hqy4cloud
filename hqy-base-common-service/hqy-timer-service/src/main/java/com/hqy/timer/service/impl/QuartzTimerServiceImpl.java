@@ -1,6 +1,7 @@
 package com.hqy.timer.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.net.NetUtil;
 import com.hqy.timer.service.TimerFoundationService;
 import com.hqy.util.CommonDateUtil;
 import com.hqy.util.IpUtil;
@@ -45,7 +46,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
      */
     @Override
     public void startUp() {
-        String host = IpUtil.getHostAddress();
+        String host =  NetUtil.getLocalhostStr();
         log.info("### QuartzTimerService ready to startUp -> {}", host);
         if (STARTED) {
             log.warn("### Start QuartzTimerService error, timerService already start up.");

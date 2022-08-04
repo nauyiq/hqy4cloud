@@ -1,55 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 日志级别从低到高分为TRACE < DEBUG < INFO < WARN < ERROR < FATAL，如果设置为WARN，则低于WARN的信息都不会输出 -->
-<!-- scan:当此属性设置为true时，配置文档如果发生改变，将会被重新加载，默认值为true -->
-<!-- scanPeriod:设置监测配置文档是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。
-                 当scan为true时，此属性生效。默认的时间间隔为1分钟。 -->
-<!-- debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
-
-<configuration scan="true" scanPeriod="10 seconds">
-
-    <contextName>logback</contextName>
-    <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
-
-    <substitutionProperty name="log.com.hqy.base" value="/hqy/deploy/services/logs/${APP_NAME}"/>
-
-    <!-- 彩色日志依赖的渲染类 -->
-    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
-    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
-    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
-    <!-- 彩色日志格式 -->
-    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-
+<configuration>
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
     <!-- ConsoleAppender：把日志输出到控制台 -->
     <appender name="stdout" class="com.hqy.foundation.common.logback.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
-            <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
+            <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文 乱码 -->
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
+    <!--    <substitutionProperty name="LOG_HOME" value="/hqy/deploy/services/logs/common-coll"/>-->
+    <substitutionProperty name="LOG_HOME" value="/home/services/gateway-service/logs"/>
 
     <!-- RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
     <!-- 以下的大概意思是：1.先按日期存日志，日期变了，将前一天的日志文件名重命名为XXX%日期%索引，新的日志仍然是sys.log -->
     <!--             2.如果日期没有发生变化，但是当前日志的文件大小超过1KB时，对当前日志进行分割 重命名-->
     <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.com.hqy.base}/sys.log</File>
+        <File>${LOG_HOME}/sys.log</File>
         <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
         <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
-            <fileNamePattern>${log.com.hqy.base}/stdout.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/stdout.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
             <maxHistory>7</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- maxFileSize:这是活动文件的大小，默认值是10MB -->
+                <!-- maxFileSize:这是活动文件的大小，默认值是10MB  -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
+            <!-- 格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>-->
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -63,9 +47,9 @@
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.cloud.sirius为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
     <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-  <!--  <logger name="com.cloud.sirius" level="DEBUG" additivity="false">
-        <appender-ref ref="stdout" />
-    </logger>-->
+    <!--  <logger name="com.cloud.sirius" level="DEBUG" additivity="false">
+          <appender-ref ref="stdout" />
+      </logger>-->
     <logger name="ch.qos" level="WARN"/>
     <logger name="org.quartz" level="WARN"/>
     <logger name="org.mybatis" level="WARN"/>
@@ -74,59 +58,7 @@
     <logger name="tk.mybatis" level="WARN"/>
     <logger name="com.alibaba" level="INFO"/>
     <logger name="io.netty" level="WARN"/>
-    <logger name="reactor.netty" level="WARN"/>
     <logger name="io.lettuce" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.redisson" level="INFO"/>
-
-    <!--
-        <logger>用来设置某一个包或者具体的某一个类的日志打印级别、
-        以及指定<appender>。<logger>仅有一个name属性，
-        一个可选的level和一个可选的 addtivity 属性。
-        name:用来指定受此logger约束的某一个包或者具体的某一个类。
-        level:用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF，
-              还有一个特俗值INHERITED或者同义词NULL，代表强制执行上级的级别。
-              如果未设置此属性，那么当前logger将会继承上级的级别。
-        addtivity:是否向上级logger传递打印信息。默认是true。
-    -->
-    <!--
-        root节点是必选节点，用来指定最基础的日志输出级别，只有一个level属性
-        level:用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF，
-        不能设置为INHERITED或者同义词NULL。默认是DEBUG
-        可以包含零个或多个元素，标识这个appender将会添加到这个logger。
-    -->
-    <!-- 开发环境输出至控制台 -->
-    <springProfile name="dev">
-        <logger name="com.alibaba.nacos" level="OFF" addtivity="false"> </logger>
-        <root level="INFO">
-            <appender-ref ref="stdout" />
-        </root>
-    </springProfile>
-
-    <!-- 测试环境输出至文件 -->
-    <springProfile name="test">
-        <root level="INFO">
-            <appender-ref ref="stdout" />
-            <appender-ref ref="FILE" />
-        </root>
-    </springProfile>
-
-
-    <!-- 生产环境输出至文件 -->
-    <springProfile name="prod">
-        <root level="INFO">
-            <appender-ref ref="stdout" />
-            <appender-ref ref="FILE" />
-        </root>
-    </springProfile>
-
-    <!-- k8s环境输出至文件 -->
-    <springProfile name="k8s">
-        <root level="INFO">
-            <appender-ref ref="stdout" />
-            <appender-ref ref="FILE" />
-        </root>
-    </springProfile>
-
-
 </configuration>
