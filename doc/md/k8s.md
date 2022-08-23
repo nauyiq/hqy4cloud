@@ -286,6 +286,29 @@ Kubernetes集群还依赖于一组称为"附件"(add-ons)的组件以提供完�
 
 
 
+**异地云服务器通过zeroTier构建局域网**
+
+```shell
+# moon主服务器配置
+https://www.likecs.com/show-204925398.html
+
+# 客服端 服务器配置
+curl -s https://install.zerotier.com | sudo bash
+systemctl start zerotier-one
+zerotier-cli join 233ccaac2786d11b #后面为zero控制台显示的id
+cd /var/lib/zerotier-one
+mkdir moons.d
+cd moons.d/
+systemctl restart zerotier-one
+
+```
+
+
+
+
+
+
+
 **设置防火墙为Iptables并设置空规则**
 
 ```shell
@@ -2420,7 +2443,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 - Config（配置数据）：部署时设置到Chart中的配置数据。
 
 - Release：基于Chart和Config部署到K8S集群中运行的一个实例。一个Chart可以被部署多次，每次的Release都不相同。
-   
+
 
 ## 2. helm安装
 
