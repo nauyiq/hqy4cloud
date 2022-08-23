@@ -2040,3 +2040,484 @@ MWYyZDFlMmU2N2Rm
 
 
 
+
+
+
+
+# 存储卷
+
+## 1. 简介
+
+> `Pod`本身具有生命周期，这就带了一系列的问题，第一，当一个容器损坏之后，`kubelet`会重启这个容器，但是文件会丢失-这个容器会是一个全新的状态；第二，当很多容器在同一`Pod`中运行的时候，很多时候需要数据文件的共享。`Docker`支持配置容器使用存储卷将数据持久存储于容器自身文件系统之外的存储空间之中，它们可以是节点文件系统或网络文件系统之上的存储空间。相应的，`kubernetes`也支持类似的存储卷功能，不过，其存储卷是与`Pod`资源绑定而非容器。
+>
+> 简单来说，存储卷是定义在`Pod`资源之上、可被其内部的所有容器挂载的共享目录，它关联至某外部的存储设备之上的存储空间，从而独立于容器自身的文件系统，而数据是否具有持久能力取决于存储卷自身是否支持持久机制。`Pod`、容器与存储卷的关系图如下。
+>
+> ![1591336181084-89a6a99e-0d9e-4ccb-a5df-a42f43a44605](images/1591336181084-89a6a99e-0d9e-4ccb-a5df-a42f43a44605.png)
+
+
+
+## 2. Kubernetes支持的存储卷类型
+
+> `Kubernetes`支持非常丰富的存储卷类型，包括本地存储（节点）和网络存储系统中的诸多存储机制，还支持`Secret`和`ConfigMap`这样的特殊存储资源。例如，关联节点本地的存储目录与关联`GlusterFS`存储系统所需要的配置参数差异巨大，因此指定存储卷类型时也就限定了其关联到的后端存储设备。通过命令`# kubectl explain pod.spec`可以查看当前`kubernetes`版本支持的存储卷类型。常用类型如下：
+>
+> - 非持久性存储
+>
+>
+> - emptyDir
+>
+>
+> - hostPath
+>
+>
+> - 网络连接性存储
+>
+>
+> - SAN：iscsi
+>
+>
+> - NFS：nfs、cfs
+>
+>
+> - 分布式存储
+>
+>
+> - glusterfs、cephfs、rbd
+>
+>
+> - 云端存储
+>
+>
+> - awsElasticBlockStore、azureDisk、gitRepo
+
+
+
+## 3. 存储卷的使用方式
+
+> 在Pod中定义使用存储卷的配置由两部分组成：一是通过`.spec.volumes`字段定义在`Pod`之上的存储卷列表，其支持使用多种不同类型的存储卷且配置参数差别很大；另一个是通过`.spce.containers.volumeMounts`字段在容器上定义的存储卷挂载列表，它只能挂载当前`Pod`资源中定义的具体存储卷，当然，也可以不挂载任何存储卷。
+
+在Pod级别定义存储卷时，`.spec.volumes`字段的值为对象列表格式，每个对象为一个存储卷的定义，由存储卷名称（`.spec.volumes.name <string>`）或存储卷对象（`.spec.volumes.VOL_TYPE <Object>`）组成，其中VOL_TYPE是使用的存储卷类型名称，它的内嵌字段随类型的不同而不同。下面示例定义了由两个存储卷组成的卷列表，一个为`emptyDir`类型，一个是`gitRepo`类型。
+
+```shell
+......
+volumes:
+- name: data
+  emptyDir: {}
+- name: example
+  gitRepo:
+    repository: https://github.com/ikubernetes/k8s_book.git
+    revision: master
+    directory:
+```
+
+无论何种类型的存储卷，挂载格式基本上都是相同的，通过命令`# kubectl explain pod.spec.containers.volumeMounts` 可以进行查看。在容器中顶一个挂载卷时的通用语法形式如下：
+
+```
+......
+volumeMounts:
+- name	<string> -required-      #指定要挂载的存储卷的名称，必选字段
+  mountPath	<string> -required-  #挂载点路径，容器文件系统的路径，必选字段
+  readOnly	<boolean>            #是否挂载为只读卷
+  subPath	<string>             #挂载存储卷时使用的子路径，及mountPath指定的路径下使用一个子路径作为其挂载点。
+```
+
+示例，容器`myapp`将上面定义的`data`存储卷挂载于`/var/log/myapp`，将`examply`挂载到`/webdata/example`目录。
+
+```shell
+spec:
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+    volumeMounts:
+    - name: data
+      mountPath: /var/log/myapp/
+    - name: example
+      mountPath: /webdata/example/
+```
+
+
+
+## 4. EmptyDir 存储卷
+
+> `emptyDir`存储卷是`Pod`对象生命周期中的一个临时目录，类似于`Docker`上的`“docker 挂载卷”`，在`Pod`对象启动时即被创建，而在`Pod`对象被移除时会被一并删除（永久删除）。`Pod`中的容器都可以读写这个目录，这个目录可以被挂载到各个容器相同或者不相同的路径下。注意：一个容器崩溃了不会导致数据的丢失，因为容器的崩溃并不移除`Pod`。
+>
+> **emptyDir的作用：**
+>
+> 1. 普通空间，基于磁盘的数据存储
+> 2. 作为从崩溃中恢复的备份点
+> 3. 存储那些需要长久保存的数据，例如`web`服务中的数据
+
+**emptyDir字段说明：**
+
+```shell
+kubectl explain pod.spec.volumes.emptyDir
+medium	<string>：    #此目录所在的存储介质的类型，可取值为“default”或“Memory”，默认为default，表示使用节点的的默认存储介质；Memory表示使用基于RAM的临时的文件系统temfs，空间受限于内存，但性能非常好，通常用于为容器中的应用提供缓存空间。
+sizeLimit	<string>    #当前存储卷的空间限额，默认值为nil，表示不限制；不过，在medium字段值为“Memory”时建议务必定义此限额。
+```
+
+**emptyDir示例：**
+
+```shell
+vim vol-emptydir.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vol-emptydir-pod
+spec:
+  volumes:    #定义存储卷
+  - name: html    #定义存储卷的名称
+    emptyDir: {}    #定义存储卷的类型
+  containers:
+  - name: nginx
+    image: nginx:1.12
+    volumeMounts:    #在容器中定义挂载存储卷的名和路径
+    - name: html
+      mountPath: /usr/share/nginx/html
+  - name: sidecar
+    image: alpine
+    volumeMounts:    #在容器中定义挂载存储卷的名和路径
+    - name: html
+      mountPath: /html
+    command: ["/bin/sh", "-c"]
+    args:
+    - while true; do
+        echo $(hostname) $(date) >> /html/index.html;
+      sleep 10;
+      done
+```
+
+
+
+## 5. hostPath 存储卷
+
+> `hostPath`类型的存储卷是指将工作节点上的某文件系统的目录或文件挂载于`Pod`中的一种存储卷，独立于`Pod`资源的生命周期，具有持久性。在`Pod`删除时，数据不会丢失。
+>
+> ![1591336288526-1312168e-70d0-4d26-8c6b-19ca4ee9a1ec](images/1591336288526-1312168e-70d0-4d26-8c6b-19ca4ee9a1ec.png)
+
+**hostPath字段说明：**
+
+```shell
+kubectl explain pod.spec.volumes.hostPath
+path	<string> -required-    #指定工作节点上的目录路径
+type	<string>    #指定存储卷类型
+```
+
+
+
+**type类型如下：**
+
+- DirectoryOrCreate    指定的路径不存在时自动创建其权限为0755的空目录,属主和属组为kubelet
+- Directory            必须存在的目录路径
+- FileOrCreate         指定的路径不存在时自动创建其权限为0644的空文件，属主和属组为kubelet
+- File                 必须存在的文件路径
+- Socket               必须存在的Socket文件路径
+- CharDevice           必须存在的字符设备文件路径
+- BlockDevice          必须存在的块设备文件路径
+
+
+
+**hostPath示例：**
+
+```shell
+vim vol-hostpath.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-vol-hostpath
+  namespace: default
+spec:
+  containers:
+  - name: myapp
+    image: nginx:1.15
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+  volumes:
+  - name: html
+    hostPath:
+      path: /data/pod/volume1
+      type: DirectoryOrCreate
+```
+
+
+
+## 6. nfs 存储卷
+
+> `nfs`存储卷用于将事先存在的`NFS`服务器上导出的存储空间挂载到`Pod`中供容器使用。与`emptyDir`不同的是，当`pod`资源删除时`emptyDir`也会被删除，而`NFS`在`Pod`对象删除时仅是被卸载而非删除。这就意味`NFS`能够允许我们提前对数据进行处理，而且这些数据可以在`Pod`之间相互传递，并且`NFS`可以同时被多个`Pod`挂载并进行读写。
+
+
+
+**nfs字段说明：**
+
+```shell
+server	<string> -required-    #NFS服务器的IP地址或主机名，必选字段
+path	<string> -required-    #NFS服务器导出（共享）的文件系统路径，必选字段
+readOnly	<boolean>          #是否以只读方式挂载，默认为false
+```
+
+
+
+**nfs示例：**
+
+1）首先准备一个nfs服务器
+
+```shell
+#安装软件
+yum -y install nfs-utils rpcbind nfs-common
+#创建共享目录
+mkdir -p /nfs/data
+#编辑配置文件配置共享目录
+vim /etc/exports 
+/nfs/data  192.168.191.0/24(rw,no_root_squash)
+#启动rpcbind服务（nfs依赖服务）
+systemctl start rpcbind
+#启动nfs
+systemctl start nfs
+```
+
+2) 编辑资源清单文件
+
+```shell
+vim vol-nfs.yaml
+```
+
+
+
+# ![1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8](C:\Users\AD04\Desktop\1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8.png)PV-PVC
+
+## 1. 介绍
+
+> 前面提到`Kubernetes`提供那么多存储接口，但是首先`Kubernetes`的各个`Node`节点能管理这些存储，但是各种存储参数也需要专业的存储工程师才能了解，由此我们的`Kubernetes`管理变的更加复杂。由此`kubernetes`提出了`PV`和`PVC`的概念，这样开发人员和使用者就不需要关注后端存储是什么，使用什么参数等问题。如下图：
+>
+> ![1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8](images/1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8-0801656259.png)
+
+**PV：**
+
+> `PersistentVolume`（`PV`）是集群中已由管理员配置的一段网络存储。集群中的资源就像一个节点是一个集群资源。`PV`是诸如卷之类的卷插件，但是具有独立于使用`PV`的任何单个`Pod`的生命周期。该`API`对象捕获存储的实现细节，即`NFS`，`ISCSI`或云提供商特定的存储系统。
+
+**PVC：**
+
+> `PersistentVolumeClaim`（`PVC`）是用户存储的请求。它类似于`Pod`。`Pod`消耗节点资源，`PVC`消耗存储资源。`Pod`可以请求特定级别的资源（`CPU`和内存）。权限要求可以请求特定的大小和访问模式。
+
+> 虽然`PersistentVolumeClaims`允许用户使用抽象存储资源，但是常见的是，用户需要具有不同属性（如性能）的`PersistentVolumes`，用于不同的问题。集群管理员需要能够提供多种不同于`PersistentVolumes`的`PersistentVolumes`，而不仅仅是大小和访问模式，而不会使用户了解这些卷的实现细节。对于这些需求，存在`StorageClass`资源。
+
+> `StorageClass`为管理员提供了一种描述他们提供的存储的“类”的方法。不同的类可能映射到服务质量级别，或备份策略，或者由集群管理员确定的任意策略。`Kubernetes`本身对于什么类别代表是不言而喻的。这个概念有时在其它存储系统中称为“配置文件”
+
+
+
+## 2. 生命周期
+
+> `PV`是集群中的资源。`PVC`是对这些资源的请求，也是对资源的索赔检查。`PV`和`PVC`之间的相互作用遵循这个生命周期：
+>
+> `Provisioning—>Binding—>Using—>Releasing—>Recycling`
+
+**供应准备Provisioning**
+
+> `PV`有两种提供方式：静态或者动态
+>
+> - Static：集群管理员创建多个`PV`。它们携带可供集群用户使用的真实存储的详细信息。它们存在于`Kubernetes API`中，可用于消费。
+>
+>
+> - Dynamic：当管理员创建的静态`PV`都不匹配用户的`PersistentVolumesClaim`时，集群可能会尝试为`PVC`动态配置卷。此配置基于`StorageClasses：PVC`必须请求一个类，并且管理员必须已经创建并配置该类才能进行动态配置。要求该类的声明有效地位自己禁用动态配置。
+
+**绑定Binding**
+
+> 用户创建`PVC`并指定需要的资源和访问模式。在找到可用`PV`之前，`PVC`会保持未绑定状态。
+
+**使用Using**
+
+> 用户可在`Pod`中像`volume`一样使用`PVC`。
+
+**释放Releasing**
+
+> 用户删除`PVC`来回收存储资源，`PV`将变成`“released”`状态。由于还保留着之前的数据，这些数据要根据不同的策略来处理，否则这些存储资源无法被其它`PVC`使用
+
+**回收Recycling**
+
+> `PV`可以设置三种回收策略：保留（`Retain`）、回收（`Recycle`）和删除（`Delete`）。
+
+
+
+## 3. 创建PV
+
+**字段说明：**
+
+`PersistentVolume Spec`主要支持以下几个通用字段，用于定义`PV`的容量、访问模式、和回收策略
+
+```shell
+capacity	<map[string]string>    #当前PV的容量；目前，capacity仅支持空间设定，将来应该还可以指定IOPS和throughput。
+accessModes	<[]string>    #访问模式；尽管在PV层看起来并无差异，但存储设备支持及启用的功能特性却可能不尽相同。例如NFS存储支持多客户端同时挂载及读写操作，但也可能是在共享时仅启用了只读操作，其他存储系统也存在类似的可配置特性。因此，PV底层的设备或许存在其特有的访问模式，用户使用时必须在其特性范围内设定其功能。参考：https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    - ReadWriteOnce：仅可被单个节点读写挂载；命令行中简写为RWO。
+    - ReadOnlyMany：可被多个节点同时只读挂载；命令行中简写为ROX。
+    - ReadWriteMany：可被多个节点同时读写挂载；命令行中简写为RWX。
+    
+persistentVolumeReclaimPolicy	<string>    #PV空间被释放时的处理机制；可用类型仅为Retain（默认）、Recycle或Delete，具体说明如下。
+    - Retain：保持不动，由管理员随后手动回收。
+    - Recycle：空间回收，即删除存储卷目录下的所有文件（包括子目录和隐藏文件），目前仅NFS和hostPath支持此操作。
+    - Delete：删除存储卷，仅部分云端存储系统支持，如AWS EBS、GCE PD、Azure Disk和Cinder
+
+volumeMode	<string>    #卷模型，用于指定此卷可被用作文件系统还是裸格式的块设备；默认为Filesystem。
+
+storageClassName	<string>    #当前PV所属的StorageClass的名称；默认为空值，即不属于任何StorageClass。
+
+mountOptions	<[]string>    #挂载选项组成的列表，如ro、soft和hard等。
+```
+
+
+
+## 4. 创建PVC
+
+**字段说明：**
+
+`PersistentVolumeClaim`是存储卷类型的资源，它通过申请占用某个`PersistentVolume`而创建，它与`PV`是一对一的关系，用户无须关系其底层实现细节。申请时，用户只需要指定目标空间的大小、访问模式、`PV`标签选择器和`StorageClass`等相关信息即可。`PVC`的`Spec`字段的可嵌套字段具体如下：
+
+```shell
+# kubectl explain pvc.spec
+accessModes	<[]string>    #当前PVC的访问模式，其可用模式与PV相同
+
+resources	<Object>    #当前PVC存储卷需要占用的资源量最小值；目前，PVC的资源限定仅指其空间大小
+
+selector	<Object>    #绑定时对PV应用的标签选择器（matchLabels）或匹配条件表达式（matchEx-pressions），用于挑选要绑定的PV；如果同时指定了两种挑选机制，则必须同时满足两种选择机制的PV才能被选出
+
+storageClassName	<string>    #所依赖的存储卷的名称
+
+volumeMode	<string>    #卷模型，用于指定此卷可被用作于文件系统还是裸格式的块设备；默认为“Filesystem”
+
+volumeName	<string>    #用于直接指定要绑定的PV的卷名
+```
+
+### 4.1 在Pod中使用PVC
+
+在`Pod`资源中调用`PVC`资源，只需要在定义`volumes`时使用`persistentVolumeClaims`字段嵌套指定两个字段即可。具体如下：
+
+```shell
+kubectl explain pod.spec.volumes.persistentVolumeClaim
+
+claimName	<string> -required-    #要调用的PVC存储卷的名称，PVC卷要与Pod在同一名称空间中
+readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false。
+```
+
+
+
+# 集群调度
+
+
+
+# Helm
+
+## 1. 简介
+
+> Helm是一个 [Kubernetes](https://so.csdn.net/so/search?q=Kubernetes&spm=1001.2101.3001.7020) 应用的包管理工具，helm 类似于Linux系统下的包管理器，如yum/apt等，python中pip，node中的npm，可以方便快捷的将之前打包好的yaml文件快速部署进kubernetes内，方便管理维护。
+
+
+
+**Helm主要包括以下组件**
+
+- Chart：Chart是一个Helm的程序包，软件包，包含了运行一个K8S应用程序所需的镜像、依赖关系和资源定义等，也就是包含了一个应用所需资源对象的YAML文件，通常以.tgz压缩包形式提供，也可以是文件夹形式。
+- Repository（仓库）：是Helm的软件仓库，Repository本质上是一个Web服务器，该服务器保存了一系列的Chart软件包供用户下载，并且提供了该Repository的Chart包的清单文件便于查询。
+
+- Config（配置数据）：部署时设置到Chart中的配置数据。
+
+- Release：基于Chart和Config部署到K8S集群中运行的一个实例。一个Chart可以被部署多次，每次的Release都不相同。
+   
+
+## 2. helm安装
+
+```shell
+wget https://storage.googleapis.com/kubernetes-helm/helm-v2.13.1-linux-amd64.tar.gz
+
+wget https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
+
+tar -zxvf helm-v2.13.1-linux-amd64.tar.gz
+cp linux-amd64/helm /usr/local/bin/
+chmod a+x /usr/local/bin/helm 
+```
+
+
+
+另外一个值得注意的问题是`RBAC`，我们需要为`Tiller`创建一个`ServiceAccount`，让他拥有执行的权限，详细内容可以查看 Helm 文档中的[Role-based Access Control](https://docs.helm.sh/using_helm/#role-based-access-control)。 创建`rbac.yaml`
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+```
+
+```shell
+kubectl create -f rbac-config.yaml
+helm init --service-account tiller --skip-refresh
+
+docker pull sapcc/tiller:v2.13.1
+
+docker tag sapcc/tiller:v2.13.1 gcr.io/kubernetes-helm/tiller:v2.13.1
+ 
+```
+
+
+
+##  3. helm安装Dashboard
+
+**1) 拉取helm kubernetes-dashboard Chart** 
+
+```shell
+helm repo add k8s-dashboard https://kubernetes.github.io/dashboard
+
+helm fetch  k8s-dashboard/kubernetes-dashboard --version 2.0.1
+```
+
+**2) 解压后指定yaml启动**
+
+`vim kubernetes-dashboard.yaml`
+
+```yaml
+image:
+  repository: registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
+  tag: v1.10.1
+  pullPolicy: IfNotPresent
+ingress:
+  enabled: true
+  hosts:
+    - dashboard.nauyiq.com
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  tls:
+        - secretName: nauyiq.com.tls.secret
+      hosts:
+        - dashboard.xiaofu.com
+  rbac:
+  clusterAdminRole: true
+
+  serviceAccount:
+  name: dashboard-admin
+```
+
+```shell
+helm install k8s-dashboard/kubernetes-dashboard -n kubernetes-dashboard --namespace kube-system -f kubernetes-dashboard.yaml
+```
+
+
+
+
+
+
+
+
+
