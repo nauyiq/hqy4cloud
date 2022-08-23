@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  common-collector-service:
+    image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev
+    container_name: collector-service
+    volumes:
+      - /home/hongqy/docker/deploy/services/common-collector-service/logs:/home/services/common-collector-service/logs
+    #  - /home/hongqy/docker/deploy/services/common-collector-service/target:/home/services/common-collector-service/target
+    network_mode: host
+    env_file:
+      - service.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  gateway-service:
+    image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/gateway-service:1.0-dev
+    container_name: gateway-service
+    volumes:
+      - /home/hongqy/docker/deploy/services/gatewat-service/logs:/home/services/gateway-service/logs
+    network_mode: host
+    env_file:
+      - service.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  account-service:
+    image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/account-service:1.0-dev
+    container_name: account-service
+    volumes:
+      - /home/hongqy/docker/deploy/services/account-service/logs:/home/services/account-service/logs
+    network_mode: host
+    env_file:
+      - service.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager

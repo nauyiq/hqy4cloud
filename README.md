@@ -1,14 +1,18 @@
-## hqy-parent-all简介
+## hqy-parent-all
 
-各类技术栈框架整合，引入微服务相关设计，相关中间件，基础服务等
+各类技术栈整合，基于 `Spring cloud alibaba` 构建技术栈框架。
 
-+ spirng全家桶
-+ 中间件
-+ 网关限流器等等
-+ 自定义rpc
-+ netty实例...
+### common-modules
 
-基于gfw-parent进行搭建. 
+### mq-modules
+
+### oauth2-module
+
+### netty
+
+### rpc
+
+### 
 
 
 

@@ -106,6 +106,8 @@
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
+<!--                            <classpathLayoutType>custom</classpathLayoutType>-->
+<!--                            <customClasspathLayout>${artifactId}-${version}</customClasspathLayout>-->
                         </manifest>
                         <!-- <manifestEntries>
                              <Class-Path>. lib/tools-1.8.jar</Class-Path>
