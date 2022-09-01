@@ -1,0 +1,73 @@
+nacos:
+  server-addr: hongqy1024.cn:8848
+  group: DEV_GROUP
+  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+
+#开发环境
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        file-extension: yaml
+        extension-configs[0]:
+          data-id: redis-config.yaml
+          group: ${nacos.group}
+          refresh: true
+        extension-configs[1]:
+          data-id: cloud-gateway.yaml
+          group: ${nacos.group}
+          refresh: true
+      discovery:
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        server-addr: ${nacos.server-addr}
+        ephemeral: true # false为永久实例，true表示临时实例
+
+    sentinel:
+      # 取消懒加载
+      eager: true
+      # 启用sentinel
+      enabled: true
+      # sentinel控制台
+      transport:
+        dashboard: 172.31.1.1:8080 #sentinel控制台访问路径
+        # sentinel控制台和服务端的交互端口 默认8719
+        port: 8719
+      # sentinel加载nacos远程配置规则
+      datasource:
+#        flow:
+#          nacos:
+#            serverAddr: ${nacos.server-addr}
+#            namespace: ${nacos.namespace}
+#            groupId: ${nacos.group}
+#            dataId: sentinel-gateway-flow
+#            data-type: json
+#            ruleType: flow
+        gw-flow:
+          nacos:
+            serverAddr: ${nacos.server-addr}
+            namespace: ${nacos.namespace}
+            groupId: ${nacos.group}
+            dataId: sentinel-gateway-gw-flow
+            data-type: json
+            ruleType: gw-flow
+        gw-api-flow:
+          nacos:
+            serverAddr: ${nacos.server-addr}
+            namespace: ${nacos.namespace}
+            groupId: ${nacos.group}
+            dataId: sentinel-gateway-gw-api-flow
+            data-type: json
+            ruleType: gw-api-group
+
+# 支持动态路由
+gateway:
+  dynamicRoute:
+    dataId: gateway-routing.json
+    group: ${nacos.group}
+    enabled: true
+    type: nacos
+
