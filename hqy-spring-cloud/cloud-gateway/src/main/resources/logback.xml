@@ -38,11 +38,20 @@
         </encoder>
     </appender>
 
+    <appender name ="ASYNC" class= "ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold >20</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1000</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref ="rollingFile"/>
+    </appender>
+
 
     <!-- 控制台输出日志级别 -->
     <root value="DEBUG">
         <appender-ref ref="stdout"/>
-        <appender-ref ref="rollingFile"/>
+        <appender-ref ref="ASYNC"/>
     </root>
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.cloud.sirius为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->

@@ -37,6 +37,8 @@ public interface StringConstants {
 
     String OS_ARCH_PREFIX = "aarch64";
 
+    String BOOTSTRAP = "bootstrap";
+
 
 
     interface Auth {
@@ -195,6 +197,14 @@ public interface StringConstants {
          * ,
          */
         String COMMA = ",";
+    }
+
+    interface File {
+
+        String YML = ".yml";
+
+        String YAML = ".yaml";
+
     }
 
 

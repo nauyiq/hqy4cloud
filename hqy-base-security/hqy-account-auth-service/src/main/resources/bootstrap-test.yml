@@ -1,7 +1,7 @@
 nacos:
-  server-addr: hongqy1024.cn:8848
-  group: DEV_GROUP
-  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+  server-addr: nacos-headless:8888
+  group: TEST_GROUP
+  namespace: a7f78604-f575-48cb-bf17-ab9a2b09b516
 
 spring:
   cloud:

@@ -108,34 +108,22 @@
 
     <build>
         <finalName>hqy-gateway-service</finalName>
-        <resources>
-<!--            <resource>-->
-                <!-- <targetPath>${project.build.directory}/classes</targetPath> -->
-<!--                <directory>src/main/resources</directory>-->
-<!--                <filtering>false</filtering>-->
-<!--                <includes>-->
-<!--                    <include>**/*.xml</include>-->
-<!--                    <include>*.properties</include>-->
-<!--                    <include>*.yml</include>-->
-<!--                    <include>*.key</include>-->
-<!--                    <include>**/*.factories</include>-->
-<!--                </includes>-->
-<!--            </resource>-->
-        </resources>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.GatewayMain</mainClass>
+                            <mainClass>com.hqy.Main</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
+                            <classpathLayoutType>simple</classpathLayoutType>
                         </manifest>
                        <!-- <manifestEntries>
                             <Class-Path>. lib/tools-1.8.jar</Class-Path>
@@ -159,7 +147,6 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
-                            <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
                 </executions>

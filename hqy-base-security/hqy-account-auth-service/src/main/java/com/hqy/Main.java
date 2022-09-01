@@ -23,10 +23,10 @@ import java.util.List;
 @MapperScan(basePackages = "com.hqy.*.dao")
 @SpringBootApplication
 @EnableDiscoveryClient
-public class AccountServiceMain {
+public class Main {
 
     public static void main(String[] args) {
-        SpringApplication.run(AccountServiceMain.class, args);
+        SpringApplication.run(Main.class, args);
         ProjectContextInfo.startPrintf();
     }
 

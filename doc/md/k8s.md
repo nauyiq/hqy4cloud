@@ -1,5 +1,5 @@
 ---
-typora-copy-images-to: images
+ typora-copy-images-to: images
 ---
 
 # Kubernetes
@@ -305,6 +305,12 @@ systemctl restart zerotier-one
 
 
 
+**安装依赖包**
+
+```shell
+yum install -y contrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git 
+```
+
 
 
 
@@ -324,14 +330,6 @@ yum -y install iptables-services && systemctl start iptables && systemctl enable
 ```shell
 swapoff -a && sed -ri 's/.*swap.*/#&/' /etc/fstab
 setenforce 0 && sed -i 's/enforcing/disabled/' /etc/selinux/config
-```
-
-
-
-**安装依赖包**
-
-```shell
-yum install -y conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git
 ```
 
 
@@ -362,12 +360,11 @@ sysctl -p /etc/sysctl.d/kubernetes.conf
 **调整系统时区**
 
 ```shell
-# 设置系统时区为 中国/上海
-timedatectl set-timezone Asia/上海
-#将当前UTC时间写入硬件时钟
+timedatectl set-timezone Asia/Shanghai
+ #将当前的 UTC 时间写入硬件时钟
 timedatectl set-local-rtc 0
-#重启依赖于系统时间的服务
-systemctl restart rsyslong
+ #重启依赖于系统时间的服务
+systemctl restart rsyslog 
 systemctl restart crond
 ```
 
@@ -440,11 +437,138 @@ modprobe -- nf_conntrack_ipv4
 EOF
 
 chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules && lsmod | grep -e ip_vs -e nf_conntract_ipv4
+
+
+# 如果高内核版本修改不成功
+# modprobe: FATAL: Module nf_conntrack_ipv4 not found.
+则改为
+cat > /etc/sysconfig/modules/ipvs.modules <<EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
+EOF
+
+chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules && lsmod | grep -e ip_vs -e nf_conntract
 ```
 
 
 
-### 2.3 kubeadm初始化
+**所有节点安装ipset**
+
+> iptables是Linux服务器上进行网络隔离的核心技术，内核在处理网络请求时会对iptables中的策略进行逐条解析，因此当策略较多时效率较低；而是用IPSet技术可以将策略中的五元组(协议，源地址，源端口,目的地址，目的端口)合并到有限的集合中，可以大大减少iptables策略条目从而提高效率。测试结果显示IPSet方式效率将比iptables提高100倍
+
+```shell
+yum install ipset -y
+
+# 为了方面ipvs管理，这里安装一下ipvsadm。
+
+yum install ipvsadm -y
+
+
+```
+
+
+
+> kubernetes 1.20以上版本不再支持`docker`， 具体原因查看下面文章
+>
+> - https://cloud.tencent.com/developer/article/1758588
+> - https://kubernetes.io/zh-cn/blog/2020/12/02/dont-panic-kubernetes-and-docker/
+
+
+
+### 2.3 Containerd 安装
+
+> 在安装containerd前，我们需要优先升级`libseccomp`	
+>
+> 在centos7中yum下载`libseccomp`的版本是2.3的，版本不满足我们最新containerd的需求，需要下载2.4以上的
+
+```shell
+rpm -qa | grep libseccomp
+libseccomp-2.3.1-4.el7.x86_64
+#卸载原来的
+rpm -e libseccomp-2.3.1-4.el7.x86_64 --nodeps
+#下载高于2.4以上的包
+wget http://rpmfind.net/linux/centos/8-stream/BaseOS/x86_64/os/Packages/libseccomp-2.5.1-1.el8.x86_64.rpm
+#安装
+rpm -ivh libseccomp-2.5.1-1.el8.x86_64.rpm 
+
+```
+
+
+
+**下载安装containerd**
+
+github地址:<https://containerd.io/downloads/>
+
+Containerd安装我们使用`1.6.1`版本号
+
+> containerd-1.6.1-linux-amd64.tar.gz 只包含containerd
+> `cri-containerd-cni-1.6.4-linux-amd64.tar.gz` 包含containerd以及cri runc等相关工具包，建议下载本包
+>
+> ```shell
+> #下载tar.gz包
+> #containerd工具包，包含cri runc等
+> wget https://github.com/containerd/containerd/releases/download/v1.6.4/cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+> #备用下载地址
+> wget https://d.frps.cn/file/kubernetes/containerd/cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+>
+> tar zxvf cri-containerd-cni-1.6.4-linux-amd64.tar.gz -C / #我们直接让它给我们对应的目录给替换掉
+> #创建配置文件目录
+> mkdir /etc/containerd -p
+>
+> #生成默认配置文件
+> containerd config default > /etc/containerd/config.toml
+>
+> 配置systemd作为容器的cgroup driver
+> sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+>
+> #设置开机启动
+> systemctl daemon-reload
+> systemctl enable containerd --now
+> ```
+
+
+
+**高可用k8s集群安装**
+
+
+
+> 以前做法：多个master服务器，然后使用keepalived监控master节点的可用性和故障转移，使用haproxy对master进行均衡负载。
+> 新的解决方案：利用K8S原生的kube-vip实现master高可用。
+> 建议使用kube-vip解决方案，这样，不存在VIP节点的问题，其中心思想也是vip架构，但是通过公平选举诞生的。
+
+
+
+**负载均衡安装设置(kube-vip)**
+
+> ```shell
+> # 设置VIP地址（仅在master01上部署先）
+>
+>   mkdir -p /etc/kubernetes/manifests/
+>   export VIP=192.168.191.6
+>   export INTERFACE=ztr4nuy7j4
+>   ctr image pull ghcr.io/kube-vip/kube-vip:v0.3.8
+>   ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:v0.3.8 vip \
+>   /kube-vip manifest pod \
+>   --interface $INTERFACE \
+>   --vip $VIP \
+>   --controlplane \
+>   --services \
+>   --arp \
+>   --leaderElection | tee  /etc/kubernetes/manifests/kube-vip.yaml
+>
+> ```
+>
+> 
+
+
+
+
+
+### 2.4 kubeadm初始化
 
 `说明：下面初始化环境工作master节点和node节点都需要执行`
 
@@ -463,36 +587,82 @@ repo_gpgcheck=0
 gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.grp
 EOF
 
-yum -y install kubelet-1.15.2 kubeadm-1.15.2 kubectl-1.15.2
+yum -y install kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+
 systemctl enable kubelet.service
 ```
 
 
 
+
+
 ```shell
 #无法翻墙方案解决
-docker pull  registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.3.10
-docker pull coredns/coredns:1.3.1
+# 查看kubeadm 需要的镜像 kubeadm config images list
+docker pull  registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.23.5
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.23.5
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.23.5
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.23.5
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.1-0
+
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.8.6
 
 #重新打tag
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.15.2 k8s.gcr.io/kube-apiserver:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.15.2 k8s.gcr.io/kube-controller-manager:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.15.2 k8s.gcr.io/kube-scheduler:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.15.2 k8s.gcr.io/kube-proxy:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 k8s.gcr.io/pause:3.1
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.3.10 k8s.gcr.io/etcd:3.3.10
-docker tag coredns/coredns:1.3.1 k8s.gcr.io/coredns:1.3.1
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.23.5 k8s.gcr.io/kube-apiserver:v1.23.5
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.23.5 k8s.gcr.io/kube-controller-manager:v1.23.5
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.23.5 k8s.gcr.io/kube-scheduler:v1.23.5
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.23.5 k8s.gcr.io/kube-proxy:v1.23.5
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6 k8s.gcr.io/pause:3.6
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.1-0 k8s.gcr.io/etcd:3.5.1-0
+
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.8.6 k8s.gcr.io/coredns/coredns:v1.8.6 
+```
+
+
+
+```shell
+wget https://d.frps.cn/file/kubernetes/image/k8s_all_1.23.5.tar
+ctr -n k8s.io i import k8s_all_1.23.5.tar
+
+#删除k8s.io
+ ctr -n k8s.io i rm $(ctr -n k8s.io i ls -q)
+
+for i in master1 master2 master3 worker1 worker2 worker3;do
+    scp k8s_all_1.23.5.tar root@$i:/usr/local/kubernetes/
+    ssh root@$i ctr -n k8s.io i import k8s_all_1.23.5.tar
+done
+```
+
+
+
+```shell
+kubectl get pod -o wide -n kube-system|grep etcd
+
+kubectl exec -ti etcd-master1 -n kube-system sh
+export ETCDCTL_API=3
+etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list
 
 
 ```
 
+
+
+
+
 ```shell
 kubeadm config print init-defaults > kubeadm-config.yaml
+kubeadm config print init-defaults --component-configs KubeletConfiguration > kubeadm.yaml
 
 localAPIEndpoint:
   advertiseAddress: 192.168.191.93
@@ -509,10 +679,48 @@ featureGates:
 mode: ipvs
 
 
-kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs | tee kubeadm-init.log
+#指定Kubernetes工作节点内网IP¶
+#所以我们需要对应修改或创建 /etc/default/kubelet :
+KUBELET_EXTRA_ARGS="--node-ip=192.168.191.3"
+
+
+kubeadm init --config kubeadm-init.yaml --upload-certs --node-name master1
+
+
+kubeadm join k8s.hongqy1024.cn:6443 --token abcdef.0123456789abcdef \
+	--discovery-token-ca-cert-hash sha256:341ff8d56b811e27a757377e7d22dc3d0373092fbc11803027277a96cce973a8 \
+	--control-plane --certificate-key 50baa00c00e1c682a60da5a83c780bfc54c71932bcc985aea13b0cdef0d5ae14 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=192.168.191.3
+
+kubeadm join k8s.hongqy1024.cn:6443 --token 2rqxy6.q2sci6osacmggpes --discovery-token-ca-cert-hash sha256:341ff8d56b811e27a757377e7d22dc3d0373092fbc11803027277a96cce973a8 --node-name worker1 --cri-socket /run/containerd/containerd.sock
+	
 
 export KUBECONFIG=/etc/kubernetes/kubelet.conf
 ```
+
+
+
+**重新初始化集群**
+
+```shell
+kubeadm reset -f
+rm -rf /etc/kubernetes/*
+rm -rf ~/.kube/*
+rm -rf /var/lib/etcd/*
+rm -rf /etc/cni/net.d
+ipvsadm --clear
+
+lsof -i :6443|grep -v "PID"|awk '{print "kill -9",	$2}'|sh   
+lsof -i :10259|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+lsof -i :10257|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+lsof -i :10250|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+lsof -i :2379|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+lsof -i :2380|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+
+```
+
+
+
+
 
 **部署网络**
 
@@ -525,8 +733,6 @@ kubectl  apply -f
 https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 kubectl create -f kube-flannel.yaml
-
-export KUBECONFIG=/etc/kubernetes/admin.conf
 
 #如果不会用eth0网卡，flannel 和 calico都可以指定网卡
 
@@ -579,7 +785,75 @@ kubectl edit svc common-collect-service
 #查看日志
 kubectl logs --tail 200 -f common-collect-service-8557844c57-ztwc7
 
+
+sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
 ```
+
+
+
+```shell
+cat<<EOF | kubectl delete -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx:alpine
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - name: busybox
+    image: abcdocker9/centos:v1
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+EOF
+
+for i in master2 master3 worker1 worker2 worker3
+do
+   ssh root@$i curl -s 10.104.83.201   #nginx svc ip
+   ssh root@$i curl -s 10.244.182.3   #pod ip
+done
+
+
+
+
+```
+
+
 
 
 
@@ -2296,7 +2570,7 @@ vim /etc/exports
 #启动rpcbind服务（nfs依赖服务）
 systemctl start rpcbind
 #启动nfs
-systemctl start nfs
+  systemctl start nfs
 ```
 
 2) 编辑资源清单文件
@@ -2307,7 +2581,7 @@ vim vol-nfs.yaml
 
 
 
-# ![1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8](C:\Users\AD04\Desktop\1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8.png)PV-PVC
+# PV-PVC
 
 ## 1. 介绍
 
@@ -2448,7 +2722,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 ## 2. helm安装
 
 ```shell
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.13.1-linux-amd64.tar.gz
+wget https://storage.googleapis.com/kubernetes-helm/helm-v3.8.2-linux-amd64.tar.gz
 
 wget https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
 

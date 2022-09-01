@@ -97,18 +97,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.CommonCollectorMain</mainClass>
+                            <mainClass>Main</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-<!--                            <classpathLayoutType>custom</classpathLayoutType>-->
+                            <classpathLayoutType>simple</classpathLayoutType>
 <!--                            <customClasspathLayout>${artifactId}-${version}</customClasspathLayout>-->
                         </manifest>
+<!--                        <manifestEntries>-->
+<!--                            <Class-Path>.</Class-Path>-->
+<!--                        </manifestEntries>-->
                         <!-- <manifestEntries>
                              <Class-Path>. lib/tools-1.8.jar</Class-Path>
                          </manifestEntries>-->
@@ -131,7 +135,6 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
-                            <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
                 </executions>

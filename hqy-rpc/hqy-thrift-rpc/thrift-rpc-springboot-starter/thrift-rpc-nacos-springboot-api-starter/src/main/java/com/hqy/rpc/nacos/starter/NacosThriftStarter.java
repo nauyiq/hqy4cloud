@@ -1,5 +1,6 @@
 package com.hqy.rpc.nacos.starter;
 
+import cn.hutool.core.net.NetUtil;
 import com.hqy.base.common.base.lang.ActuatorNodeEnum;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.RpcException;
@@ -13,6 +14,7 @@ import com.hqy.rpc.common.support.RegistryInfo;
 import com.hqy.rpc.registry.nacos.node.Metadata;
 import com.hqy.rpc.registry.nacos.util.NacosConfigurationUtils;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.IpUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
@@ -145,18 +147,34 @@ public abstract class NacosThriftStarter implements RPCStarter {
 
     public static RegistryInfo buildRegistryInfo(String serverAddr) {
         try {
+            String hostAddr;
+            int port;
             String[] hostAndPort = serverAddr.split(StringConstants.Symbol.COLON);
-            if (hostAndPort.length == 0) {
-                return new RegistryInfo(serverAddr);
+            if (hostAndPort.length == 1) {
+                //if not ip string. try to analysis host.
+                hostAddr = getIpByHost(serverAddr);
+                port = 0;
+            } else {
+                port = Integer.parseInt(hostAndPort[1]);
+                hostAddr = hostAndPort[0];
+                if (!IpUtil.isIP(hostAddr)) {
+                    //if not ip string. try to analysis host.
+                    hostAddr = getIpByHost(hostAddr);
+                }
             }
-            String host = hostAndPort[0];
-            int port = Integer.parseInt(hostAndPort[1]);
-            AssertUtil.isTrue(StringUtils.isNotBlank(host) && port != 0, "host is empty.");
-            return new RegistryInfo(host, port, serverAddr);
+            RegistryInfo registryInfo = new RegistryInfo(hostAddr, port, serverAddr);
+            log.info("Build registry info end, registryInfo = {}", registryInfo);
+            return registryInfo;
         } catch (Throwable cause) {
             log.error("Failed execute to buildConnectionInfo, cause {}, serverAddr {}", cause.getMessage(), serverAddr, cause);
             throw cause;
         }
+    }
+
+    protected static String getIpByHost(String serverAddr) {
+        String ip = NetUtil.getIpByHost(serverAddr);
+        AssertUtil.isTrue(StringUtils.isNotBlank(ip) && IpUtil.isIP(ip), "Invalid input serverAddr, addr: " + serverAddr);
+        return ip;
     }
 
 }
