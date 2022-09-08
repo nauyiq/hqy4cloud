@@ -71,10 +71,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-validator</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
 
         <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
 <!--        <dependency>-->
@@ -108,11 +109,9 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <classpathLayoutType>simple</classpathLayoutType>
-<!--                            <customClasspathLayout>${artifactId}-${version}</customClasspathLayout>-->
                         </manifest>
-<!--                        <manifestEntries>-->
-<!--                            <Class-Path>.</Class-Path>-->
-<!--                        </manifestEntries>-->
+
+
                         <!-- <manifestEntries>
                              <Class-Path>. lib/tools-1.8.jar</Class-Path>
                          </manifestEntries>-->

@@ -486,7 +486,7 @@ yum install ipvsadm -y
 > - https://cloud.tencent.com/developer/article/1758588
 > - https://kubernetes.io/zh-cn/blog/2020/12/02/dont-panic-kubernetes-and-docker/
 >
-> 在安装containerd前，我们需要优先升级`libseccomp`	
+>   在安装containerd前，我们需要优先升级`libseccomp`
 >
 > 在centos7中yum下载`libseccomp`的版本是2.3的，版本不满足我们最新containerd的需求，需要下载2.4以上的
 >

@@ -1,0 +1,26 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: common-collector-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: common-collector-service
+  template:
+    metadata:
+      labels:
+        app: common-collector-service
+    spec:
+      imagePullSecrets:
+      - name: $SECRET_NAME
+      containers:
+        - name: common-collector-service
+          image: $IMAGE_NAME
+          ports:
+            - containerPort: $SERVICE_PORT
+              name: web
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
