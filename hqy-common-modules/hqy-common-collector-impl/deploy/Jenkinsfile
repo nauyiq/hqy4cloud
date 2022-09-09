@@ -5,19 +5,20 @@ def namespace = "hqy-parent-all"
 // 镜像仓库项目
 def project = "collector-service"
 //镜像版本号
-def image_version="1.0"
+def image_version="1.0-dev"
 // 镜像完整名称
 def image_name = "${registry}/${namespace}/${project}:${image_version}"
 // git仓库地址
 def git_address = "https://github.com/nauyiq/hqy-parent-all.git"
 // 分支
-def branch = "*/test"
+def branch = "*/dev"
 // jenkins aliyun认证
 def aliyunhub_auth = "6c5aab53-0985-4ffc-bae7-0908c0b18961"
 // K8s认证
 def k8s_auth = "kubeconfig"
 // aliyun仓库secret_name
 def aliyun_registry_secret = "aliyun-pull-secret"
+def serverPort = "8888"
 
 
 podTemplate(
@@ -26,25 +27,31 @@ podTemplate(
     containers: [
        //containerTemplate(name: 'jnlp', image: "docker.io/jenkins/inbound-agent:latest"),
         containerTemplate(name: 'jnlp', image: "docker.io/jenkins/jnlp-slave:latest"),
-       containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'maven', image: 'registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/maven:1.0')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
     ]){
     node('jenkins-agent'){
-        stage('拉取代码') { // for display purposes
+        stage('Git Clone') {
             checkout([$class: 'GitSCM',branches: [[name: '*/master']], userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]])
         }
-        stage('代码编译') {
-        //    sh "mvn clean package -Dmaven.test.skip=true"
-            sh "ls"
+
+        stage('Maven Package') {
+           container('maven') {
+             stage('Build a Maven project') {
+              sh "mvn clean package -Dmaven.test.skip=true"
+             }
+           }
         }
-        stage('构建镜像') {
+
+        stage('Build Image') {
             container('docker') {
-                stage('打包镜像') {
+                stage('Package Image') {
                    withCredentials([usernamePassword(credentialsId: "${aliyunhub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
-                      docker build -t ${image_name} .
+                      docker build -t ${image_name} ./hqy-common-modules/hqy-common-collector-impl/deploy
                       docker login -u ${username} -p '${password}' ${registry}
                       docker push ${image_name}
                    """
@@ -52,14 +59,15 @@ podTemplate(
                 }
             }
         }
+
         stage('部署到K8s'){
             sh """
                 sed -i 's#\$IMAGE_NAME#${image_name}#' deployment.yaml
                 sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' deployment.yaml
-                sed -i 's#\$NODE_PORT#${nodePort}#' deployment.yaml
+                sed -i 's#\$SERVICE_PORT#${serverPort}#' deployment.yaml
 
             """
-             kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: "82eb8e6c-da8f-44cd-837b-2acb02d328fb"
+             kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: "${k8s_auth}"
         }
     }
 }

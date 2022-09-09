@@ -3,6 +3,16 @@ set -x
 export CUSTOM_SEARCH_NAMES="application,custom"
 export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
 
+
+# -XX:+UseSerialGC 年轻代和老年代都用串行收集器
+# -XX:+UseParNewGC 年轻代使用 ParNew，老年代使用 Serial Old
+# -XX:+UseParallelGC 年轻代使用 ParallerGC，老年代使用 Serial Old
+# -XX:+UseParallelOldGC 新生代和老年代都使用并行收集器
+# -XX:+UseConcMarkSweepGC，表示年轻代使用 ParNew，老年代的用 CMS
+# -XX:+UseG1GC 使用 G1垃圾回收器
+# -XX:+UseZGC 使用 ZGC 垃圾回收器
+
+
 #堆内存大小
 JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
 # 年轻代和年老代比例为1:2
