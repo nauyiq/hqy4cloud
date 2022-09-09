@@ -36,7 +36,7 @@ podTemplate(
     ]){
     node('jenkins-agent'){
         stage('Git Clone') {
-            checkout([$class: 'GitSCM',branches: [[name: '*/master']], userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]])
+            checkout([$class: 'GitSCM',branches: [[name: '${branch}']], userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]])
         }
 
         stage('Maven Package') {
