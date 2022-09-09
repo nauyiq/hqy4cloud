@@ -41,6 +41,7 @@ podTemplate(
                      stage('Build a Maven project') {
                         sh
                         """
+                        ls
                         cd hqy-parent-all
                         mvn clean install -DskipTests
                         """
