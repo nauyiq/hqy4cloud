@@ -28,7 +28,8 @@ podTemplate(
        //containerTemplate(name: 'jnlp', image: "docker.io/jenkins/inbound-agent:latest"),
         containerTemplate(name: 'jnlp', image: "docker.io/jenkins/jnlp-slave:latest"),
         containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'maven', image: 'registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/maven:1.0')
+//         containerTemplate(name: 'maven', image: 'registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/maven:1.0')
+        containerTemplate(name: 'maven', image: 'docker.io/maven:3.8.1-jdk-8')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
