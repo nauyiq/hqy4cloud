@@ -39,7 +39,11 @@ podTemplate(
             checkout([$class: 'GitSCM',branches: [[name: '${branch}']],  userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]])
                 container('maven') {
                      stage('Build a Maven project') {
-                        sh "mvn clean install -DskipTests"
+                        sh
+                        """
+                        cd hqy-parent-all
+                        mvn clean install -DskipTests
+                        """
                      }
                 }
         }
