@@ -32,7 +32,7 @@ podTemplate(
         containerTemplate(name: 'maven', image: 'docker.io/maven:3.8.1-jdk-8')
     ],
     volumes: [
-//         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
+           hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 //         hostPathVolume(mountPath: '/usr/share/maven/ref/repository', hostPath: '/home/hongqy/data/repository')
     ]){
     node('jenkins-agent'){
