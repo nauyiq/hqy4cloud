@@ -38,12 +38,11 @@ podTemplate(
     node('jenkins-agent'){
         stage('Git Clone') {
             checkout([$class: 'GitSCM',branches: [[name: '${branch}']],  userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]])
+            sh """ ls """
             container('maven') {
                          stage('Build a Maven project') {
-                          sh """
-                          ls
+                          sh """              
                           mvn -B clean install -DskipTests
-
                           """
                          }
                        }
