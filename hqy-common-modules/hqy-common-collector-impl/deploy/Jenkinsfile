@@ -43,20 +43,15 @@ podTemplate(
             branches: [[name: '${branch}']],
             userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
             extensions:[[$class:'CheckoutOption',timeout:30]]
-
             ])
+            
+            container('maven') {
+                            stage('Build a Maven project') {
+                                sh 'mvn -B clean install -DskipTests'
+                            }
+                        }
+            
         }
-
-         stage('Maven Package') {
-           container('maven') {
-             stage('Build a Maven project') {
-              sh """
-              ls
-              mvn clean install -DskipTests
-              """
-             }
-           }
-        } 
 
         stage('Build Image') {
             container('docker') {
