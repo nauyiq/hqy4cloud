@@ -13,7 +13,7 @@ def git_address = "https://github.com/nauyiq/hqy-parent-all.git"
 // 分支
 def branch = "*/dev"
 // jenkins aliyun认证
-def aliyunhub_auth = "6c5aab53-0985-4ffc-bae7-0908c0b18961"
+def aliyunhub_auth = "aliyun_mirror_server"
 // K8s认证
 def k8s_auth = "kubeconfig"
 // aliyun仓库secret_name
