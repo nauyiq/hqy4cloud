@@ -45,28 +45,18 @@ podTemplate(
             extensions:[[$class:'CheckoutOption',timeout:30]]
 
             ])
-
-            container('maven') {
-                         stage('Build a Maven project') {
-                          sh """
-                          ls
-                          mvn -B clean install -DskipTests
-                          """
-                         }
-                       }
         }
 
-       /*  stage('Maven Package') {
+         stage('Maven Package') {
            container('maven') {
              stage('Build a Maven project') {
               sh """
               ls
               mvn clean install -DskipTests
-
               """
              }
            }
-        } */
+        } 
 
         stage('Build Image') {
             container('docker') {
