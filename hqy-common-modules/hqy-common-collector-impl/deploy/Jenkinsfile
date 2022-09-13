@@ -42,7 +42,7 @@ podTemplate(
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
             userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
-            extensions:[[$class:'CheckoutOption',timeout:30]]
+            extensions:[[$class:'CheckoutOption',timeout:30],[$class:'CloneOption',depth:0,noTags:false,reference:'',shallow:false,timeout:30]]
             ])
             
             container('maven') {
