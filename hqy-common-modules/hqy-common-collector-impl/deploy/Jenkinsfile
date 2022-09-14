@@ -33,14 +33,13 @@ podTemplate(
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
-//         hostPathVolume(mountPath: '/usr/share/maven/ref/repository', hostPath: '/home/hongqy/data/repository')
     ]){
     node('jenkins-agent'){
         stage('Git Clone') {         
             checkout([
             $class: 'GitSCM',
-            branches: [[name: "${branch}"]],
-            userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]
+            branches: [[name: '*/dev']],
+            userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]]
             ])
             
             container('maven') {
