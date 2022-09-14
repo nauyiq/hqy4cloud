@@ -36,6 +36,10 @@ podTemplate(
     node('jenkins-agent'){
 
         stage('Git Clone') {
+            sh """
+            echo start git clone
+            git config --global http.postBuffer 600000
+            """
             checkout([
             $class: 'GitSCM',
             branches: [[name: '*/dev']],
