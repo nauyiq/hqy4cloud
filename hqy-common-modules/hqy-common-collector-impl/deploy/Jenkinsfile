@@ -42,16 +42,16 @@ podTemplate(
             userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]]
             ])
             
-            container('maven') {
-                            stage('Build a Maven project') {
-                                sh 
-                                """
-                                ls  /home/jenkins/agent/workspace/
-                                ls
-                                mvn -B clean install -DskipTests
-                                """
-                            }
-                        }
+//             container('maven') {
+//                             stage('Build a Maven project') {
+//                                 sh 
+//                                 """
+//                                 ls  /home/jenkins/agent/workspace/
+//                                 ls
+//                                 mvn -B clean install -DskipTests
+//                                 """
+//                             }
+//                         }
             
         }
 
