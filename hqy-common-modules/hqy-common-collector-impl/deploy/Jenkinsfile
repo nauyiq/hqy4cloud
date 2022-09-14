@@ -35,13 +35,13 @@ podTemplate(
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 //         hostPathVolume(mountPath: '/usr/share/maven/ref/repository', hostPath: '/home/hongqy/data/repository')
     ]){
-    //             extensions:[[$class:'CheckoutOption',timeout:30],[$class:'CloneOption',depth:0,noTags:false,reference:'',shallow:false,timeout:30]]
     node('jenkins-agent'){
         stage('Git Clone') {         
             checkout([
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
-            userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]]
+            userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
+            extensions: [[$class: 'CloneOption', noTags: false, timeout: 30]]
             ])
             
             container('maven') {
