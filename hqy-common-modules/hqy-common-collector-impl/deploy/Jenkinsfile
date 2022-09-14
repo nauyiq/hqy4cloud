@@ -46,7 +46,12 @@ podTemplate(
             
             container('maven') {
                             stage('Build a Maven project') {
-                                sh 'mvn -B clean install -DskipTests'
+                                sh 
+                                """
+                                ls  /home/jenkins/agent/workspace/
+                                ls
+                                mvn -B clean install -DskipTests
+                                """
                             }
                         }
             
