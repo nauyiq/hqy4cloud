@@ -15,8 +15,8 @@ export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
 
 #堆内存大小
 JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
-# 年轻代和年老代比例为1:2
-JAVA_OPT="${JAVA_OPT} -XX:NewRatio=2"
+# 年轻代和年老代比例为1:2 G1垃圾回收期 如果指定NewRatio 或-Xmn参数 则G1 设定的这个目标 即MaxGCPauseMillis失效
+#JAVA_OPT="${JAVA_OPT} -XX:NewRatio=2"
 # Region size  heapSize/2048 Region size必须是2的指数 取值范围从1M到32M
 JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=4m"
 # 元数据空间, 默认为20M

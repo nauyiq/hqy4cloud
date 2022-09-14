@@ -17,17 +17,17 @@ ADD ../target/lib target/lib
 ADD ../target/$SERVICE_JAR target/$SERVICE_JAR
 RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
-ADD start.sh bin/start.sh
+ADD g1_start.sh g1_start.sh
 RUN mkdir -p init.d
 
 RUN mkdir -p logs \
     && cd logs \
     && touch sys.out
 
-RUN chmod +x start.sh
+RUN chmod +x g1_start.sh
 RUN chmod 777 target/*
 
 
 EXPOSE 8888
 
-ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["g1_start.sh"]

@@ -25,41 +25,37 @@ podTemplate(
     label: 'jenkins-agent',
     cloud: 'kubernetes',
     containers: [
-       //containerTemplate(name: 'jnlp', image: "docker.io/jenkins/inbound-agent:latest"),
-        containerTemplate(name: 'jnlp', image: "docker.io/jenkins/jnlp-slave:latest"),
-        containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat'),
-//         containerTemplate(name: 'maven', image: 'registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/maven:1.0')
-//        containerTemplate(name: 'maven', image: 'docker.io/maven:3.8.1-jdk-8')
+//         containerTemplate(name: 'jnlp', image: "docker.io/jenkins/jnlp-slave:latest"),
+        containerTemplate(name: 'jnlp', image: "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest",  alwaysPullImage: false),
+        containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
+//         persistentVolumeClaim(mountPath: '/home/jenkins/.m2/', claimName: 'jenkins-mavenrepo')
     ]){
     node('jenkins-agent'){
-        stage('Git Clone') {         
+
+        stage('Git Clone') {
             checkout([
             $class: 'GitSCM',
             branches: [[name: '*/dev']],
             userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]]
             ])
-            
-//             container('maven') {
-//                             stage('Build a Maven project') {
-//                                 sh 
-//                                 """
-//                                 ls  /home/jenkins/agent/workspace/
-//                                 ls
-//                                 mvn -B clean install -DskipTests
-//                                 """
-//                             }
-//                         }
-            
         }
+
+         stage('Maven Build') {
+            sh """
+                cd hqy-parent-all
+                mvn clean compile package -Dmaven.test.skip=true
+            """
+         }
 
         stage('Build Image') {
             container('docker') {
                 stage('Package Image') {
                    withCredentials([usernamePassword(credentialsId: "${aliyunhub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
+                      cd /home/jenkins/hqy-parent-all
                       docker build -t ${image_name} ./hqy-common-modules/hqy-common-collector-impl/deploy
                       docker login -u ${username} -p '${password}' ${registry}
                       docker push ${image_name}
@@ -71,12 +67,12 @@ podTemplate(
 
         stage('部署到K8s'){
             sh """
-                sed -i 's#\$IMAGE_NAME#${image_name}#' deployment.yaml
-                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' deployment.yaml
-                sed -i 's#\$SERVICE_PORT#${serverPort}#' deployment.yaml
+                sed -i 's#\$IMAGE_NAME#${image_name}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SERVICE_PORT#${serverPort}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
 
             """
-             kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: "${k8s_auth}"
+             kubernetesDeploy configs: './hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
         }
     }
 }
