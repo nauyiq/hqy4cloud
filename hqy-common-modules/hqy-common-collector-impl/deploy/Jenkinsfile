@@ -39,7 +39,7 @@ podTemplate(
         stage('Git Clone') {         
             checkout([
             $class: 'GitSCM',
-            branches: [[name: '${branch}']],
+            branches: [[name: "${branch}"]],
             userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
             extensions: [[$class: 'CloneOption', noTags: false, timeout: 30]]
             ])
