@@ -20,6 +20,8 @@ def k8s_auth = "kubeconfig"
 def aliyun_registry_secret = "aliyun-pull-secret"
 def serverPort = "8888"
 
+def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
+
 
 podTemplate(
     label: 'jenkins-agent',
@@ -49,7 +51,7 @@ podTemplate(
 
          stage('Maven Build') {
             sh """
-                cd hqy-parent-all
+                cd ${base_dir}
                 mvn clean compile package -Dmaven.test.skip=true
             """
          }
@@ -60,7 +62,7 @@ podTemplate(
                    withCredentials([usernamePassword(credentialsId: "${aliyunhub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
                       cd /home/jenkins/hqy-parent-all
-                      docker build -t ${image_name} ./hqy-common-modules/hqy-common-collector-impl/deploy
+                      docker build -t ${image_name} ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
                       docker login -u ${username} -p '${password}' ${registry}
                       docker push ${image_name}
                    """
@@ -71,12 +73,12 @@ podTemplate(
 
         stage('部署到K8s'){
             sh """
-                sed -i 's#\$IMAGE_NAME#${image_name}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SERVICE_PORT#${serverPort}#' ./hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$IMAGE_NAME#${image_name}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SERVICE_PORT#${serverPort}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
 
             """
-             kubernetesDeploy configs: './hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
+             kubernetesDeploy configs: '${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
         }
     }
 }
