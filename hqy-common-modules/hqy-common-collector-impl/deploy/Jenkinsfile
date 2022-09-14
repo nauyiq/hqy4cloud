@@ -37,7 +37,12 @@ podTemplate(
     ]){
     //             extensions:[[$class:'CheckoutOption',timeout:30],[$class:'CloneOption',depth:0,noTags:false,reference:'',shallow:false,timeout:30]]
     node('jenkins-agent'){
-        stage('Git Clone') {
+        stage('Git Clone') {         
+            sh 
+            """ 
+            git config --global  --unset https.https://github.com.proxy 
+            git config --global  --unset http.https://github.com.proxy 
+            """
             checkout([
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
