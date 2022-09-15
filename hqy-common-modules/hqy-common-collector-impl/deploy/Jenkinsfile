@@ -51,6 +51,7 @@ podTemplate(
 
          stage('Maven Build') {
             sh """
+                ls ${base_dir}
                 cd ${base_dir}
                 mvn clean compile package -Dmaven.test.skip=true
             """
@@ -61,7 +62,7 @@ podTemplate(
                 stage('Package Image') {
                    withCredentials([usernamePassword(credentialsId: "${aliyunhub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
-                      cd /home/jenkins/hqy-parent-all
+                      cd ${base_dir}
                       docker build -t ${image_name} ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
                       docker login -u ${username} -p '${password}' ${registry}
                       docker push ${image_name}
