@@ -20,7 +20,7 @@ def k8s_auth = "kubeconfig"
 def aliyun_registry_secret = "aliyun-pull-secret"
 def serverPort = "8888"
 
-def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev/hqy-parent-all"
+def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
 
 
 podTemplate(
@@ -52,7 +52,7 @@ podTemplate(
 
          stage('Maven Build') {
             sh """
-                ls ${base_dir}
+                ls
                 cd ${base_dir}
                 mvn clean compile package -Dmaven.test.skip=true
             """
