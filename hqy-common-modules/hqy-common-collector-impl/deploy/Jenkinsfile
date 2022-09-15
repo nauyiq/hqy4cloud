@@ -20,7 +20,7 @@ def k8s_auth = "kubeconfig"
 def aliyun_registry_secret = "aliyun-pull-secret"
 def serverPort = "8888"
 
-def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
+def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev/hqy-parent-all"
 
 
 podTemplate(
