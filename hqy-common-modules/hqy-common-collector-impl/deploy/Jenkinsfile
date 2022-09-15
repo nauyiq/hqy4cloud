@@ -54,6 +54,7 @@ podTemplate(
             sh """
                 ls
                 cd ${base_dir}
+                ls
                 mvn clean compile package -Dmaven.test.skip=true
             """
          }
