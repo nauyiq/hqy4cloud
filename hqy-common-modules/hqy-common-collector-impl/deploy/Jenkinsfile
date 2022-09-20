@@ -27,7 +27,7 @@ podTemplate(
     label: 'jenkins-agent',
     cloud: 'kubernetes',
     containers: [
-        containerTemplate(name: 'jnlp', image: "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest",  alwaysPullImage: false),
+        containerTemplate(name: 'jnlp', image: "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest",  alwaysPullImage: true),
         containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
