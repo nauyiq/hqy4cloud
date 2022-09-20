@@ -423,7 +423,7 @@ yum --enablerepo=elrepo-kernel install -y kernel-lt
 #查看安装的内核
 awk -F\' '$1=="menuentry " {print $2}' /etc/grub2.cfg
 
-grub2-set-default "CentOS Linux (5.4.209-1.el7.elrepo.x86_64) 7 (Core)"
+grub2-set-default "CentOS Linux (5.4.214-1.el7.elrepo.x86_64) 7 (Core)"
 
 reboot
 ```
@@ -523,7 +523,7 @@ yum install ipvsadm -y
 > mkdir /etc/containerd -p
 >
 > #生成默认配置文件
-> containerd config default > /etc/containerd/config.toml
+>   containerd config default > /etc/containerd/config.toml
 >
 > 配置systemd作为容器的cgroup driver
 > sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
@@ -597,7 +597,7 @@ yum install ipvsadm -y
 > ```shell
 > # 设置VIP地址（仅在master01上部署先）
 > mkdir -p /etc/kubernetes/manifests/
-> export VIP=192.168.191.6
+> export VIP=172.27.0.10
 > export INTERFACE=ztr4nuy7j4
 > ctr image pull ghcr.io/kube-vip/kube-vip:v0.3.8
 > ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:v0.3.8 vip \
@@ -690,15 +690,19 @@ yum install ipvsadm -y
 > #所以我们需要对应修改或创建 /etc/default/kubelet :
 > KUBELET_EXTRA_ARGS="--node-ip=192.168.191.3"
 >
+> #modprobe br_netfilter
+> #echo 1 > /proc/sys/net/ipv4/ip_forward
+>
 > #集群初始化
-> kubeadm init --config kubeadm-init.yaml --upload-certs --node-name master1
+> kubeadm init  --config kubeadm-init.yaml --upload-certs --node-name master1
 >
 > #加入集群
 > kubeadm join k8s.hongqy1024.cn:6443 --token abcdef.0123456789abcdef \
-> 	--discovery-token-ca-cert-hash sha256:341ff8d56b811e27a757377e7d22dc3d0373092fbc11803027277a96cce973a8 \
-> 	--control-plane --certificate-key 50baa00c00e1c682a60da5a83c780bfc54c71932bcc985aea13b0cdef0d5ae14 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=192.168.191.3
+> 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef \
+> 	--control-plane --certificate-key 6f731084c5bf28e54b11af3c8c7f43541e2ad3cf977864e331dbd1ac285bd6f1 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=172.27.0.3
 >
-> kubeadm join k8s.hongqy1024.cn:6443 --token 2rqxy6.q2sci6osacmggpes --discovery-token-ca-cert-hash sha256:341ff8d56b811e27a757377e7d22dc3d0373092fbc11803027277a96cce973a8 --node-name worker1 --cri-socket /run/containerd/containerd.sock
+> kubeadm join k8s.hongqy1024.cn:6443 --token abcdef.0123456789abcdef \
+> 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef --node-name worker1 --cri-socket /run/containerd/containerd.sock
 > ```
 >
 > 

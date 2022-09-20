@@ -38,7 +38,7 @@ yum makecache fast
 yum install docker-ce docker-ce-cli containerd.io
 
 #查看Docker版本
-docker --version
+  docker --version
 
 #启动docker服务
 systemctl start docker
