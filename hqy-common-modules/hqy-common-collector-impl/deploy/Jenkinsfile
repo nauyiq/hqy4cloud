@@ -52,7 +52,7 @@ podTemplate(
             sh """
                 cd ${base_dir}
                 ls
-                mvn clean compile package -Dmaven.test.skip=true
+                mvn clean compile install -Dmaven.test.skip=true
             """
          }
 
