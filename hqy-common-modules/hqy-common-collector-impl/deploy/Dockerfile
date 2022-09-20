@@ -11,11 +11,11 @@ ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
     JAVA="${JAVA_HOME}/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-WORKDIR $BASE_DIR
+WORKDIR ${BASE_DIR}
 # ADD ../target/classes/logback.xml target/logback.xml
 ADD ../target/lib target/lib
-ADD ../target/$SERVICE_JAR target/$SERVICE_JAR
-RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
+ADD ../target/${SERVICE_JAR} target/${SERVICE_JAR}
+RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
 ADD g1_start.sh g1_start.sh
 RUN mkdir -p init.d

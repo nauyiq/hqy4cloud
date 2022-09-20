@@ -688,7 +688,7 @@ yum install ipvsadm -y
 >
 > #指定Kubernetes工作节点内网IP¶
 > #所以我们需要对应修改或创建 /etc/default/kubelet :
-> KUBELET_EXTRA_ARGS="--node-ip=192.168.191.3"
+> KUBELET_EXTRA_ARGS="--node-ip=172.27.0.4"
 >
 > #modprobe br_netfilter
 > #echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -701,8 +701,7 @@ yum install ipvsadm -y
 > 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef \
 > 	--control-plane --certificate-key 6f731084c5bf28e54b11af3c8c7f43541e2ad3cf977864e331dbd1ac285bd6f1 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=172.27.0.3
 >
-> kubeadm join k8s.hongqy1024.cn:6443 --token abcdef.0123456789abcdef \
-> 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef --node-name worker1 --cri-socket /run/containerd/containerd.sock
+> kubeadm join k8s.hongqy1024.cn:6443 --token hdj506.908ufcp1u0uk1w5j --discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef  --node-name worker1 --cri-socket /run/containerd/containerd.sock
 > ```
 >
 > 
