@@ -32,7 +32,7 @@ podTemplate(
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-        persistentVolumeClaim(mountPath: '/home/jenkins/.m2/', claimName: 'maven-repository-pvc')
+        persistentVolumeClaim(mountPath: '/usr/local/apache-maven-3.8.6/repo', claimName: 'maven-repository-pvc')
     ]) {
     node('jenkins-agent'){
 
