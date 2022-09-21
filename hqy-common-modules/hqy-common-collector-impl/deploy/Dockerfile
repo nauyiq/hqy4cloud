@@ -16,7 +16,7 @@ RUN mkdir -p ${BASE_DIR}
 WORKDIR ${BASE_DIR}
 ADD lib ${BASE_DIR}/target/lib
 ADD ${SERVICE_JAR} ${BASE_DIR}/target/${SERVICE_JAR}
-ADD g1_start.sh ${BASE_DIR}/tg1_start.sh
+ADD g1_start.sh ${BASE_DIR}/g1_start.sh
 
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
