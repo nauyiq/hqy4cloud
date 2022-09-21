@@ -68,7 +68,7 @@ podTemplate(
                 sed -i 's#\$SERVICE_PORT#${serverPort}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
 
             """
-             kubernetesDeploy configs: '${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
+             kubernetesDeploy configs: '/home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
         }
     }
 }
