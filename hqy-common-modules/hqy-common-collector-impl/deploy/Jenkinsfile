@@ -8,7 +8,7 @@ def aliyun_registry_secret = "aliyun-hub-secret"
 
 
 def serverPort = "8888"
-def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
+def base_dir = "/home/jenkins/agent/workspace/common-collector-service_dev"
 
 
 podTemplate(
