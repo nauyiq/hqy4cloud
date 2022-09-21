@@ -15,7 +15,6 @@ podTemplate(
 
     node('jenkins-agent'){
         stage('Git Clone') {
-            sh 'mkdir -p /home/services'
             checkout([
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
@@ -28,7 +27,7 @@ podTemplate(
 
          stage('Maven Build') {
             sh """
-                cd ${base_dir}
+                cd /home/jenkins/agent/workspace/hqy-parent-all_dev
                 ls
                 mvn clean compile install -Dmaven.test.skip=true
             """
