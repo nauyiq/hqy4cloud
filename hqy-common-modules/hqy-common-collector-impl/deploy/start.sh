@@ -21,7 +21,7 @@ JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
 JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=2m"
 JAVA_OPT="${JAVA_OPT} -XX:+ParallelRefProcEnabled"
 # 用于控制对象经过GC多少次仍然存活后晋升到老年代的最大阈值 默认15
-JAVA_OPT="${JAVA_OPT} -XX:+MaxTenuringThreshold=10"
+JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 # 元数据空间, 默认为20M
 JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=40m"
 # 最大元数据空间 注意：metaspace太小会引起full gc
