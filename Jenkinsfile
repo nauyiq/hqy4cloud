@@ -17,8 +17,8 @@ podTemplate(
         stage('Git Clone') {
             checkout([
             $class: 'GitSCM',
-            branches: [[name: '${branch}']],
-            userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
+            branches: [[name: '*/dev']],
+            userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
             extensions: [
             [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
             ]
