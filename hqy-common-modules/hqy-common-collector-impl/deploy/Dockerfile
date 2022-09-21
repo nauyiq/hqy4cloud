@@ -6,17 +6,18 @@ ARG SERVICE_JAR="hqy-common-collector-service.jar"
 
 # set environment
 ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
+    JENKINS_DIR="/home/jenkins/agent/workspace/hqy-parent-all_dev/hqy-common-modules/hqy-common-collector-impl" \
     JAVA_JAR="${SERVICE_JAR}" \
     JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
     JAVA="${JAVA_HOME}/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-RUN mkdir -p ${BASE_DIR} && pwd && ls
+RUN mkdir -p ${BASE_DIR} && ls ${JENKINS_DIR}
 
 WORKDIR ${BASE_DIR}
 # ADD ../target/classes/logback.xml target/logback.xml
-ADD ../target/lib target/lib
-ADD ../target/${SERVICE_JAR} target/${SERVICE_JAR}
+ADD ${JENKINS_DIR}/target/lib target/lib
+ADD ${JENKINS_DIR}/target/${SERVICE_JAR} target/${SERVICE_JAR}
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
 ADD g1_start.sh g1_start.sh
