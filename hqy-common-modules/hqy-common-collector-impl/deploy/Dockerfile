@@ -12,15 +12,16 @@ ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
     JAVA="${JAVA_HOME}/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-RUN mkdir -p ${BASE_DIR} && ls ${JENKINS_DIR}
+RUN mkdir -p ${BASE_DIR}
 
-WORKDIR ${BASE_DIR}
+
 # ADD ../target/classes/logback.xml target/logback.xml
-ADD ${JENKINS_DIR}/target/lib target/lib
-ADD ${JENKINS_DIR}/target/${SERVICE_JAR} target/${SERVICE_JAR}
+ADD ${JENKINS_DIR}/target/lib ${BASE_DIR}/target/lib
+ADD ${JENKINS_DIR}/target/${SERVICE_JAR} ${BASE_DIR}/target/${SERVICE_JAR}
+ADD g1_start.sh ${BASE_DIR}/tg1_start.sh
+WORKDIR ${BASE_DIR}
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
-ADD g1_start.sh g1_start.sh
 RUN mkdir -p init.d
 
 RUN mkdir -p logs \
