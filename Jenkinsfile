@@ -15,13 +15,14 @@ podTemplate(
 
     node('jenkins-agent'){
         stage('Git Clone') {
+            sh 'mkdir -p /home/services'
             checkout([
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
             userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
             extensions: [
             [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
-            [$class: 'SparseCheckoutPaths',  sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path:'${base_dir}']]]
+            [$class: 'SparseCheckoutPaths',  sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path:'/home/services']]]
             ]
             ])
         }
