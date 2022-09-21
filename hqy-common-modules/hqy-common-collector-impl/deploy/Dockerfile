@@ -27,10 +27,10 @@ RUN mkdir -p logs \
     && cd logs \
     && touch sys.out
 
-RUN chmod +x start.sh
+RUN chmod +x ${BASE_DIR}/start.sh
 RUN chmod 777 target/*
 
 
 EXPOSE 8888
 
-ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["${BASE_DIR}/start.sh"]
