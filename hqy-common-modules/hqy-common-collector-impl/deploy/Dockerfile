@@ -12,11 +12,12 @@ ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
     JAVA="${JAVA_HOME}/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-
-COPY ../target/lib ${BASE_DIR}/target/lib
-COPY ../target/${SERVICE_JAR} ${BASE_DIR}/target/${SERVICE_JAR}
-COPY g1_start.sh ${BASE_DIR}/tg1_start.sh
+RUN mkdir -p ${BASE_DIR}
 WORKDIR ${BASE_DIR}
+ADD lib ${BASE_DIR}/target/lib
+ADD ${SERVICE_JAR} ${BASE_DIR}/target/${SERVICE_JAR}
+ADD g1_start.sh ${BASE_DIR}/tg1_start.sh
+
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
 RUN mkdir -p init.d

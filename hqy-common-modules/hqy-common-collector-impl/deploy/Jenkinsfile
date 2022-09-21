@@ -9,6 +9,7 @@ def aliyun_registry_secret = "aliyun-hub-secret"
 
 def serverPort = "8888"
 def base_dir = "/home/jenkins/agent/workspace/common-collector-service_dev"
+def service_jar = "hqy-common-collector-service.jar"
 
 
 podTemplate(
@@ -49,6 +50,8 @@ podTemplate(
                    withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
                       cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
+                      cp -rf ../target/lib .
+                      cp -rf ../target/${service_jar} .
                       docker build -t ${image_name} .
                       docker login -u ${username} -p '${password}' ${registry}
                       docker push ${image_name}
