@@ -1,5 +1,4 @@
 def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
-def git_address = "https://github.com/nauyiq/hqy-parent-all.git"
 def branch = "*/dev"
 def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
 

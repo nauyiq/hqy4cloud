@@ -1,25 +1,13 @@
-// 镜像仓库地址
 def registry = "registry.cn-shenzhen.aliyuncs.com"
-// 命名空间
-def namespace = "hqy-parent-all"
-// 镜像仓库项目
-def project = "collector-service"
-//镜像版本号
-def image_version="1.0-dev"
-// 镜像完整名称
-def image_name = "${registry}/${namespace}/${project}:${image_version}"
-// git仓库地址
-def git_address = "https://github.com/nauyiq/hqy-parent-all.git"
-// 分支
-def branch = "*/dev"
-// jenkins aliyun认证
-def aliyun_hub_auth = "aliyun_mirror_server"
-// K8s认证
-def k8s_auth = "kubeconfig"
-// aliyun仓库secret_name
-def aliyun_registry_secret = "aliyun-hub-secret"
-def serverPort = "8888"
+def image_name = "${registry}/hqy-parent-all/collector-service:1.0-dev"
+def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
 
+def k8s_auth = "kubeconfig"
+def aliyun_hub_auth = "aliyun_mirror_server"
+def aliyun_registry_secret = "aliyun-hub-secret"
+
+
+def serverPort = "8888"
 def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
 
 
@@ -27,32 +15,31 @@ podTemplate(
     label: 'jenkins-agent',
     cloud: 'kubernetes',
     containers: [
-        containerTemplate(name: 'jnlp', image: "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest",  alwaysPullImage: true),
+        containerTemplate(name: 'jnlp', image: "${jnlp_image}",  alwaysPullImage: true),
         containerTemplate(name: 'docker', image: 'docker.io/docker:latest', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-        persistentVolumeClaim(mountPath: '/usr/local/apache-maven-3.8.6/repo', claimName: 'maven-repository-pvc')
+        hostPathVolume(mountPath: '/usr/local/apache-maven-3.8.6/repo', hostPath: '/usr/local/apache-maven-3.8.6/repo')
     ]) {
-    node('jenkins-agent'){
 
-        stage('Git Clone') {
-            sh """
-            git config --global http.postBuffer 600000
-            """
-            checkout([
-            $class: 'GitSCM',
-            branches: [[name: '*/dev']],
-            userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
-            extensions: [[$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]]
-            ])
-        }
+    node('jenkins-agent'){
+         stage('Git Clone') {
+              checkout([
+              $class: 'GitSCM',
+              branches: [[name: '*/dev']],
+              userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
+              extensions: [
+              [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
+              ]
+              ])
+         }
 
          stage('Maven Build') {
             sh """
-                cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/
+                cd ${base_dir}
                 ls
-                mvn clean compile package -Dmaven.test.skip=true
+                mvn clean compile install -Dmaven.test.skip=true
             """
          }
 
