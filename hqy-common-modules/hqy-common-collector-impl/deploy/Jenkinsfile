@@ -59,6 +59,10 @@ podTemplate(
         }
 
         stage('部署到K8s'){
+             sh """
+              ls
+              ls &{base_dir}
+             """
              kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: "kubeconfig"
         }
     }
