@@ -48,7 +48,7 @@ JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationStoppedTime"
 JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationConcurrentTime"
 JAVA_OPT="${JAVA_OPT} -XX:+PrintTenuringDistribution"
 JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramBeforeFullGC"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramAfterFullG"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramAfterFullGC"
 JAVA_OPT="${JAVA_OPT} -Xloggc:/home/services/common-collector-service/logs/gc-$(date +%Y%m%d-%H%M).log"
 # 发生内存溢出时打印堆栈快照
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"
