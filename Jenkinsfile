@@ -19,7 +19,10 @@ podTemplate(
             $class: 'GitSCM',
             branches: [[name: '${branch}']],
             userRemoteConfigs: [[credentialsId: "", url: "${git_address}"]],
-            extensions: [[$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],[$class: 'SparseCheckoutPaths',  sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path:'${base_dir}']]]
+            extensions: [
+            [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true],
+            [$class: 'SparseCheckoutPaths',  sparseCheckoutPaths:[[$class:'SparseCheckoutPath', path:'${base_dir}']]]
+            ]
             ])
         }
 
