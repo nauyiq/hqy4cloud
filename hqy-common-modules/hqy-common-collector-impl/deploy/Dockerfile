@@ -33,4 +33,4 @@ RUN chmod 777 target/*
 
 EXPOSE 8888
 
-ENTRYPOINT ["${BASE_DIR}/start.sh"]
+ENTRYPOINT ["/home/services/common-collector-service/start.sh"]
