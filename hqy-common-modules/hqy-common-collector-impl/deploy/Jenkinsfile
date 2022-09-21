@@ -63,9 +63,9 @@ podTemplate(
 
         stage('部署到K8s'){
             sh """
-                sed -i 's#\$IMAGE_NAME#${image_name}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SERVICE_PORT#${serverPort}#' ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$IMAGE_NAME#${image_name}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
+                sed -i 's#\$SERVICE_PORT#${serverPort}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
 
             """
              kubernetesDeploy configs: '${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
