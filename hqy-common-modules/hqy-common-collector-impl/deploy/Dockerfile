@@ -11,6 +11,8 @@ ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
     JAVA="${JAVA_HOME}/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
+RUN mkdir -p ${BASE_DIR} && pwd && ll
+
 WORKDIR ${BASE_DIR}
 # ADD ../target/classes/logback.xml target/logback.xml
 ADD ../target/lib target/lib
