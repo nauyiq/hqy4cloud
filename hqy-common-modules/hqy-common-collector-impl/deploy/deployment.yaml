@@ -21,7 +21,4 @@ spec:
           ports:
             - containerPort: 8888
               name: web
-            initialDelaySeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 3
 
