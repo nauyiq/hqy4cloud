@@ -61,9 +61,8 @@ podTemplate(
         stage('部署到K8s'){
              sh """
               ls
-              ls &{base_dir}
              """
-             kubernetesDeploy configs: "${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml", kubeconfigId: "kubeconfig"
+             kubernetesDeploy configs: "hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml", kubeconfigId: "kubeconfig"
         }
     }
 }
