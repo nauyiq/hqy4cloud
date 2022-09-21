@@ -18,27 +18,37 @@ JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
 # 年轻代和年老代比例为1:2 G1垃圾回收期 如果指定NewRatio 或-Xmn参数 则G1 设定的这个目标 即MaxGCPauseMillis失效
 #JAVA_OPT="${JAVA_OPT} -XX:NewRatio=2"
 # Region size  heapSize/2048 Region size必须是2的指数 取值范围从1M到32M
-JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=4m"
+JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=2m"
+JAVA_OPT="${JAVA_OPT} -XX:+ParallelRefProcEnabled"
+# 用于控制对象经过GC多少次仍然存活后晋升到老年代的最大阈值 默认15
+JAVA_OPT="${JAVA_OPT} -XX:+MaxTenuringThreshold=10"
 # 元数据空间, 默认为20M
 JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=40m"
 # 最大元数据空间 注意：metaspace太小会引起full gc
 JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=40m"
+# 最大的可使用的直接内存
+JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=40M"
 # MaxTenuringThreshold设置垃圾的最大年龄. 默认为15 年轻代经历gc进入年老代的年龄
 JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
+# 服务启动的时候真实的分配物理内存给jvm
+JAVA_OPT="${JAVA_OPT} -XX:+AlwaysPreTouch"
 # 采用G1垃圾回收器
 JAVA_OPT="${JAVA_OPT} -XX:+UseG1GC"
 # 当堆内存的使用率达到45%之后就会自动启动G1的并发垃圾回收 默认为45
 JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
 # 每次GC最大的停顿毫秒数
 JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=200"
-# gc日志打印 -> 输出详细GC日志；打印gc发生的时间戳；打印gc前后堆栈情况；可以生成更详细的Survivor空间占用日志；定义GC Log 的滚动功能；生成gc文件的数量；gc-log日志大小；gc日志路径
+
+# gc日志打印
+JAVA_OPT="${JAVA_OPT} -verbose:gc"
 JAVA_OPT="${JAVA_OPT} -XX:+PrintGCDetails"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintGCTimeStamps"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintGCDateStamps"
 JAVA_OPT="${JAVA_OPT} -XX:+PrintHeapAtGC"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintAdaptiveSizePolicy"
-JAVA_OPT="${JAVA_OPT} -XX:+UseGCLogFileRotation"
-JAVA_OPT="${JAVA_OPT} -XX:NumberOfGCLogFiles=4"
-JAVA_OPT="${JAVA_OPT} -XX:GCLogFileSize=32m"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationStoppedTime"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationConcurrentTime"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintTenuringDistribution"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramBeforeFullGC"
+JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramAfterFullG"
 JAVA_OPT="${JAVA_OPT} -Xloggc:/home/services/common-collector-service/logs/gc-$(date +%Y%m%d-%H%M).log"
 # 发生内存溢出时打印堆栈快照
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"

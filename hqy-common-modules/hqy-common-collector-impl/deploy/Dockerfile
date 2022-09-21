@@ -17,7 +17,7 @@ RUN mkdir -p ${BASE_DIR}
 WORKDIR ${BASE_DIR}
 ADD lib target/lib
 ADD ${SERVICE_JAR} target/${SERVICE_JAR}
-ADD g1_start.sh g1_start.sh
+ADD start.sh start.sh
 
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
@@ -27,10 +27,10 @@ RUN mkdir -p logs \
     && cd logs \
     && touch sys.out
 
-RUN chmod +x g1_start.sh
+RUN chmod +x start.sh
 RUN chmod 777 target/*
 
 
 EXPOSE 8888
 
-ENTRYPOINT ["g1_start.sh"]
+ENTRYPOINT ["start.sh"]
