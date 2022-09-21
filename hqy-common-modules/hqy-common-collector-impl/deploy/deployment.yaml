@@ -14,12 +14,12 @@ spec:
         app: common-collector-service
     spec:
       imagePullSecrets:
-      - name: $SECRET_NAME
+      - name: aliyun-hub-secret
       containers:
         - name: common-collector-service
-          image: $IMAGE_NAME
+          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev
           ports:
-            - containerPort: $SERVICE_PORT
+            - containerPort: 8888
               name: web
             initialDelaySeconds: 20
             timeoutSeconds: 5

@@ -4,10 +4,7 @@ def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:la
 
 def k8s_auth = "kubeconfig"
 def aliyun_hub_auth = "aliyun_mirror_server"
-def aliyun_registry_secret = "aliyun-hub-secret"
 
-
-def serverPort = "8888"
 def base_dir = "/home/jenkins/agent/workspace/common-collector-service_dev"
 def service_jar = "hqy-common-collector-service.jar"
 
@@ -62,12 +59,6 @@ podTemplate(
         }
 
         stage('部署到K8s'){
-            sh """
-                sed -i 's#\$IMAGE_NAME#${image_name}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SECRET_NAME#${aliyun_registry_secret}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-                sed -i 's#\$SERVICE_PORT#${serverPort}#' /home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml
-
-            """
              kubernetesDeploy configs: '/home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
         }
     }
