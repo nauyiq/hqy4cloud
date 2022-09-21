@@ -46,7 +46,7 @@ podTemplate(
         stage('Build Image') {
 //             container('docker') {
                 stage('Package Image') {
-//                    withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                   withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                    sh """
                       cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
                       docker build -t ${image_name} .
@@ -54,7 +54,7 @@ podTemplate(
                       docker push ${image_name}
                    """
                     }
-//                 }
+                }
 //             }
         }
 
