@@ -37,7 +37,7 @@ podTemplate(
 
          stage('Maven Build') {
             sh """
-                cd ${base_dir}
+                cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/
                 ls
                 mvn clean compile install -Dmaven.test.skip=true
             """
