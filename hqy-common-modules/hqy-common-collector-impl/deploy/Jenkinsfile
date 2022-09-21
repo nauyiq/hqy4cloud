@@ -59,7 +59,7 @@ podTemplate(
         }
 
         stage('部署到K8s'){
-             kubernetesDeploy configs: '/home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml', kubeconfigId: "${k8s_auth}"
+             kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: "kubeconfig"
         }
     }
 }
