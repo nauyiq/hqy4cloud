@@ -26,7 +26,7 @@ podTemplate(
             dir("${base_dir}") {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '*/dev']],
+                    branches: [[name: '*/test']],
                     userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
                     extensions: [
                     [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
