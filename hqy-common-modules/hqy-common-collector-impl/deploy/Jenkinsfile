@@ -39,28 +39,39 @@ podTemplate(
          stage('Maven Build') {
             dir("${base_dir}") {
                 sh """ mvn clean compile install -Dmaven.test.skip=true """
+                container('docker') {
+                    stage('Package Image') {
+                         withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                               sh """
+                                  cd hqy-common-modules/hqy-common-collector-impl/deploy
+                                  cp -rf ../target/lib .
+                                  cp -rf ../target/${service_jar} .
+                                  docker build -t ${image_name} .
+                                  docker login -u ${username} -p '${password}' ${registry}
+                                  docker push ${image_name}
+                                  """
+                         }
+                    }
+                }
             }
          }
 
-        stage('Build Image') {
-            container('docker') {
-                stage('Package Image') {
-                     dir("${base_dir}") {
-                         withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
-                                           sh """
-                                              cd hqy-common-modules/hqy-common-collector-impl/deploy
-                                              cp -rf ../target/lib .
-                                              cp -rf ../target/${service_jar} .
-                                              docker build -t ${image_name} .
-                                              docker login -u ${username} -p '${password}' ${registry}
-                                              docker push ${image_name}
-                                              """
-                          }
-                     }
-
-                }
-            }
-        }
+//         stage('Build Image') {
+//             container('docker') {
+//                 stage('Package Image') {
+//                      withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+//                            sh """
+//                               cd hqy-common-modules/hqy-common-collector-impl/deploy
+//                               cp -rf ../target/lib .
+//                               cp -rf ../target/${service_jar} .
+//                               docker build -t ${image_name} .
+//                               docker login -u ${username} -p '${password}' ${registry}
+//                               docker push ${image_name}
+//                               """
+//                      }
+//                 }
+//             }
+//         }
 
         stage('部署到K8s'){
             dir("${base_dir}") {
