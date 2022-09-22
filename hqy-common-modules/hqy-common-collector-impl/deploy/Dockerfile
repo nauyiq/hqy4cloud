@@ -1,4 +1,4 @@
-FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8.0_291
+FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
 MAINTAINER hongqy<759428167@qq.com>
 
 ARG SERVICE_DIR="common-collector-service"
