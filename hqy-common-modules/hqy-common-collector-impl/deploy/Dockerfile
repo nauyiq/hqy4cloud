@@ -6,7 +6,6 @@ ARG SERVICE_JAR="hqy-common-collector-service.jar"
 
 # set environment
 ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
-    JENKINS_DIR="/home/jenkins/agent/workspace/common-collector-service_dev/hqy-common-modules/hqy-common-collector-impl" \
     JAVA_JAR="${SERVICE_JAR}" \
     JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
     JAVA="${JAVA_HOME}/bin/java" \
