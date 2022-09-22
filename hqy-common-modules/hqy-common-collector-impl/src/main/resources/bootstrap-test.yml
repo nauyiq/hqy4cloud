@@ -1,5 +1,5 @@
 nacos:
-  server-addr: nacos-headless:8888
+  server-addr: htpp://nacos-headless:8888
   group: TEST_GROUP
   namespace: a7f78604-f575-48cb-bf17-ab9a2b09b516
 
