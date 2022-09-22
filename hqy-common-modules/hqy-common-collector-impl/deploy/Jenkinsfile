@@ -1,5 +1,5 @@
 def registry = "registry.cn-shenzhen.aliyuncs.com"
-def image_name = "${registry}/hqy-parent-all/collector-service:1.0-dev"
+def image_name = "${registry}/hqy-parent-all/collector-service:1.0"
 def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
 
 def k8s_auth = "kubeconfig"
@@ -43,24 +43,20 @@ podTemplate(
          }
 
         stage('Build Image') {
-            dir("${base_dir}") {
-                container('docker') {
-                    stage('Package Image') {
-                       withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
-                       sh """
-                          cd hqy-common-modules/hqy-common-collector-impl/deploy
-                          cp -rf ../target/lib .
-                          cp -rf ../target/${service_jar} .
-                          docker build -t ${image_name} .
-                          docker login -u ${username} -p '${password}' ${registry}
-                          docker push ${image_name}
-                          """
-                       }
-                    }
+            container('docker') {
+                stage('Package Image') {
+                   withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                   sh """
+                      cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
+                      cp -rf ../target/lib .
+                      cp -rf ../target/${service_jar} .
+                      docker build -t ${image_name} .
+                      docker login -u ${username} -p '${password}' ${registry}
+                      docker push ${image_name}
+                      """
+                   }
                 }
-
             }
-
         }
 
         stage('部署到K8s'){
