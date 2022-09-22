@@ -15,9 +15,9 @@ ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
 RUN mkdir -p ${BASE_DIR}
 
 WORKDIR ${BASE_DIR}
-ADD lib target/lib
-ADD ${SERVICE_JAR} target/${SERVICE_JAR}
-ADD start.sh start.sh
+ADD lib ${BASE_DIR}/target/lib
+ADD ${SERVICE_JAR} ${BASE_DIR}/target/${SERVICE_JAR}
+ADD start.sh ${BASE_DIR}/start.sh
 
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
