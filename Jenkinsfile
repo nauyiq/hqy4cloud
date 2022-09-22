@@ -1,6 +1,6 @@
 def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
 def branch = "*/dev"
-def base_dir = "/home/jenkins/agent/workspace/hqy-parent-all_dev"
+def base_dir = "/home/service"
 
 podTemplate(
     label: 'jenkins-agent',
@@ -14,22 +14,25 @@ podTemplate(
 
     node('jenkins-agent'){
         stage('Git Clone') {
-            checkout([
-            $class: 'GitSCM',
-            branches: [[name: '*/dev']],
-            userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
-            extensions: [
-            [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
-            ]
-            ])
+            dir("${base_dir}") {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/dev']],
+                    userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
+                    extensions: [
+                    [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
+                    ]
+                ])
+            }
+
         }
 
          stage('Maven Build') {
-            sh """
-                cd /home/jenkins/agent/workspace/hqy-parent-all_dev
-                ls
-                mvn clean compile install -Dmaven.test.skip=true
-            """
+            dir("${base_dir}") {
+               sh """
+                  mvn clean compile install -Dmaven.test.skip=true
+                  """
+            }
          }
     }
 }

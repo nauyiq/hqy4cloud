@@ -1,11 +1,11 @@
 def registry = "registry.cn-shenzhen.aliyuncs.com"
-def image_name = "${registry}/hqy-parent-all/collector-service:1.0-dev"
+def image_name = "${registry}/hqy-parent-all/collector-service:1.0"
 def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
 
 def k8s_auth = "kubeconfig"
 def aliyun_hub_auth = "aliyun_mirror_server"
 
-def base_dir = "/home/jenkins/agent/workspace/common-collector-service_dev"
+def base_dir = "/home/jenkins/agent/workspace/common-collector-service"
 def service_jar = "hqy-common-collector-service.jar"
 
 
@@ -23,46 +23,47 @@ podTemplate(
 
     node('jenkins-agent'){
          stage('Git Clone') {
-              checkout([
-              $class: 'GitSCM',
-              branches: [[name: '*/dev']],
-              userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
-              extensions: [
-              [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
-              ]
-              ])
+            dir("${base_dir}") {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/dev']],
+                    userRemoteConfigs: [[credentialsId: "", url: "https://github.com/nauyiq/hqy-parent-all.git"]],
+                    extensions: [
+                    [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]
+                    ]
+                ])
+            }
+
          }
 
          stage('Maven Build') {
-            sh """
-                cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/
-                ls
-                mvn clean compile install -Dmaven.test.skip=true
-            """
+            dir("${base_dir}") {
+                sh """ mvn clean compile install -Dmaven.test.skip=true """
+            }
          }
 
         stage('Build Image') {
             container('docker') {
                 stage('Package Image') {
-                   withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
-                   sh """
-                      cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
-                      cp -rf ../target/lib .
-                      cp -rf ../target/${service_jar} .
-                      docker build -t ${image_name} .
-                      docker login -u ${username} -p '${password}' ${registry}
-                      docker push ${image_name}
-                   """
-                    }
+                     withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                           sh """
+                              cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
+                              cp -rf ../target/lib .
+                              cp -rf ../target/${service_jar} .
+                              docker build -t ${image_name} .
+                              docker login -u ${username} -p '${password}' ${registry}
+                              docker push ${image_name}
+                              """
+                     }
                 }
             }
         }
 
         stage('部署到K8s'){
-             sh """
-              ls
-             """
-             kubernetesDeploy configs: "hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml", kubeconfigId: "kubeconfig"
+            dir("${base_dir}") {
+                kubernetesDeploy configs: "hqy-common-modules/hqy-common-collector-impl/deploy/deployment.yaml", kubeconfigId: "kubeconfig"
+            }
+
         }
     }
 }
