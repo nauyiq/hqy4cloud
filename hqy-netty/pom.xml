@@ -13,6 +13,7 @@
         <module>hqy-netty-core</module>
         <module>hqy-netty-websocket-demo</module>
         <module>hqy-netty-text-websocket</module>
+        <module>hqy-socketio-springboot-starter</module>
     </modules>
 
     <modelVersion>4.0.0</modelVersion>
