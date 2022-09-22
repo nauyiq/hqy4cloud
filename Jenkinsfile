@@ -29,10 +29,11 @@ podTemplate(
         }
 
          stage('Maven Build') {
-            sh """
-                cd ${base_dir}
-                ls
-            """
+            dir("${base_dir}") {
+               sh """
+                  mvn clean compile install -Dmaven.test.skip=true
+                  """
+            }
          }
     }
 }
