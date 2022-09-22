@@ -59,6 +59,8 @@ JAVA_OPT="${JAVA_OPT} -Dfile.encoding=UTF-8"
 #JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/target/logback.xml"
 #JAVA_OPT="${JAVA_OPT} --logging.file.path=${BASE_DIR}/logs/"
 
+ls ${BASE_DIR}/target/
+
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/${JAVA_JAR}"
 
 
