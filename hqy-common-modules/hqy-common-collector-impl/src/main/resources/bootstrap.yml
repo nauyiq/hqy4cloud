@@ -8,7 +8,7 @@ spring:
   application:
     name: common-collector
   profiles:
-    active: test
+    active: dev
 
 management: #暴露所有
   endpoints:
