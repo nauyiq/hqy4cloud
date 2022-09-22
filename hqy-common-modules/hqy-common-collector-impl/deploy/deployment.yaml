@@ -17,7 +17,7 @@ spec:
       - name: aliyun-hub-secret
       containers:
         - name: common-collector-service
-          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev
+          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8888
