@@ -1,5 +1,5 @@
 ---
-typora-copy-images-to: images
+ typora-copy-images-to: images
 ---
 
 # Kubernetes
@@ -256,7 +256,7 @@ Kubernetes集群还依赖于一组称为"附件"(add-ons)的组件以提供完�
 >
 > `Kubeadm`仅关心如何初始化并启动集群，余下的其他操作，例如安装`Kubernetes Dashboard`、监控系统、日志系统等必要的附加组件则不在其考虑范围之内，需要管理员自行部署。
 >
-> `Kubeadm`集成了`Kubeadm init`和`kubeadm join`等工具程序，其中`kubeadm init`用于集群的快速初始化，其核心功能是部署Master节点的各个组件，而`kubeadm join`则用于将节点快速加入到指定集群中，它们是创建`Kubernetes`集群最佳实践的“快速路径”。另外，`kubeadm token`可于集群构建后管理用于加入集群时使用的认证令牌（t`oken`)，而`kubeadm reset`命令的功能则是删除集群构建过程中生成的文件以重置回初始状态。
+> `Kubeadm`集成了`Kubeadm init`和`kubeadm join`等工具程序，其中`kubeadm init`用于集群的快速初始化，其核心功能是部署Master节点的各个组件，而`kubeadm join`则用于将节点快速加入到指定集群中，它们是创建`Kubernetes`集群最佳实践的“快速路径”。另外，`kubeadm token`可于集群构建后管理用于加入集群时使用的认证令牌（`token`)，而`kubeadm reset`命令的功能则是删除集群构建过程中生成的文件以重置回初始状态。
 
 
 
@@ -286,7 +286,7 @@ Kubernetes集群还依赖于一组称为"附件"(add-ons)的组件以提供完�
 
 
 
-**异地云服务器通过zeroTier构建局域网**
+**1) 异地云服务器通过zeroTier构建局域网**
 
 ```shell
 # moon主服务器配置
@@ -305,11 +305,15 @@ systemctl restart zerotier-one
 
 
 
+**2)  安装依赖包**
+
+```shell
+yum install -y contrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git 
+```
 
 
 
-
-**设置防火墙为Iptables并设置空规则**
+**3)  设置防火墙为Iptables并设置空规则**
 
 ```shell
 systemctl stop firewalld && systemctl disable firewalld
@@ -319,7 +323,7 @@ yum -y install iptables-services && systemctl start iptables && systemctl enable
 
 
 
-**关闭`selinux` 和 `swap`**
+**4)  关闭`selinux` 和 `swap`**
 
 ```shell
 swapoff -a && sed -ri 's/.*swap.*/#&/' /etc/fstab
@@ -328,15 +332,7 @@ setenforce 0 && sed -i 's/enforcing/disabled/' /etc/selinux/config
 
 
 
-**安装依赖包**
-
-```shell
-yum install -y conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git
-```
-
-
-
-**调整内核参数，对于k8s**
+**5)  调整内核参数，对于k8s**
 
 ```shell
 cat > kubernetes.conf << EOF
@@ -359,25 +355,30 @@ cp kubernetes.conf /etc/sysctl.d/kubernetes.conf
 sysctl -p /etc/sysctl.d/kubernetes.conf
 ```
 
-**调整系统时区**
+
+
+**6)  调整系统时区**
 
 ```shell
-# 设置系统时区为 中国/上海
-timedatectl set-timezone Asia/上海
-#将当前UTC时间写入硬件时钟
+timedatectl set-timezone Asia/Shanghai
+ #将当前的 UTC 时间写入硬件时钟
 timedatectl set-local-rtc 0
-#重启依赖于系统时间的服务
-systemctl restart rsyslong
+ #重启依赖于系统时间的服务
+systemctl restart rsyslog 
 systemctl restart crond
 ```
 
-**关闭系统不需要服务**
+
+
+**7)  关闭系统不需要服务 (非必要)**
 
 ```shell
 systemctl stop postfix && systemctl disable postfix
 ```
 
-**设置rsyslogd和systemd journald** 
+
+
+**8) 设置rsyslogd和systemd journald** 
 
 ```shell
 # 持久化保存日志的目录
@@ -410,7 +411,9 @@ EOF
 systemctl restart systemd-journald 
 ```
 
-**升级系统内核**
+
+
+**9)  升级系统内核**
 
 ```shell
 rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm 
@@ -420,12 +423,14 @@ yum --enablerepo=elrepo-kernel install -y kernel-lt
 #查看安装的内核
 awk -F\' '$1=="menuentry " {print $2}' /etc/grub2.cfg
 
-grub2-set-default "CentOS Linux (5.4.209-1.el7.elrepo.x86_64) 7 (Core)"
+grub2-set-default "CentOS Linux (5.4.214-1.el7.elrepo.x86_64) 7 (Core)"
 
 reboot
 ```
 
-**Kube-proxy开启ipvs的前置条件**
+
+
+**10) Kube-proxy开启ipvs的前置条件**
 
 ```shell
 modprobe br_netfilter
@@ -440,146 +445,365 @@ modprobe -- nf_conntrack_ipv4
 EOF
 
 chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules && lsmod | grep -e ip_vs -e nf_conntract_ipv4
-```
 
 
-
-### 2.3 kubeadm初始化
-
-`说明：下面初始化环境工作master节点和node节点都需要执行`
-
-
-
-**配置`kubenetes`的`yum`仓库（这里使用阿里云仓库**
-
-```shell
-cat << EOF > /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
-enabled=1
-gpgcheck=0
-repo_gpgcheck=0
-gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.grp
+# 如果高内核版本修改不成功
+# modprobe: FATAL: Module nf_conntrack_ipv4 not found.
+则改为
+cat > /etc/sysconfig/modules/ipvs.modules <<EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
 EOF
 
-yum -y install kubelet-1.15.2 kubeadm-1.15.2 kubectl-1.15.2
-systemctl enable kubelet.service
+chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules && lsmod | grep -e ip_vs -e nf_conntract
 ```
 
 
+
+**11) 所有节点安装ipset**
+
+> iptables是Linux服务器上进行网络隔离的核心技术，内核在处理网络请求时会对iptables中的策略进行逐条解析，因此当策略较多时效率较低；而是用IPSet技术可以将策略中的五元组(协议，源地址，源端口,目的地址，目的端口)合并到有限的集合中，可以大大减少iptables策略条目从而提高效率。测试结果显示IPSet方式效率将比iptables提高100倍
 
 ```shell
-#无法翻墙方案解决
-docker pull  registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.15.2
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.3.10
-docker pull coredns/coredns:1.3.1
+yum install ipset -y
 
-#重新打tag
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.15.2 k8s.gcr.io/kube-apiserver:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.15.2 k8s.gcr.io/kube-controller-manager:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.15.2 k8s.gcr.io/kube-scheduler:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.15.2 k8s.gcr.io/kube-proxy:v1.15.2
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 k8s.gcr.io/pause:3.1
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.3.10 k8s.gcr.io/etcd:3.3.10
-docker tag coredns/coredns:1.3.1 k8s.gcr.io/coredns:1.3.1
+# 为了方面ipvs管理，这里安装一下ipvsadm。
 
+yum install ipvsadm -y
 
 ```
 
-```shell
-kubeadm config print init-defaults > kubeadm-config.yaml
-
-localAPIEndpoint:
-  advertiseAddress: 192.168.191.93
-kubernetesVersion: v1.15.2
-networking:
-  podSubnet: "10.244.0.0/16"
-  serviceSubnet: 10.96.0.0/12
-  
----
-apiVersion: kubeproxy.config.k8s.io/v1alpha1
-kind: KubeProxyConfiguration
-featureGates:
-  SupportIPVSProxyMode: true
-mode: ipvs
 
 
-kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs | tee kubeadm-init.log
+### 2.3 Containerd 安装
 
-export KUBECONFIG=/etc/kubernetes/kubelet.conf
-```
+> kubernetes 1.20以上版本不再支持`docker`， 具体原因查看下面文章
+>
+> - https://cloud.tencent.com/developer/article/1758588
+> - https://kubernetes.io/zh-cn/blog/2020/12/02/dont-panic-kubernetes-and-docker/
+>
+>   在安装containerd前，我们需要优先升级`libseccomp`
+>
+> 在centos7中yum下载`libseccomp`的版本是2.3的，版本不满足我们最新containerd的需求，需要下载2.4以上的
+>
+> ```shell
+> rpm -qa | grep libseccomp
+> libseccomp-2.3.1-4.el7.x86_64
+> #卸载原来的
+> rpm -e libseccomp-2.3.1-4.el7.x86_64 --nodeps
+> #下载高于2.4以上的包
+> wget http://rpmfind.net/linux/centos/8-stream/BaseOS/x86_64/os/Packages/libseccomp-2.5.1-1.el8.x86_64.rpm
+> #安装
+> rpm -ivh libseccomp-2.5.1-1.el8.x86_64.rpm
+> ```
+>
+> 
+>
+> **下载安装containerd**
+>
+> <https://containerd.io/downloads/>
+>
+> Containerd使用`1.6.1`版本号， `containerd-1.6.1-linux-amd64.tar.gz ` 只包含containerd包
+>
+> `cri-containerd-cni-1.6.4-linux-amd64.tar.gz` 包含containerd以及cri runc等相关工具包，建议此本包
+>
+> ```shell
+> #下载tar.gz包
+> #containerd工具包，包含cri runc等
+> wget https://github.com/containerd/containerd/releases/download/v1.6.4/cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+> #备用下载地址
+> wget https://d.frps.cn/file/kubernetes/containerd/cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+>
+> tar zxvf cri-containerd-cni-1.6.4-linux-amd64.tar.gz -C / #我们直接让它给我们对应的目录给替换掉
+> #创建配置文件目录
+> mkdir /etc/containerd -p
+>
+> #生成默认配置文件
+>   containerd config default > /etc/containerd/config.toml
+>
+> 配置systemd作为容器的cgroup driver
+> sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+>
+> #设置开机启动
+> systemctl daemon-reload
+> systemctl enable containerd --now
+> ```
+>
+> 
+>
+> **containerd常用命令**
+>
+> https://blog.csdn.net/kali_yao/article/details/122530390
+>
+> ```shell
+> # 查看镜像
+> ctr images list 或  ctr i ls
+> # 如没有指定名称空间则需指定
+> ctr namespaces list  或 ctr ns list
+> ctr -n k8s.io images list
+>
+> # 镜像标记
+> ctr -n k8s.io images tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.2 k8s.gcr.io/pause:3.2
+>
+> # 删除镜像
+> ctr -n k8s.io images rm k8s.gcr.io/pause:3.2
+>
+> # 拉取镜像
+> ctr -n k8s.io images pull -k k8s.gcr.io/pause:3.2
+>
+> # 导出镜像
+> ctr -n k8s.io images export pause.tar k8s.gcr.io/pause:3.2
+>
+> # 导入镜像;不支持 build,commit 镜像
+> ctr -n k8s.io i import pause.tar
+>
+> # 运行容器
+> ctr -n k8s.io run --null-io --net-host -d –env PASSWORD=$drone_password –mount type=bind,src=/etc,dst=/host-etc,options=rbind:rw –mount type=bind,src=/root/.kube,dst=/root/.kube,options=rbind:rw $image sysreport bash /sysreport/run.sh
+>
+> –null-io: 将容器内标准输出重定向到/dev/null
+> –net-host: 主机网络
+> -d: 当task执行后就进行下一步shell命令,如没有选项,则会等待用户输入,并定向到容器内
+>
+> # 查看容器
+> ctr containers list 或 ctr c ls
+> # 如没有指定名称空间则需指定
+> ctr -n k8s.io c ls
+> # 先找出容器然后搜索容器名
+> ctr -n k8s.io c ls 
+> # 找出容器名
+> ctr -n k8s.io tasks list 
+> # 停止容器 
+> ctr kill -a -s 9 {id}
+> ```
 
-**部署网络**
-
-```shell
-# Flannel 为每个使用 Kubernetes 的机器提供一个子网，也就是说 Kubernetes 集群中的每个主机都有自己一个完整的子网。
-
-# 同理可以使用calico.
-
-kubectl  apply -f 
-https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
-kubectl create -f kube-flannel.yaml
-
-export KUBECONFIG=/etc/kubernetes/admin.conf
-
-#如果不会用eth0网卡，flannel 和 calico都可以指定网卡
 
 
-#calico指定网卡
-spec:
-  containers:
-  - env:
-    - name: DATASTORE_TYPE
-      value: kubernetes
-    - name: IP_AUTODETECTION_METHOD  # DaemonSet中添加该环境变量
-      value: interface=eth0    # 指定内网网卡
-    - name: WAIT_FOR_DATASTORE
-      value: "true"
 
-#flannel  在deploy的args中指定网卡
-containers:
-      - name: kube-flannel
-        image: quay.io/coreos/flannel:v0.10.0-amd64
-        command:
-        - /opt/bin/flanneld
-        args:
-        - --ip-masq
-        - --kube-subnet-mgr
-        - --iface=eth0 # 指定内网网卡
 
-```
 
-```shell
-#获取连接主节点的命令
-kubeadm token create --print-join-command
-#查看节点数目
-kubectl get node
-#查看pod详细信息
-kubectl get pod -n kube-system -o wide
-#启动一个pod
-kubectl run common-collect-service --image=registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev --replicas=1
-#删除pod 必须先删除 deployment
-kubectl delete deployment common-collect-service
-#查看rs
-kubectl get rs
-#动态扩容
-kubectl scale --replicas=2 deployment/common-collect-service
-#暴露端口 并且使用svc进行负载
-kubectl expose deployment common-collect-service --port=8888 --target-port=8888
-#查看svc 
-kubectl get svc
-#修改svc 把type改成NodePort
-kubectl edit svc common-collect-service
-#查看日志
-kubectl logs --tail 200 -f common-collect-service-8557844c57-ztwc7
 
-```
+## 2.4 高可用k8s集群安装
+
+> 以前做法：多个master服务器，然后使用keepalived监控master节点的可用性和故障转移，使用haproxy对master进行均衡负载。
+> 新的解决方案：利用K8S原生的kube-vip实现master高可用。
+> 建议使用kube-vip解决方案，这样，不存在VIP节点的问题，其中心思想也是vip架构，但是通过公平选举诞生的。
+>
+> **1) 负载均衡安装设置(kube-vip)**
+>
+> ```shell
+> # 设置VIP地址（仅在master01上部署先）
+> mkdir -p /etc/kubernetes/manifests/
+> export VIP=172.27.0.10
+> export INTERFACE=ztr4nuy7j4
+> ctr image pull ghcr.io/kube-vip/kube-vip:v0.3.8
+> ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:v0.3.8 vip \
+> /kube-vip manifest pod \
+> --interface $INTERFACE \
+> --vip $VIP \
+> --controlplane \
+> --services \
+> --arp \
+> --leaderElection | tee  /etc/kubernetes/manifests/kube-vip.yaml
+> ```
+>
+> 
+>
+> **2) 安装kubenetes和配置`kubenetes`的`yum`仓库（这里使用阿里云仓库) （所有节点）**
+>
+> ```shell
+> cat << EOF > /etc/yum.repos.d/kubernetes.repo
+> [kubernetes]
+> name=Kubernetes
+> baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+> enabled=1
+> gpgcheck=0
+> repo_gpgcheck=0
+> gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.grp
+> EOF
+>
+> #安装kubelet、kubeadm、kubectl
+> yum -y install kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+> systemctl enable kubelet.service
+>
+> ```
+>
+> 
+>
+> **3) 初始化集群前置镜像**
+>
+> ```shell
+> #需要翻墙可以采用国内仓库 再重新打标签
+> #docker pull  registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.23.5
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.23.5
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.23.5
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.23.5
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.1-0
+> #docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.8.6
+>
+> #重新打tag
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.23.5 k8s.gcr.io/kube-apiserver:v1.23.5
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.23.5 k8s.gcr.io/kube-controller-manager:v1.23.5
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.23.5 k8s.gcr.io/kube-scheduler:v1.23.5
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.23.5 k8s.gcr.io/kube-proxy:v1.23.5
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6 k8s.gcr.io/pause:3.6
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.1-0 k8s.gcr.io/etcd:3.5.1-0
+> #docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.8.6 k8s.gcr.io/coredns/coredns:v1.8.6 
+>
+> #以上是docker示例，同样containerd也可以如此操作
+>
+> #containerd外部镜像导入
+> wget https://d.frps.cn/file/kubernetes/image/k8s_all_1.23.5.tar
+> ctr -n k8s.io i import k8s_all_1.23.5.tar
+> ```
+>
+> 
+>
+> **4） 初始化集群**
+>
+> ```shell
+> #修改和配置kubeadm-config
+> kubeadm config print init-defaults > kubeadm-config.yaml
+> kubeadm config print init-defaults --component-configs KubeletConfiguration > kubeadm.yaml
+>
+> localAPIEndpoint:
+>   advertiseAddress: 192.168.191.93
+> kubernetesVersion: v1.15.2
+> networking:
+>   podSubnet: "10.244.0.0/16"
+>   serviceSubnet: 10.96.0.0/12
+>   
+> ---
+> apiVersion: kubeproxy.config.k8s.io/v1alpha1
+> kind: KubeProxyConfiguration
+> featureGates:
+>   SupportIPVSProxyMode: true
+> mode: ipvs
+>
+>
+>
+> #指定Kubernetes工作节点内网IP¶
+> #所以我们需要对应修改或创建 /etc/default/kubelet :
+> KUBELET_EXTRA_ARGS="--node-ip=172.27.0.4"
+>
+> #modprobe br_netfilter
+> #echo 1 > /proc/sys/net/ipv4/ip_forward
+>
+> #集群初始化
+> kubeadm init  --config kubeadm-init.yaml --upload-certs --node-name master1
+>
+> #加入集群
+> kubeadm join k8s.hongqy1024.cn:6443 --token abcdef.0123456789abcdef \
+> 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef \
+> 	--control-plane --certificate-key 6f731084c5bf28e54b11af3c8c7f43541e2ad3cf977864e331dbd1ac285bd6f1 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=172.27.0.3
+>
+> kubeadm join k8s.hongqy1024.cn:6443 --token hdj506.908ufcp1u0uk1w5j --discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef  --node-name worker1 --cri-socket /run/containerd/containerd.sock
+> ```
+>
+> 
+>
+> **5） 部署网络插件**
+>
+> ```shell
+> # Flannel 为每个使用 Kubernetes 的机器提供一个子网，也就是说 Kubernetes 集群中的每个主机都有自己一个完整的子网。
+> # 同理可以使用calico.
+> kubectl  apply -f 
+> https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+>
+> kubectl create -f kube-flannel.yaml
+>
+> #calico指定网卡
+> spec:
+>   containers:
+>   - env:
+>     - name: DATASTORE_TYPE
+>       value: kubernetes
+>     - name: IP_AUTODETECTION_METHOD  # DaemonSet中添加该环境变量
+>       value: interface=eth0    # 指定内网网卡
+>     - name: WAIT_FOR_DATASTORE
+>       value: "true"
+>
+> #flannel  在deploy的args中指定网卡
+> containers:
+>       - name: kube-flannel
+>         image: quay.io/coreos/flannel:v0.10.0-amd64
+>         command:
+>         - /opt/bin/flanneld
+>         args:
+>         - --ip-masq
+>         - --kube-subnet-mgr
+>         - --iface=eth0 # 指定内网
+> ```
+
+
+
+## 2.5 kubernetes 重要命令
+
+> **1）查看etcd数据是否正常**
+>
+> ```shell
+> kubectl get pod -o wide -n kube-system|grep etcd
+> kubectl exec -ti etcd-master1 -n kube-system sh
+> export ETCDCTL_API=3
+> etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list
+> ```
+>
+> 
+>
+> **2）重新初始化集群**
+>
+> ```shell
+> kubeadm reset -f
+> rm -rf /etc/kubernetes/*
+> rm -rf ~/.kube/*
+> rm -rf /var/lib/etcd/*
+> rm -rf /etc/cni/net.d
+> ipvsadm --clear
+>
+> lsof -i :6443|grep -v "PID"|awk '{print "kill -9",	$2}'|sh   
+> lsof -i :10259|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+> lsof -i :10257|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+> lsof -i :10250|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+> lsof -i :2379|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+> lsof -i :2380|grep -v "PID"|awk '{print "kill -9",$2}'|sh
+> ```
+>
+> 
+>
+> **3）命令**
+>
+> ```shell
+> #获取连接主节点的命令
+> kubeadm token create --print-join-command
+> #查看节点数目
+> kubectl get node
+> #查看pod详细信息
+> kubectl get pod -n kube-system -o wide
+> #启动一个pod
+> kubectl run common-collect-service --image=registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev --replicas=1
+> #删除pod 必须先删除 deployment
+> kubectl delete deployment common-collect-service
+> #查看rs
+> kubectl get rs
+> #动态扩容
+> kubectl scale --replicas=2 deployment/common-collect-service
+> #暴露端口 并且使用svc进行负载
+> kubectl expose deployment common-collect-service --port=8888 --target-port=8888
+> #查看svc 
+> kubectl get svc
+> #修改svc 把type改成NodePort
+> kubectl edit svc common-collect-service
+> #查看日志
+> kubectl logs --tail 200 -f common-collect-service-8557844c57-ztwc7
+> ```
+>
+> 
+
+
 
 
 
@@ -1242,13 +1466,7 @@ spec:
         
         
  # kubectl create -f readiness-httpget.yaml
- 
- 
 ```
-
-
-
-### 3.8 Start 和 Stop 示例
 
 
 
@@ -2296,7 +2514,7 @@ vim /etc/exports
 #启动rpcbind服务（nfs依赖服务）
 systemctl start rpcbind
 #启动nfs
-systemctl start nfs
+  systemctl start nfs
 ```
 
 2) 编辑资源清单文件
@@ -2307,7 +2525,7 @@ vim vol-nfs.yaml
 
 
 
-# ![1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8](C:\Users\AD04\Desktop\1591336326280-ceb41cdc-940b-4540-97cd-7f3c919feab8.png)PV-PVC
+# PV-PVC
 
 ## 1. 介绍
 
@@ -2423,6 +2641,164 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 
 
 
+## 5. 动态NFS-PV示例
+
+> ··· 省略创建nfs步骤
+>
+> 
+>
+> **创建SA**
+>
+> ```shell
+> apiVersion: v1
+> kind: Namespace
+> metadata:
+>   name: nfs
+> ---
+> apiVersion: v1
+> kind: ServiceAccount
+> metadata:
+>   name: nfs-client-provisioner
+>   # replace with namespace where provisioner is deployed
+>   namespace: nfs
+> ---
+> kind: ClusterRole
+> apiVersion: rbac.authorization.k8s.io/v1
+> metadata:
+>   name: nfs-client-provisioner-runner
+> rules:
+>   - apiGroups: [""]
+>     resources: ["nodes"]
+>     verbs: ["get", "list", "watch"]
+>   - apiGroups: [""]
+>     resources: ["persistentvolumes"]
+>     verbs: ["get", "list", "watch", "create", "delete"]
+>   - apiGroups: [""]
+>     resources: ["persistentvolumeclaims"]
+>     verbs: ["get", "list", "watch", "update"]
+>   - apiGroups: ["storage.k8s.io"]
+>     resources: ["storageclasses"]
+>     verbs: ["get", "list", "watch"]
+>   - apiGroups: [""]
+>     resources: ["events"]
+>     verbs: ["create", "update", "patch"]
+> ---
+> kind: ClusterRoleBinding
+> apiVersion: rbac.authorization.k8s.io/v1
+> metadata:
+>   name: run-nfs-client-provisioner
+> subjects:
+>   - kind: ServiceAccount
+>     name: nfs-client-provisioner
+>     # replace with namespace where provisioner is deployed
+>     namespace: nfs
+> roleRef:
+>   kind: ClusterRole
+>   name: nfs-client-provisioner-runner
+>   apiGroup: rbac.authorization.k8s.io
+> ---
+> kind: Role
+> apiVersion: rbac.authorization.k8s.io/v1
+> metadata:
+>   name: leader-locking-nfs-client-provisioner
+>   # replace with namespace where provisioner is deployed
+>   namespace: nfs
+> rules:
+>   - apiGroups: [""]
+>     resources: ["endpoints"]
+>     verbs: ["get", "list", "watch", "create", "update", "patch"]
+> ---
+> kind: RoleBinding
+> apiVersion: rbac.authorization.k8s.io/v1
+> metadata:
+>   name: leader-locking-nfs-client-provisioner
+>   # replace with namespace where provisioner is deployed
+>   namespace: nfs
+> subjects:
+>   - kind: ServiceAccount
+>     name: nfs-client-provisioner
+>     # replace with namespace where provisioner is deployed
+>     namespace: nfs
+> roleRef:
+>   kind: Role
+>   name: leader-locking-nfs-client-provisioner
+>   apiGroup: rbac.authorization.k8s.io
+> ```
+>
+> 
+>
+> **创建storageclass**
+>
+> ```shell
+> apiVersion: storage.k8s.io/v1
+> kind: StorageClass
+> metadata:
+>   name: managed-nfs-storage
+> provisioner: k8s-sigs.io/nfs-subdir-external-provisioner # or choose another name, must match deployment's env PROVISIONER_NAME'
+> reclaimPolicy: Retain #PV的删除策略，默认为delete，删除PV后立即删除NFS server的数据
+> mountOptions:
+>   #- vers=4.1 #containerd有部分参数异常
+>   #- noresvport #告知NFS客户端在重新建立网络连接时，使用新的传输控制协议源端口
+>   - noatime #访问文件时不更新文件inode中的时间戳，高并发环境可提高性能
+> parameters:
+>   #mountOptions: "vers=4.1,noresvport,noatime"
+>   archiveOnDelete: "true"  #删除pod时保留pod数据，默认为false时为不保留数据 
+> ```
+>
+> 
+>
+> **nfs provisioner**
+>
+> ```shell
+> apiVersion: apps/v1
+> kind: Deployment
+> metadata:
+>   name: nfs-client-provisioner
+>   labels:
+>     app: nfs-client-provisioner
+>   # replace with namespace where provisioner is deployed
+>   namespace: nfs
+> spec:
+>   replicas: 1
+>   strategy: #部署策略
+>     type: Recreate
+>   selector:
+>     matchLabels:
+>       app: nfs-client-provisioner
+>   template:
+>     metadata:
+>       labels:
+>         app: nfs-client-provisioner
+>     spec:
+>       serviceAccountName: nfs-client-provisioner
+>       containers:
+>         - name: nfs-client-provisioner
+>           #image: k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2 
+>           image: reg.zhangjw.com/public/nfs-subdir-external-provisioner:v4.0.2 
+>           volumeMounts:
+>             - name: nfs-client-root
+>               mountPath: /logging
+>           env:
+>             - name: PROVISIONER_NAME
+>               value: k8s-sigs.io/nfs-subdir-external-provisioner
+>             - name: NFS_SERVER
+>               value: hongqy1024.cn
+>             - name: NFS_PATH
+>               value: /home/hongqy/data/elasticsearch/logging
+>       volumes:
+>         - name: nfs-client-root
+>           nfs:
+>             server: hongqy1024.cn
+>             path:  /home/hongqy/data/elasticsearch/logging
+>
+> ```
+>
+> 
+
+
+
+
+
 # 集群调度
 
 
@@ -2432,8 +2808,6 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 ## 1. 简介
 
 > Helm是一个 [Kubernetes](https://so.csdn.net/so/search?q=Kubernetes&spm=1001.2101.3001.7020) 应用的包管理工具，helm 类似于Linux系统下的包管理器，如yum/apt等，python中pip，node中的npm，可以方便快捷的将之前打包好的yaml文件快速部署进kubernetes内，方便管理维护。
-
-
 
 **Helm主要包括以下组件**
 
@@ -2445,21 +2819,20 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 - Release：基于Chart和Config部署到K8S集群中运行的一个实例。一个Chart可以被部署多次，每次的Release都不相同。
 
 
+
+
 ## 2. helm安装
 
 ```shell
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.13.1-linux-amd64.tar.gz
-
-wget https://get.helm.sh/helm-v2.13.1-linux-amd64.tar.gz
-
-tar -zxvf helm-v2.13.1-linux-amd64.tar.gz
+wget https://storage.googleapis.com/kubernetes-helm/helm-v3.8.2-linux-amd64.tar.gz
+tar -zxvf helm-v3.8.2-linux-amd64.tar.gz
 cp linux-amd64/helm /usr/local/bin/
 chmod a+x /usr/local/bin/helm 
 ```
 
-
-
 另外一个值得注意的问题是`RBAC`，我们需要为`Tiller`创建一个`ServiceAccount`，让他拥有执行的权限，详细内容可以查看 Helm 文档中的[Role-based Access Control](https://docs.helm.sh/using_helm/#role-based-access-control)。 创建`rbac.yaml`
+
+**helm3 可以取消此操作 因为helm3取消tiller模块**
 
 ```yaml
 apiVersion: v1
@@ -2494,46 +2867,22 @@ docker tag sapcc/tiller:v2.13.1 gcr.io/kubernetes-helm/tiller:v2.13.1
 
 
 
-##  3. helm安装Dashboard
-
-**1) 拉取helm kubernetes-dashboard Chart** 
+## 3. helm常用命令
 
 ```shell
-helm repo add k8s-dashboard https://kubernetes.github.io/dashboard
-
-helm fetch  k8s-dashboard/kubernetes-dashboard --version 2.0.1
-```
-
-**2) 解压后指定yaml启动**
-
-`vim kubernetes-dashboard.yaml`
-
-```yaml
-image:
-  repository: registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
-  tag: v1.10.1
-  pullPolicy: IfNotPresent
-ingress:
-  enabled: true
-  hosts:
-    - dashboard.nauyiq.com
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: 'true'
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-  tls:
-        - secretName: nauyiq.com.tls.secret
-      hosts:
-        - dashboard.xiaofu.com
-  rbac:
-  clusterAdminRole: true
-
-  serviceAccount:
-  name: dashboard-admin
-```
-
-```shell
-helm install k8s-dashboard/kubernetes-dashboard -n kubernetes-dashboard --namespace kube-system -f kubernetes-dashboard.yaml
+helm version                            // 查看helm版本
+helm create xxx                         // 创建一个xxx charts
+helm install xxx1 ./xxx                 // 部署安装xxx，设置名称为xxx1
+helm uninstall xxx1                     // 卸载删除xxx1
+helm list                               // 列出已经部署的charts
+helm lint ./xxx                         // 检查包的格式或信息是否有问题
+helm package ./xxx                      // 打包charts
+helm template helm_charts-0.1.1.tgz     // 查看生成的模板
+helm repo add --username admin --password password myharbor xxx  // 增加repo
+helm repo update                        // 更新仓库资源
+helm search repo                        // 从你添加（使用 helm repo add）到本地 helm 客户端中的仓库中进行查找。该命令基于本地数据进行搜索，无需连接互联网 
+helm search hub                         // 从 Artifact Hub 中查找并列出 helm charts。 Artifact Hub中存放了大量不同的仓库
+Helm charts
 ```
 
 

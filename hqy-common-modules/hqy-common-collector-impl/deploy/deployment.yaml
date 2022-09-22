@@ -1,0 +1,25 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: common-collector-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: common-collector-service
+  template:
+    metadata:
+      labels:
+        app: common-collector-service
+    spec:
+      imagePullSecrets:
+      - name: aliyun-hub-secret
+      containers:
+        - name: common-collector-service
+          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/collector-service:1.0-dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              name: web
+

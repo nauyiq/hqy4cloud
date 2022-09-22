@@ -29,7 +29,7 @@ public class NacosConfigurationUtils {
             String active = ConfigurationContext.getString(yaml, ACTIVE);
             if (StringUtils.isNotBlank(active)) {
                 serviceAddress = ConfigurationContext.
-                        getString(ConfigurationContext.YamlEnum.getYaml(yaml.fineName + StringConstants.Symbol.RAIL + active), serverAddressKey);
+                        getString(ConfigurationContext.YamlEnum.getYaml(StringConstants.BOOTSTRAP + StringConstants.Symbol.RAIL + active + StringConstants.File.YML), serverAddressKey);
             } else {
                 serviceAddress = ConfigurationContext.getString(yaml, serverAddressKey);
             }

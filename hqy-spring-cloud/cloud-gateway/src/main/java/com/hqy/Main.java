@@ -14,10 +14,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class GatewayMain {
+public class Main {
 
     public static void main(String[] args) {
-        SpringApplication.run(GatewayMain.class, args);
+        SpringApplication.run(Main.class, args);
         ProjectContextInfo.startPrintf();
     }
 

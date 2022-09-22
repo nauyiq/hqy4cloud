@@ -56,11 +56,13 @@ public class NacosThriftServerStarterAutoConfiguration {
         try {
             nacosThriftStarter.registerProjectContextInfo();
             nacosDiscoveryProperties.setMetadata(nacosThriftStarter.getMetadata().toMetadataMap());
+            return new NacosWatch(nacosDiscoveryProperties);
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
-            System.exit(0);
+            System.exit(1);
+            return null;
         }
-        return new NacosWatch(nacosDiscoveryProperties);
+
     }
 
 

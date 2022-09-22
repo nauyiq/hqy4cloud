@@ -71,10 +71,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-validator</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
 
         <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
 <!--        <dependency>-->
@@ -97,18 +98,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.CommonCollectorMain</mainClass>
+                            <mainClass>com.hqy.Main</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-<!--                            <classpathLayoutType>custom</classpathLayoutType>-->
-<!--                            <customClasspathLayout>${artifactId}-${version}</customClasspathLayout>-->
+                            <classpathLayoutType>simple</classpathLayoutType>
                         </manifest>
+
+
                         <!-- <manifestEntries>
                              <Class-Path>. lib/tools-1.8.jar</Class-Path>
                          </manifestEntries>-->
@@ -131,7 +134,6 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
-                            <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
                 </executions>

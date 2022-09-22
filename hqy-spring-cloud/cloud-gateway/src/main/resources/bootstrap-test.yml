@@ -17,10 +17,20 @@ spring:
           group: ${nacos.group}
           refresh: true
         extension-configs[1]:
-          data-id: db-config.yaml
+          data-id: cloud-gateway.yaml
           group: ${nacos.group}
           refresh: true
       discovery:
-        ephemeral: false # false为永久实例，true表示临时实例
-        server-addr: ${nacos.server-addr}
         namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        server-addr: ${nacos.server-addr}
+        ephemeral: true # false为永久实例，true表示临时实例
+
+# 支持动态路由
+gateway:
+  dynamicRoute:
+    dataId: gateway-routing.json
+    group: ${nacos.group}
+    enabled: true
+    type: nacos
+

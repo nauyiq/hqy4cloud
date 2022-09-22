@@ -1,5 +1,5 @@
 nacos:
-  server-addr: 120.76.65.160:8848
+  server-addr: hongqy1024.cn:8848
   group: DEV_GROUP
   namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
 
@@ -36,7 +36,6 @@ spring:
         dashboard: 172.31.1.1:8080 #sentinel控制台访问路径
         # sentinel控制台和服务端的交互端口 默认8719
         port: 8719
-
       # sentinel加载nacos远程配置规则
       datasource:
 #        flow:

@@ -3,24 +3,33 @@ nacos:
   group: TEST_GROUP
   namespace: a7f78604-f575-48cb-bf17-ab9a2b09b516
 
-#开发环境
 spring:
   cloud:
     nacos:
       config:
         server-addr: ${nacos.server-addr}
+        file-extension: yaml
         namespace: ${nacos.namespace}
         group: ${nacos.group}
-        file-extension: yaml
         extension-configs[0]:
           data-id: redis-config.yaml
           group: ${nacos.group}
           refresh: true
         extension-configs[1]:
-          data-id: db-config.yaml
+          data-id: db-app-config.yaml
+          group: ${nacos.group}
+          refresh: true
+        extension-configs[2]:
+          data-id: dev-config.yaml
           group: ${nacos.group}
           refresh: true
       discovery:
-        ephemeral: false # false为永久实例，true表示临时实例
         server-addr: ${nacos.server-addr}
+        group: ${nacos.group}
         namespace: ${nacos.namespace}
+        ephemeral: true # false为永久实例，true表示临时实例
+
+
+
+
+

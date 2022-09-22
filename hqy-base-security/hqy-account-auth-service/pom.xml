@@ -102,33 +102,21 @@
 
     <build>
         <finalName>hqy-account-service</finalName>
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>src/main/resources</directory>-->
-<!--                <filtering>false</filtering>-->
-<!--                <includes>-->
-<!--                    <include>**/*.xml</include>-->
-<!--                    <include>*.properties</include>-->
-<!--                    <include>*.yml</include>-->
-<!--                    <include>*.jks</include>-->
-<!--                </includes>-->
-<!--            </resource>-->
-<!--        </resources>-->
-
         <plugins>
-            <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.AccountServiceMain</mainClass>
+                            <mainClass>com.hqy.Main</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
+                            <classpathLayoutType>simple</classpathLayoutType>
                         </manifest>
                         <!-- <manifestEntries>
                              <Class-Path>. lib/tools-1.8.jar</Class-Path>
@@ -152,8 +140,6 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
-                            <!-- lib打包后带组织名的结构 -->
-                            <useRepositoryLayout>true</useRepositoryLayout>
                         </configuration>
                     </execution>
                 </executions>

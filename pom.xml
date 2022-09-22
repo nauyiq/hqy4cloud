@@ -42,6 +42,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <source.plugin.version>3.0.1</source.plugin.version>
+        <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
         <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
         <!-- spring-boot -->
@@ -68,6 +69,7 @@
         <log4j.version>1.2.17</log4j.version>
         <log4j2.version>2.1</log4j2.version>
         <org.slf4j.version>1.7.30</org.slf4j.version>
+        <logstash.logback.encoder.version>5.3</logstash.logback.encoder.version>
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
@@ -297,6 +299,13 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+
+            <!-- logstash-logback 模块 -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash.logback.encoder.version}</version>
             </dependency>
 
         </dependencies>

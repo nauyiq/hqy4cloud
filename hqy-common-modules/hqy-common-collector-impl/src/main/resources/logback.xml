@@ -2,7 +2,7 @@
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
     <!-- ConsoleAppender：把日志输出到控制台 -->
-    <appender name="stdout" class="com.hqy.foundation.common.logback.ConsoleAppender">
+    <appender name="STDOUT" class="com.hqy.foundation.common.logback.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
             <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文 乱码 -->
@@ -10,7 +10,6 @@
         </encoder>
     </appender>
 
-<!--    <substitutionProperty name="LOG_HOME" value="/hqy/deploy/services/logs/common-coll"/>-->
     <substitutionProperty name="LOG_HOME" value="/home/services/common-collector-service/logs"/>
 
     <!-- RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
@@ -39,17 +38,30 @@
     </appender>
 
 
+<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>www.hongqy1024.cn:</destination>-->
+<!--    </appender>-->
+
+
+    <appender name ="ASYNC" class= "ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold >20</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1000</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref ="rollingFile"/>
+    </appender>
+
+
     <!-- 控制台输出日志级别 -->
     <root value="DEBUG">
-        <appender-ref ref="stdout"/>
-        <appender-ref ref="rollingFile"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
     </root>
+
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.cloud.sirius为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
     <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-  <!--  <logger name="com.cloud.sirius" level="DEBUG" additivity="false">
-        <appender-ref ref="stdout" />
-    </logger>-->
     <logger name="ch.qos" level="WARN"/>
     <logger name="org.quartz" level="WARN"/>
     <logger name="org.mybatis" level="WARN"/>
