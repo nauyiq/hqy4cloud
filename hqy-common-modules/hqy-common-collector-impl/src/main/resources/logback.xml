@@ -38,9 +38,9 @@
     </appender>
 
 
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>www.hongqy1024.cn:</destination>
-    </appender>
+<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>www.hongqy1024.cn:</destination>-->
+<!--    </appender>-->
 
 
     <appender name ="ASYNC" class= "ch.qos.logback.classic.AsyncAppender">
