@@ -5,7 +5,7 @@ def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:la
 def k8s_auth = "kubeconfig"
 def aliyun_hub_auth = "aliyun_mirror_server"
 
-def base_dir = "/home/services/common-collector-service"
+def base_dir = "/home/jenkins/agent/workspace/common-collector-service"
 def service_jar = "hqy-common-collector-service.jar"
 
 
@@ -47,7 +47,7 @@ podTemplate(
                 stage('Package Image') {
                      withCredentials([usernamePassword(credentialsId: "${aliyun_hub_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
                            sh """
-                              cd /home/services/common-collector-service/hqy-common-modules/hqy-common-collector-impl/deploy
+                              cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
                               cp -rf ../target/lib .
                               cp -rf ../target/${service_jar} .
                               docker build -t ${image_name} .
