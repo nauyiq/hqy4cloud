@@ -55,8 +55,6 @@ JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"
 JAVA_OPT="${JAVA_OPT} -XX:HeapDumpPath=${BASE_DIR}/heap-dump.hprof"
 # 虚拟机启动的时候以UTF-8字符集编码来解析class字节码
 JAVA_OPT="${JAVA_OPT} -Dfile.encoding=UTF-8"
-# 命令用于追加配置文件 原有的application.properties或application.yml文件均有效。
-JAVA_OPT="${JAVA_OPT} --spring.config.additional-location=${CUSTOM_SEARCH_LOCATIONS}"
 
 #JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/target/logback.xml"
 #JAVA_OPT="${JAVA_OPT} --logging.file.path=${BASE_DIR}/logs/"

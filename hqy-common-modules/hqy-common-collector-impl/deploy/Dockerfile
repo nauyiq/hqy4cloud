@@ -21,8 +21,6 @@ ADD start.sh start.sh
 
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
-RUN mkdir -p init.d
-
 RUN mkdir -p logs \
     && cd logs \
     && touch sys.out
