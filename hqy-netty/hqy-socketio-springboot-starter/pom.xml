@@ -29,8 +29,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-netty-core</artifactId>
+            <groupId>com.hqy.socketio</groupId>
+            <artifactId>hqy-socketio-springboot-starter-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

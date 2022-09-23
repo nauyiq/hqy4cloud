@@ -1,7 +1,6 @@
 package com.hqy.socketio;
 
 import com.hqy.socketio.support.EventListener;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 

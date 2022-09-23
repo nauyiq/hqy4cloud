@@ -1,11 +1,8 @@
 package com.hqy.socketio;
 
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.base.common.base.project.MicroServiceConstants;
-import com.hqy.fundation.common.route.SocketClusterStatus;
-import com.hqy.fundation.common.route.SocketClusterStatusManager;
-import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +56,7 @@ public abstract class AbstractServerLauncher implements ServerLauncher {
         enhanceSocketIoServer(socketIOServer);
         //registry socketIoServet to ProjectContextInfo
         ProjectContextInfo.setBean(socketIOServer);
+        SpringContextHolder.getProjectContextInfo().registrySocketIoPort(port);
         //start up socketIoServer
         socketIOServer.start();
 
