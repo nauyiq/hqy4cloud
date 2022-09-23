@@ -10,6 +10,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <packaging>jar</packaging>
+
     <groupId>com.hqy.socketio</groupId>
     <artifactId>hqy-socketio-springboot-starter</artifactId>
 
@@ -26,10 +28,15 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-netty-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-foundation</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 
 /**
- * @see com.hqy.socketio.service.ThriftSocketIoPushService
+ * @see ThriftSocketIoPushService
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/9/22 17:55
