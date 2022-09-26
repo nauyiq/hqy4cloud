@@ -11,7 +11,7 @@ set -x
 
 
 #堆内存大小
-JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
+JAVA_OPT="${JAVA_OPT} -Xmx1024m -Xms512m"
 # 年轻代和年老代比例为1:2 G1垃圾回收期 如果指定NewRatio 或-Xmn参数 则G1 设定的这个目标 即MaxGCPauseMillis失效
 #JAVA_OPT="${JAVA_OPT} -XX:NewRatio=2"
 # 采用G1垃圾回收器
