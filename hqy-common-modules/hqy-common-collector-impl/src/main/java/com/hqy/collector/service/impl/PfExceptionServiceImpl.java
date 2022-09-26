@@ -4,7 +4,7 @@ import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.collector.dao.PfExceptionDao;
 import com.hqy.collector.service.PfExceptionService;
-import com.hqy.coll.struct.PfException;
+import com.hqy.collector.entity.PfException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,7 +1,7 @@
 package com.hqy.collector.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.coll.entity.RPCFlowRecord;
+import com.hqy.collector.entity.RPCFlowRecord;
 import org.springframework.stereotype.Repository;
 
 /**

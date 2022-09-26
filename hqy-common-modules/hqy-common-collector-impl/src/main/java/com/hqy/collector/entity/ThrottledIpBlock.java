@@ -1,4 +1,4 @@
-package com.hqy.coll.entity;
+package com.hqy.collector.entity;
 
 import com.hqy.base.BaseEntity;
 import lombok.AllArgsConstructor;

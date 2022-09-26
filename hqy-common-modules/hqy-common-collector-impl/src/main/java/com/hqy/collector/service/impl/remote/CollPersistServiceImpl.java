@@ -2,7 +2,7 @@ package com.hqy.collector.service.impl.remote;
 
 
 import com.hqy.base.common.result.CommonResultCode;
-import com.hqy.coll.entity.ThrottledIpBlock;
+import com.hqy.collector.entity.ThrottledIpBlock;
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.collector.service.ThrottledIpBlockService;
 import com.hqy.coll.struct.ThrottledIpBlockStruct;

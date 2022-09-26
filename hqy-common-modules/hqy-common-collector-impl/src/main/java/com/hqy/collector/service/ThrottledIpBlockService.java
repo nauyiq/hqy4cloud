@@ -1,7 +1,7 @@
 package com.hqy.collector.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.coll.entity.ThrottledIpBlock;
+import com.hqy.collector.entity.ThrottledIpBlock;
 
 /**
  * @author qiyuan.hong

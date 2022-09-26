@@ -22,4 +22,11 @@ spec:
           ports:
             - containerPort: 8888
               name: web
-
+          volumeMounts:
+            - name: collect-service-host
+              mountPath: /home/services/common-collector-service/logs
+      volumes:
+        - name: collect-service-host
+          hostPath:
+            path: /home/services/common-collector-service/logs
+            type: FileOrCreate

@@ -14,6 +14,7 @@
         <module>hqy-netty-websocket-demo</module>
         <module>hqy-netty-text-websocket</module>
         <module>hqy-socketio-springboot-starter</module>
+        <module>hqy-socketio-springboot-starter-api</module>
     </modules>
 
     <modelVersion>4.0.0</modelVersion>

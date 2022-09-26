@@ -1,4 +1,4 @@
-package com.hqy.coll.struct;
+package com.hqy.collector.entity;
 
 import com.hqy.base.BaseEntity;
 

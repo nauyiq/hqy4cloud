@@ -1,7 +1,7 @@
 package com.hqy.collector.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.coll.struct.PfException;
+import com.hqy.collector.entity.PfException;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -222,4 +222,10 @@ public class ProjectContextInfo implements Serializable {
     public static void setBean(Class<?> clazz ,Object bean) {
         beansMap.put(clazz, bean);
     }
+
+    public void registrySocketIoPort(int port) {
+        if (this.getUip() != null) {
+            getUip().setSocketPort(port);
+        }
+    }
 }

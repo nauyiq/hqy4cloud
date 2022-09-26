@@ -1,7 +1,7 @@
 package com.hqy.collector.service;
 
 import com.hqy.base.BaseTkService;
-import com.hqy.coll.struct.PfException;
+import com.hqy.collector.entity.PfException;
 
 /**
  * @author qiyuan.hong

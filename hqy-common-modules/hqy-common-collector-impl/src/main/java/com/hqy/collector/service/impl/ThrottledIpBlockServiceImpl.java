@@ -3,7 +3,7 @@ package com.hqy.collector.service.impl;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.collector.dao.ThrottledIpBlockDao;
-import com.hqy.coll.entity.ThrottledIpBlock;
+import com.hqy.collector.entity.ThrottledIpBlock;
 import com.hqy.collector.service.ThrottledIpBlockService;
 import org.springframework.stereotype.Service;
 
