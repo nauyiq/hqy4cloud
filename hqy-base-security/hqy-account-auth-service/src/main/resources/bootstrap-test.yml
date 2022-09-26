@@ -19,10 +19,6 @@ spring:
           data-id: db-app-config.yaml
           group: ${nacos.group}
           refresh: true
-        extension-configs[2]:
-          data-id: dev-config.yaml
-          group: ${nacos.group}
-          refresh: true
       discovery:
         server-addr: ${nacos.server-addr}
         group: ${nacos.group}
