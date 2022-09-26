@@ -1,4 +1,4 @@
-package com.hqy.base.common.base.project;
+    package com.hqy.base.common.base.project;
 
 /**
  * 微服务的模块定义。用在@ThriftService注解上面<br>
@@ -29,6 +29,12 @@ public class MicroServiceConstants {
      * 聊天消息服务
      */
     public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
+
+    /**
+     * 博客服务.
+     */
+    public static final String BLOG_SERVICE = "blog-service";
+
 
 
     public static final String DEMO_ORDER_SERVICE = "demo-order-service";
