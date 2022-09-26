@@ -33,7 +33,7 @@ public class MicroServiceConstants {
     /**
      * 博客服务.
      */
-    public static final String BLOG_SERVICE = "blog-service";
+    public static final String BLOG_SERVICE = "apps-blog-service";
 
 
 
