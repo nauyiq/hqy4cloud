@@ -6,7 +6,7 @@ def k8s_auth = "kubeconfig"
 def aliyun_hub_auth = "aliyun_mirror_server"
 
 def base_dir = "/home/jenkins/agent/workspace/common-collector-service"
-def service_jar = "hqy-common-collector-service.jar"
+def service_jar = "common-collector-service.jar"
 
 
 podTemplate(
