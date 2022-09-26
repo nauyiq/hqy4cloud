@@ -26,7 +26,7 @@ JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=100m"
 # 最大元数据空间 注意：metaspace太小会引起full gc
 #JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=100m"
 # 最大的可使用的直接内存
-JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=40M"
+JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=100M"
 # MaxTenuringThreshold设置垃圾的最大年龄. 默认为15 年轻代经历gc进入年老代的年龄
 JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 # 服务启动的时候真实的分配物理内存给jvm
