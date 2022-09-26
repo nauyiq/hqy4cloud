@@ -7,7 +7,7 @@ spring:
   application:
     name: account-auth-service
   profiles:
-    active: dev
+    active: test
 
 #暴露所有
 management:
