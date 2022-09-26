@@ -29,4 +29,4 @@ RUN chmod 777 target/*
 
 EXPOSE 9527
 
-ENTRYPOINT ["/home/services/services/start.sh"]
+ENTRYPOINT ["/home/services/cloud-gateway-service/start.sh"]
