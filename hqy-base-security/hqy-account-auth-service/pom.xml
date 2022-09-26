@@ -101,7 +101,7 @@
 
 
     <build>
-        <finalName>hqy-account-service</finalName>
+        <finalName>account-auth-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

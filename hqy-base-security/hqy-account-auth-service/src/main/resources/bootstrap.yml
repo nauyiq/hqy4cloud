@@ -2,7 +2,7 @@ logging:
   config: classpath:logback.xml
 
 server:
-  port: 8010
+  port: 8088
 spring:
   application:
     name: account-auth-service

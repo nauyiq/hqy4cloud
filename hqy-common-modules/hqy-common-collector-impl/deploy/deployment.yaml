@@ -29,4 +29,4 @@ spec:
         - name: collect-service-host
           hostPath:
             path: /home/services/common-collector-service/logs
-            type: FileOrCreate
+            type: DirectoryOrCreate
