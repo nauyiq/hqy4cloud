@@ -1,7 +1,7 @@
 nacos:
-  server-addr: nacos-headless:8888
+  server-addr: nacos-headless.app.svc.cluster.local:8848
   group: TEST_GROUP
-  namespace: a7f78604-f575-48cb-bf17-ab9a2b09b516
+  namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
 
 spring:
   cloud:
