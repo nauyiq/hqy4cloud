@@ -6,7 +6,7 @@ server:
 
 spring:
   profiles:
-     active: dev
+     active: test
   application:
     name: gateway-service
 
