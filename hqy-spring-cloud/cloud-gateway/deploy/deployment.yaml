@@ -23,10 +23,10 @@ spec:
             - containerPort: 9527
               name: web
           volumeMounts:
-            - name: cloud-gateway-service
+            - name: cloud-gateway-service-host
               mountPath: /home/services/cloud-gateway-service/logs
       volumes:
-        - name: collect-service-host
+        - name: cloud-gateway-service-host
           hostPath:
             path: /home/services/cloud-gateway-service/logs
             type: DirectoryOrCreate
