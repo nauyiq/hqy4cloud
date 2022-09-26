@@ -98,7 +98,7 @@
     </dependencies>
 
     <build>
-        <finalName>hqy-common-collector-service</finalName>
+        <finalName>common-collector-service</finalName>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>

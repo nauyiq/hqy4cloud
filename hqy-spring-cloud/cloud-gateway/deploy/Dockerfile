@@ -1,8 +1,8 @@
 FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
 MAINTAINER hongqy<759428167@qq.com>
 
-ARG SERVICE_DIR="common-collector-service"
-ARG SERVICE_JAR="common-collector-service.jar"
+ARG SERVICE_DIR="cloud-gateway-service"
+ARG SERVICE_JAR="cloud-gateway-service.jar"
 
 # set environment
 ENV BASE_DIR="/home/services/${SERVICE_DIR}" \
@@ -21,13 +21,12 @@ ADD start.sh ${BASE_DIR}/start.sh
 RUN ln -snf /usr/share/zoneinfo/$ /etc/localtime && echo ${TIME_ZONE}> /etc/timezone
 
 RUN mkdir -p logs \
-    && cd logs \
-    && touch sys.out
+    && cd logs
 
 RUN chmod +x ${BASE_DIR}/start.sh
 RUN chmod 777 target/*
 
 
-EXPOSE 8888
+EXPOSE 9527
 
-ENTRYPOINT ["/home/services/common-collector-service/start.sh"]
+ENTRYPOINT ["/home/services/services/start.sh"]

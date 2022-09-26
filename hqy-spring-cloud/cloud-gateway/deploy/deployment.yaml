@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cloud-gateway-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-gateway-service
+  template:
+    metadata:
+      labels:
+        app: cloud-gateway-service
+    spec:
+      imagePullSecrets:
+      - name: aliyun-hub-secret
+      containers:
+        - name: cloud-gateway-service
+          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/cloud-gateway-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9527
+              name: web
+          volumeMounts:
+            - name: cloud-gateway-service
+              mountPath: /home/services/cloud-gateway-service/logs
+      volumes:
+        - name: collect-service-host
+          hostPath:
+            path: /home/services/cloud-gateway-service/logs
+            type: FileOrCreate

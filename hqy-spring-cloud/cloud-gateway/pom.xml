@@ -107,7 +107,7 @@
 
 
     <build>
-        <finalName>hqy-gateway-service</finalName>
+        <finalName>cloud-gateway-service</finalName>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
