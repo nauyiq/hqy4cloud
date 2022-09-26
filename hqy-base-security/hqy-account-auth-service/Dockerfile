@@ -17,7 +17,7 @@ ADD ./target/lib target/lib
 ADD ./target/$SERVICE_JAR target/$SERVICE_JAR
 RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
-ADD bin/start.sh bin/start.sh
+ADD deploy/start.sh bin/start.sh
 RUN mkdir -p init.d
 
 RUN mkdir -p logs \

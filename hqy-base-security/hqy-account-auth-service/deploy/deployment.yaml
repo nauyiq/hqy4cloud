@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: account-auth-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account-auth-service
+  template:
+    metadata:
+      labels:
+        app: account-auth-service
+    spec:
+      imagePullSecrets:
+      - name: aliyun-hub-secret
+      containers:
+        - name: account-auth-service
+          image: registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/account-auth-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8088
+              name: web
+          volumeMounts:
+            - name: account-auth-service-host
+              mountPath: /home/services/account-auth-service/logs
+      volumes:
+        - name: account-auth-service-host
+          hostPath:
+            path: /home/services/account-auth-service/logs
+            type: DirectoryOrCreate
