@@ -1,7 +1,6 @@
 package com.hqy.rpc.registry.nacos;
 
 import cn.hutool.core.map.MapUtil;
-import com.alibaba.nacos.api.common.Constants;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
@@ -53,7 +52,7 @@ public class NacosRegistry extends FailBackRegistry {
         AssertUtil.notEmpty(rpcModel.getName(), "Failed execute to lookup, serviceName is empty.");
         try {
             List<Instance> instances = namingService.selectInstances(rpcModel.getName(), true);
-            return NacosInstanceUtils.instancesConvert(getRegistryRpcContext().getRegistryInfo(), instances);
+            return NacosInstanceUtils.instancesConvert(getRegistryRpcContext().getRegistryInfo(), rpcModel.getGroup(), instances);
         } catch (Throwable t) {
             throw new RpcException("Failed to lookup " + rpcModel + " from nacos " + getRegistryRpcContext() + ", cause: " + t.getMessage(), t);
         }
@@ -65,14 +64,10 @@ public class NacosRegistry extends FailBackRegistry {
         try {
             String serviceName = rpcModel.getName();
             Instance instance = createInstance(rpcModel);
-            namingService.registerInstance(serviceName, getGroup(rpcModel), instance);
+            namingService.registerInstance(serviceName, rpcModel.getGroup(), instance);
         } catch (Throwable cause) {
             throw new RpcException("Failed to register to nacos " + getRegistryRpcContext() + ", cause: " + cause.getMessage(), cause);
         }
-    }
-
-    private String getGroup(RPCModel rpcModel) {
-        return rpcModel.getParameter(rpcModel.getParameter(Constants.GROUP), Constants.DEFAULT_GROUP);
     }
 
     @Override
@@ -81,7 +76,7 @@ public class NacosRegistry extends FailBackRegistry {
         try {
             String serviceName = rpcModel.getName();
             Instance instance = createInstance(rpcModel);
-            namingService.deregisterInstance(serviceName, getGroup(rpcModel), instance);
+            namingService.deregisterInstance(serviceName, rpcModel.getGroup(), instance);
         } catch (Throwable cause) {
             throw new RpcException("Failed to unregister to nacos " + getRegistryRpcContext() + ", cause: " + cause.getMessage(), cause);
         }
@@ -148,7 +143,7 @@ public class NacosRegistry extends FailBackRegistry {
             //  Instances
             filterEnabledInstances(enabledInstances);
         }
-        List<RPCModel> rpcModels = NacosInstanceUtils.instancesConvert(rpcModel.getRegistryInfo(), instances);
+        List<RPCModel> rpcModels = NacosInstanceUtils.instancesConvert(rpcModel.getRegistryInfo(), rpcModel.getGroup(),instances);
         NacosRegistry.this.notify(rpcModel, listener, rpcModels);
     }
 

@@ -74,6 +74,9 @@ public class ThriftMonitor implements Monitor {
                 send();
             } catch (Throwable t) {
                 log.error("Unexpected error occur at send statistic, cause: " + t.getMessage(), t);
+            } finally {
+                //reset collection map.
+                statisticsMap.clear();
             }
         }, monitorInterval, monitorInterval, TimeUnit.MILLISECONDS);
     }

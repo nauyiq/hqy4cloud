@@ -40,17 +40,17 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
             try {
                 subscribeAndNotify(providerServiceName, factory);
             } catch (Throwable t) {
-                log.warn("Failed execute to registry subscribe,  metadata {} from registry {}", consumerContext,  factory.getRegistry(consumerContext));
+                log.warn("Failed execute to registry subscribe,  metadata {} from registry {}", consumerRpcModel,  factory.getRegistry(consumerRpcModel));
             }
         }
 
     }
 
     private void subscribeAndNotify(String providerServiceName, RegistryFactory factory) {
-        Registry registry = factory.getRegistry(consumerContext);
+        Registry registry = factory.getRegistry(consumerRpcModel);
         //create provider rpc model.
         //does not represent a specific remote service
-        RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerContext.getRegistryInfo(), null);
+        RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerRpcModel.getGroup(),consumerRpcModel.getRegistryInfo(), null);
         //query rpc provider instance from registry.
         List<RPCModel> rpcModels = registry.lookup(rpcModel);
         //notify.

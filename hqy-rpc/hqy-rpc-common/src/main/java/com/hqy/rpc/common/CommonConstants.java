@@ -9,6 +9,9 @@ import com.hqy.base.common.base.lang.StringConstants;
  */
 public interface CommonConstants {
 
+    String GROUP = "group";
+    String DEFAULT_GROUP = "DEFAULT_GROUP";
+
     String REGISTRY_DELAY_NOTIFICATION_KEY = "delay-notification";
     String WARMUP = "warmup";
     String USERNAME = "username";
