@@ -1,5 +1,6 @@
 package com.hqy.account.service;
 
+import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.entity.Account;
 import com.hqy.base.BaseTkService;
 
@@ -16,6 +17,10 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
      */
     Account queryAccountByUsernameOrEmail(String usernameOrEmail);
 
-
-
+    /**
+     * 查找用户信息
+     * @param id 用户id
+     * @return   AccountInfoDTO.
+     */
+    AccountInfoDTO getAccountInfo(Long id);
 }

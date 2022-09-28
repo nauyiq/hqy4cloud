@@ -20,6 +20,7 @@ import org.springframework.util.AntPathMatcher;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * 网关鉴权管理器 所有权限在此配置
@@ -67,13 +68,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
                 .filter(Authentication::isAuthenticated)
                 .flatMapIterable(Authentication::getAuthorities)
                 .map(GrantedAuthority::getAuthority)
-                .any(authority -> {
-                    //FIXME 获取用户角色 校验权限
-                    log.info("权限：{}", authority);
-                    return true;
-                })
-                .map(AuthorizationDecision::new)
-                .defaultIfEmpty(new AuthorizationDecision(false));
+                .any(s -> true)
+                .map(s -> new AuthorizationDecision(true))
+                .defaultIfEmpty(new AuthorizationDecision(true));
 
     }
 

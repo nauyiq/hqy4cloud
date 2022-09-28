@@ -2,14 +2,14 @@ package com.hqy.security.server;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.hqy.security.core.user.SecurityUser;
-import com.hqy.security.dto.UserJwtPayloadDTO;
 import com.hqy.security.core.user.SecurityUserDetailServiceImpl;
+import com.hqy.security.dto.UserJwtPayloadDTO;
 import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -61,6 +61,12 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
         }
 
         return securityUser;
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String haha = bCryptPasswordEncoder.encode("b7f5d4e072bcb46d16d38bcc1efc13a4");
+        System.out.println(haha);
     }
 
 

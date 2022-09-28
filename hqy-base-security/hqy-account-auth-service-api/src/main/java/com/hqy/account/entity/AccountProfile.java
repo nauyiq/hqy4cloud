@@ -28,10 +28,23 @@ public class AccountProfile extends BaseEntity<Long> {
      */
     private String intro;
 
+    /**
+     * 生日
+     */
+    private String birthday;
+
 
 
     public AccountProfile() {
 
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public String getNickname() {

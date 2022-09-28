@@ -56,7 +56,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.warn("Failed execute parse jwt token, cause: {}", e.getMessage());
         }
 
         return chain.filter(exchange);

@@ -7,6 +7,6 @@ import com.hqy.base.BaseTkService;
  * @author qiyuan.hong
  * @date 2022-03-10 21:17
  */
-public interface AccountRoleService extends BaseTkService<AccountRole, Long> {
+public interface AccountRoleTkService extends BaseTkService<AccountRole, Long> {
 
 }
