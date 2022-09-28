@@ -51,7 +51,7 @@ public abstract class ThriftRPCClient extends AbstractClient {
 
     @Override
     protected <T> Directory<T> createDirectory(Class<T> serviceClass, String application) {
-        RPCModel context = getConsumerRpcModel();
+        RPCModel rpcModel = getConsumerRpcModel();
         if (clientManager == null) {
             synchronized (this.registryFactory) {
                 if (clientManager == null) {
@@ -59,7 +59,7 @@ public abstract class ThriftRPCClient extends AbstractClient {
                 }
             }
         }
-        return new ThriftDynamicDirectory<>(application, context, serviceClass, clientManager, registryFactory);
+        return new ThriftDynamicDirectory<>(application, rpcModel, serviceClass, clientManager, registryFactory);
     }
 
 

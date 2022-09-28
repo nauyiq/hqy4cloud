@@ -53,7 +53,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory, List<RouterFactory<T>> routerFactories) {
         super(providerServiceName, serviceType, rpcModel);
-        this.consumerContext = rpcModel;
+        this.consumerRpcModel = rpcModel;
         this.serviceType = serviceType;
         setRouterFactories(routerFactories);
         this.factory = registryFactory;
@@ -158,7 +158,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     @Override
     public RPCModel getConsumerModel() {
-        return consumerContext;
+        return consumerRpcModel;
     }
 
     public void setRouterFactories(List<RouterFactory<T>> routerFactories) {
