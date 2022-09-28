@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -28,6 +29,8 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -51,6 +54,20 @@ public class ResourceServerConfiguration {
     @Resource
     private AuthorizationManager authorizationManager;
 
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
     @Bean
     public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http) {
         //jwt增强
@@ -59,14 +76,14 @@ public class ResourceServerConfiguration {
                 .publicKey(rsaPublicKey());
 
         //自定义处理JWT请求头过期或签名错误的结果
-        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
+        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint())
+                .and()
+        //option请求放行
+        .authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
-        //获取项目中的uri白名单
+        //白名单配置
         Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
-        if (CollectionUtils.isNotEmpty(whiteUri)) {
-            //白名单配置
             http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();
-        }
 
         http.authorizeExchange()
                 //鉴权管理器配置
@@ -76,7 +93,7 @@ public class ResourceServerConfiguration {
                 .accessDeniedHandler(accessDeniedHandler())
                 //处理未认证
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .and().csrf().disable();
+                .and().cors().and().csrf().disable();
         return http.build();
     }
 
@@ -141,8 +158,12 @@ public class ResourceServerConfiguration {
     @Bean
     public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(StringConstants.Auth.JWT_AUTHORITIES_KEY);
+//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
+        //取消权限的前缀，默认会加上SCOPE_
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.EMPTY);
+        //从哪个字段中获取权限
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+//        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(StringConstants.Auth.JWT_AUTHORITIES_KEY);
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

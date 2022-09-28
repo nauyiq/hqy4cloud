@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
  * @author qiyuan.hong
  * @date  2021/7/25 22:42
  */
-@Component
+//@Component
 @Slf4j
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 

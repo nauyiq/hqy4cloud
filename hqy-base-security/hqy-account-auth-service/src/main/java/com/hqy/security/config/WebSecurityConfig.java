@@ -3,6 +3,7 @@ package com.hqy.security.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -65,6 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/oauth/**", "/sms-code").permitAll()
                 .antMatchers("/webjars/**", "/doc.html", "/swagger-resources/**", "/v2/api-docs").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated();
 //        http.formLogin().loginProcessingUrl(AuthorizationWhiteListManager.SecurityContext.LOGIN_PROCESSING_URL)
 //        http.formLogin().successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler);
@@ -77,6 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // 授权码模式单独处理，需要session的支持，此模式可以支持所有oauth2的认证
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
         }*/
+
 
 
         http.headers().frameOptions().disable();

@@ -33,6 +33,7 @@ public class AuthorizationWhiteListManager {
         ENDPOINTS.add("/message/websocket/**");
 
         ENDPOINTS.addAll(Arrays.asList(
+                "favicon.io",
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**",
                 //端点监控
