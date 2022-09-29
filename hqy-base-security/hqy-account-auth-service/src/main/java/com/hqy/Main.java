@@ -1,5 +1,6 @@
 package com.hqy;
 
+import com.hqy.account.service.remote.AccountProfileRemoteService;
 import com.hqy.account.service.remote.AccountRemoteService;
 import com.hqy.rpc.api.service.RPCService;
 import com.hqy.rpc.thrift.service.ThriftServerLauncher;
@@ -11,6 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.stereotype.Component;
 import tk.mybatis.spring.annotation.MapperScan;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,10 +37,11 @@ public class Main {
     public static class ThriftServerRegisterServer implements ThriftServerLauncher {
 
         private final AccountRemoteService accountRemoteService;
+        private final AccountProfileRemoteService accountProfileRemoteService;
 
         @Override
         public List<RPCService> getRpcServices() {
-            return Collections.singletonList(accountRemoteService);
+            return Arrays.asList(accountRemoteService, accountProfileRemoteService);
         }
     }
 

@@ -179,12 +179,12 @@ public abstract class AbstractUploadFileService implements UploadFileService {
 
             @Override
             public String path() {
-                return relativePath;
+                return path;
             }
 
             @Override
             public String relativePath() {
-                return path;
+                return relativePath;
             }
         };
     }

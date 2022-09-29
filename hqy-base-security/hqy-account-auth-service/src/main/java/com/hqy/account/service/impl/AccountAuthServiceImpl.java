@@ -5,8 +5,10 @@ import com.hqy.account.service.AccountAuthService;
 import com.hqy.account.service.AccountOauthClientTkService;
 import com.hqy.account.service.AccountProfileTkService;
 import com.hqy.account.service.AccountTkService;
+import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,12 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     @Override
     public AccountInfoDTO getAccountInfo(Long id) {
         AssertUtil.notNull(id, "Account id should not be null.");
-        return accountTkService.getAccountInfo(id);
+        AccountInfoDTO accountInfo = accountTkService.getAccountInfo(id);
+        String avatar = accountInfo.getAvatar();
+        if (StringUtils.isNotBlank(avatar) && !avatar.startsWith(StringConstants.HTTP)) {
+            accountInfo.setAvatar(StringConstants.Host.HTTPS_FILE_ACCESS + avatar);
+        }
+        return accountInfo;
     }
 
     @Override

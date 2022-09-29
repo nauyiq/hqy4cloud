@@ -39,6 +39,8 @@ public interface StringConstants {
 
     String BOOTSTRAP = "bootstrap";
 
+    String HTTP = "http";
+
 
 
     interface Auth {
@@ -212,6 +214,7 @@ public interface StringConstants {
         String HTTPS = "https://";
         String FILE_HQY_HOST = "file.hongqy1024.cn";
         String LOCAL_HOST = HTTP + "localhost";
+        String HTTPS_FILE_ACCESS = HTTPS + FILE_HQY_HOST;
     }
 
 
