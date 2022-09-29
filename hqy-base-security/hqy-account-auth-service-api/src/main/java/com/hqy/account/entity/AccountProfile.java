@@ -3,6 +3,7 @@ package com.hqy.account.entity;
 import com.hqy.base.BaseEntity;
 
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * 账户信息表 t_account_profile
@@ -31,7 +32,7 @@ public class AccountProfile extends BaseEntity<Long> {
     /**
      * 生日
      */
-    private String birthday;
+    private Date birthday;
 
 
 
@@ -39,11 +40,11 @@ public class AccountProfile extends BaseEntity<Long> {
 
     }
 
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

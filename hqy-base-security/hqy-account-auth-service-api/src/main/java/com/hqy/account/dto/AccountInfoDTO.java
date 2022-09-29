@@ -57,7 +57,7 @@ public class AccountInfoDTO {
     /**
      * 生日
      */
-    private String birthday;
+    private Date birthday;
 
     /**
      * 状态
