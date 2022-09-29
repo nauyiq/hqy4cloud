@@ -1,4 +1,4 @@
-package com.hqy.account.service.impl;
+package com.hqy.account.service.impl.remote;
 
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.AccountAuthService;

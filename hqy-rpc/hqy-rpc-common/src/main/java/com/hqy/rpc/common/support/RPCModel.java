@@ -167,6 +167,11 @@ public class RPCModel extends Parameters implements Serializable {
         return host;
     }
 
+    public String getServerHost() {
+        return serverAddress == null ? null : serverAddress.getHostAddr();
+    }
+
+
     public int getPort() {
         return serverAddress == null ? 0 : serverAddress.getPort();
     }

@@ -1,5 +1,6 @@
 package com.hqy.rpc.cluster.router.gray;
 
+import cn.hutool.core.net.NetUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.swticher.CommonSwitcher;
@@ -110,10 +111,10 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
 
     private List<Invoker<T>> findSameIpInvokers(RPCModel rpcModel, List<Invoker<T>> invokers) {
         try {
-            String host = rpcModel.getHost();
+            String host = rpcModel.getServerHost();
             List<Invoker<T>> hostInvokers = HOST_INSTANCES.getIfPresent(host);
             if (CollectionUtils.isEmpty(hostInvokers)) {
-                hostInvokers = invokers.stream().filter(invoker -> invoker.getModel().getHost().equals(host)).collect(Collectors.toList());
+                hostInvokers = invokers.stream().filter(invoker -> invoker.getModel().getServerHost().equals(host)).collect(Collectors.toList());
                 HOST_INSTANCES.put(host, hostInvokers);
             }
             return hostInvokers;
