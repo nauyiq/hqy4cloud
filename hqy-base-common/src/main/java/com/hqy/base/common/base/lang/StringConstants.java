@@ -207,6 +207,13 @@ public interface StringConstants {
 
     }
 
+    interface Host {
+        String HTTP = "http://";
+        String HTTPS = "https://";
+        String FILE_HQY_HOST = "file.hongqy1024.cn";
+        String LOCAL_HOST = HTTP + "localhost";
+    }
+
 
     interface SocketProperties {
 

@@ -5,7 +5,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.base.common.exception.PublishedException;
+import com.hqy.base.common.base.lang.exception.PublishedException;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.netty.websocket.base.HandshakeData;
 import com.hqy.netty.websocket.base.WsErrorReason;

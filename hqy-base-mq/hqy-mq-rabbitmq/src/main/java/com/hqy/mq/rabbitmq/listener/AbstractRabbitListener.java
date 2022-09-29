@@ -1,6 +1,6 @@
 package com.hqy.mq.rabbitmq.listener;
 
-import com.hqy.base.common.exception.MessageMqException;
+import com.hqy.base.common.base.lang.exception.MessageMqException;
 import com.hqy.mq.common.listener.payload.MessagePayload;
 import com.hqy.mq.rabbitmq.config.RabbitmqAutoConfiguration;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;

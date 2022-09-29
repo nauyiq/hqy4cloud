@@ -1,6 +1,6 @@
 package com.hqy.netty.websocket.exception;
 
-import com.hqy.base.common.exception.PublishedException;
+import com.hqy.base.common.base.lang.exception.PublishedException;
 import com.hqy.netty.websocket.base.HandshakeData;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.unix.Errors;

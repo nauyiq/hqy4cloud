@@ -1,5 +1,7 @@
 package com.hqy.util.config;
 
+import com.hqy.base.common.base.lang.StringConstants;
+import com.hqy.util.spring.ProjectContextInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,8 @@ public class ConfigurationContext {
      * .yal 文件map
      */
     public static Map<YamlEnum, YamlStrategy> yamlMap = new ConcurrentHashMap<>();
+
+    private static String baseUploadFilesDirectory = null;
 
 
     public static Properties getProperties(PropertiesEnum propertiesEnum) {
@@ -73,6 +77,17 @@ public class ConfigurationContext {
         return StringUtils.isBlank(string) ? defaultValue : string;
     }
 
+
+    public static String getConfigPath() {
+        if (StringUtils.isBlank(baseUploadFilesDirectory)) {
+            if (System.getProperty(StringConstants.OS_NAME_KEY).startsWith(StringConstants.OS_WINDOWS_PREFIX)) {
+                baseUploadFilesDirectory = "C:/hongqy/data";
+            } else {
+                baseUploadFilesDirectory = "/home/hongqy/data";
+            }
+        }
+        return baseUploadFilesDirectory;
+    }
 
 
     public enum PropertiesEnum {

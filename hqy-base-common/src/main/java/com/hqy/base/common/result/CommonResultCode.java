@@ -96,6 +96,12 @@ public enum CommonResultCode {
      */
     INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
 
+    /**
+     * 上传文件失败.
+     */
+    INVALID_UPLOAD_FILE(10001, "Failed execute to upload file."),
+
+
     ;
 
     public int code;
@@ -142,6 +148,10 @@ public enum CommonResultCode {
         return dataResponse(true, SUCCESS, null);
     }
 
+    public static DataResponse dataResponse(Object data) {
+        return dataResponse(CommonResultCode.SUCCESS, data);
+    }
+
     public static DataResponse dataResponse(CommonResultCode code) {
         return dataResponse(false, code, null);
     }
@@ -152,6 +162,10 @@ public enum CommonResultCode {
 
     public static DataResponse dataResponse(boolean result, CommonResultCode code, Object data) {
         return new DataResponse(result, code.message, code.code, data);
+    }
+
+    public static DataResponse dataResponse(int code, String message) {
+        return new DataResponse(false, message, code, null);
     }
 
 

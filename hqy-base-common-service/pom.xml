@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hqy-common-service</module>
+        <module>hqy-common-web-service</module>
         <module>hqy-timer-service</module>
     </modules>
 

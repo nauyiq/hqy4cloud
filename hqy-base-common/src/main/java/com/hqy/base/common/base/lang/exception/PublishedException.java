@@ -1,4 +1,4 @@
-package com.hqy.base.common.exception;
+package com.hqy.base.common.base.lang.exception;
 
 /**
  * @author qiyuan.hong
