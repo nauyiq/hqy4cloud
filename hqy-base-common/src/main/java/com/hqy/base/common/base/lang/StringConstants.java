@@ -41,6 +41,10 @@ public interface StringConstants {
 
     String HTTP = "http";
 
+    String SHOULD_NOT_BE_NULL = "should not be null.";
+
+    String SHOULD_NOT_BE_EMPTY = "should not be empty.";
+
 
 
     interface Auth {

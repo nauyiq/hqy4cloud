@@ -4,6 +4,8 @@ import com.hqy.base.common.base.lang.exception.UploadFileException;
 import com.hqy.foundation.common.FileResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * UploadFileService.
  * @author qiyuan.hong
@@ -42,6 +44,7 @@ public interface UploadFileService {
      * @return                      fileResponse.
      */
     FileResponse uploadFile(String folderPath, final MultipartFile file) throws UploadFileException;
+
 
     /**
      * add support image file type.

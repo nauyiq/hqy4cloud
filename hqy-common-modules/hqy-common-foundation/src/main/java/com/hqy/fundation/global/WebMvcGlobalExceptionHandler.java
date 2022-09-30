@@ -2,6 +2,7 @@ package com.hqy.fundation.global;
 
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,8 +39,15 @@ public class WebMvcGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public MessageResponse handler(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        return new MessageResponse(false,"["+ Objects.requireNonNull(e.getBindingResult().getFieldError()).getField()+"] " +
-                e.getBindingResult().getFieldError().getDefaultMessage(), CommonResultCode.ERROR_PARAM.code);
+        String message = "["+ Objects.requireNonNull(e.getBindingResult().getFieldError()).getField()+"] ";
+        String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+        if (StringUtils.isNotBlank(defaultMessage)) {
+            message = message + defaultMessage;
+        } else {
+            message = message + "should not be empty.";
+        }
+
+        return new MessageResponse(false, message, CommonResultCode.ERROR_PARAM.code);
     }
 
     /**

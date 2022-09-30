@@ -106,6 +106,11 @@ public enum CommonResultCode {
      */
     INVALID_UPLOAD_FILE(10001, "Failed execute to upload file."),
 
+    /**
+     * 上传文件失败, 文件类型不支持
+     */
+    INVALID_FILE_TYPE(10002, "Failed execute to upload file, file type not supported."),
+
 
     ;
 
