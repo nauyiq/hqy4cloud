@@ -40,22 +40,27 @@ public enum CommonResultCode {
     /**
      * 新增数据异常
      */
-    SYSTEM_ERROR_INSERT_FAIL(9100, "Insert data to db failure."),
+    SYSTEM_ERROR_INSERT_FAIL(9100, "System is busy, insert data failure."),
+
+    /**
+     * 更新数据异常.
+     */
+    SYSTEM_ERROR_UPDATE_FAIL(9200, "System is busy, update data failure."),
 
     /**
      * 无效的token
      */
-    INVALID_ACCESS_TOKEN(9200, "Invalid token, token expired or invalid."),
+    INVALID_ACCESS_TOKEN(9300, "Invalid token, token expired or invalid."),
 
     /**
      * 权限不够
      */
-    LIMITED_AUTHORITY(9300, "Access authority Limit."),
+    LIMITED_AUTHORITY(9400, "Access authority Limit."),
 
     /**
      * 耗时的rpc方法
      */
-    CONSUMING_TIME_RPC(9400, "Consuming time RPC method"),
+    CONSUMING_TIME_RPC(9500, "Consuming time RPC method"),
 
 
 

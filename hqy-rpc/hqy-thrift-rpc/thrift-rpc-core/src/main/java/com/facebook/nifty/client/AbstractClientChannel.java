@@ -369,16 +369,14 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
     }
 
     protected void onError(Throwable t) {
-        log.warn("onError:1 出错了~ " + t.getMessage(), t);
+        log.warn("onError: " + t.getMessage(), t);
         TException wrappedException = wrapException(t);
 
         if (channelError == null) {
             channelError = wrappedException;
         }
 
-        log.warn("onError:2 fireChannelErrorCallback;");
-        Collection<Request> requests = new ArrayList<>();
-        requests.addAll(requestMap.values());
+        Collection<Request> requests = new ArrayList<>(requestMap.values());
         for (Request request : requests) {
             try {
                 fireChannelErrorCallback(request.getListener(), wrappedException);
@@ -386,34 +384,22 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 log.warn(e.getMessage() + " | " + e.getClass().getName());
             }
         }
-        /*** 聚合到disposeMemoryLeak() 方法
-         cancelAllTimeouts();
-         Channel channel = getNettyChannel();
-         if (nettyChannel.isOpen())
-         {
-         LOGGER.warn("onError:3 channel.close();关闭当前channel;");
-         channel.close();
-         }
-         ***/
-        //聚合到disposeMemoryLeak() 方法
+        //释放内存 防止内存泄露
         disposeMemoryLeak();
-
-
     }
 
     /**
-     * 2020 1230 防止内存泄露,channel有问题的时候 清理掉 残留的东东
+     * 防止内存泄露, channel有问题的时候 清理掉 残留的东东
      */
     public void disposeMemoryLeak() {
         try {
-            log.warn("onError:3 cancelAllTimeouts; 取消所有的超时定时任务;");
+            // cancelAllRequestTimeouts 取消所有超时的定时任务
             cancelAllRequestTimeouts();
-            //cancel完定时任务后，务必手动清理掉MAP 防止内存泄露...
+            // 清理Map
             requestMap.clear();
-            log.warn("onError:4 channel.close(); 清空 requestMap;");
             Channel channel = getNettyChannel();
-            if (nettyChannel.isOpen()) {
-                log.warn("onError:5 channel.close();关闭当前channel;");
+            if (nettyChannel.isOpen() && CommonSwitcher.ENABLE_CLOSE_THRIFT_CHANNEL_ON_ERROR.isOn()) {
+                log.warn("Rpc happen error, close thrift rpc channel.");
                 channel.close();
             }
         } catch (Exception e) {

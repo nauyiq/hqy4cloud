@@ -1,5 +1,6 @@
 package com.hqy.account.struct;
 
+import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
 
 /**
@@ -11,10 +12,15 @@ import com.facebook.swift.codec.ThriftStruct;
 @ThriftStruct
 public final class AccountProfileStruct {
 
+    @ThriftField(1)
     public Long id;
+    @ThriftField(2)
     public String nickname;
+    @ThriftField(3)
     public String avatar;
+    @ThriftField(4)
     public String intro;
+    @ThriftField(5)
     public String birthday;
 
     public AccountProfileStruct() {
