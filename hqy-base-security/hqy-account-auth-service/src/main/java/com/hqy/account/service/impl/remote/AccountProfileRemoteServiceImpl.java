@@ -36,14 +36,16 @@ public class AccountProfileRemoteServiceImpl extends AbstractRPCService implemen
             return false;
         }
         if (StringUtils.isNotBlank(profileStruct.birthday)) {
-            DateTime dateTime = DateUtil.parseTime(profileStruct.birthday);
+            DateTime dateTime = DateUtil.parseDateTime(profileStruct.birthday);
             accountProfile.setBirthday(dateTime);
         }
         if (StringUtils.isNotBlank(profileStruct.nickname)) {
             accountProfile.setNickname(profileStruct.nickname);
         }
 
-        accountProfile.setAvatar(profileStruct.avatar);
+        if (StringUtils.isNotBlank(profileStruct.avatar)) {
+            accountProfile.setAvatar(profileStruct.avatar);
+        }
 
         return accountProfileTkService.update(accountProfile);
     }
