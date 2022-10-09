@@ -4,6 +4,8 @@ import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.entity.Account;
 import com.hqy.base.BaseTkService;
 
+import java.util.List;
+
 /**
  * @author qiyuan.hong
  * @date 2022-03-10 21:17
@@ -23,4 +25,11 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
      * @return   AccountInfoDTO.
      */
     AccountInfoDTO getAccountInfo(Long id);
+
+    /**
+     * 查找用户信息
+     * @param ids 用户id 列表
+     * @return    AccountInfoDTO Set.
+     */
+    List<AccountInfoDTO> getAccountInfos(List<Long> ids);
 }

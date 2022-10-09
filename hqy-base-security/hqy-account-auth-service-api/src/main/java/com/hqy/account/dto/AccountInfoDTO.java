@@ -1,6 +1,7 @@
 package com.hqy.account.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
  * @date 2022/9/27 15:50
  */
 @Data
+@EqualsAndHashCode
 public class AccountInfoDTO {
 
     /**

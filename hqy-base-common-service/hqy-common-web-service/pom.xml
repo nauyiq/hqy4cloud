@@ -23,6 +23,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-account-auth-service-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>

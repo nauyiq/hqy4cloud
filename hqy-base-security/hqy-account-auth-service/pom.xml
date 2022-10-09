@@ -59,11 +59,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-
         <!-- spring-security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -82,19 +77,6 @@
             <artifactId>hqy-public-common-security</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
-        <!-- sentinel-module -->
-        <!--<dependency>
-            <groupId>com.hqy.security</groupId>
-            <artifactId>hqy-public-common-alibaba-sentinel</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>${project.parent.version}</version>
-        </dependency>-->
 
 
     </dependencies>

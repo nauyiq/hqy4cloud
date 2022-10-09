@@ -2,6 +2,9 @@ package com.hqy.account.service;
 
 import com.hqy.account.dto.AccountInfoDTO;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Account Auth Service Crud.
  * @author qiyuan.hong
@@ -18,6 +21,12 @@ public interface AccountAuthService {
      */
     AccountInfoDTO getAccountInfo(Long id);
 
+    /**
+     * get account information,
+     * @param ids account id List.
+     * @return AccountInfoDTO
+     */
+    List<AccountInfoDTO> getAccountInfo(List<Long> ids);
 
     /**
      * simple table crud for t_account.
@@ -36,5 +45,6 @@ public interface AccountAuthService {
      * @return AccountOauthClientTkService.
      */
     AccountOauthClientTkService getAccountOauthClientTkService();
+
 
 }

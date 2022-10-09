@@ -226,13 +226,14 @@ public abstract class AbstractRedisAdaptor implements RedisService {
 
 
     @Override
-    public <T> List<T> hmGet(String key, Collection<T> hashKeys) {
-       try {
-           return redisTemplate.opsForHash().multiGet(key, hashKeys);
-       } catch (Exception e) {
-           throw new RedisException("@@@ [hmGet] failure: key: " + key, e);
-       }
+    public <T> List<T> hmGet(String key, Collection<String> hashKeys) {
+        try {
+            return redisTemplate.opsForHash().multiGet(key, hashKeys);
+        } catch (Exception e) {
+            throw new RedisException("@@@ [hmGet] failure: key: " + key, e);
+        }
     }
+
 
     @Override
     public Boolean hmSet(String key, Map map) {

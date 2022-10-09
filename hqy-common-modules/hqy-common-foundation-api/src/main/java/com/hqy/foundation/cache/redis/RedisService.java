@@ -135,7 +135,7 @@ public interface RedisService {
      * @param <T>       return type
      * @return value
      */
-    <T> List<T> hmGet(String key, Collection<T> hashKeys);
+    <T> List<T> hmGet(String key, Collection<String> hashKeys);
 
 
     /**

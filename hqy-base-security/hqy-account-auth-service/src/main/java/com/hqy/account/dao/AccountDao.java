@@ -6,6 +6,9 @@ import com.hqy.base.BaseDao;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author qiyuan.hong
  * @date 2022-03-10 21:42
@@ -27,4 +30,11 @@ public interface AccountDao extends BaseDao<Account, Long> {
      * @return   AccountInfoDTO.
      */
     AccountInfoDTO getAccountInfo(@Param("id") Long id);
+
+    /**
+     * 根据id集合查找用户信息
+     * @param ids idjihe
+     * @return    AccountInfoDTO Set.
+     */
+    List<AccountInfoDTO> getAccountInfos(@Param("ids") List<Long> ids);
 }

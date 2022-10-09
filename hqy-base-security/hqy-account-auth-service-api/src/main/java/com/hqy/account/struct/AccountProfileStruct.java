@@ -2,6 +2,7 @@ package com.hqy.account.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
+import lombok.EqualsAndHashCode;
 
 /**
  * AccountProfileStruct.
@@ -10,6 +11,7 @@ import com.facebook.swift.codec.ThriftStruct;
  * @date 2022/9/29 18:08
  */
 @ThriftStruct
+@EqualsAndHashCode
 public final class AccountProfileStruct {
 
     @ThriftField(1)

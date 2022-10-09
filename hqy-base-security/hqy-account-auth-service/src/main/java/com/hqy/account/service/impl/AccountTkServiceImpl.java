@@ -12,6 +12,7 @@ import com.hqy.util.AssertUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,5 +50,10 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     public AccountInfoDTO getAccountInfo(Long id) {
         AssertUtil.notNull(id, "Account id should not be null.");
         return accountDao.getAccountInfo(id);
+    }
+
+    @Override
+    public List<AccountInfoDTO> getAccountInfos(List<Long> ids) {
+        return accountDao.getAccountInfos(ids);
     }
 }
