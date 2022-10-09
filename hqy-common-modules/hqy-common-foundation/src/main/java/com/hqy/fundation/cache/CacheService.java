@@ -54,8 +54,8 @@ public interface CacheService<T, PK> {
      * 获取所有的缓存
      * @return cache cacheData.
      */
-    default Set<T> allCache2Set() {
-        return Collections.emptySet();
+    default List<T> allCaches() {
+        return Collections.emptyList();
     }
 
     /**

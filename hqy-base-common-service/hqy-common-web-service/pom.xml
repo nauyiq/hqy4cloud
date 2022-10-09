@@ -15,13 +15,8 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-foundation-api</artifactId>
+            <artifactId>hqy-common-foundation</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
@@ -31,11 +26,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-collector-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
     </dependencies>
 

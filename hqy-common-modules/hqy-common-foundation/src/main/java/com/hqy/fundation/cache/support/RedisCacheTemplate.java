@@ -1,11 +1,14 @@
 package com.hqy.fundation.cache.support;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ReflectUtil;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.CacheService;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,11 +24,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
 
-    protected final String redisPrefix;
+    private String redisPrefix;
     private int delaySeconds = 1;
 
     RedisCacheTemplate() {
-        this(RedisCacheTemplate.class.getSimpleName());
     }
 
     public RedisCacheTemplate(String redisPrefix) {
@@ -108,6 +110,9 @@ public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
     protected abstract void invalidCacheFromRedis(PK pk);
 
     public String getRedisPrefix() {
+        if (StringUtils.isBlank(redisPrefix)) {
+            redisPrefix = ReflectUtils.getTargetGenericClass(getClass(), 0).getSimpleName();
+        }
         return redisPrefix;
     }
 

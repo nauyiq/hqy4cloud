@@ -129,12 +129,12 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
     }
 
     @Override
-    public Set<T> allCache2Set() {
+    public List<T> allCaches() {
         Map<PK, T> pkCacheMap = allCache2Map();
         if (pkCacheMap == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
-        return new HashSet<>(pkCacheMap.values());
+        return new ArrayList<>(pkCacheMap.values());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.hqy.fundation.global;
+package com.hqy.web.global;
 
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;

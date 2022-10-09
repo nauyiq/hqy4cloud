@@ -1,4 +1,4 @@
-package com.hqy.fundation.spring.event;
+package com.hqy.web.service.collect;
 
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.base.common.swticher.CommonSwitcher;
@@ -99,9 +99,7 @@ public class ExceptionCollActionEventHandler {
         int sign = Math.abs(hashCode) % MAX_CONCURRENT;
         Long count = counter.get(hashCode);
         count = count == null ? 0 : count;
-
         Lock lock = locks[sign];
-
         lock.lock();
         try {
             doCollection(event, count);
@@ -109,11 +107,11 @@ public class ExceptionCollActionEventHandler {
             log.error("[ExceptionCollActionEventHandler] doCollection error, event:{}", JsonUtil.toJson(event));
             log.error(e.getMessage(), e);
         } finally {
+            lock.unlock();
             if (count > Integer.MAX_VALUE) {
                 count = 0L;
             }
             counter.put(hashCode, ++count);
-            lock.unlock();
         }
 
     }

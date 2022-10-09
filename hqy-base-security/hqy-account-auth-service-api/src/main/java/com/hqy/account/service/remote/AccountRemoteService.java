@@ -26,6 +26,15 @@ public interface AccountRemoteService extends RPCService {
     @ThriftMethod
     String getAccountInfoJson(@ThriftField(1) Long id);
 
+
+    /**
+     * 获取用户基本信息
+     * @param id 查找哪个用户的基本信息
+     * @return   AccountBaseInfoStruct.
+     */
+    @ThriftMethod
+    AccountBaseInfoStruct getAccountBaseInfo(@ThriftField(1)Long id);
+
     /**
      * 获取用户基本信息
      * @param ids 查找哪些用户的基本信息

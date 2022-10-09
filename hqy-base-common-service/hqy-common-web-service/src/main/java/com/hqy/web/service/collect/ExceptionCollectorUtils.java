@@ -1,4 +1,4 @@
-package com.hqy.fundation.spring.event;
+package com.hqy.web.service.collect;
 
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.coll.service.ExceptionCollectionService;

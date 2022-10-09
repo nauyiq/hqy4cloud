@@ -45,7 +45,7 @@ public class RedisResourceSlidingWindowsLimiter extends AbstractLimiter {
             redisScript.setResultType(Long.class);
             redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit/slidingLimit.lua")));
             flag = (Long) LettuceStringRedis.getInstance().getRedisTemplate().execute(redisScript, Collections.singletonList(resource),
-                    String.valueOf(now - timeWindow), String.valueOf(now), String.valueOf(config.getCount()), String.valueOf(now));
+                    String.valueOf(now - timeWindow), String.valueOf(now), String.valueOf(config.getCount()), String.valueOf(now), String.valueOf(config.getBlockSeconds()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

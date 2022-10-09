@@ -10,6 +10,7 @@ local res = redis.call('zcard', KEYS[1])
 -- 3. 是否超过阈值
 if (res == nil) or (res < tonumber(ARGV[3])) then
     redis.call('zadd', KEYS[1], ARGV[2], ARGV[4])
+    redis.call('expire', KEYS[1], ARGV[5])
     return 1
 else
     return 0

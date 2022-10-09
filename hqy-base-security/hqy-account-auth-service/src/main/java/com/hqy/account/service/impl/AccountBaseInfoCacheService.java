@@ -59,4 +59,9 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
         accountProfile.setNickname(cache.getNickname());
         AssertUtil.isTrue(accountAuthService.getAccountProfileTkService().update(accountProfile), CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
     }
+
+    @Override
+    public Long StringConvertPkType(String pkStr) {
+        return Long.parseLong(pkStr);
+    }
 }

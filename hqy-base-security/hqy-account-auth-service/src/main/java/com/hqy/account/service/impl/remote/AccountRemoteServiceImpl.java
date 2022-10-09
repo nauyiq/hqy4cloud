@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,11 +38,21 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     }
 
     @Override
+    public AccountBaseInfoStruct getAccountBaseInfo(Long id) {
+        AccountBaseInfoDTO accountBaseInfoDTO = baseInfoCacheService.getCache(id);
+        if (accountBaseInfoDTO == null) {
+            return new AccountBaseInfoStruct();
+        }
+        return new AccountBaseInfoStruct(accountBaseInfoDTO);
+    }
+
+    @Override
     public List<AccountBaseInfoStruct> getAccountBaseInfos(List<Long> ids) {
         List<AccountBaseInfoDTO> caches = baseInfoCacheService.getCaches(ids);
         if (CollectionUtils.isEmpty(caches)) {
             return Collections.emptyList();
         }
+
         return caches.stream().map(AccountBaseInfoStruct::new).collect(Collectors.toList());
     }
 
