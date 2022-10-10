@@ -44,7 +44,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfiguration {
 
     @Bean("LettuceRedisTemplate")
-    @ConditionalOnMissingBean(name = "redisTemplate")
+    @ConditionalOnMissingBean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
 
@@ -59,6 +59,7 @@ public class RedisConfiguration {
 
         // key采用String的序列化方式
         template.setKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(jackson2JsonRedisSerializer);
         // Hash key序列化
         template.setHashKeySerializer(stringRedisSerializer);
         // hash的value序列化方式采用jackson

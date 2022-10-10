@@ -23,13 +23,13 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractRedisAdaptor implements RedisService {
 
     protected AbstractRedisAdaptor(RedisTemplate redisTemplate) {
-        AbstractRedisAdaptor.redisTemplate = redisTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
      * 由子类进行构造，由子类选择构造的redis客户端，是lettuce还是jedis
      */
-    private static RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
 
     public RedisTemplate getRedisTemplate() {
