@@ -1,13 +1,12 @@
 package com.hqy.gateway.server;
 
-import com.hqy.access.auth.AuthorizationWhiteListManager;
+import com.hqy.access.auth.Oauth2Access;
+import com.hqy.access.auth.Oath2Request;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.gateway.util.RequestUtil;
-import com.hqy.util.spring.ProjectContextInfo;
-import com.hqy.util.spring.SpringContextHolder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -16,11 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * 网关鉴权管理器 所有权限在此配置
@@ -29,9 +24,10 @@ import java.util.function.Predicate;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
-    private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
+    private final Oauth2Access oauth2Access;
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
@@ -41,26 +37,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(true));
         }
 
-        String path = request.getURI().getPath();
-        String ipAddress = RequestUtil.getIpAddress(request);
-
-        //检验是否可以白名单path
-        if (permitAll(path)) {
+        Oath2Request oath2Request = new ReactAccess2Request(request);
+        if (oauth2Access.isPermitRequest(oath2Request)) {
             return Mono.just(new AuthorizationDecision(true));
-        }
-
-        // token必须以"bearer "为前缀
-        String token = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isNotBlank(token) && StringUtils.startsWithIgnoreCase(token, StringConstants.Auth.JWT_PREFIX) ) {
-            //白名单ip无需鉴权 放行
-            Set<String> whiteIp = SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
-            if (CollectionUtils.isNotEmpty(whiteIp)) {
-                if (whiteIp.stream().anyMatch(ipAddress::equals)) {
-                    return Mono.just(new AuthorizationDecision(true));
-                }
-            }
-        } else {
-            return Mono.just(new AuthorizationDecision(false));
         }
 
         // 判断JWT中携带的用户角色是否有权限访问
@@ -74,9 +53,39 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
     }
 
-    private boolean permitAll(String path) {
-        Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
-        return whiteUri.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, path));
+    public static class ReactAccess2Request implements Oath2Request {
+
+        private final String requestIp;
+        private final String requestUri;
+        private final String requestUserAgent;
+        private final String requestAccessToken;
+
+        public ReactAccess2Request(ServerHttpRequest request) {
+            this.requestIp = RequestUtil.getIpAddress(request);
+            this.requestUri = request.getURI().getPath();
+            this.requestUserAgent = request.getHeaders().getFirst(HttpHeaders.USER_AGENT);
+            this.requestAccessToken = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
+        }
+
+        @Override
+        public String requestIp() {
+            return requestIp;
+        }
+
+        @Override
+        public String requestUri() {
+            return requestUri;
+        }
+
+        @Override
+        public String requestUserAgent() {
+            return requestUserAgent;
+        }
+
+        @Override
+        public String requestAccessToken() {
+            return requestAccessToken;
+        }
     }
 
 

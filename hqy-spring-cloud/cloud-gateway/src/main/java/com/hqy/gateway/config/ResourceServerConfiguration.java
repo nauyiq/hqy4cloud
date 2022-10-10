@@ -2,16 +2,17 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
-import com.hqy.access.auth.AuthorizationWhiteListManager;
+import com.hqy.access.auth.Oauth2Access;
+import com.hqy.access.auth.support.EndpointAuthorizationManager;
+import com.hqy.access.auth.support.NacosOauth2Access;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
-import com.hqy.gateway.server.AuthorizationManager;
+import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.AssertUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -39,7 +40,7 @@ import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * 网关承担 资源服务器
@@ -52,7 +53,12 @@ import java.util.Set;
 public class ResourceServerConfiguration {
 
     @Resource
-    private AuthorizationManager authorizationManager;
+    private com.hqy.gateway.server.AuthorizationManager authorizationManager;
+
+    @Bean
+    public Oauth2Access oauth2Access(ManualWhiteIpService manualWhiteIpService) {
+        return new NacosOauth2Access(manualWhiteIpService);
+    }
 
 
     @Bean
@@ -81,9 +87,8 @@ public class ResourceServerConfiguration {
         //option请求放行
         .authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
-        //白名单配置
-        Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
-            http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();
+        ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
+        http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
 
         http.authorizeExchange()
                 //鉴权管理器配置
