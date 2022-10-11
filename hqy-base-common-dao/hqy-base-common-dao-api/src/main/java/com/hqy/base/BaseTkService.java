@@ -87,5 +87,7 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     boolean delete(T t);
 
+    BaseDao<T, PK> getDao();
+
 
 }

@@ -99,7 +99,10 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     public boolean delete(T t) {
         BaseDao<T, PK> dao = checkDao();
         return dao.delete(t) > 0;
+    }
 
-
+    @Override
+    public BaseDao<T, PK> getDao() {
+        return selectDao();
     }
 }
