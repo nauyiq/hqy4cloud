@@ -4,10 +4,10 @@ import com.hqy.account.dto.AccountBaseInfoDTO;
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.entity.AccountProfile;
 import com.hqy.account.service.AccountAuthService;
+import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.fundation.cache.support.RedisHashCache;
 import com.hqy.util.AssertUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoDTO, Long> {
+
+    public AccountBaseInfoCacheService(AccountAuthService accountAuthService) {
+        super(MicroServiceConstants.ACCOUNT_SERVICE, AccountBaseInfoDTO.class.getSimpleName());
+        this.accountAuthService = accountAuthService;
+    }
 
     private final AccountAuthService accountAuthService;
 

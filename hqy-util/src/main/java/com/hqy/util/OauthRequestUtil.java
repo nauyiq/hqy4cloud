@@ -2,6 +2,7 @@ package com.hqy.util;
 
 import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.context.request.RequestAttributes;
@@ -69,6 +70,9 @@ public class OauthRequestUtil {
 
     public static Long idFromOauth2Request(HttpServletRequest request) {
         Map<String, Object> payload = requestMapFromOauth2Payload(request);
+        if (MapUtils.isEmpty(payload)) {
+            return null;
+        }
         Object id = payload.get("id");
         if (id instanceof Integer) {
             return Long.parseLong(id + "");
@@ -91,6 +95,9 @@ public class OauthRequestUtil {
     @SuppressWarnings("unchecked")
     public static Map<String, Object> requestMapFromOauth2Payload(HttpServletRequest request) {
         String payload = requestPayloadFromOauth2Header(request);
+        if (StringUtils.isBlank(payload)) {
+            return null;
+        }
         return (Map<String, Object>) JsonUtil.jsonToMap(payload);
     }
 

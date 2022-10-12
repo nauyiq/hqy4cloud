@@ -3,6 +3,7 @@ package com.hqy.fundation.cache.redis;
 import com.hqy.foundation.cache.redis.RedisService;
 import com.hqy.fundation.cache.exception.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -194,7 +195,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public <T> T hGet(String key, String hashKey) {
+    public <T> T hGet(String key, Object hashKey) {
        try {
            Object o = redisTemplate.opsForHash().get(key, hashKey);
            return o == null ? null : (T) o;
@@ -204,7 +205,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public Boolean hSet(String key, String hashKey, Object value) {
+    public Boolean hSet(String key, Object hashKey, Object value) {
         try {
             redisTemplate.opsForHash().put(key, hashKey, value);
             return true;
@@ -214,7 +215,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
 
-    public Boolean hSet(String key, String hashKey, Object value, long time, TimeUnit timeUnit) {
+    public Boolean hSet(String key, Object hashKey, Object value, long time, TimeUnit timeUnit) {
         try {
             redisTemplate.opsForHash().put(key, hashKey, value);
             expire(key, time, timeUnit);
@@ -226,7 +227,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
 
 
     @Override
-    public <T> List<T> hmGet(String key, Collection<String> hashKeys) {
+    public <T> List<T> hmGet(String key, List<?> hashKeys) {
         try {
             return redisTemplate.opsForHash().multiGet(key, hashKeys);
         } catch (Exception e) {
@@ -246,7 +247,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public <K, V> Map<K, V> hGetAll(String key) {
+    public <K, V> Map<K, V> hGetAll(Object key) {
         try {
             Map map = redisTemplate.opsForHash().entries(key);
             return (Map<K, V>) map;
@@ -257,7 +258,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
 
 
     @Override
-    public Long hDel(String key, String... hashKey) {
+    public Long hDel(String key, Object... hashKey) {
         try {
             return redisTemplate.opsForHash().delete(key, hashKey);
         } catch (Exception e) {
@@ -266,7 +267,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public Boolean hExists(String key, String hashKey) {
+    public Boolean hExists(String key, Object hashKey) {
         try {
             return redisTemplate.opsForHash().hasKey(key, hashKey);
         } catch (Exception e) {
@@ -276,7 +277,7 @@ public abstract class AbstractRedisAdaptor implements RedisService {
     }
 
     @Override
-    public long hIncrBy(String key, String hashKey, long by) {
+    public long hIncrBy(String key, Object hashKey, long by) {
         try {
             return redisTemplate.opsForHash().increment(key, hashKey, by);
         } catch (Exception e) {
@@ -425,6 +426,44 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         }
     }
 
+    public boolean setBit(String key, long offset, boolean value) {
+        try {
+            Boolean setBit = redisTemplate.opsForValue().setBit(key, offset, value);
+            setBit = setBit != null && setBit;
+            return setBit;
+        } catch (Exception e) {
+            throw new RedisException("@@@ [setBit] failure: key: " + key, e);
+        }
+    }
+
+    public boolean getBit(String key, long offset) {
+        try {
+            Boolean getBit = redisTemplate.opsForValue().getBit(key, offset);
+            getBit = getBit != null && getBit;
+            return getBit;
+        } catch (Exception e) {
+            throw new RedisException("@@@ [getBit] failure: key: " + key, e);
+        }
+    }
+
+    public long bitCount(String key) {
+        try {
+            Long execute = (Long) redisTemplate.execute((RedisCallback<Long>) connection -> connection.bitCount(key.getBytes()));
+            execute = execute == null ? 0 : execute;
+            return execute;
+        } catch (Exception e) {
+            throw new RedisException("@@@ [bitCount] failure: key: " + key, e);
+        }
+    }
+
+    public List<Long> bigField(String key, int limit, int offset) {
+        try {
+            return redisTemplate.opsForValue().
+                    bitField(key, BitFieldSubCommands.create().get(BitFieldSubCommands.BitFieldType.unsigned(limit)).valueAt(offset));
+        } catch (Exception e) {
+            throw new RedisException("@@@ [bigField] failure: key: " + key, e);
+        }
+    }
 
 
 

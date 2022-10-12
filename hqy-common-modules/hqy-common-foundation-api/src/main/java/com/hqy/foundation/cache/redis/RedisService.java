@@ -125,7 +125,7 @@ public interface RedisService {
      * @param <T>       return type
      * @return value
      */
-    <T> T hGet(String key, String hashKey);
+    <T> T hGet(String key, Object hashKey);
 
 
     /**
@@ -135,7 +135,7 @@ public interface RedisService {
      * @param <T>       return type
      * @return value
      */
-    <T> List<T> hmGet(String key, Collection<String> hashKeys);
+    <T> List<T> hmGet(String key, List<?> hashKeys);
 
 
     /**
@@ -145,7 +145,7 @@ public interface RedisService {
      * @param value     value
      * @return 操作是否成功
      */
-    Boolean hSet(String key, String hashKey, Object value);
+    Boolean hSet(String key, Object hashKey, Object value);
 
 
     /**
@@ -163,7 +163,7 @@ public interface RedisService {
      * @param <V> value type
      * @return map
      */
-    <K, V> Map<K, V> hGetAll(String key);
+    <K, V> Map<K, V> hGetAll(Object key);
 
 
     /**
@@ -172,7 +172,7 @@ public interface RedisService {
      * @param hashKeys  hashKeys
      * @return 影响的行数
      */
-    Long hDel(String key, String... hashKeys);
+    Long hDel(String key, Object... hashKeys);
 
     /**
      * 判断hashKey是否存在于hash中
@@ -180,7 +180,7 @@ public interface RedisService {
      * @param hashKey   hashKey
      * @return Boolean
      */
-    Boolean hExists(String key, String hashKey);
+    Boolean hExists(String key, Object hashKey);
 
     /**
      * 将hash中指定域的值增加给定的数字
@@ -189,7 +189,7 @@ public interface RedisService {
      * @param by        增加的数字大小
      * @return 增加后的数字
      */
-    long hIncrBy(String key, String hashKey, long by);
+    long hIncrBy(String key, Object hashKey, long by);
 
     /**
      * 添加一个或多个元素到集合set中

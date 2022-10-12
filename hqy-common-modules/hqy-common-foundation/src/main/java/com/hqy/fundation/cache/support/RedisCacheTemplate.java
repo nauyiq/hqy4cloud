@@ -1,14 +1,11 @@
 package com.hqy.fundation.cache.support;
 
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ReflectUtil;
-import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.CacheService;
+import com.hqy.fundation.cache.redis.key.support.DefaultKeyGenerator;
 import com.hqy.util.AssertUtil;
-import com.hqy.util.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,14 +21,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
 
-    private String redisPrefix;
+    private final DefaultKeyGenerator generator;
     private int delaySeconds = 1;
 
-    RedisCacheTemplate() {
-    }
-
-    public RedisCacheTemplate(String redisPrefix) {
-        this.redisPrefix = redisPrefix;
+    public RedisCacheTemplate(String project) {
+        this.generator = new DefaultKeyGenerator(project);
     }
 
     @Override
@@ -109,21 +103,11 @@ public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
 
     protected abstract void invalidCacheFromRedis(PK pk);
 
-    public String getRedisPrefix() {
-        if (StringUtils.isBlank(redisPrefix)) {
-            redisPrefix = ReflectUtils.getTargetGenericClass(getClass(), 0).getSimpleName();
-        }
-        return redisPrefix;
-    }
-
-    public String genKey(PK pk) {
-        return getRedisPrefix() + StringConstants.Symbol.COLON + pk.toString();
-    }
-
     public void setDelaySeconds(int delaySeconds) {
         this.delaySeconds = delaySeconds;
     }
 
-
-
+    public DefaultKeyGenerator getGenerator() {
+        return generator;
+    }
 }
