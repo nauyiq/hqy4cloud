@@ -10,7 +10,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,13 +40,6 @@ public abstract class AbstractRedisAdaptor implements RedisService {
         return redisTemplate;
     }
 
-
-    /**
-     * 选择需要操作的redis db
-     * @param db redis db下标 注意的是只能是0-15
-     * @return RedisService
-     */
-    public abstract AbstractRedisAdaptor selectDb(int db);
 
     @Override
     public void flushDb() {

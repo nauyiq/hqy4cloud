@@ -1,6 +1,7 @@
 package com.hqy.fundation.cache.redis.key;
 
 import com.hqy.base.common.base.lang.StringConstants;
+import com.hqy.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -11,13 +12,32 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractKeyGenerator {
     private final String project;
+    private String defaultPrefix;
+
+
     public AbstractKeyGenerator(String project) {
-        this.project = project.toUpperCase();
+        this(project, StringConstants.EMPTY);
+    }
+
+    public AbstractKeyGenerator(String project, String defaultPrefix) {
+        this.project = project;
+        this.defaultPrefix = defaultPrefix;
+    }
+
+    public String genPrefix() {
+        AssertUtil.notEmpty(defaultPrefix, "Default prefix should not be empty.");
+        return genPrefix(defaultPrefix);
     }
 
     public String genPrefix(String prefix) {
         return project.concat(StringConstants.Symbol.COLON).concat(prefix).concat(StringConstants.Symbol.COLON);
     }
+
+    public String genKey(String key) {
+        AssertUtil.notEmpty(defaultPrefix, "Default prefix should not be empty.");
+        return genKey(defaultPrefix, key);
+    }
+
 
     public String genKey(String prefix, String key) {
         String genKey = project.concat(StringConstants.Symbol.COLON);
@@ -31,5 +51,13 @@ public abstract class AbstractKeyGenerator {
 
     public String getProject() {
         return project;
+    }
+
+    public void setDefaultPrefix(String defaultPrefix) {
+        this.defaultPrefix = defaultPrefix;
+    }
+
+    public String getDefaultPrefix() {
+        return defaultPrefix;
     }
 }

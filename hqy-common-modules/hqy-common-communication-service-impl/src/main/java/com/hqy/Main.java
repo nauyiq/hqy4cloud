@@ -1,5 +1,6 @@
 package com.hqy;
 
+import com.hqy.communication.service.mail.EmailRemoteService;
 import com.hqy.rpc.api.service.RPCService;
 import com.hqy.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.util.spring.ProjectContextInfo;
@@ -31,9 +32,11 @@ public class Main {
     @RequiredArgsConstructor
     public static class ThriftServerRegisterServer implements ThriftServerLauncher {
 
+        private final EmailRemoteService emailRemoteService;
+
         @Override
         public List<RPCService> getRpcServices() {
-            return Collections.emptyList();
+            return Collections.singletonList(emailRemoteService);
         }
     }
 

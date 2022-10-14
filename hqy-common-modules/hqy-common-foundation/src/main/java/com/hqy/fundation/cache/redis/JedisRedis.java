@@ -18,12 +18,6 @@ public class JedisRedis extends AbstractRedisAdaptor {
         super(redisTemplate);
     }
 
-    @Override
-    @SuppressWarnings("rawtypes")
-    public AbstractRedisAdaptor selectDb(int db) {
-        return null;
-    }
-
     private static volatile JedisRedis instance = null;
 
     public static JedisRedis getInstance() {

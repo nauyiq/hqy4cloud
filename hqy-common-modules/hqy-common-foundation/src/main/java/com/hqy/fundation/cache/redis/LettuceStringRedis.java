@@ -1,14 +1,11 @@
 package com.hqy.fundation.cache.redis;
 
-import com.hqy.fundation.cache.exception.RedisException;
 import com.hqy.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author qiyuan.hong
@@ -38,25 +35,4 @@ public class LettuceStringRedis extends AbstractRedisAdaptor {
         return instance;
     }
 
-
-
-
-    @Override
-    public AbstractRedisAdaptor selectDb(int db) {
-        if (db < 0 || db > 15) {
-            db = 0;
-        }
-        RedisTemplate redisTemplate = getRedisTemplate();
-        LettuceConnectionFactory lettuceConnectionFactory = (LettuceConnectionFactory) redisTemplate.getConnectionFactory();
-        if (Objects.isNull(lettuceConnectionFactory)) {
-            throw new RedisException("@@@ Initialize redisTemplate failure, get redisTemplateConnectionFactory failure.");
-        }
-        try {
-            lettuceConnectionFactory.setDatabase(db);
-            super.getRedisTemplate().setConnectionFactory(lettuceConnectionFactory);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return this;
-    }
 }

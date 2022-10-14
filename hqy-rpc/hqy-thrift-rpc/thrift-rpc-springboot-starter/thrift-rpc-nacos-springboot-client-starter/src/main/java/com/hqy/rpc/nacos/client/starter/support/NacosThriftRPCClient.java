@@ -62,11 +62,9 @@ public class NacosThriftRPCClient extends ThriftRPCClient {
         return rpcModel;
     }
 
-    public static RPCModel createDirectRpcModel() {
+    private  RPCModel createDirectRpcModel() {
         RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(NacosConfigurationUtils.getServerAddress());
-        RPCModel rpcModel = new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer());
-        ProjectContextInfo.setBean(rpcModel);
-        return rpcModel;
+        return new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer());
     }
 
     private static String getGroup() {

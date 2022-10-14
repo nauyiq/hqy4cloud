@@ -59,19 +59,25 @@ public class ClusterContext {
         ClusterMode mode = getClusterMode(serverName, defaultClusterMode);
         try {
             Cluster cluster;
-            switch (mode) {
-                case FAILBACK:
-                    cluster = SpringContextHolder.getBean(FailBackCluster.class);
-                    break;
-                case FAILFAST:
-                    cluster = SpringContextHolder.getBean(FailFastCluster.class);
-                    break;
-                case FAILSAFE:
-                    cluster = SpringContextHolder.getBean(FailSafeCluster.class);
-                    break;
-                default:
-                    cluster = SpringContextHolder.getBean(FailoverCluster.class);
+            try {
+                switch (mode) {
+                    case FAILBACK:
+                        cluster = SpringContextHolder.getBean(FailBackCluster.class);
+                        break;
+                    case FAILFAST:
+                        cluster = SpringContextHolder.getBean(FailFastCluster.class);
+                        break;
+                    case FAILSAFE:
+                        cluster = SpringContextHolder.getBean(FailSafeCluster.class);
+                        break;
+                    default:
+                        cluster = SpringContextHolder.getBean(FailoverCluster.class);
+                }
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+                cluster = new FailoverCluster();
             }
+
             AssertUtil.notNull(cluster, "From the spring container cluster bean error, cluster mode " + mode);
             return cluster;
         } catch (Throwable t) {

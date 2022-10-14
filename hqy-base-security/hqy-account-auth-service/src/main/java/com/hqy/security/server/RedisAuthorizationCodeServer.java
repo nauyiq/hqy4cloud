@@ -1,7 +1,8 @@
 package com.hqy.security.server;
 
-import com.hqy.base.common.base.lang.StringConstants;
+import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.fundation.cache.redis.key.support.DefaultKeyGenerator;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisAuthorizationCodeServer extends RandomValueAuthorizationCodeServices {
 
+    public final DefaultKeyGenerator keyGenerator = new DefaultKeyGenerator(MicroServiceConstants.ACCOUNT_SERVICE,
+            RedisAuthorizationCodeServer.class.getSimpleName());
 
     @Override
     protected void store(String code, OAuth2Authentication oAuth2Authentication) {
@@ -32,6 +35,6 @@ public class RedisAuthorizationCodeServer extends RandomValueAuthorizationCodeSe
 
 
     private String redisKey(String code) {
-        return RedisAuthorizationCodeServer.class.getSimpleName().concat(StringConstants.Symbol.COLON).concat(code);
+        return keyGenerator.genKey(code);
     }
 }

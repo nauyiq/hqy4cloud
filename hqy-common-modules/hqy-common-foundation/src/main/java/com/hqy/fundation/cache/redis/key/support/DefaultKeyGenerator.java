@@ -11,4 +11,8 @@ public class DefaultKeyGenerator extends AbstractKeyGenerator {
     public DefaultKeyGenerator(String namespace) {
         super(namespace);
     }
+
+    public DefaultKeyGenerator(String project, String defaultPrefix) {
+        super(project, defaultPrefix);
+    }
 }
