@@ -7,6 +7,8 @@ import com.hqy.account.struct.AccountProfileStruct;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.rpc.api.service.RPCService;
 
+import java.util.List;
+
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -22,6 +24,14 @@ public interface AccountProfileRemoteService extends RPCService {
      */
     @ThriftMethod
     boolean uploadAccountProfile(@ThriftField(1)AccountProfileStruct profileStruct);
+
+    /**
+     * 获取用户profile信息
+     * @param ids 用户ids.
+     * @return    AccountProfileStruct.
+     */
+    @ThriftMethod
+    List<AccountProfileStruct> getAccountProfiles(@ThriftField(1) List<Long> ids);
 
 
 }

@@ -11,8 +11,12 @@ import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.util.CommonDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -26,6 +30,16 @@ public class AccountProfileRemoteServiceImpl extends AbstractRPCService implemen
 
     private final AccountAuthService accountAuthService;
 
+
+    @Override
+    public List<AccountProfileStruct> getAccountProfiles(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        //TODO.
+
+        return null;
+    }
 
     @Override
     public boolean uploadAccountProfile(AccountProfileStruct profileStruct) {

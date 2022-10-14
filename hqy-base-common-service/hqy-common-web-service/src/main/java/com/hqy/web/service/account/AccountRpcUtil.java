@@ -33,6 +33,8 @@ public class AccountRpcUtil {
     }
 
 
+
+
     public static AccountBaseInfoStruct getAccountBaseInfo(Long id) {
         if (id == null) {
             return null;

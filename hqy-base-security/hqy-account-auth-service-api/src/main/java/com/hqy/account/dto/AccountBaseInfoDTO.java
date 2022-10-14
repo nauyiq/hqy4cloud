@@ -21,6 +21,7 @@ public class AccountBaseInfoDTO {
     private String nickname;
     private String username;
     private String email;
+    private String avatar;
 
     public AccountBaseInfoDTO(AccountBaseInfoStruct struct) {
         this.id = struct.id;

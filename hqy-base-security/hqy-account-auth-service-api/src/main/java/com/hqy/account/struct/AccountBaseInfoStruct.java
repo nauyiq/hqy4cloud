@@ -27,11 +27,14 @@ public final class AccountBaseInfoStruct {
     public String username;
     @ThriftField(4)
     public String email;
+    @ThriftField(5)
+    public String avatar;
 
     public AccountBaseInfoStruct(AccountBaseInfoDTO info) {
         this.id = info.getId();
         this.nickname = info.getNickname();
         this.username = info.getUsername();
         this.email = info.getEmail();
+        this.avatar = info.getAvatar();
     }
 }

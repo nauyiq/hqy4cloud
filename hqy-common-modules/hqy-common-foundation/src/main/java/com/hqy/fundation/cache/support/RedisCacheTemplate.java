@@ -50,8 +50,8 @@ public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
         if (CollectionUtils.isEmpty(caches)) {
             caches = getCachesFromDb(pks);
             if (CollectionUtils.isNotEmpty(caches)) {
-                HashMap<PK, T> map = MapUtil.newHashMap(pks.size());
-                for (int i = 0; i < pks.size(); i++) {
+                HashMap<PK, T> map = MapUtil.newHashMap(caches.size());
+                for (int i = 0; i < caches.size(); i++) {
                     map.put(pks.get(i), caches.get(i));
                 }
                 cache(map);

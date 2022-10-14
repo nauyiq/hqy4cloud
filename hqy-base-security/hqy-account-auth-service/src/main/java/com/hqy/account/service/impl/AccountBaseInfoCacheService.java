@@ -40,7 +40,7 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
             return null;
         }
         return accountInfos.stream().map(info ->
-                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail())).collect(Collectors.toList());
+                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail(), info.getAvatar())).collect(Collectors.toList());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
         if (accountInfo == null) {
             return null;
         }
-        return new AccountBaseInfoDTO(accountInfo.getId(), accountInfo.getNickname(), accountInfo.getUsername(), accountInfo.getEmail());
+        return new AccountBaseInfoDTO(accountInfo.getId(), accountInfo.getNickname(), accountInfo.getUsername(), accountInfo.getEmail(), accountInfo.getAvatar());
     }
 
     @Override
