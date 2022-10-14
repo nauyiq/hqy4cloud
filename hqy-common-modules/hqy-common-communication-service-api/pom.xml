@@ -16,13 +16,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
+            <groupId>com.hqy.rpc</groupId>
+            <artifactId>thrift-rpc-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

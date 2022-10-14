@@ -1,47 +1,17 @@
+logging:
+  config: classpath:logback.xml
+
 server:
-  port: 9000
+  port: 8777
+
 spring:
-  main:
-    allow-bean-definition-overriding: true #使用dubbo服务最好加此配置
   application:
-    name: public-basic-service
-  cloud:
-    nacos:
-      config:
-        server-addr: www.hongqy.cn:80
-        file-extension: yaml
-        namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
-        group: DEV_GROUP
-        extension-configs[0]:
-          data-id: redis-config.yaml
-          group: DEV_GROUP
-          refresh: true
-        extension-configs[1]:
-          data-id: db-config.yaml
-          group: DEV_GROUP
-          refresh: true
-      discovery:
-        server-addr: www.hongqy.cn:80
-#    sentinel:
-#      transport:
-#        dashboard: localhost:8080
-#        port: 8791
+    name: common-communication-service
+  profiles:
+    active: dev
+
 management: #暴露所有
   endpoints:
     web:
       exposure:
         include: "*"
-dubbo:
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    address: spring-cloud://www.hongqy.cn
-  scan:
-    base-packages: com.hqy.basic.service
-  application:
-    qos-enable: false
-    qos-accept-foreign-ip: false
-    name: public-basic-service
-    id: public-basic-service
-
