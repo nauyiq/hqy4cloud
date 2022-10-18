@@ -75,6 +75,16 @@ public class Account extends BaseEntity<Long> {
         this.password = password;
     }
 
+    public Account(long id, String username, String password, String email) {
+        Date now = new Date();
+        super.setId(id);
+        super.setCreated(now);
+        super.setUpdated(now);
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     public Boolean getStatus() {
         return status;
     }

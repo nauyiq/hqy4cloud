@@ -8,8 +8,6 @@ spring:
     name: account-auth-service
   profiles:
     active: dev
-  redis:
-    database: 1
 
 #暴露所有
 management:

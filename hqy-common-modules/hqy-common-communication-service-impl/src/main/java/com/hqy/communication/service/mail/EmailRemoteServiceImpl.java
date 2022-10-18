@@ -1,5 +1,7 @@
 package com.hqy.communication.service.mail;
 
+import com.hqy.foundation.common.bind.EmailTemplateInfo;
+import com.hqy.foundation.util.AccountEmailTemplateUtil;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.ValidationUtil;
@@ -31,7 +33,7 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
     private String sender;
 
     @Override
-    public void senSimpleEmail(String to, String subject, String content) {
+    public void sendSimpleEmail(String to, String subject, String content) {
         //创建SimpleMailMessage对象
         this.senderSimpleEmail(sender, to, subject, content);
     }
@@ -57,7 +59,7 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
     }
 
     @Override
-    public void senSimpleEmails(Set<String> receivers, String subject, String content) {
+    public void sendSimpleEmails(Set<String> receivers, String subject, String content) {
         this.senderSimpleEmails(sender, receivers, subject, content);
     }
 
@@ -77,12 +79,12 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
     }
 
     @Override
-    public void senHtmlEmail(String to, String subject, String content) {
+    public void sendHtmlEmail(String to, String subject, String content) {
         this.sendHtmlEmails(Collections.singleton(to), subject, content);
     }
 
     @Override
-    public void senHtmlEmails(String sender, String to, String subject, String content) {
+    public void senderHtmlEmail(String sender, String to, String subject, String content) {
         this.senderHtmlEmails(sender, Collections.singleton(to), subject, content);
     }
 
@@ -115,5 +117,11 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
         } catch (Throwable cause) {
             log.error("Failed execute to send email. receivers -> {}.", JsonUtil.toJson(receivers), cause);
         }
+    }
+
+    @Override
+    public void sendRegistryEmail(String to, String receiver, String emailCode) {
+        EmailTemplateInfo emailTemplate = AccountEmailTemplateUtil.getDefaultAccountRegistryEmailTemplate(receiver, emailCode);
+        this.sendHtmlEmail(to, emailTemplate.getSubject(), emailTemplate.getContent());
     }
 }

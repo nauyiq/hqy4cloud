@@ -1,5 +1,7 @@
 package com.hqy.security.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -8,22 +10,27 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @version 1.0
  * @date 2022/5/25 15:10
  */
+@Data
 @ToString
-public class OauthAccountDTO {
+@AllArgsConstructor
+public class OauthAccountRegistryDTO {
 
     @NotEmpty(message = "Username cannot be empty.")
     private String username;
 
+    @NotEmpty(message = "Email cannot be empty.")
+    private String email;
+
     @NotEmpty(message = "Password cannot be empty.")
     private String password;
 
-    public OauthAccountDTO() {
+    @NotEmpty(message = "Registry code be empty.")
+    private String code;
+
+    public OauthAccountRegistryDTO() {
     }
 
-    public OauthAccountDTO(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+
 
     public String getUsername() {
         return username;

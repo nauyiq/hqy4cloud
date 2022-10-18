@@ -40,6 +40,12 @@ public class AccountProfile extends BaseEntity<Long> {
 
     }
 
+    public AccountProfile(Long id, String nickname, String avatar) {
+        super(id, new Date());
+        this.nickname = nickname;
+        this.avatar = avatar;
+    }
+
     public Date getBirthday() {
         return birthday;
     }

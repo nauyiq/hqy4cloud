@@ -86,6 +86,13 @@ public class AccountOauthClient extends BaseEntity<Long> {
         this.clientId = clientId;
     }
 
+    public AccountOauthClient(long id, String clientId, String clientSecret) {
+        super(new Date());
+        super.setId(id);
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+    }
+
     public Boolean getStatus() {
         return status;
     }

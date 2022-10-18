@@ -4,6 +4,8 @@ import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Locale;
+
 /**
  * AbstractKeyGenerator.
  * @author qiyuan.hong
@@ -20,8 +22,8 @@ public abstract class AbstractKeyGenerator {
     }
 
     public AbstractKeyGenerator(String project, String defaultPrefix) {
-        this.project = project;
-        this.defaultPrefix = defaultPrefix;
+        this.project = project.toUpperCase();
+        this.defaultPrefix = defaultPrefix.toUpperCase();
     }
 
     public String genPrefix() {

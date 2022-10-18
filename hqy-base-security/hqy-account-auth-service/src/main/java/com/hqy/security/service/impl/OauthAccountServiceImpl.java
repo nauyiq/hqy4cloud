@@ -4,7 +4,7 @@ import com.hqy.account.entity.Account;
 import com.hqy.account.entity.AccountOauthClient;
 import com.hqy.account.service.AccountOauthClientTkService;
 import com.hqy.account.service.AccountTkService;
-import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.dto.OauthAccountRegistryDTO;
 import com.hqy.security.service.OauthAccountService;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
@@ -37,7 +37,7 @@ public class OauthAccountServiceImpl implements OauthAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MessageResponse registry(OauthAccountDTO oauthAccount) {
+    public MessageResponse registry(OauthAccountRegistryDTO oauthAccount) {
         String username = oauthAccount.getUsername();
         //check username exist.
         Account account = accountTkService.queryOne(new Account(username));

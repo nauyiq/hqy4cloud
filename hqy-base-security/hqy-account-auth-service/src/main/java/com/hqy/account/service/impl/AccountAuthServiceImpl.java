@@ -39,6 +39,9 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     public AccountInfoDTO getAccountInfo(Long id) {
         AssertUtil.notNull(id, "Account id should not be null.");
         AccountInfoDTO accountInfo = accountTkService.getAccountInfo(id);
+        if (accountInfo == null) {
+            return null;
+        }
         settingAvatar(accountInfo);
         return accountInfo;
     }

@@ -6,13 +6,10 @@ import com.hqy.account.service.AccountTkService;
 import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
-import com.hqy.communication.service.mail.EmailRemoteService;
-import com.hqy.rpc.nacos.client.starter.RPCClient;
-import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.dto.OauthAccountRegistryDTO;
 import com.hqy.security.server.SentinelOauthExceptionServer;
 import com.hqy.security.service.OauthAccountService;
 import com.hqy.util.OauthRequestUtil;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.KeyPair;
-import java.util.Map;
 
 /**
  * Oauth 相关接口
@@ -55,7 +51,7 @@ public class OauthController {
 
 
     @PostMapping("/registry")
-    public MessageResponse registry(@RequestBody @Valid OauthAccountDTO account) {
+    public MessageResponse registry(@RequestBody @Valid OauthAccountRegistryDTO account) {
         return oauthAccountService.registry(account);
     }
 
