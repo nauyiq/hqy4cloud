@@ -49,6 +49,9 @@ public class AccountProfileRemoteServiceImpl extends AbstractRPCService implemen
         if (accountProfile == null) {
             return false;
         }
+
+        //setting information.
+        accountProfile.setIntro(profileStruct.intro);
         if (StringUtils.isNotBlank(profileStruct.birthday)) {
             DateTime dateTime = DateUtil.parseDateTime(profileStruct.birthday);
             accountProfile.setBirthday(dateTime);

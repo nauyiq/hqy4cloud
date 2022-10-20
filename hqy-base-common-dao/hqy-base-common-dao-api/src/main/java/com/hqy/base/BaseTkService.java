@@ -72,6 +72,13 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     boolean update(T t);
 
+    /**
+     * 根据主键更新不为null的属性
+     * @param t 实体对象.
+     * @return  是否修改数据成功.
+     */
+    boolean updateSelective(T t);
+
 
     /**
      * 根据id删除数据

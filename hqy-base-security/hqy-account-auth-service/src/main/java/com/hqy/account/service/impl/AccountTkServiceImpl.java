@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> implements AccountTkService {
 
-    private static final Cache<String, Account>  USER_CACHE =
-            CacheBuilder.newBuilder().initialCapacity(1024).expireAfterAccess(10, TimeUnit.MINUTES).build();
 
     @Resource
     private AccountDao accountDao;
@@ -36,14 +34,7 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
 
     @Override
     public Account queryAccountByUsernameOrEmail(String usernameOrEmail) {
-        Account account = USER_CACHE.getIfPresent(usernameOrEmail);
-        if (account == null) {
-            account = accountDao.queryAccountByUsernameOrEmail(usernameOrEmail);
-            if (account != null) {
-                USER_CACHE.put(usernameOrEmail, account);
-            }
-        }
-        return account;
+        return accountDao.queryAccountByUsernameOrEmail(usernameOrEmail);
     }
 
     @Override

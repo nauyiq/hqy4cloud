@@ -9,6 +9,7 @@ import com.hqy.account.service.AccountAuthService;
 import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountRemoteService;
 import com.hqy.account.struct.AccountBaseInfoStruct;
+import com.hqy.account.struct.AccountStruct;
 import com.hqy.account.struct.RegistryAccountStruct;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.UpdateDbException;
@@ -48,6 +49,30 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     public String getAccountInfoJson(Long id) {
         AccountInfoDTO accountInfo = accountAuthService.getAccountInfo(id);
         return accountInfo == null ? StringConstants.EMPTY : JsonUtil.toJson(accountInfo);
+    }
+
+    @Override
+    public Long getAccountIdByUsernameOrEmail(String usernameOrEmail) {
+        if (StringUtils.isBlank(usernameOrEmail)) {
+            return null;
+        }
+        Account account = accountAuthService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        if (account == null) {
+            return null;
+        }
+        return account.getId();
+    }
+
+    @Override
+    public AccountStruct getAccountStructByUsernameOrEmail(String usernameOrEmail) {
+        if (StringUtils.isBlank(usernameOrEmail)) {
+            return new AccountStruct();
+        }
+        Account account = accountAuthService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        if (account == null) {
+            return new AccountStruct();
+        }
+        return new AccountStruct(account);
     }
 
     @Override
@@ -120,4 +145,26 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
             throw new UpdateDbException(CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.message, cause);
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResultStruct updateAccountPassword(String usernameOrEmail, String newPassword) {
+        if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
+            return new CommonResultStruct(false, CommonResultCode.ERROR_PARAM.code, "Request param should not be empty.");
+        }
+        Account account = accountAuthService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        if (account == null) {
+            return new CommonResultStruct(false, CommonResultCode.USER_NOT_FOUND.code, CommonResultCode.USER_NOT_FOUND.message);
+        }
+        //更新账号密码
+        newPassword = passwordEncoder.encode(newPassword);
+        account.setPassword(newPassword);
+        accountAuthService.getAccountTkService().update(account);
+        //更新oauth2表
+        if (!accountAuthService.getAccountOauthClientTkService().updateSelective(new AccountOauthClient(account.getId(), account.getUsername(), newPassword))) {
+            throw new UpdateDbException(CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
+        }
+        return new CommonResultStruct();
+    }
+
 }

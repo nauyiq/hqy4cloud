@@ -33,6 +33,11 @@ public class Account extends BaseEntity<Long> {
     private String email;
 
     /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
      * 指定客户端所拥有的权限值
      */
     private String authorities;
@@ -83,6 +88,14 @@ public class Account extends BaseEntity<Long> {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Boolean getStatus() {

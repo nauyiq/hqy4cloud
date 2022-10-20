@@ -4,6 +4,7 @@ import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.account.struct.AccountBaseInfoStruct;
+import com.hqy.account.struct.AccountStruct;
 import com.hqy.account.struct.RegistryAccountStruct;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.rpc.api.service.RPCService;
@@ -27,6 +28,22 @@ public interface AccountRemoteService extends RPCService {
     @ThriftMethod
     String getAccountInfoJson(@ThriftField(1) Long id);
 
+    /**
+     * 根据用户名或者邮箱获取账号id
+     * @param usernameOrEmail 用户名或者邮箱
+     * @return
+     */
+    @ThriftMethod
+    Long getAccountIdByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
+
+    /**
+     * 根据用户名或者邮箱获取账号信息
+     * @param usernameOrEmail 用户名或者邮箱
+     * @return                AccountStruct.
+     */
+    @ThriftMethod
+    AccountStruct getAccountStructByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
+
 
     /**
      * 获取用户基本信息
@@ -35,6 +52,8 @@ public interface AccountRemoteService extends RPCService {
      */
     @ThriftMethod
     AccountBaseInfoStruct getAccountBaseInfo(@ThriftField(1)Long id);
+
+
 
     /**
      * 获取用户基本信息
@@ -63,5 +82,17 @@ public interface AccountRemoteService extends RPCService {
      */
     @ThriftMethod
     CommonResultStruct registryAccount(@ThriftField(1) RegistryAccountStruct struct);
+
+    /**
+     * 修改用户密码
+     * 调用此rpc默认为已经校验过用户的验证码.
+     * @param usernameOrEmail 用户名或邮箱.
+     * @param newPassword     新密码.
+     * @return                CommonResultStruct.
+     */
+    @ThriftMethod
+    CommonResultStruct updateAccountPassword(@ThriftField(1) String usernameOrEmail, @ThriftField(2) String newPassword);
+
+
 
 }

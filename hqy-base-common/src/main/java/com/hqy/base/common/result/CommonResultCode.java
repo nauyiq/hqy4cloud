@@ -97,9 +97,26 @@ public enum CommonResultCode {
     USERNAME_EXIST(2003,"This username already exist."),
 
     /**
+     * 无效的邮箱
+     */
+    INVALID_EMAIL(2004, "Please input valid email."),
+
+    /**
+     * 邮箱已经存在.
+     */
+    EMAIL_EXIST(2005, "Account email already exist."),
+
+    /**
+     * 验证码错误
+     */
+    VERIFY_CODE_ERROR(2006, "Verify code error, please input right code."),
+
+
+    /**
      * 错误的用户名或者密码
      */
     INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
+
 
     /**
      * 上传文件失败.
@@ -151,6 +168,10 @@ public enum CommonResultCode {
 
     public static MessageResponse messageResponse(boolean result, CommonResultCode code) {
         return new MessageResponse(result, code.message, code.code);
+    }
+
+    public static MessageResponse messageResponse(int code, String message) {
+        return new MessageResponse(false, message, code);
     }
 
 
