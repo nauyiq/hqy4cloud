@@ -33,25 +33,31 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
 
     private static final Logger log = LoggerFactory.getLogger(ThriftClientTargetBaseKeyedFactory.class);
 
+    /**
+     * key: microServiceName
+     */
+    private static final Map<String, Map<RPCServerAddress, FramedClientConnector>> RPC_SERVICE_CONNECTOR_MAP = MapUtil.newConcurrentHashMap();
+
+    private final String serviceName;
+
     private final Class<T> rpcInterfaceClass;
 
-    private Map<RPCServerAddress, FramedClientConnector> framedClientConnectorMap;
 
     private final ThriftClientManagerWrapper clientManagerWrapper;
 
-    public ThriftClientTargetBaseKeyedFactory(Class<T> rpcInterfaceClass, ThriftClientManagerWrapper clientManagerWrapper) {
+    public ThriftClientTargetBaseKeyedFactory(String serviceName, Class<T> rpcInterfaceClass, ThriftClientManagerWrapper clientManagerWrapper) {
         this.rpcInterfaceClass = rpcInterfaceClass;
         this.clientManagerWrapper = clientManagerWrapper;
+        this.serviceName = serviceName;
     }
 
     public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
-        this.framedClientConnectorMap = iniFramedClientConnectorMap(invokers);
+        iniFramedClientConnectorMap(invokers);
     }
 
-
-    private Map<RPCServerAddress, FramedClientConnector> iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
+    private void iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
         if (CollectionUtils.isEmpty(invokers)) {
-            return MapUtil.newConcurrentHashMap();
+            RPC_SERVICE_CONNECTOR_MAP.put(serviceName, MapUtil.newConcurrentHashMap(0));
         }
         Map<RPCServerAddress, FramedClientConnector> map = MapUtil.newConcurrentHashMap(invokers.size());
         for (Invoker<T> invoker : invokers) {
@@ -59,7 +65,7 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
             FramedClientConnector framedClientConnector = ThriftNiftyFramedClientUtils.createFramedClientConnector(serverAddress);
             map.put(serverAddress, framedClientConnector);
         }
-        return map;
+        RPC_SERVICE_CONNECTOR_MAP.put(serviceName, map);
     }
 
     public String gerServiceInfo(T service) {
@@ -74,8 +80,9 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
     public T create(RPCServerAddress serverAddress) throws Exception {
         AssertUtil.notNull(serverAddress, "RPCServerAddress should not be null.");
 
-        FramedClientConnector connector = framedClientConnectorMap.get(serverAddress);
-        if (framedClientConnectorMap.isEmpty() || connector == null) {
+        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.get(serviceName);
+        FramedClientConnector connector = rpcServerAddressFramedClientConnectorMap.get(serverAddress);
+        if (connector == null) {
             throw new NoAvailableProviderException("No available connectors for this rpc service "
                     + rpcInterfaceClass.getName() + ", rpc server address " + serverAddress + ".");
         }
@@ -97,5 +104,14 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
             clientChannel.close();
             log.info("Destroy object, close client channel {}", ThriftNiftyFramedClientUtils.printfChannelInfo(clientChannel));
         }
+        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.get(serviceName);
+        rpcServerAddressFramedClientConnectorMap.remove(key);
+    }
+
+    /**
+     * 连接池关闭时 清楚缓存
+     */
+    public void closeConnectionCache(String serviceName) {
+        RPC_SERVICE_CONNECTOR_MAP.remove(serviceName);
     }
 }
