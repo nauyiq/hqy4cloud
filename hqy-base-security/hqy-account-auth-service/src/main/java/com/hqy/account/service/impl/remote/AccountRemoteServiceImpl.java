@@ -167,4 +167,29 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
         return new CommonResultStruct();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResultStruct updateAccountPasswordByIdAndOldPassword(Long accountId, String oldPassword, String newPassword) {
+        if (accountId == null || StringUtils.isAnyBlank(oldPassword, newPassword)) {
+            return new CommonResultStruct(CommonResultCode.ERROR_PARAM_UNDEFINED);
+        }
+        Account account = accountAuthService.getAccountTkService().queryById(accountId);
+        if (account == null) {
+            return new CommonResultStruct(CommonResultCode.USER_NOT_FOUND);
+        }
+
+        //校验密码是否正确
+        if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
+            return new CommonResultStruct(CommonResultCode.PASSWORD_ERROR);
+        }
+        //更新账号密码
+        newPassword = passwordEncoder.encode(newPassword);
+        account.setPassword(newPassword);
+        accountAuthService.getAccountTkService().update(account);
+        //更新oauth2表
+        if (!accountAuthService.getAccountOauthClientTkService().updateSelective(new AccountOauthClient(account.getId(), account.getUsername(), newPassword))) {
+            throw new UpdateDbException(CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
+        }
+        return new CommonResultStruct();
+    }
 }

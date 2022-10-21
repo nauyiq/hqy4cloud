@@ -27,6 +27,13 @@ public final class CommonResultStruct {
         this.message = CommonResultCode.SUCCESS.message;
     }
 
+    public CommonResultStruct(CommonResultCode resultCode) {
+        this.result = false;
+        this.code = resultCode.code;
+        this.message = resultCode.message;
+    }
+
+
     public CommonResultStruct(boolean result, int code, String message) {
         this.result = result;
         this.code = code;

@@ -94,5 +94,14 @@ public interface AccountRemoteService extends RPCService {
     CommonResultStruct updateAccountPassword(@ThriftField(1) String usernameOrEmail, @ThriftField(2) String newPassword);
 
 
+    /**
+     * 修改用户密码 并且校验旧密码是否正确
+     * @param accountId   账号id
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return            CommonResultStruct.
+     */
+    @ThriftMethod
+    CommonResultStruct updateAccountPasswordByIdAndOldPassword(Long accountId, String oldPassword, String newPassword);
 
 }

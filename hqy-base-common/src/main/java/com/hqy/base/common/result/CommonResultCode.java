@@ -63,11 +63,15 @@ public enum CommonResultCode {
     CONSUMING_TIME_RPC(9500, "Consuming time RPC method"),
 
 
-
     /**
      * 错误参数
      */
     ERROR_PARAM(1001, "Invalid parameter, please check parameter again."),
+
+    /**
+     * 错误参数，检查参数是否存在
+     */
+    ERROR_PARAM_UNDEFINED(1002, "Invalid parameter, please check undefined."),
 
 
     /**
@@ -116,6 +120,11 @@ public enum CommonResultCode {
      * 错误的用户名或者密码
      */
     INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
+
+    /**
+     * 密码错误
+     */
+    PASSWORD_ERROR(3002, "Please input the correct password."),
 
 
     /**
