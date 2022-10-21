@@ -13,12 +13,10 @@ import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConv
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import javax.sql.DataSource;
 import java.security.KeyPair;
 import java.util.Map;
 
@@ -30,17 +28,6 @@ import java.util.Map;
  */
 @Configuration
 public class TokenStoreConfiguration {
-
-    /**
-     * 基于数据库存储token
-     * 需要创建两张表oauth_access_token oauth_refresh_token
-     * @param dataSource
-     * @return
-     */
-   /* @Bean
-    public JdbcTokenStore jdbcTokenStore(DataSource dataSource){
-        return new JdbcTokenStore(dataSource) ;
-    }*/
 
 
     @Bean
@@ -86,7 +73,7 @@ public class TokenStoreConfiguration {
     }
 
     private Map<String, Object> userConvertToMap(SecurityUser securityUser) {
-        UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(), securityUser.getPassword(), securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
+        UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(),  securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
         return BeanUtil.beanToMap(userJwtPayloadDTO);
     }
 

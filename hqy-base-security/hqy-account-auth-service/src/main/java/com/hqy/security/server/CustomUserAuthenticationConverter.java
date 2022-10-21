@@ -41,7 +41,7 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
     }
 
     private Map<String, ?> userConvertToMap(SecurityUser securityUser) {
-        UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(), securityUser.getPassword(), securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
+        UserJwtPayloadDTO userJwtPayloadDTO = new UserJwtPayloadDTO(securityUser.getId(), securityUser.getEmail(), securityUser.getUsername(), securityUser.getAuthorities());
         return BeanUtil.beanToMap(userJwtPayloadDTO);
     }
 
