@@ -1,6 +1,7 @@
 package com.hqy.security.config;
 
 import com.hqy.security.core.client.SecurityClientDetailsServiceImpl;
+import com.hqy.security.core.user.SecurityUserDetailServiceImpl;
 import com.hqy.security.server.PasswordEnhanceTokenGranter;
 import com.hqy.security.server.RedisAuthorizationCodeServer;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private final AuthenticationManager authenticationManager;
 
     private final SecurityClientDetailsServiceImpl clientDetailsService;
+
+    private final SecurityUserDetailServiceImpl userDetailService;
 
     private final JwtTokenStore tokenStore;
 
@@ -105,9 +108,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         //客户端模式   GRANT_TYPE = "client_credentials";
         tokenGranters.add(new ClientCredentialsTokenGranter(tokenServices, clientDetails, requestFactory));
         //密码模式	  GRANT_TYPE = "password";
-        tokenGranters.add(new PasswordEnhanceTokenGranter(authenticationManager, tokenServices,clientDetails, requestFactory));
+        tokenGranters.add(new PasswordEnhanceTokenGranter(authenticationManager, tokenServices, clientDetails, requestFactory));
         //授权码模式   GRANT_TYPE = "authorization_code";
-        tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetails,requestFactory));
+        tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetails, requestFactory));
         //刷新模式	  GRANT_TYPE = "refresh_token";
         tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetails, requestFactory));
         //简易模式	  GRANT_TYPE = "implicit";
@@ -118,6 +121,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .accessTokenConverter(jwtAccessTokenConverter)
                 .tokenEnhancer(tokenEnhancerChain)
                 .tokenGranter(new CompositeTokenGranter(tokenGranters))
+                .userDetailsService(userDetailService)
                 .tokenServices(tokenServices(endpoints));
 
     }
