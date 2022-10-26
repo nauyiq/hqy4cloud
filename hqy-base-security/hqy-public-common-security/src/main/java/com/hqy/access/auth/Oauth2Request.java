@@ -9,7 +9,7 @@ import com.hqy.base.common.base.lang.StringConstants;
  * @version 1.0
  * @date 2022/10/10 13:56
  */
-public interface Oath2Request {
+public interface Oauth2Request {
 
     /**
      * 当前请求的ip.
@@ -40,5 +40,7 @@ public interface Oath2Request {
     default String requestAccessToken() {
         return StringConstants.EMPTY;
     }
+
+
 
 }

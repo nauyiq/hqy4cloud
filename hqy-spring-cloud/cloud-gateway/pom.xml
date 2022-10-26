@@ -38,14 +38,6 @@
             <artifactId>nacos-client</artifactId>
         </dependency>
 
-
-
-        <!--dubbo rpc 接入-->
-        <!--<dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-dubbo</artifactId>
-        </dependency>-->
-
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-public-common-security</artifactId>
@@ -69,6 +61,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
         <!-- OAuth2资源服务器-->
         <dependency>

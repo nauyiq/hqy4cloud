@@ -59,7 +59,9 @@ public class EndpointAuthorizationManager {
         ENDPOINTS.add(value);
     }
 
-
+    public AntPathMatcher getAntPathMatcher() {
+        return ANT_PATH_MATCHER;
+    }
 
     public boolean isStaticWhiteEndpoint(String endpoint) {
         return ENDPOINTS.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, endpoint));
@@ -72,6 +74,8 @@ public class EndpointAuthorizationManager {
     public boolean isAdminRequest(String accessUri) {
         return ADMIN_ENDPOINTS.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, accessUri));
     }
+
+
 
 
 

@@ -8,7 +8,6 @@ import com.hqy.account.service.AccountProfileTkService;
 import com.hqy.account.service.remote.AccountProfileRemoteService;
 import com.hqy.account.struct.AccountProfileStruct;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
-import com.hqy.util.CommonDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

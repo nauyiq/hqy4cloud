@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * AccountBaseInfoCacheService.
  * @see RedisHashCache
  * @author qiyuan.hong
  * @version 1.0
@@ -40,7 +41,7 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
             return null;
         }
         return accountInfos.stream().map(info ->
-                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail(), info.getAvatar())).collect(Collectors.toList());
+                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail(), info.getAvatar(), info.getRoles())).collect(Collectors.toList());
     }
 
     @Override
@@ -49,7 +50,7 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
         if (accountInfo == null) {
             return null;
         }
-        return new AccountBaseInfoDTO(accountInfo.getId(), accountInfo.getNickname(), accountInfo.getUsername(), accountInfo.getEmail(), accountInfo.getAvatar());
+        return new AccountBaseInfoDTO(accountInfo.getId(), accountInfo.getNickname(), accountInfo.getUsername(), accountInfo.getEmail(), accountInfo.getAvatar(), accountInfo.getRoles());
     }
 
     @Override

@@ -51,7 +51,7 @@ public class SecurityUserDetailServiceImpl implements UserDetailsService {
         Account account = accountTkService.queryAccountByUsernameOrEmail(username);
         if (Objects.nonNull(account)) {
             userDetails = new SecurityUser(account.getId(), account.getUsername(), account.getPassword(), account.getEmail() ,account.getStatus(), AuthorityUtils
-                    .commaSeparatedStringToAuthorityList(account.getAuthorities()));
+                    .commaSeparatedStringToAuthorityList(account.getRoles()));
         }
         return userDetails;
     }

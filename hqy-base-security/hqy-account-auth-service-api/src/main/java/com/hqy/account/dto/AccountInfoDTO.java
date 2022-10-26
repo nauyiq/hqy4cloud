@@ -44,7 +44,7 @@ public class AccountInfoDTO {
     /**
      * 拥有的权限
      */
-    private String authorities;
+    private String roles;
 
     /**
      * 头像
@@ -80,7 +80,7 @@ public class AccountInfoDTO {
                 .append("nickname", nickname)
                 .append("phone", phone)
                 .append("email", email)
-                .append("authorities", authorities)
+                .append("authorities", roles)
                 .append("avatar", avatar)
                 .append("intro", intro)
                 .append("status", status)

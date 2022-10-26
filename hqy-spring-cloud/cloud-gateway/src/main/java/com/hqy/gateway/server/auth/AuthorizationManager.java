@@ -1,11 +1,14 @@
-package com.hqy.gateway.server;
+package com.hqy.gateway.server.auth;
 
 import com.hqy.access.auth.Oauth2Access;
-import com.hqy.access.auth.Oath2Request;
+import com.hqy.access.auth.Oauth2Request;
+import com.hqy.access.auth.RolesAuthoritiesChecker;
+import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -17,6 +20,10 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 网关鉴权管理器 所有权限在此配置
  * @author qiyuan.hong
@@ -27,7 +34,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
+    private final RolesAuthoritiesChecker rolesAuthoritiesChecker;
     private final Oauth2Access oauth2Access;
+
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
@@ -37,23 +46,35 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(true));
         }
 
-        Oath2Request oath2Request = new ReactAccess2Request(request);
-        if (oauth2Access.isPermitRequest(oath2Request)) {
+        Oauth2Request oauth2Request = new ReactAccess2Request(request);
+        if (oauth2Access.isPermitRequest(oauth2Request)) {
             return Mono.just(new AuthorizationDecision(true));
         }
-
         // 判断JWT中携带的用户角色是否有权限访问
         return mono
                 .filter(Authentication::isAuthenticated)
-                .flatMapIterable(Authentication::getAuthorities)
-                .map(GrantedAuthority::getAuthority)
-                .any(s -> true)
-                .map(s -> new AuthorizationDecision(true))
-                .defaultIfEmpty(new AuthorizationDecision(true));
+                .map(authorities -> getAuthorizationDecision(oauth2Request, authorities));
+//                .defaultIfEmpty(new AuthorizationDecision(true));
 
     }
 
-    public static class ReactAccess2Request implements Oath2Request {
+    private AuthorizationDecision getAuthorizationDecision(Oauth2Request oauth2Request, Authentication authorities) {
+        Collection<? extends GrantedAuthority> authoritiesAuthorities = authorities.getAuthorities();
+        if (CollectionUtils.isEmpty(authoritiesAuthorities)) {
+            return new AuthorizationDecision(true);
+        } else {
+            List<String> roles = authoritiesAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+            try {
+                boolean isPermitAuthorities = rolesAuthoritiesChecker.isPermitAuthorities(roles, oauth2Request.requestUri());
+                return new AuthorizationDecision(isPermitAuthorities);
+            } catch (Throwable cause) {
+                log.warn("Failed execute to check permit authorities, roles: {}.", roles, cause);
+                return new AuthorizationDecision(false);
+            }
+        }
+    }
+
+    public static class ReactAccess2Request implements Oauth2Request {
 
         private final String requestIp;
         private final String requestUri;

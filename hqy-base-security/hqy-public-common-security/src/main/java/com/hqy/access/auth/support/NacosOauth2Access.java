@@ -22,6 +22,7 @@ public class NacosOauth2Access extends AbstractOauth2Access {
 
     private final ManualWhiteIpService manualWhiteIpService;
 
+
     @Value("${oauth2.white.uri}")
     private List<String> oauth2WhiteAccessUriList;
 

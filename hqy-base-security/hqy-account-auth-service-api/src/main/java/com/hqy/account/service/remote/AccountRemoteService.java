@@ -3,9 +3,7 @@ package com.hqy.account.service.remote;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.account.struct.AccountStruct;
-import com.hqy.account.struct.RegistryAccountStruct;
+import com.hqy.account.struct.*;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.rpc.api.service.RPCService;
 import com.hqy.rpc.thrift.struct.CommonResultStruct;
@@ -103,5 +101,25 @@ public interface AccountRemoteService extends RPCService {
      */
     @ThriftMethod
     CommonResultStruct updateAccountPasswordByIdAndOldPassword(Long accountId, String oldPassword, String newPassword);
+
+
+    /**
+     * 根据角色获取可以访问的资源数据.
+     * @param  roles 角色列表.
+     * @return       ResourcesInRoleStruct.
+     */
+    @ThriftMethod
+    List<ResourcesInRoleStruct> getAuthoritiesResourcesByRoles(@ThriftField(1)List<String> roles);
+
+
+    /**
+     * 根据角色更新资源信息
+     * @param role             角色
+     * @param resourceStructs  资源
+     */
+    @ThriftMethod(oneway = true)
+    void updateAuthoritiesResource(@ThriftField(1)String role, @ThriftField(2)List<ResourceStruct> resourceStructs);
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.hqy.fundation.cache.support;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hqy.base.common.base.lang.BaseMathConstants;
 import com.hqy.fundation.cache.redis.LettuceRedis;
 import org.apache.commons.collections4.MapUtils;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * RedisHashCacheService.
+ * 对应的实体需要加注解 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/10/8 16:11

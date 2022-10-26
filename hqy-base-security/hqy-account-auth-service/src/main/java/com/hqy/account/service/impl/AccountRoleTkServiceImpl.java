@@ -5,22 +5,21 @@ import com.hqy.account.entity.AccountRole;
 import com.hqy.account.service.AccountRoleTkService;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * @author qiyuan.hong
  * @date 2022-03-10 21:18
  */
 @Service
-public class AccountRoleTkServiceImpl extends BaseTkServiceImpl<AccountRole, Long> implements AccountRoleTkService {
+@RequiredArgsConstructor
+public class AccountRoleTkServiceImpl extends BaseTkServiceImpl<AccountRole, Integer> implements AccountRoleTkService {
 
-    @Resource
-    private AccountRoleDao accountRoleDao;
+    private final AccountRoleDao accountRoleDao;
 
     @Override
-    public BaseDao<AccountRole, Long> selectDao() {
+    public BaseDao<AccountRole, Integer> selectDao() {
         return accountRoleDao;
     }
 }

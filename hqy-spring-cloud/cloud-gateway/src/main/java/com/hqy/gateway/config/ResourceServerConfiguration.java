@@ -5,10 +5,13 @@ import cn.hutool.core.io.IoUtil;
 import com.hqy.access.auth.Oauth2Access;
 import com.hqy.access.auth.support.EndpointAuthorizationManager;
 import com.hqy.access.auth.support.NacosOauth2Access;
+import com.hqy.access.auth.support.ResourceInRoleCacheServer;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
+import com.hqy.gateway.server.auth.AuthorizationManager;
+import com.hqy.gateway.server.auth.DefaultJwtGrantedAuthoritiesConverter;
 import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.AssertUtil;
 import lombok.SneakyThrows;
@@ -53,13 +56,17 @@ import java.util.ArrayList;
 public class ResourceServerConfiguration {
 
     @Resource
-    private com.hqy.gateway.server.AuthorizationManager authorizationManager;
+    private AuthorizationManager authorizationManager;
+
+    @Bean
+    public ResourceInRoleCacheServer resourceInRoleCacheServer() {
+        return new ResourceInRoleCacheServer();
+    }
 
     @Bean
     public Oauth2Access oauth2Access(ManualWhiteIpService manualWhiteIpService) {
         return new NacosOauth2Access(manualWhiteIpService);
     }
-
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
@@ -111,7 +118,7 @@ public class ResourceServerConfiguration {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
             MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
-            DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
+            DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
     }
@@ -162,7 +169,8 @@ public class ResourceServerConfiguration {
      */
     @Bean
     public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+//        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        DefaultJwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new DefaultJwtGrantedAuthoritiesConverter();
 //        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
         //取消权限的前缀，默认会加上SCOPE_
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.EMPTY);

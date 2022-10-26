@@ -14,6 +14,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 基于redis的缓存service
+ * 使用redis做缓存的时候，务必考虑缓存命中和缓存大小的问题
+ * 使用的业务应该是比较热点的数据，因此采用缓存机制...
+ * 如果请求的资源比较冷门 或热点数据对应数据库资源不存在，可能导致以下问题：
+ * 1. 冷数据存储在redis中，但并不怎么被访问，特别hash结构时可能导致冷数据一直不过期
+ * 2. 当前service redis没有存储空值，意味着每次查询如果从redis中查出来为空则会查询db或其他数据源... 导致缓存命中问题... 即如果资源为空时，
+ * 大请求会走redis再走db 导致系统压力反而增大，并且吞吐量降低。 因此在业务中使用此service的时候，应该考虑业务中的实际情况 合理使用。
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/10/8 15:10
@@ -46,6 +52,7 @@ public abstract class RedisCacheTemplate<T, PK> implements CacheService<T, PK> {
         if (CollectionUtils.isEmpty(pks)) {
             return Collections.emptyList();
         }
+        //TODO 没有缓存空值， 缓存命中问题???
         List<T> caches = getCachesFromRedis(pks);
         if (CollectionUtils.isEmpty(caches)) {
             caches = getCachesFromDb(pks);

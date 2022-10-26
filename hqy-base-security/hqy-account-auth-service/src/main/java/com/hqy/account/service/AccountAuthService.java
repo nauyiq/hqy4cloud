@@ -1,6 +1,7 @@
 package com.hqy.account.service;
 
 import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.account.struct.ResourcesInRoleStruct;
 
 import java.util.List;
 import java.util.Set;
@@ -46,5 +47,28 @@ public interface AccountAuthService {
      */
     AccountOauthClientTkService getAccountOauthClientTkService();
 
+    /**
+     * simple table crud for t_resource
+     * @return ResourceTkService
+     */
+    ResourceTkService getResourceTkService();
 
+    /**
+     * simple table crud for t_authorities
+     * @return AuthoritiesTkService
+     */
+    AuthoritiesTkService getAuthoritiesTkService();
+
+    /**
+     * simple table crud for t_account_role
+     * @return AccountRoleTkService
+     */
+    AccountRoleTkService getAccountRoleTkService();
+
+    /**
+     * 根据角色列表获取资源
+     * @param roles 资源
+     * @return
+     */
+    List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles);
 }

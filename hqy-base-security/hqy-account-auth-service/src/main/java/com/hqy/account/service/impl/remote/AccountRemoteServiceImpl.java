@@ -5,17 +5,17 @@ import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.entity.Account;
 import com.hqy.account.entity.AccountOauthClient;
 import com.hqy.account.entity.AccountProfile;
+import com.hqy.account.entity.AccountRole;
 import com.hqy.account.service.AccountAuthService;
 import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountRemoteService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.account.struct.AccountStruct;
-import com.hqy.account.struct.RegistryAccountStruct;
+import com.hqy.account.struct.*;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.UpdateDbException;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.rpc.thrift.struct.CommonResultStruct;
+import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.ValidationUtil;
 import com.hqy.util.identity.ProjectSnowflakeIdWorker;
@@ -72,7 +72,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
         if (account == null) {
             return new AccountStruct();
         }
-        return new AccountStruct(account);
+        return new AccountStruct(account.getId(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRoles(), account.getStatus());
     }
 
     @Override
@@ -191,5 +191,26 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
             throw new UpdateDbException(CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
         }
         return new CommonResultStruct();
+    }
+
+    @Override
+    public List<ResourcesInRoleStruct> getAuthoritiesResourcesByRoles(List<String> roles) {
+        if (CollectionUtils.isEmpty(roles)) {
+            return Collections.emptyList();
+        }
+        return accountAuthService.getResourcesByRoles(roles);
+    }
+
+    @Override
+    public void updateAuthoritiesResource(String role, List<ResourceStruct> resourceStructs) {
+        if (StringUtils.isBlank(role) || CollectionUtils.isEmpty(resourceStructs)) {
+            log.warn("Role or resourceStructs should not be empty.");
+            return;
+        }
+        //获取对应role数据。
+        AccountRole accountRole = accountAuthService.getAccountRoleTkService().queryOne(new AccountRole(role));
+        AssertUtil.notNull(accountRole, "Not found role name: " + role);
+        accountAuthService.getAuthoritiesTkService().insertOrUpdateAuthoritiesResource(accountRole.getId(), role, resourceStructs);
+
     }
 }

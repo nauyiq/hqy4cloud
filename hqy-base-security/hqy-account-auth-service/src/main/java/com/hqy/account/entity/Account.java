@@ -3,7 +3,6 @@ package com.hqy.account.entity;
 import com.hqy.base.BaseEntity;
 import com.hqy.util.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Table;
 import java.util.Date;
@@ -38,9 +37,9 @@ public class Account extends BaseEntity<Long> {
     private String phone;
 
     /**
-     * 指定客户端所拥有的权限值
+     * 用户角色
      */
-    private String authorities;
+    private String roles;
 
     /**
      * 状态
@@ -60,11 +59,11 @@ public class Account extends BaseEntity<Long> {
     }
 
 
-    public Account(String username, String password, String email, String authorities) {
+    public Account(String username, String password, String email, String roles) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.authorities = authorities;
+        this.roles = roles;
         Date now = new Date();
         super.setCreated(now);
         super.setUpdated(now);
@@ -131,11 +130,11 @@ public class Account extends BaseEntity<Long> {
         this.email = email;
     }
 
-    public String getAuthorities() {
-        return authorities;
+    public String getRoles() {
+        return roles;
     }
 
-    public void setAuthorities(String authorities) {
-        this.authorities = authorities;
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 }

@@ -32,7 +32,7 @@ public class UserJwtPayloadDTO {
     /**
      * 权限
      */
-    public Collection<? extends GrantedAuthority> authorities;
+//    public Collection<? extends GrantedAuthority> authorities;
 
     public UserJwtPayloadDTO() {
         super();
@@ -42,6 +42,6 @@ public class UserJwtPayloadDTO {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.authorities = authorities;
+//        this.authorities = authorities;
     }
 }

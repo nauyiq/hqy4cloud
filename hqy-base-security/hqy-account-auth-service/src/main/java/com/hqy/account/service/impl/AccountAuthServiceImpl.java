@@ -1,10 +1,8 @@
 package com.hqy.account.service.impl;
 
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.service.AccountAuthService;
-import com.hqy.account.service.AccountOauthClientTkService;
-import com.hqy.account.service.AccountProfileTkService;
-import com.hqy.account.service.AccountTkService;
+import com.hqy.account.service.*;
+import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,9 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     private final AccountTkService accountTkService;
     private final AccountProfileTkService accountProfileTkService;
     private final AccountOauthClientTkService accountOauthClientTkService;
+    private final AccountRoleTkService accountRoleTkService;
+    private final ResourceTkService resourceTkService;
+    private final AuthoritiesTkService authoritiesTkService;
 
 
     @Override
@@ -65,6 +66,14 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     }
 
     @Override
+    public List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles) {
+        if (CollectionUtils.isEmpty(roles)) {
+            return Collections.emptyList();
+        }
+        return resourceTkService.getResourcesByRoles(roles);
+    }
+
+    @Override
     public AccountTkService getAccountTkService() {
         return accountTkService;
     }
@@ -77,5 +86,20 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     @Override
     public AccountOauthClientTkService getAccountOauthClientTkService() {
         return accountOauthClientTkService;
+    }
+
+    @Override
+    public ResourceTkService getResourceTkService() {
+        return resourceTkService;
+    }
+
+    @Override
+    public AuthoritiesTkService getAuthoritiesTkService() {
+        return authoritiesTkService;
+    }
+
+    @Override
+    public AccountRoleTkService getAccountRoleTkService() {
+        return accountRoleTkService;
     }
 }

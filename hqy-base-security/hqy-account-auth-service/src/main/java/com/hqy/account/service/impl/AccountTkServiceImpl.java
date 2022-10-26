@@ -1,7 +1,5 @@
 package com.hqy.account.service.impl;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.hqy.account.dao.AccountDao;
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.entity.Account;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author qiyuan.hong

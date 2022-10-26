@@ -18,7 +18,7 @@ public abstract class AbstractOauth2Access implements Oauth2Access {
     private static final Logger log = LoggerFactory.getLogger(AbstractOauth2Access.class);
 
     @Override
-    public boolean isPermitRequest(Oath2Request request) {
+    public boolean isPermitRequest(Oauth2Request request) {
         if (request == null) {
             log.warn("Oath2 request should not be null. checking false.");
             return false;
@@ -39,9 +39,10 @@ public abstract class AbstractOauth2Access implements Oauth2Access {
             return true;
         }
         //判断是否携带token.
-        if (isLegalAccessToken(request.requestAccessToken())) {
-            return true;
-        }
+//        if (isLegalAccessToken(request.requestAccessToken())) {
+//            return true;
+//        }
+
 
         log.info("Access request not Permit, this request: {}", JsonUtil.toJson(request));
 
