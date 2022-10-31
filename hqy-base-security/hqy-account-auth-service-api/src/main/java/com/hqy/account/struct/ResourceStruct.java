@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * ResourceStruct.
  * @author qiyuan.hong
@@ -16,8 +18,9 @@ import lombok.NoArgsConstructor;
 @ThriftStruct
 @NoArgsConstructor
 @AllArgsConstructor
-public final class ResourceStruct {
+public final class ResourceStruct implements Serializable {
 
+    private static final long serialVersionUID = -7981979868867409270L;
     /**
      * 资源id
      */

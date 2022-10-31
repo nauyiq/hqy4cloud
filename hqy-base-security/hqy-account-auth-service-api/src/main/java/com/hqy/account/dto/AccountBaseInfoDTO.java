@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -14,7 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AccountBaseInfoDTO {
+public class AccountBaseInfoDTO implements Serializable {
+    private static final long serialVersionUID = -492977226753159315L;
 
     private Long id;
     private String nickname;

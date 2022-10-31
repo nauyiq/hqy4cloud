@@ -10,6 +10,7 @@ import com.hqy.fundation.cache.support.RedisHashCache;
 import com.hqy.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoDTO, Long> {
 
-    public AccountBaseInfoCacheService(AccountAuthService accountAuthService) {
-        super(MicroServiceConstants.ACCOUNT_SERVICE, AccountBaseInfoDTO.class.getSimpleName());
+    public AccountBaseInfoCacheService(AccountAuthService accountAuthService, RedissonClient redissonClient) {
+        super(MicroServiceConstants.ACCOUNT_SERVICE, AccountBaseInfoDTO.class.getSimpleName(), redissonClient);
         this.accountAuthService = accountAuthService;
     }
 
@@ -65,8 +66,4 @@ public class AccountBaseInfoCacheService extends RedisHashCache<AccountBaseInfoD
         AssertUtil.isTrue(accountAuthService.getAccountProfileTkService().update(accountProfile), CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
     }
 
-    @Override
-    public Long StringConvertPkType(String pkStr) {
-        return Long.parseLong(pkStr);
-    }
 }

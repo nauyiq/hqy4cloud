@@ -1,19 +1,18 @@
 package com.hqy.foundation.cache.redis;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * RedisCommonOperations.
+ * 通用的redis操作.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/4/2 15:23
+ * @date 2022/10/26 15:46
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
-public interface RedisService {
-
+public interface RedisTemplateCommonOperations {
 
 
     /**
@@ -70,15 +69,6 @@ public interface RedisService {
 
 
     /**
-     * 根据key获取对应的value
-     * @param key redis key
-     * @param <T> return type
-     * @return value
-     */
-    <T> T get(String key);
-
-
-    /**
      * 保存一个key,value到redis中 数据结果为String
      * @param key       redis key
      * @param value     值
@@ -87,7 +77,6 @@ public interface RedisService {
      * @return 操作是否成功
      */
     Boolean set(String key, Object value, Long time, TimeUnit timeUnit);
-
 
     /**
      * 保存一个key,value 并设置过期时间 这是一个原子操作
@@ -99,6 +88,7 @@ public interface RedisService {
      */
     Boolean setEx(String key, Object value, long time, TimeUnit timeUnit);
 
+
     /**
      * 只有key不存在的时候才会返回true 这是一个原子操作
      * @param key        redis key
@@ -109,7 +99,6 @@ public interface RedisService {
      */
     Boolean setNx(String key, Object value, long time, TimeUnit timeUnit);
 
-
     /**
      * 递增
      * @param key    redis key
@@ -118,61 +107,16 @@ public interface RedisService {
      */
     Long incr(String key, long delta);
 
-    /**
-     * 获取hash结构的value
-     * @param key       redis key
-     * @param hashKey   hashKey
-     * @param <T>       return type
-     * @return value
-     */
-    <T> T hGet(String key, Object hashKey);
 
 
     /**
-     * 获取hash结构的多个value
+     * 根据hash表的key   删除相应的值
      * @param key       redis key
      * @param hashKeys  hashKeys
-     * @param <T>       return type
-     * @return value
-     */
-    <T> List<T> hmGet(String key, List<?> hashKeys);
-
-
-    /**
-     * 往hash表中存放一条数据
-     * @param key       redis key
-     * @param hashKey   hashKey
-     * @param value     value
-     * @return 操作是否成功
-     */
-    Boolean hSet(String key, Object hashKey, Object value);
-
-
-    /**
-     * 设置多个hash值
-     * @param key  redis key
-     * @param map  hashKeys, hashValues
-     * @return 操作是否成功
-     */
-    Boolean hmSet(String key, Map map);
-
-    /**
-     * 获取hash表中的所有key,value
-     * @param key redis key
-     * @param <K> ket type
-     * @param <V> value type
-     * @return map
-     */
-    <K, V> Map<K, V> hGetAll(Object key);
-
-
-    /**
-     * 根据hash表的key 删除相应的值
-     * @param key       redis key
-     * @param hashKeys  hashKeys
-     * @return 影响的行数
+     * @return          影响的行数
      */
     Long hDel(String key, Object... hashKeys);
+
 
     /**
      * 判断hashKey是否存在于hash中
@@ -200,45 +144,50 @@ public interface RedisService {
     Long sAdd(String key, Object... values);
 
     /**
-     * 获取集合中的所有元素
-     * @param key redis key
-     * @param <T> type
-     * @return 集合
+     * 添加一个或多个元素到集合set中
+     * @param key       redis key
+     * @param time      时间
+     * @param timeUnit  时间单位
+     * @param values    values
+     * @return          影响的行数
      */
-    <T> Set<T> sMembers(String key);
-
-    /**
-     * 判断给定的一个值是否是set的成员
-     * @param key   redis key
-     * @param value check value
-     * @return boolean
-     */
-    Boolean sIsMember(String key, Object value);
+    Long sAdd(String key, long time, TimeUnit timeUnit, Object... values);
 
 
     /**
      * 获取集合里面元素的数量
      * @param key redis key
-     * @return 元素的数量
+     * @return   元素的数量
      */
     Long sCard(String key);
+
 
     /**
      * 从集合中删除一个或多个元素
      * @param key     redis key
      * @param values  delete value
-     * @return 影响的行数
+     * @return        影响的行数
      */
     Long sRem(String key, Object... values);
+
+    /**
+     * 判断给定的一个值是否是set的成员
+     * @param key   redis key
+     * @param value check value
+     * @return      是否是set的成员
+     */
+    Boolean sIsMember(String key, Object value);
+
 
     /**
      * 添加到有序set的集合中, 如果存在则更新分数
      * @param key   redis key
      * @param value 值
      * @param score 分数
-     * @return 是否成功
+     * @return      是否成功
      */
     Boolean zADD(String key, Object value, double score);
+
 
     /**
      * 从有序集合中删除一个或多个元素
@@ -248,6 +197,7 @@ public interface RedisService {
      */
     Long zRem(String key, Object... values);
 
+
     /**
      * 确定某个值在集合中的排名 即索引位置
      * @param key   redis key
@@ -255,7 +205,6 @@ public interface RedisService {
      * @return 索引
      */
     Long zRank(String key, Object value);
-
 
     /**
      * 从队列的左边入队一个或多个元素
@@ -265,38 +214,49 @@ public interface RedisService {
      */
     Long lPush(String key, Object... values);
 
-    /**
-     * 从队列的左边出队一个元素
-     * @param key redis key
-     * @param <T> return type
-     * @return value
-     */
-    <T> T lPop(String key);
 
-    /**
-     * 从队列的左边获取制定返回的元素
-     * @param key   redis key
-     * @param start 开始的偏移量
-     * @param end   结束的偏移量
-     * @param <T>   return type
-     * @return 元素集合
-     */
-    <T> List<T> lRange(String key, long start, long end);
 
     /**
      * 从队列的右边入队一个或多个元素
      * @param key    redis key
      * @param values 元素
-     * @return 影响的行数
+     * @return       影响的行数
      */
     Long rPush(String key, Object... values);
 
+
     /**
-     * 从队列的右边出队一个元素
-     * @param key redis key
-     * @param <T> return type
-     * @return value
+     * 设置一个位图
+     * @param key    redis key
+     * @param offset 偏移量
+     * @param value  value
+     * @return       result.
      */
-    <T> T rPop(String key);
+    boolean setBit(String key, long offset, boolean value);
+
+    /**
+     * 获取位图数据
+     * @param key    redis key
+     * @param offset 偏移量
+     * @return       value.
+     */
+    boolean getBit(String key, long offset);
+
+    /**
+     * 获取位图的数目
+     * @param key  redis key
+     * @return     位图元素个数
+     */
+    long bitCount(String key);
+
+    /**
+     * 获取指定范围内位图的元素值
+     * @param key     redis key
+     * @param limit   查多少个元素
+     * @param offset  从几个元素开始查
+     * @return        范围内位图的元素值
+     */
+    List<Long> bigField(String key, int limit, int offset);
+
 
 }

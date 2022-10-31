@@ -1,13 +1,13 @@
 package com.hqy.gateway.server;
 
-import com.hqy.access.limit.service.ManualWhiteIpServiceImpl;
-import com.hqy.access.limit.service.RedisManualBlockedIpServiceImpl;
-import com.hqy.foundation.limit.service.BiBlockedIpService;
+import com.hqy.foundation.limit.service.BlockedIpService;
+import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;
 import com.hqy.util.HtmlCommonUtil;
-import com.hqy.util.spring.SpringContextHolder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
@@ -17,22 +17,13 @@ import java.util.Objects;
  * @date 2021-08-02 10:45
  */
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class ThrottlesProcess implements ThrottlesServer {
 
-    private ThrottlesProcess() {}
-
-    private static ThrottlesProcess instance = null;
-
-    public static ThrottlesProcess getInstance() {
-        if (Objects.isNull(instance)) {
-            synchronized (ThrottlesProcess.class) {
-                if (Objects.isNull(instance)) {
-                    instance = new ThrottlesProcess();
-                }
-            }
-        }
-        return instance;
-    }
+    private final BlockedIpService manualBlockedIpService;
+    private final BlockedIpService biBlockedIpService;
+    private final ManualWhiteIpService manualWhiteIpService;
 
     /**
      * 校验参数
@@ -73,40 +64,35 @@ public class ThrottlesProcess implements ThrottlesServer {
         return false;
     }
 
-    @Override
-    public boolean isWhiteIp(String remoteAddress) {
-        ManualWhiteIpServiceImpl whiteIpService = SpringContextHolder.getBean(ManualWhiteIpServiceImpl.class);
-        return whiteIpService.isWhiteIp(remoteAddress);
-    }
 
     @Override
     public boolean isWhiteUri(String uri) {
         return false;
     }
 
+    @Override
+    public boolean isWhiteIp(String remoteAddress) {
+        return manualWhiteIpService.isWhiteIp(remoteAddress);
+    }
 
     @Override
     public boolean isBiBlockedIp(String ip) {
-        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
-        return service.isBlockIp(ip);
+        return biBlockedIpService.isBlockIp(ip);
     }
 
     @Override
     public boolean isManualBlockedIp(String ip) {
-        RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
-        return service.isBlockIp(ip);
+        return manualBlockedIpService.isBlockIp(ip);
     }
 
     @Override
     public void addBiBlockIp(String ip, Integer blockSeconds) {
-        BiBlockedIpService service = SpringContextHolder.getBean(BiBlockedIpService.class);
-        service.addBlockIp(ip, blockSeconds);
+        biBlockedIpService.addBlockIp(ip, blockSeconds);
     }
 
     @Override
     public void addManualBlockIp(String ip, Integer blockSeconds) {
-        RedisManualBlockedIpServiceImpl service = SpringContextHolder.getBean(RedisManualBlockedIpServiceImpl.class);
-        service.addBlockIp(ip, blockSeconds);
+        manualBlockedIpService.addBlockIp(ip, blockSeconds);
     }
 
 }

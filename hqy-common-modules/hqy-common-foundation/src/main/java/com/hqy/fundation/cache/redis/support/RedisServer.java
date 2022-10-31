@@ -1,6 +1,7 @@
-package com.hqy.fundation.cache.redis;
+package com.hqy.fundation.cache.redis.support;
 
 import com.hqy.fundation.cache.exception.RedisException;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +30,7 @@ public enum RedisServer {
     public boolean getLock(String lockName, long lockTime, long timeOut) {
         long beginTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - beginTime < timeOut) {
-            Boolean result = LettuceStringRedis.getInstance().setNx(lockName, "lock ok.", lockTime, TimeUnit.MILLISECONDS);
+            Boolean result = SmartRedisManager.getInstance().setNx(lockName, "lock ok.", lockTime, TimeUnit.MILLISECONDS);
             if (result) {
                 return true;
             }
@@ -51,7 +52,7 @@ public enum RedisServer {
      */
     public boolean releaseLock(String lockName) {
         try {
-            return LettuceStringRedis.getInstance().del(lockName);
+            return SmartRedisManager.getInstance().del(lockName);
         } catch (Exception e) {
             throw new RedisException("@@@ releaseLock getLock lockName = " + lockName + "Exception", e);
         }

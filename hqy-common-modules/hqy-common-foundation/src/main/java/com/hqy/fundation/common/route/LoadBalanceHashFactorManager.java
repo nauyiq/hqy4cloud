@@ -3,7 +3,7 @@ package com.hqy.fundation.common.route;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.fundation.cache.redis.LettuceStringRedis;
+import com.hqy.fundation.cache.redis.support.SmartRedisManager;
 import com.hqy.rpc.common.CommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class LoadBalanceHashFactorManager {
         String key = genKey(module, hash);
         String hashFactor = HASH_CACHE.getIfPresent(key);
         if (StringUtils.isBlank(hashFactor)) {
-            hashFactor = LettuceStringRedis.getInstance().get(key);
+            hashFactor = SmartRedisManager.getInstance().get(key);
             if (StringUtils.isBlank(hashFactor)) {
                 log.warn("@@@ Not found hashFactor, module:{}, hash:{}", module, hash);
                 hashFactor = CommonConstants.DEFAULT_HASH_FACTOR;
@@ -56,7 +56,7 @@ public class LoadBalanceHashFactorManager {
 
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
-        LettuceStringRedis.getInstance().set(key, hashFactor);
+        SmartRedisManager.getInstance().set(key, hashFactor);
         HASH_CACHE.put(key, hashFactor);
     }
 

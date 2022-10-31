@@ -1,7 +1,7 @@
 package com.hqy.fundation.common.support;
 
 import cn.hutool.core.util.RandomUtil;
-import com.hqy.fundation.cache.redis.LettuceStringRedis;
+import com.hqy.fundation.cache.redis.support.SmartRedisManager;
 import com.hqy.fundation.cache.redis.key.support.DefaultKeyGenerator;
 import com.hqy.fundation.common.AccountRandomCodeServer;
 import com.hqy.util.AssertUtil;
@@ -38,7 +38,7 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
     public String randomCode(String username, String email, int length, int expiredSeconds) {
         String code = RandomUtil.randomString(length);
         int i = 1;
-        while (!LettuceStringRedis.getInstance().set(keyGenerator.genKey(email+ code + username), "1", (long)expiredSeconds, TimeUnit.SECONDS)) {
+        while (!SmartRedisManager.getInstance().set(keyGenerator.genKey(email+ code + username), "1", (long)expiredSeconds, TimeUnit.SECONDS)) {
             AssertUtil.isTrue(i <= maxRetry, "Already generator random code max time.");
             code = RandomUtil.randomString(length);
             i++;
@@ -48,7 +48,7 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
 
     @Override
     public boolean isExist(String username, String email, String code) {
-        return LettuceStringRedis.getInstance().exists(keyGenerator.genKey(email+ code + username));
+        return SmartRedisManager.getInstance().exists(keyGenerator.genKey(email+ code + username));
     }
 
     public void setMaxRetry(int maxRetry) {

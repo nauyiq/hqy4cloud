@@ -7,6 +7,7 @@ import com.hqy.fundation.cache.support.RedisHashCache;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
 public class ResourceInRoleCacheServer extends RedisHashCache<ResourcesInRoleStruct, String> {
     private static final Logger log = LoggerFactory.getLogger(ResourceInRoleCacheServer.class);
 
-    public ResourceInRoleCacheServer() {
-        super(MicroServiceConstants.ACCOUNT_SERVICE, ResourcesInRoleStruct.class.getSimpleName());
+    public ResourceInRoleCacheServer(RedissonClient redissonClient) {
+        super(MicroServiceConstants.ACCOUNT_SERVICE, ResourcesInRoleStruct.class.getSimpleName(), redissonClient);
     }
 
     @Override
@@ -54,11 +55,6 @@ public class ResourceInRoleCacheServer extends RedisHashCache<ResourcesInRoleStr
         }
         AccountRemoteService remoteService = RPCClient.getRemoteService(AccountRemoteService.class);
         remoteService.updateAuthoritiesResource(role, cache.resources);
-    }
-
-    @Override
-    public String StringConvertPkType(String pkStr) {
-        return pkStr;
     }
 
 

@@ -6,9 +6,13 @@ import com.hqy.access.auth.Oauth2Access;
 import com.hqy.access.auth.support.EndpointAuthorizationManager;
 import com.hqy.access.auth.support.NacosOauth2Access;
 import com.hqy.access.auth.support.ResourceInRoleCacheServer;
+import com.hqy.access.limit.service.support.BiBlockedIpRedisService;
+import com.hqy.access.limit.service.support.ManualBlockedIpService;
+import com.hqy.access.limit.service.support.ManualWhiteIpRedisService;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.foundation.limit.service.BlockedIpService;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.gateway.server.auth.AuthorizationManager;
 import com.hqy.gateway.server.auth.DefaultJwtGrantedAuthoritiesConverter;
@@ -16,6 +20,7 @@ import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.AssertUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -28,7 +33,6 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
@@ -59,9 +63,25 @@ public class ResourceServerConfiguration {
     private AuthorizationManager authorizationManager;
 
     @Bean
-    public ResourceInRoleCacheServer resourceInRoleCacheServer() {
-        return new ResourceInRoleCacheServer();
+    public ResourceInRoleCacheServer resourceInRoleCacheServer(RedissonClient redissonClient) {
+        return new ResourceInRoleCacheServer(redissonClient);
     }
+
+    @Bean
+    public ManualWhiteIpService manualWhiteIpService(RedissonClient redisson) {
+        return new ManualWhiteIpRedisService(redisson);
+    }
+
+    @Bean
+    public BlockedIpService biBlockedIpService() {
+        return new BiBlockedIpRedisService();
+    }
+
+    @Bean
+    public BlockedIpService manualBlockedIpService() {
+        return new ManualBlockedIpService();
+    }
+
 
     @Bean
     public Oauth2Access oauth2Access(ManualWhiteIpService manualWhiteIpService) {

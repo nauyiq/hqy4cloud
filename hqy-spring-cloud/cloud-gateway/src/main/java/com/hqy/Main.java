@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
- * 启动类必须放在包com.hqy下 不然很多bean会扫描不到 导致程序启动抛出not found bean
  * 全局网关服务...启动类...
  * @author qiyuan.hong
  * @date 2021/7/25 19:08

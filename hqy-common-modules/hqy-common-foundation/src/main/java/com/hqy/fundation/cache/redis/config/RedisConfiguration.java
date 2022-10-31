@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -44,8 +45,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @AutoConfigureBefore(RedisAutoConfiguration.class)
 public class RedisConfiguration {
 
-    @Bean("LettuceRedisTemplate")
-    @ConditionalOnMissingBean
+//    @Bean("LettuceRedisTemplate")
+    @Bean
+    @Lazy
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
 
@@ -54,8 +56,6 @@ public class RedisConfiguration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        //指定序列化输入的类型，类必须是非final修饰的，final修饰的类，比如String,Integer等会跑出异常
-//        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         //String 序列化器
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();

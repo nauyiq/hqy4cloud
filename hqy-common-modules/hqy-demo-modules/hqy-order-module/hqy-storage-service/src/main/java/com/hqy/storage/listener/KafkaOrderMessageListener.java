@@ -4,7 +4,7 @@ import com.hqy.common.entity.order.Order;
 import com.hqy.common.entity.order.OrderMessageRecord;
 import com.hqy.common.entity.storage.Storage;
 import com.hqy.common.service.OrderRemoteService;
-import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.fundation.cache.redis.support.RedisManager;
 import com.hqy.mq.kafka.config.KafkaTransactionalInitialConfiguration;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.storage.service.StorageTkService;
@@ -73,7 +73,7 @@ public class KafkaOrderMessageListener {
             Integer count = order.getCount();
 
             //获取当时下单查询到的库存
-            Storage storage = LettuceRedis.getInstance().get(messageId);
+            Storage storage = RedisManager.getInstance().get(messageId);
             if (Objects.isNull(storage)) {
                 storage = storageTkService.queryById(productId);
             }

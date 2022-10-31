@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.fundation.cache.CacheConfig;
 import com.hqy.fundation.cache.CacheService;
-import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.fundation.cache.redis.support.RedisManager;
 import com.hqy.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -66,7 +66,7 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
         T cache = cached.getIfPresent(pk);
         if (cache == null) {
             if (usingRedis) {
-                cache = LettuceRedis.getInstance().hGet(redisKey, pk.toString());
+                cache = RedisManager.getInstance().hGet(redisKey, pk.toString());
             }
             if (cache == null) {
                 cache = getCacheFromDb(pk);
@@ -118,7 +118,7 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
         AssertUtil.notNull(cache, "Cache should not be null.");
         AssertUtil.notNull(pk, "Cache pk should not be null.");
         cached.put(pk, cache);
-        LettuceRedis.getInstance().hSet(redisKey, pk.toString(), cache);
+        RedisManager.getInstance().hSet(redisKey, pk.toString(), cache);
     }
 
 
@@ -143,7 +143,7 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
             return cached.asMap();
         }
         if (usingRedis) {
-            return LettuceRedis.getInstance().hGetAll(redisKey);
+            return RedisManager.getInstance().hGetAll(redisKey);
         }
         return getAllCacheFromDb();
     }
@@ -160,7 +160,7 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
         AssertUtil.notNull(pk, "Cache pk should not be null.");
         cached.invalidate(pk);
         if (usingRedis) {
-            LettuceRedis.getInstance().hDel(redisKey, pk.toString());
+            RedisManager.getInstance().hDel(redisKey, pk.toString());
         }
     }
 
@@ -168,7 +168,7 @@ public abstract class AbstractCacheService<T, PK> implements CacheService<T, PK>
     public void invalidAll() {
         cached.invalidateAll();
         if (usingRedis) {
-            LettuceRedis.getInstance().del(redisKey);
+            RedisManager.getInstance().del(redisKey);
         }
     }
 }
