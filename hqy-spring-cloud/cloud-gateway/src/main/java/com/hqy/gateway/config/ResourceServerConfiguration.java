@@ -137,7 +137,8 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
+//            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
+            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.INVALID_AUTHORIZATION);
             DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
@@ -153,7 +154,8 @@ public class ResourceServerConfiguration {
             log.warn("@@@ RestAuthenticationEntryPoint访问受限, e:{}", e.getMessage());
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+//                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });

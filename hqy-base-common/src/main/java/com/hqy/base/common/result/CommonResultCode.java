@@ -62,6 +62,11 @@ public enum CommonResultCode {
      */
     CONSUMING_TIME_RPC(9500, "Consuming time RPC method"),
 
+    /**
+     * 无效的认证
+     */
+    INVALID_AUTHORIZATION(9600, "Invalid authorization, please check your authorization again."),
+
 
     /**
      * 错误参数
