@@ -310,7 +310,45 @@ docker run \
 -v /usr/local/nacos/logs:/home/nacos/logs \
 -v /usr/local/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
 -d nacos/nacos-server:2.0.3
+
+
+---
+
+docker  run \
+--name nacos -d \
+-p 8848:8848 -p 9848:9848 -p 9849:9849 \
+--privileged=true \
+--restart=always \
+-e JVM_XMS=256m \
+-e JVM_XMX=256m \
+-e MODE=standalone \
+-e PREFER_HOST_MODE=hostname \
+-e SPRING_DATASOURCE_PLATFORM=mysql \
+-e MYSQL_SERVICE_HOST=172.23.50.195 \
+-e MYSQL_SERVICE_PORT=3306 \
+-e MYSQL_SERVICE_DB_NAME=nacos_config \
+-e MYSQL_SERVICE_USER=root \
+-e MYSQL_SERVICE_PASSWORD=mysql@220504 \
+-e MYSQL_DATABASE_NUM=1 \
+-v /hongqy/local/nacos/logs:/home/nacos/logs \
+-v /hongqy/local/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
+nacos/nacos-server:2.0.3
+
 ```
+
+
+
+```shell
+docker run -p 6379:6379 --name redis -v /hongqy/local/redis/conf/redis.conf:/etc/redis/redis.conf  -v /hongqy/local/redis/data:/data -d  redis redis-server /etc/redis/redis.conf --appendonly yes
+
+
+docker run --restart=always -p 6379:6379 --name redis -v /hongqy/local/redis/conf/redis.conf:/etc/redis/redis.conf   -v /hongqy/local/redis/data:/data -d redis 
+
+```
+
+
+
+
 
 ### **3.elasticsearch和kibana**
 

@@ -83,7 +83,7 @@ public class ConfigurationContext {
             if (System.getProperty(StringConstants.OS_NAME_KEY).startsWith(StringConstants.OS_WINDOWS_PREFIX)) {
                 baseUploadFilesDirectory = "C:/hongqy/data";
             } else {
-                baseUploadFilesDirectory = "/home/hongqy/data";
+                baseUploadFilesDirectory = "/hongqy/share/data";
             }
         }
         return baseUploadFilesDirectory;

@@ -295,7 +295,8 @@ https://www.likecs.com/show-204925398.html
 # 客服端 服务器配置
 curl -s https://install.zerotier.com | sudo bash
 systemctl start zerotier-one
-zerotier-cli join 233ccaac2786d11b #后面为zero控制台显示的id
+systemctl enable zerotier-one
+zerotier-cli join db64858fedf3f9af #后面为zero控制台显示的id
 cd /var/lib/zerotier-one
 mkdir moons.d
 cd moons.d/
@@ -577,10 +578,100 @@ yum install ipvsadm -y
 > # 找出容器名
 > ctr -n k8s.io tasks list 
 > # 停止容器 
-> ctr kill -a -s 9 {id}
+>  ctr -n k8s.io c rm ${pid}
+>
+>
+>    ctr -n k8s.io c rm  $(ctr -n k8s.io c ls )
 > ```
 
 
+
+```shell
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  serviceName: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        - name: node.data
+          value: "true"
+        - name: node.master
+          value: "true"
+        - name: path.data
+          value: /usr/share/elasticsearch/data
+        - name: cluster.name
+          value: es-cluster
+        - name: node.name
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: cluster.initial_master_nodes
+          value: "elasticsearch-0"
+        - name: discovery.zen.minimum_master_nodes
+          value: "1"
+        - name: discovery.seed_hosts
+          value: "elasticsearch"
+        name: elasticsearch
+        image: elasticsearch:7.14.0
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                sysctl -w vm.max_map_count=262144
+                ulimit -l unlimited
+                ulimit -n 65536
+                chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data
+        ports:
+        - containerPort: 9200
+          name: 9200tcp2
+          protocol: TCP
+        - containerPort: 9300
+          name: 9300tcp2
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 768Mi
+          requests:
+            cpu: "1"
+            memory: 768Mi
+        volumeMounts:
+          - name: elasticsearch-data
+            mountPath: /usr/share/elasticsearch/data
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: elasticsearch-data
+    spec:
+      accessModes:
+      - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: nfs-elasticsearch-client
+      
+      
+      elasticsearch.efk.svc.Cluster.local:9200
+
+```
 
 
 
@@ -701,7 +792,9 @@ yum install ipvsadm -y
 > 	--discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef \
 > 	--control-plane --certificate-key 6f731084c5bf28e54b11af3c8c7f43541e2ad3cf977864e331dbd1ac285bd6f1 --cri-socket /run/containerd/containerd.sock  --node-name master3  --apiserver-advertise-address=172.27.0.3
 >
-> kubeadm join k8s.hongqy1024.cn:6443 --token hdj506.908ufcp1u0uk1w5j --discovery-token-ca-cert-hash sha256:3135b45ff0bc3e2f4f7c03cfd13a30688a2ad6d412c7561fabe0baee8c4978ef  --node-name worker1 --cri-socket /run/containerd/containerd.sock
+> kubeadm join 172.30.0.1:6443 --token abcdef.0123456789abcdef \
+> 	--discovery-token-ca-cert-hash sha256:47d8692ed6b8a4797e749a478546fa95b6b76221dfbb1a481cbc074f72b5e53f --node-name node2 --cri-socket /run/containerd/containerd.sock
+>
 > ```
 >
 > 
@@ -2063,6 +2156,71 @@ EOF
 
 
 
+### 4.3.   helm 安装ingress
+
+```shell
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm fetch ingress-nginx/ingress-nginx
+tar -xvf ingress-nginx-4.0.13.tgz && cd ingress-nginx
+```
+
+> 我们这里测试环境就将 master1 节点看成边缘节点，所以我们就直接将 `ingress-nginx`
+> 固定到 master1 节点上，采用 hostNetwork 模式(生产环境可以使用 LB + DaemonSet hostNetwork 模式)，为了避免创建的错误 Ingress 等资源对象影响控制器重新加载，所以我们也强烈建议大家开启准入控制器，`ingess-nginx`
+> 中会提供一个用于校验资源对象的 Admission Webhook，我们可以通过 Values 文件进行开启。然后新建一个名为 `ci/daemonset-prod.yaml`
+> 的 Values 文件，用来覆盖 ingress-nginx 默认的 Values 值。
+
+
+
+### 4.4. Ingress的使用
+
+#### 4.4.1 Ingress资源的创建
+
+> ```shell
+> apiVersion: networking.k8s.io/v1
+> kind: Ingress
+> metadata:
+>   name: example
+>   namespace: foo
+> spec:
+>   ingressClassName: nginx
+>   rules:
+>     - host: www.example.com
+>       http:
+>         paths:
+>           - pathType: Prefix
+>             backend:
+>               service:
+>                 name: exampleService
+>                 port:
+>                   number: 80
+>             path: /
+>     # This section is only required if TLS is to be enabled for the Ingress
+>   tls:
+>     - hosts:
+>       - www.example.com
+>       secretName: example-tls
+>         
+>      
+> If TLS is enabled for the Ingress, a Secret containing the certificate and key must also be provided:
+>
+> apiVersion: v1
+> kind: Secret
+> metadata:
+>   name: example-tls
+>   namespace: foo
+> data:
+>   tls.crt: <base64 encoded cert>
+>   tls.key: <base64 encoded key>
+> type: kubernetes.io/tls
+> ```
+
+
+
+
+
+
+
 
 
 # ConfigMap
@@ -2793,11 +2951,18 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 >
 > ```
 >
-> 
+
+
+
+kubectl patch storageclass nfs-kubesphere-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 
 
 
+
+kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l app=ks-install -o jsonpath='{.items[0].metadata.name}') -f
+
+ 
 
 # 集群调度
 
