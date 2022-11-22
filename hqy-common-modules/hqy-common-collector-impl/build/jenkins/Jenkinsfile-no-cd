@@ -16,7 +16,7 @@ podTemplate(
                         image: "${jnlp_image}",
                         alwaysPullImage: false,
                         privileged: true,
-                        ttyEnabled: true)
+                        ttyEnabled: true),
 
       containerTemplate(name: 'podman',
                         image: "${podman_image}",
