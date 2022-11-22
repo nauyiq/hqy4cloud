@@ -35,6 +35,12 @@ public class MicroServiceConstants {
      */
     public static final String BLOG_SERVICE = "apps-blog-service";
 
+    /**
+     * 通用通讯服务
+     */
+    public static final String COMMUNICATION_SERVICE = "common-communication-service";
+
+
 
 
     public static final String DEMO_ORDER_SERVICE = "demo-order-service";

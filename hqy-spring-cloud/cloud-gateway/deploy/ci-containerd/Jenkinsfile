@@ -1,0 +1,5 @@
+def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
+def image_name = "${registry}/hqy-parent-all/cloud-gateway-service:1.0"
+def aliyun_hub_auth = "aliyun_mirror_server"
+def base_dir = "/home/jenkins/agent/workspace/cloud-gateway-service"
+def service_jar = "cloud-gateway-service.jar"

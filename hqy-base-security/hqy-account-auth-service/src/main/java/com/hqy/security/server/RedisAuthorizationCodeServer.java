@@ -1,7 +1,8 @@
 package com.hqy.security.server;
 
-import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.base.common.base.project.MicroServiceConstants;
+import com.hqy.fundation.cache.redis.key.support.DefaultKeyGenerator;
+import com.hqy.fundation.cache.redis.support.SmartRedisManager;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.stereotype.Component;
@@ -16,22 +17,24 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisAuthorizationCodeServer extends RandomValueAuthorizationCodeServices {
 
+    public final DefaultKeyGenerator keyGenerator = new DefaultKeyGenerator(MicroServiceConstants.ACCOUNT_SERVICE,
+            RedisAuthorizationCodeServer.class.getSimpleName());
 
     @Override
     protected void store(String code, OAuth2Authentication oAuth2Authentication) {
-        LettuceRedis.getInstance().set(redisKey(code), oAuth2Authentication, 10L, TimeUnit.MINUTES);
+        SmartRedisManager.getInstance().set(redisKey(code), oAuth2Authentication, 10L, TimeUnit.MINUTES);
     }
 
     @Override
     protected OAuth2Authentication remove(final String code) {
         String key = redisKey(code);
-        OAuth2Authentication oAuth2Authentication = LettuceRedis.getInstance().get(key);
-        LettuceRedis.getInstance().del(key);
+        OAuth2Authentication oAuth2Authentication = SmartRedisManager.getInstance().get(key, OAuth2Authentication.class);
+        SmartRedisManager.getInstance().del(key);
         return oAuth2Authentication;
     }
 
 
     private String redisKey(String code) {
-        return RedisAuthorizationCodeServer.class.getSimpleName().concat(StringConstants.Symbol.COLON).concat(code);
+        return keyGenerator.genKey(code);
     }
 }

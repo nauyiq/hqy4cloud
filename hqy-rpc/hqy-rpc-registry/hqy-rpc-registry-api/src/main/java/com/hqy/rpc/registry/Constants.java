@@ -7,6 +7,8 @@ package com.hqy.rpc.registry;
  */
 public interface Constants {
 
+    String DEV_REGISTRY_GROUP_KEY = "nacos.group";
+
     /**
      * Period of registry center's retry interval
      */

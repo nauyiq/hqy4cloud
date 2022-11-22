@@ -1,6 +1,6 @@
 package com.hqy.security.service;
 
-import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.dto.OauthAccountRegistryDTO;
 import com.hqy.base.common.bind.MessageResponse;
 
 /**
@@ -15,6 +15,6 @@ public interface OauthAccountService {
      * @param account Request body
      * @return        MessageResponse
      */
-    MessageResponse registry(OauthAccountDTO account);
+    MessageResponse registry(OauthAccountRegistryDTO account);
 
 }

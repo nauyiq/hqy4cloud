@@ -138,11 +138,9 @@ public class CommonSwitcher extends AbstractSwitcher {
 
 
     /**
-     * 节点-是否启用spring容器 (是否是Spring项目)
+     * 节点-Thrift rpc 发生异常时是否关闭channel （默认 false）
      */
-    public static final CommonSwitcher ENABLE_SPRING_CONTEXT = new CommonSwitcher(300, "节点-是否启用spring容器 (是否是Spring项目)", true);
-
-
+    public static final CommonSwitcher ENABLE_CLOSE_THRIFT_CHANNEL_ON_ERROR = new CommonSwitcher(254, "节点-Thrift Rpc发生异常时是否关闭通道", false);
 
 
 

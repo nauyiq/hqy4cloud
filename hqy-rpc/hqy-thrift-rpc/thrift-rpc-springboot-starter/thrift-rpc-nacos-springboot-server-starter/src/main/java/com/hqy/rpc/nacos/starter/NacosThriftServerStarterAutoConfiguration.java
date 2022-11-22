@@ -39,7 +39,7 @@ public class NacosThriftServerStarterAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean
     public NacosThriftStarter nacosThriftStarter(ThriftServerLauncher thriftServerLauncher, NacosDiscoveryProperties properties, ThriftServerWrapper thriftServer) {
-        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), thriftServerLauncher.getWight(), ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor()) {
+        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), thriftServerLauncher.getWight(), ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), properties.getGroup()) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {
                 return thriftServer.getServerAddr();

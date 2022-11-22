@@ -40,7 +40,7 @@ public class NacosNamingServiceUtils {
         }
 
         if (namingService != null) {
-            return new NamingServiceWrapper(namingService);
+            return new NamingServiceWrapper(namingService, rpcModel.getGroup());
         }
 
         Properties nacosProperties = buildNacosProperties(rpcModel);
@@ -50,7 +50,7 @@ public class NacosNamingServiceUtils {
             log.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
-        return new NamingServiceWrapper(namingService);
+        return new NamingServiceWrapper(namingService, rpcModel.getGroup());
     }
 
     private static Properties buildNacosProperties(RPCModel rpcModel) {

@@ -3,7 +3,7 @@ package com.hqy.access.flow.strategy;
 import com.hqy.access.flow.FlowLimitConfig;
 import com.hqy.access.flow.LimitMode;
 import com.hqy.base.common.base.lang.BaseMathConstants;
-import com.hqy.fundation.cache.redis.LettuceStringRedis;
+import com.hqy.fundation.cache.redis.support.SmartRedisManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -44,8 +44,8 @@ public class RedisResourceSlidingWindowsLimiter extends AbstractLimiter {
             DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
             redisScript.setResultType(Long.class);
             redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("limit/slidingLimit.lua")));
-            flag = (Long) LettuceStringRedis.getInstance().getRedisTemplate().execute(redisScript, Collections.singletonList(resource),
-                    String.valueOf(now - timeWindow), String.valueOf(now), String.valueOf(config.getCount()), String.valueOf(now));
+            flag = (Long) SmartRedisManager.getInstance().getRedisTemplate().execute(redisScript, Collections.singletonList(resource),
+                    String.valueOf(now - timeWindow), String.valueOf(now), String.valueOf(config.getCount()), String.valueOf(now), String.valueOf(config.getBlockSeconds()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

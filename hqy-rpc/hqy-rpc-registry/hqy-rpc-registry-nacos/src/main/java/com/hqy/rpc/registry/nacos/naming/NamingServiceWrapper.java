@@ -38,9 +38,11 @@ import java.util.List;
 public class NamingServiceWrapper {
 
     private final NamingService namingService;
+    private final String defaultGroupName;
 
-    public NamingServiceWrapper(NamingService namingService) {
+    public NamingServiceWrapper(NamingService namingService, String defaultGroupName) {
         this.namingService = namingService;
+        this.defaultGroupName = defaultGroupName;
     }
 
     public String getServerStatus() {
@@ -48,7 +50,7 @@ public class NamingServiceWrapper {
     }
 
     public void subscribe(String serviceName, EventListener eventListener) throws NacosException {
-        namingService.subscribe(serviceName, eventListener);
+        namingService.subscribe(serviceName, defaultGroupName, eventListener);
     }
 
     public void subscribe(String serviceName, String group, EventListener eventListener) throws NacosException {
@@ -56,7 +58,7 @@ public class NamingServiceWrapper {
     }
 
     public void unsubscribe(String serviceName, EventListener listener) throws NacosException {
-        namingService.unsubscribe(serviceName, listener);
+        namingService.unsubscribe(serviceName, defaultGroupName, listener);
     }
 
     public void unsubscribe(String serviceName, String group, EventListener listener) throws NacosException {
@@ -85,7 +87,7 @@ public class NamingServiceWrapper {
     }
 
     public List<Instance> selectInstances(String serviceName, boolean healthy) throws NacosException {
-        return namingService.selectInstances(serviceName, healthy);
+        return namingService.selectInstances(serviceName, defaultGroupName, healthy);
     }
 
     public List<Instance> selectInstances(String serviceName, String group, boolean healthy) throws NacosException {

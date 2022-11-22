@@ -28,7 +28,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
     protected final String providerServiceName;
     private volatile boolean destroyed = false;
-    protected volatile RPCModel consumerContext;
+    protected volatile RPCModel consumerRpcModel;
     protected RouterChain<T> routerChain;
 
     /**
@@ -80,7 +80,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     public AbstractDirectory(String providerServiceName, RPCModel rpcModel, RouterChain<T> routerChain) {
         AssertUtil.notNull(rpcModel, "metadata is null.");
         this.providerServiceName = providerServiceName;
-        this.consumerContext = rpcModel;
+        this.consumerRpcModel = rpcModel;
         setRouterChain(routerChain);
         connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("thrift-connectivity-scheduler", true));
         reconnectTaskTryCount = DEFAULT_RECONNECT_TASK_TRY_COUNT;

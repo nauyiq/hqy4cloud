@@ -84,8 +84,15 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
         AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
         BaseDao<T, PK> dao = checkDao();
         t.setUpdated(new Date());
-        int i = dao.updateByPrimaryKey(t);
-        return i > 0;
+        return dao.updateByPrimaryKey(t) > 0;
+    }
+
+    @Override
+    public boolean updateSelective(T t) {
+        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        BaseDao<T, PK> dao = checkDao();
+        t.setUpdated(new Date());
+        return dao.updateByPrimaryKeySelective(t) > 0;
     }
 
     @Override
@@ -99,7 +106,10 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     public boolean delete(T t) {
         BaseDao<T, PK> dao = checkDao();
         return dao.delete(t) > 0;
+    }
 
-
+    @Override
+    public BaseDao<T, PK> getDao() {
+        return selectDao();
     }
 }

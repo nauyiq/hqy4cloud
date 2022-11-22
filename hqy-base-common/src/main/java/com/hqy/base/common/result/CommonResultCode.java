@@ -40,29 +40,43 @@ public enum CommonResultCode {
     /**
      * 新增数据异常
      */
-    SYSTEM_ERROR_INSERT_FAIL(9100, "Insert data to db failure."),
+    SYSTEM_ERROR_INSERT_FAIL(9100, "System is busy, insert data failure."),
+
+    /**
+     * 更新数据异常.
+     */
+    SYSTEM_ERROR_UPDATE_FAIL(9200, "System is busy, update data failure."),
 
     /**
      * 无效的token
      */
-    INVALID_ACCESS_TOKEN(9200, "Invalid token, token expired or invalid."),
+    INVALID_ACCESS_TOKEN(9300, "Invalid token, token expired or invalid."),
 
     /**
      * 权限不够
      */
-    LIMITED_AUTHORITY(9300, "Access authority Limit."),
+    LIMITED_AUTHORITY(9400, "Access authority Limit."),
 
     /**
      * 耗时的rpc方法
      */
-    CONSUMING_TIME_RPC(9400, "Consuming time RPC method"),
+    CONSUMING_TIME_RPC(9500, "Consuming time RPC method"),
 
+    /**
+     * 无效的认证
+     */
+    INVALID_AUTHORIZATION(9600, "Invalid authorization, please check your authorization again."),
 
 
     /**
      * 错误参数
      */
     ERROR_PARAM(1001, "Invalid parameter, please check parameter again."),
+
+    /**
+     * 错误参数，检查参数是否存在
+     */
+    ERROR_PARAM_UNDEFINED(1002, "Invalid parameter, please check undefined."),
 
 
     /**
@@ -92,9 +106,42 @@ public enum CommonResultCode {
     USERNAME_EXIST(2003,"This username already exist."),
 
     /**
+     * 无效的邮箱
+     */
+    INVALID_EMAIL(2004, "Please input valid email."),
+
+    /**
+     * 邮箱已经存在.
+     */
+    EMAIL_EXIST(2005, "Account email already exist."),
+
+    /**
+     * 验证码错误
+     */
+    VERIFY_CODE_ERROR(2006, "Verify code error, please input right code."),
+
+
+    /**
      * 错误的用户名或者密码
      */
     INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
+
+    /**
+     * 密码错误
+     */
+    PASSWORD_ERROR(3002, "Please input the correct password."),
+
+
+    /**
+     * 上传文件失败.
+     */
+    INVALID_UPLOAD_FILE(10001, "Failed execute to upload file."),
+
+    /**
+     * 上传文件失败, 文件类型不支持
+     */
+    INVALID_FILE_TYPE(10002, "Failed execute to upload file, file type not supported."),
+
 
     ;
 
@@ -137,9 +184,17 @@ public enum CommonResultCode {
         return new MessageResponse(result, code.message, code.code);
     }
 
+    public static MessageResponse messageResponse(int code, String message) {
+        return new MessageResponse(false, message, code);
+    }
+
 
     public static DataResponse dataResponse() {
         return dataResponse(true, SUCCESS, null);
+    }
+
+    public static DataResponse dataResponse(Object data) {
+        return dataResponse(CommonResultCode.SUCCESS, data);
     }
 
     public static DataResponse dataResponse(CommonResultCode code) {
@@ -152,6 +207,10 @@ public enum CommonResultCode {
 
     public static DataResponse dataResponse(boolean result, CommonResultCode code, Object data) {
         return new DataResponse(result, code.message, code.code, data);
+    }
+
+    public static DataResponse dataResponse(int code, String message) {
+        return new DataResponse(false, message, code, null);
     }
 
 

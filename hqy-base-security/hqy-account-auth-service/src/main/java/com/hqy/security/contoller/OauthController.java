@@ -6,7 +6,7 @@ import com.hqy.account.service.AccountTkService;
 import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
-import com.hqy.security.dto.OauthAccountDTO;
+import com.hqy.security.dto.OauthAccountRegistryDTO;
 import com.hqy.security.server.SentinelOauthExceptionServer;
 import com.hqy.security.service.OauthAccountService;
 import com.hqy.util.OauthRequestUtil;
@@ -26,6 +26,7 @@ import java.security.KeyPair;
 @Slf4j
 @RestController
 @RequestMapping("/oauth")
+@SessionAttributes("authorizationRequest")
 public class OauthController {
 
     @Resource
@@ -50,7 +51,7 @@ public class OauthController {
 
 
     @PostMapping("/registry")
-    public MessageResponse registry(@RequestBody @Valid OauthAccountDTO account) {
+    public MessageResponse registry(@RequestBody @Valid OauthAccountRegistryDTO account) {
         return oauthAccountService.registry(account);
     }
 
@@ -64,6 +65,12 @@ public class OauthController {
         Account account = accountTkService.queryById(id);
         return CommonResultCode.dataResponse(true, CommonResultCode.SUCCESS, account);
     }
+
+    @GetMapping("/callback")
+    public DataResponse oauth2Callback(String code) {
+        return CommonResultCode.dataResponse(code);
+    }
+
 
 
     /*@PostMapping("/token")

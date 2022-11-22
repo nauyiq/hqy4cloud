@@ -31,14 +31,14 @@ public class NacosInstanceUtils {
         return metadata.toMetadataMap();
     }
 
-    public static List<RPCModel> instancesConvert(RegistryInfo registryInfo, List<Instance> instances) {
+    public static List<RPCModel> instancesConvert(RegistryInfo registryInfo, String group, List<Instance> instances) {
         if (CollectionUtils.isEmpty(instances)) {
             return Collections.emptyList();
         }
-        return instances.stream().map(instance -> instanceConvert(registryInfo, instance)).collect(Collectors.toList());
+        return instances.stream().map(instance -> instanceConvert(group, registryInfo, instance)).collect(Collectors.toList());
     }
 
-    public static RPCModel instanceConvert(RegistryInfo registryInfo, Instance instance) {
+    public static RPCModel instanceConvert(String group, RegistryInfo registryInfo, Instance instance) {
         AssertUtil.notNull(instance, "Failed execute to instance convert to rpcContext, instance is null.");
         AssertUtil.notNull(registryInfo, "Failed execute to instance convert to rpcContext, registryInfo is null.");
 
@@ -47,7 +47,7 @@ public class NacosInstanceUtils {
         if (metadata == null) {
             throw new RpcException("map convert metadata error, metadata map " + JsonUtil.toJson(instanceMetadata));
         }
-        return new RPCModel(instance.getServiceName(), instance.getPort(), registryInfo, metadata.getRpcServerAddress(), instanceMetadata);
+        return new RPCModel(instance.getServiceName(), instance.getPort(), group, registryInfo, metadata.getRpcServerAddress(), instanceMetadata);
     }
 
     public static Metadata toMetadataFromMap(Map<String, String> metadataMap) {

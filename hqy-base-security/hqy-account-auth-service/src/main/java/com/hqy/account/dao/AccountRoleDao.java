@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 2022-03-10 21:42
  */
 @Repository
-public interface AccountRoleDao extends BaseDao<AccountRole, Long> {
+public interface AccountRoleDao extends BaseDao<AccountRole, Integer> {
 }

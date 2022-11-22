@@ -23,9 +23,26 @@ public class CommonDateUtil {
     /**
      * 到分钟的格式
      */
-    public static final DateFormat TIME_MINUTE_FORMAT = new SimpleDateFormat("hh-MM-dd HH:mm");
+    public static final DateFormat TIME_MINUTE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    public static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("hh-MM-dd HH:mm:ss");
+    /**
+     * 标准的datetime时间格式
+     */
+    public static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * yyyyMMdd格式
+     */
+    public static final DateFormat SDF_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
+
+    /**
+     * today yyyyMMdd格式
+     * @return today.
+     */
+    public static String today() {
+        return SDF_FORMAT.format(new Date());
+    }
 
     /**
      * 时间 转 HH:mm格式

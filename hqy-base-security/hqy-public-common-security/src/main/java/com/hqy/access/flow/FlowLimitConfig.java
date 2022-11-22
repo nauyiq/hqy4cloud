@@ -26,9 +26,9 @@ public class FlowLimitConfig {
     private int count;
 
     /**
-     * 如果超限 是否对当前请求的来源进行封禁 比如ip封禁, 默认2分钟
+     * 如果超限 是否对当前请求的来源进行封禁 比如ip封禁, 默认10分钟
      */
-    private int blockSeconds = 2 * Measurement.Seconds.ONE_MINUTES.seconds;
+    private int blockSeconds = 10 * Measurement.Seconds.ONE_MINUTES.seconds;
 
     /**
      * 时间窗口 单位s

@@ -39,6 +39,11 @@ public class RPCModel extends Parameters implements Serializable {
     private final int serverPort;
 
     /**
+     * group.
+     */
+    private final String group;
+
+    /**
      * registry information.
      */
     private final RegistryInfo registryInfo;
@@ -63,16 +68,21 @@ public class RPCModel extends Parameters implements Serializable {
     }
 
     public RPCModel(String name, int serverPort) {
-        this(name, serverPort,null, null);
+        this(name, serverPort, CommonConstants.DEFAULT_GROUP);
     }
 
-    public RPCModel(String name, int serverPort, RegistryInfo registryInfo, RPCServerAddress address) {
-        this(name, serverPort, registryInfo, address, MapUtil.newConcurrentHashMap());
+    public RPCModel(String name, int serverPort, String group) {
+        this(name, serverPort, group, null, null);
     }
 
-    public RPCModel(String name, int serverPort, RegistryInfo registryInfo, RPCServerAddress serverAddress, Map<String, String> parameters) {
+    public RPCModel(String name, int serverPort, String group, RegistryInfo registryInfo, RPCServerAddress address) {
+        this(name, serverPort, group, registryInfo, address, MapUtil.newConcurrentHashMap());
+    }
+
+    public RPCModel(String name, int serverPort, String group, RegistryInfo registryInfo, RPCServerAddress serverAddress, Map<String, String> parameters) {
         this.name = name;
         this.serverPort = serverPort;
+        this.group = group;
         this.registryInfo = registryInfo;
         this.serverAddress = serverAddress;
         this.parameters = parameters;
@@ -157,6 +167,11 @@ public class RPCModel extends Parameters implements Serializable {
         return host;
     }
 
+    public String getServerHost() {
+        return serverAddress == null ? null : serverAddress.getHostAddr();
+    }
+
+
     public int getPort() {
         return serverAddress == null ? 0 : serverAddress.getPort();
     }
@@ -174,6 +189,10 @@ public class RPCModel extends Parameters implements Serializable {
             numbers = MapUtil.newConcurrentHashMap();
         }
         return numbers;
+    }
+
+    public String getGroup() {
+        return this.group;
     }
 
     public String getHashFactor() {

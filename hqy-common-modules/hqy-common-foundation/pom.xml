@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>通用化的基础模块, 比如提供全局的redis操作、采集服务等</description>
+    <description>通用化的基础模块, 比如提供全局的redis操作</description>
 
     <artifactId>hqy-common-foundation</artifactId>
 
@@ -22,13 +22,6 @@
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
 <!--        </dependency>-->
-
-        <!-- 采集服务api -->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-collector-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
 
         <!-- client-starter -->
         <dependency>
@@ -51,11 +44,12 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-        <!-- start web -->
+        <!--spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
 
         <!-- hibenate-validator -->
         <dependency>

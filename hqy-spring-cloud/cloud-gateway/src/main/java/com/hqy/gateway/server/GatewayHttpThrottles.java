@@ -11,6 +11,7 @@ import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,13 +28,11 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class GatewayHttpThrottles implements HttpThrottles {
 
     private final HttpAccessFlowControlCenter flowControlCenter;
-
-    public GatewayHttpThrottles(HttpAccessFlowControlCenter flowControlCenter) {
-        this.flowControlCenter = flowControlCenter;
-    }
+    private final ThrottlesProcess throttlesProcess;
 
     /**
      * 是否允许本次客户端请求
@@ -101,12 +100,12 @@ public class GatewayHttpThrottles implements HttpThrottles {
         final String errMsg = "Too many requests from [requestIp=" + requestIp + ", url=" + url + "] ";
 
         // 是否是人工指定的黑名单阻塞的ip
-        if (ThrottlesProcess.getInstance().isManualBlockedIp(requestIp)) {
+        if (throttlesProcess.isManualBlockedIp(requestIp)) {
             log.warn("@@@ MANUAL BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[MBK]"), LimitResult.ReasonEnum.MANUAL_BLOCKED_IP_NG);
         }
         // 是否是行为分析的黑名单ip
-        if (ThrottlesProcess.getInstance().isBiBlockedIp(requestIp)) {
+        if (throttlesProcess.isBiBlockedIp(requestIp)) {
             log.warn("@@@ BI BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
@@ -134,7 +133,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 FlowResult flowResult = flowControlCenter.needLimitPerTimeWindow(requestIp, request.getMethod(), request.getUri());
                 boolean needLimit = flowResult.isOverLimit();
                 if (flowResult.isBlock()) {
-                    ThrottlesProcess.getInstance().addBiBlockIp(requestIp, flowResult.getBlockSeconds());
+                    throttlesProcess.addBiBlockIp(requestIp, flowResult.getBlockSeconds());
                     // 记录ip 被阻塞 持久化到数据库
                     persistBlockIpAction(requestIp, flowResult.getBlockSeconds(), url, "BiBlock(RedisFlowControl)", request.getUri());
                 }
@@ -166,7 +165,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         //uri和请求参数的xss攻击校验
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             if (StringUtils.isNotBlank(requestParams)) {
-                boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
+                boolean hackAccess = throttlesProcess.isHackAccess(requestParams, ThrottlesProcess.PARAMS_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (param) !!! {} , {} ", requestParams, requestIp);
                     // 纳入黑名单，访问限制!!!!
@@ -181,13 +180,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
             }
 
             if (StringUtils.isNotBlank(urlOrQueryString) && urlOrQueryString.length() > 16) {
-                boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(urlOrQueryString, ThrottlesProcess.URI_CHECK_MODE);
+                boolean hackAccess = throttlesProcess.isHackAccess(urlOrQueryString, ThrottlesProcess.URI_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (urlOrQueryString)!!! {} ,remoteAddr:{} ", urlOrQueryString, requestIp);
                     // 纳入黑名单，访问限制!!!!
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+                        throttlesProcess.addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
@@ -196,12 +195,12 @@ public class GatewayHttpThrottles implements HttpThrottles {
             }
 
             if (StringUtils.isNotBlank(uri) && !StringConstants.Symbol.INCLINED_ROD.equals(uri)) {
-                boolean hackAccess = ThrottlesProcess.getInstance().isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE);
+                boolean hackAccess = throttlesProcess.isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE);
                 if (hackAccess) {
                     log.warn("@@@ HACK TOOL REJECT (URI)!!!,{}, requestIp:{} ", uri, requestIp);
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
                         //1次访问有问题，就拉黑
-                        ThrottlesProcess.getInstance().addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
+                        throttlesProcess.addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
                     }
                     // 记录ip 被阻塞 持久化服务~
                     persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, urlOrQueryString, "BiBlock(HackAccessURI)", urlOrQueryString);
@@ -221,13 +220,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
      */
     @Override
     public boolean isWhiteURI(String uri) {
-        return ThrottlesProcess.getInstance().isWhiteIp(uri);
+        return throttlesProcess.isWhiteIp(uri);
     }
 
 
     @Override
     public boolean isManualWhiteIp(String remoteAddr) {
-        return ThrottlesProcess.getInstance().isWhiteIp(remoteAddr);
+        return throttlesProcess.isWhiteIp(remoteAddr);
     }
 
 

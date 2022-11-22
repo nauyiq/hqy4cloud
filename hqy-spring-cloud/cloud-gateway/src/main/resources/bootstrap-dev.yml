@@ -20,6 +20,10 @@ spring:
           data-id: cloud-gateway.yaml
           group: ${nacos.group}
           refresh: true
+        extension-configs[2]:
+          data-id: oauth2-config.yaml
+          group: ${nacos.group}
+          refresh: true
       discovery:
         namespace: ${nacos.namespace}
         group: ${nacos.group}

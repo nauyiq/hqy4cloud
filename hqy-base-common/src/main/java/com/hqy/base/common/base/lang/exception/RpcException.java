@@ -7,7 +7,7 @@ import javax.naming.LimitExceededException;
  * @version 1.0
  * @date 2022/2/23 17:16
  */
-public class RpcException extends RuntimeException{
+public class RpcException extends RuntimeException {
 
     public static final int UNKNOWN_EXCEPTION = 0;
     public static final int NETWORK_EXCEPTION = 1;

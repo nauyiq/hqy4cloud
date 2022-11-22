@@ -28,6 +28,12 @@
             <artifactId>sentinel-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-account-auth-service-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 
     </dependencies>
 

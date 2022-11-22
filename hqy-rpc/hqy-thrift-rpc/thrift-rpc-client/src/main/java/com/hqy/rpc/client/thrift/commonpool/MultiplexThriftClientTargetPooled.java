@@ -32,14 +32,18 @@ public class MultiplexThriftClientTargetPooled<T> {
 
     private final GenericKeyedObjectPoolConfig<T> config;
 
+    private final String serviceName;
+
 
     public MultiplexThriftClientTargetPooled(RPCModel rpcModel, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper) {
         AssertUtil.notNull(rpcModel, "RPCContext should not be null.");
         AssertUtil.notNull(serviceType, "Rpc interface class type should not be null.");
         AssertUtil.notNull(clientManagerWrapper, "ThriftClientManagerWrapper should not be null.");
-        this.factory = new ThriftClientTargetBaseKeyedFactory<>(serviceType, clientManagerWrapper);
+        this.serviceName = rpcModel.getName();
+        this.factory = new ThriftClientTargetBaseKeyedFactory<>(serviceName, serviceType, clientManagerWrapper);
         this.config = initializeObjectPoolConfig(rpcModel);
         this.pool = new GenericKeyedObjectPool<>(factory, config);
+
     }
 
 
@@ -98,6 +102,7 @@ public class MultiplexThriftClientTargetPooled<T> {
                 pool.clear();
                 pool.close();
                 pool = null;
+                factory.closeConnectionCache(serviceName);
             }
         } catch (Throwable cause) {
             log.warn(cause.getMessage(), cause);

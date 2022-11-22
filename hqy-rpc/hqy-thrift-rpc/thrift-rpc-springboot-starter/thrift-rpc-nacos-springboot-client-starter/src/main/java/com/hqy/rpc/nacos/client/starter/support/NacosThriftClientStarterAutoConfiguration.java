@@ -36,7 +36,7 @@ public class NacosThriftClientStarterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public NacosThriftStarter nacosThriftStarter(NacosDiscoveryProperties properties) {
-        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER, CommonConstants.DEFAULT_HASH_FACTOR) {
+        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER, CommonConstants.DEFAULT_HASH_FACTOR, properties.getGroup()) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {
                 return RPCServerAddress.createConsumerRpcServer();

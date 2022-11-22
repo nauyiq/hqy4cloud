@@ -11,10 +11,34 @@
             username,
             email,
             phone,
-            authorities,
+            roles,
             status
         from t_account
         WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail}
+    </select>
+
+    <select id="getAccountInfo" resultType="com.hqy.account.dto.AccountInfoDTO">
+        SELECT
+        a.id,a.username,a.email,a.phone,a.roles,a.status,
+        p.avatar,p.nickname,p.intro,p.birthday
+        FROM t_account a
+        LEFT JOIN t_account_profile p
+        ON a.id = p.id
+        WHERE a.id = #{id}
+    </select>
+
+
+    <select id="getAccountInfos" resultType="com.hqy.account.dto.AccountInfoDTO">
+        SELECT
+        a.id,a.username,a.email,a.phone,a.roles,a.status,
+        p.avatar,p.nickname,p.intro,p.birthday
+        FROM t_account a
+        LEFT JOIN t_account_profile p
+        ON a.id = p.id
+        WHERE a.id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>

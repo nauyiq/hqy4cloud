@@ -1,8 +1,10 @@
 package com.hqy.security.config;
 
+import com.hqy.access.auth.support.EndpointAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -52,22 +54,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    /*@Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(AuthorizationWhiteListManager.getInstance().endpoints().toArray(new String[0]));
-        super.configure(web);
-    }*/
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable();
 
-        http.authorizeRequests().antMatchers("/oauth/**", "/sms-code").permitAll()
-                .antMatchers("/webjars/**", "/doc.html", "/swagger-resources/**", "/v2/api-docs").permitAll()
-                .anyRequest().authenticated();
-//        http.formLogin().loginProcessingUrl(AuthorizationWhiteListManager.SecurityContext.LOGIN_PROCESSING_URL)
-//        http.formLogin().successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler);
+        http.authorizeRequests().antMatchers(EndpointAuthorizationManager.ENDPOINTS.toArray(new String[0])).permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyRequest().authenticated()
+                .and().httpBasic();
 
         // 基于密码 等模式可以无session,不支持授权码模式
         /*if (authenticationEntryPoint == null) {
@@ -78,15 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
         }*/
 
-
         http.headers().frameOptions().disable();
         http.headers().cacheControl();
-
-
-//        http.csrf().disable().cors().disable()
-//                .authorizeRequests().requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll().and()
-//                .authorizeRequests().antMatchers("/oauth/**","/auth/**").permitAll()
-//                .and().formLogin().permitAll();
     }
 
     @Override

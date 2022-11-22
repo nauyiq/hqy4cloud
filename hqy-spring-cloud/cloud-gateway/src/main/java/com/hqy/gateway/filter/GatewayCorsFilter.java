@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
  * @author qiyuan.hong
  * @date  2021/7/25 22:42
  */
-@Component
+//@Component
 @Slf4j
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
@@ -58,6 +58,7 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         } else {
             headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
         }
+        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
 
         headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
 

@@ -3,7 +3,8 @@ package com.hqy.fundation.common.route;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.fundation.cache.redis.LettuceRedis;
+import com.hqy.fundation.cache.redis.support.RedisManager;
+import com.hqy.fundation.cache.redis.support.SmartRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class SocketClusterStatusManager {
         SocketClusterStatus hashContext = CLUSTER_STATUS_CACHE.getIfPresent(key);
         if (Objects.isNull(hashContext)) {
             //内存中没有 则去redis中获取
-            hashContext = LettuceRedis.getInstance().get(key);
+            hashContext = SmartRedisManager.getInstance().get(key, SocketClusterStatus.class);
             if (Objects.isNull(hashContext)) {
                 log.info("@@@ 获取不到当前服务：{} 的socketHashContext.", serviceName);
                 hashContext = new SocketClusterStatus(env, serviceName);
@@ -55,7 +56,7 @@ public class SocketClusterStatusManager {
     public static void registry(SocketClusterStatus socketClusterStatus) {
         String key = genKey(socketClusterStatus.getEnv(), socketClusterStatus.getModule());
         CLUSTER_STATUS_CACHE.put(key, socketClusterStatus);
-        LettuceRedis.getInstance().set(key, socketClusterStatus);
+        SmartRedisManager.getInstance().set(key, socketClusterStatus);
     }
 
 

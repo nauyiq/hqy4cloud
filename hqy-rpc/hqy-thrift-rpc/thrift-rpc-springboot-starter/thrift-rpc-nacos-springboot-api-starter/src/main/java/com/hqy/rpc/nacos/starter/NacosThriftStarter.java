@@ -40,6 +40,8 @@ public abstract class NacosThriftStarter implements RPCStarter {
 
     private final String hashFactor;
 
+    private final String group;
+
     private RPCModel rpcModel;
 
     private final Metadata metadata;
@@ -48,7 +50,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
 
     private final PubMode pubMode;
 
-    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType, String hashFactor) {
+    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType, String hashFactor, String group) {
         this.application = application;
         this.serverPort = serverPort;
         this.serverAddress = serverAddress;
@@ -58,6 +60,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
         this.actuatorType = actuatorType;
         //must final init
         this.metadata = createMetadata();
+        this.group = group;
     }
 
     private Metadata createMetadata() {
@@ -83,7 +86,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private synchronized void initRpcContext() throws RpcException {
         try {
             RegistryInfo registryInfo = buildRegistryInfo();
-            rpcModel = new RPCModel(application, serverPort, registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
+            rpcModel = new RPCModel(application, serverPort, group, registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
         } catch (Throwable cause) {
             throw new RpcException(RpcException.REGISTRY_EXCEPTION, "Failed execute to init rpc context, metadata " + metadata);
         }

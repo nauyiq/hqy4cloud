@@ -15,7 +15,7 @@ public class NacosConfigurationUtils {
 
     private static final Logger log = LoggerFactory.getLogger(NacosConfigurationUtils.class);
 
-    private static final String NACOS_ADDRESS_KEY = "spring.cloud.nacos.config.server-addr";
+    private static final String NACOS_ADDRESS_KEY = "nacos.server-addr";
     private static final String ACTIVE = "spring.profiles.active";
 
 

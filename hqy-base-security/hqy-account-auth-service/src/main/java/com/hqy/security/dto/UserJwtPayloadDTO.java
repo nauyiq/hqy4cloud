@@ -18,10 +18,6 @@ public class UserJwtPayloadDTO {
      */
     public Long id;
 
-    /**
-     * 密码
-     */
-    public String password;
 
     /**
      * 邮箱
@@ -36,17 +32,16 @@ public class UserJwtPayloadDTO {
     /**
      * 权限
      */
-    public Collection<? extends GrantedAuthority> authorities;
+//    public Collection<? extends GrantedAuthority> authorities;
 
     public UserJwtPayloadDTO() {
         super();
     }
 
-    public UserJwtPayloadDTO(Long id, String password, String email, String username, Collection<? extends GrantedAuthority> authorities) {
+    public UserJwtPayloadDTO(Long id,  String email, String username, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.password = password;
         this.email = email;
         this.username = username;
-        this.authorities = authorities;
+//        this.authorities = authorities;
     }
 }

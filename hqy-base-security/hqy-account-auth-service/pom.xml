@@ -15,10 +15,10 @@
     <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
 
     <dependencies>
-
+        <!-- common-security -->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-account-auth-service-api</artifactId>
+            <artifactId>hqy-public-common-security</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
@@ -29,10 +29,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common-dao-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-communication-service-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 
         <!-- 实时监控  spring-boot-starter-actuator-->
         <dependency>
@@ -47,6 +55,7 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+
         <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -57,11 +66,6 @@
                     <artifactId>nacos-client</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
         <!-- spring-security -->
@@ -75,26 +79,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-oauth2</artifactId>
         </dependency>
-
-        <!-- common-security -->
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-public-common-security</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <!-- sentinel-module -->
-        <!--<dependency>
-            <groupId>com.hqy.security</groupId>
-            <artifactId>hqy-public-common-alibaba-sentinel</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>${project.parent.version}</version>
-        </dependency>-->
 
 
     </dependencies>

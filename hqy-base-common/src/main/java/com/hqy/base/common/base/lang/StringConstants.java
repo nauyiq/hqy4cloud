@@ -39,6 +39,12 @@ public interface StringConstants {
 
     String BOOTSTRAP = "bootstrap";
 
+    String HTTP = "http";
+
+    String SHOULD_NOT_BE_NULL = "should not be null.";
+
+    String SHOULD_NOT_BE_EMPTY = "should not be empty.";
+
 
 
     interface Auth {
@@ -205,6 +211,14 @@ public interface StringConstants {
 
         String YAML = ".yaml";
 
+    }
+
+    interface Host {
+        String HTTP = "http://";
+        String HTTPS = "https://";
+        String FILE_HQY_HOST = "file.hongqy1024.cn";
+        String LOCAL_HOST = HTTP + "localhost";
+        String HTTPS_FILE_ACCESS = HTTPS + FILE_HQY_HOST;
     }
 
 

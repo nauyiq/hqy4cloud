@@ -6,11 +6,14 @@ import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.common.support.RegistryInfo;
 import com.hqy.rpc.nacos.starter.NacosThriftStarter;
+import com.hqy.rpc.registry.Constants;
 import com.hqy.rpc.registry.api.RegistryFactory;
 import com.hqy.rpc.registry.nacos.NacosRegistryFactory;
 import com.hqy.rpc.registry.nacos.util.NacosConfigurationUtils;
+import com.hqy.util.config.ConfigurationContext;
 import com.hqy.util.spring.ProjectContextInfo;
 import com.hqy.util.spring.SpringContextHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,11 +62,14 @@ public class NacosThriftRPCClient extends ThriftRPCClient {
         return rpcModel;
     }
 
-    public static RPCModel createDirectRpcModel() {
+    private  RPCModel createDirectRpcModel() {
         RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(NacosConfigurationUtils.getServerAddress());
-        RPCModel rpcModel = new RPCModel(CommonConstants.DIRECT_SERVICE, 0, registryInfo, RPCServerAddress.createConsumerRpcServer());
-        ProjectContextInfo.setBean(rpcModel);
-        return rpcModel;
+        return new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer());
+    }
+
+    private static String getGroup() {
+        String group = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_DEV_YAML, Constants.DEV_REGISTRY_GROUP_KEY);
+        return StringUtils.isBlank(group) ? CommonConstants.DEFAULT_GROUP : group;
     }
 
 }

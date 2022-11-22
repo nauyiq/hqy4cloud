@@ -2,20 +2,30 @@ package com.hqy.gateway.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
-import com.hqy.access.auth.AuthorizationWhiteListManager;
+import com.hqy.access.auth.Oauth2Access;
+import com.hqy.access.auth.support.EndpointAuthorizationManager;
+import com.hqy.access.auth.support.NacosOauth2Access;
+import com.hqy.access.auth.support.ResourceInRoleCacheServer;
+import com.hqy.access.limit.service.support.BiBlockedIpRedisService;
+import com.hqy.access.limit.service.support.ManualBlockedIpService;
+import com.hqy.access.limit.service.support.ManualWhiteIpRedisService;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
-import com.hqy.gateway.server.AuthorizationManager;
+import com.hqy.foundation.limit.service.BlockedIpService;
+import com.hqy.foundation.limit.service.ManualWhiteIpService;
+import com.hqy.gateway.server.auth.AuthorizationManager;
+import com.hqy.gateway.server.auth.DefaultJwtGrantedAuthoritiesConverter;
 import com.hqy.gateway.util.ResponseUtil;
 import com.hqy.util.AssertUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -23,11 +33,12 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -36,7 +47,7 @@ import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * 网关承担 资源服务器
@@ -52,6 +63,45 @@ public class ResourceServerConfiguration {
     private AuthorizationManager authorizationManager;
 
     @Bean
+    public ResourceInRoleCacheServer resourceInRoleCacheServer(RedissonClient redissonClient) {
+        return new ResourceInRoleCacheServer(redissonClient);
+    }
+
+    @Bean
+    public ManualWhiteIpService manualWhiteIpService(RedissonClient redisson) {
+        return new ManualWhiteIpRedisService(redisson);
+    }
+
+    @Bean
+    public BlockedIpService biBlockedIpService() {
+        return new BiBlockedIpRedisService();
+    }
+
+    @Bean
+    public BlockedIpService manualBlockedIpService() {
+        return new ManualBlockedIpService();
+    }
+
+
+    @Bean
+    public Oauth2Access oauth2Access(ManualWhiteIpService manualWhiteIpService) {
+        return new NacosOauth2Access(manualWhiteIpService);
+    }
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
+    @Bean
     public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http) {
         //jwt增强
          http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -59,14 +109,13 @@ public class ResourceServerConfiguration {
                 .publicKey(rsaPublicKey());
 
         //自定义处理JWT请求头过期或签名错误的结果
-        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
+        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint())
+                .and()
+        //option请求放行
+        .authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
-        //获取项目中的uri白名单
-        Set<String> whiteUri = AuthorizationWhiteListManager.getInstance().endpoints();
-        if (CollectionUtils.isNotEmpty(whiteUri)) {
-            //白名单配置
-            http.authorizeExchange().pathMatchers(whiteUri.toArray(new String[0])).permitAll();
-        }
+        ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
+        http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
 
         http.authorizeExchange()
                 //鉴权管理器配置
@@ -76,7 +125,7 @@ public class ResourceServerConfiguration {
                 .accessDeniedHandler(accessDeniedHandler())
                 //处理未认证
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .and().csrf().disable();
+                .and().cors().and().csrf().disable();
         return http.build();
     }
 
@@ -88,8 +137,9 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
-            DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
+//            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
+            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.INVALID_AUTHORIZATION);
+            DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
     }
@@ -104,7 +154,8 @@ public class ResourceServerConfiguration {
             log.warn("@@@ RestAuthenticationEntryPoint访问受限, e:{}", e.getMessage());
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+//                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
@@ -140,9 +191,14 @@ public class ResourceServerConfiguration {
      */
     @Bean
     public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(StringConstants.Auth.JWT_AUTHORITIES_KEY);
+//        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        DefaultJwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new DefaultJwtGrantedAuthoritiesConverter();
+//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
+        //取消权限的前缀，默认会加上SCOPE_
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.EMPTY);
+        //从哪个字段中获取权限
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+//        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(StringConstants.Auth.JWT_AUTHORITIES_KEY);
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
