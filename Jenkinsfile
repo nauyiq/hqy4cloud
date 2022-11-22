@@ -12,12 +12,12 @@ podTemplate(
                           ttyEnabled: true)
     ],
     volumes: [
-//         hostPathVolume(mountPath: '/usr/local/apache-maven-3.8.6/repo', hostPath: '/usr/local/apache-maven-3.8.6/repo')
-           nfsVolume(
-                mountPath: '/usr/local/apache-maven-3.8.6/repo',
-                serverAddress: '172.30.0.10',
-                serverPath: '/hongqy/share/data/maven-repository',
-                readOnly: false)
+        hostPathVolume(mountPath: '/usr/local/apache-maven-3.8.6/repo', hostPath: '/usr/local/apache-maven-3.8.6/repo')
+//            nfsVolume(
+//                 mountPath: '/usr/local/apache-maven-3.8.6/repo',
+//                 serverAddress: '172.30.0.10',
+//                 serverPath: '/hongqy/share/data/maven-repository',
+//                 readOnly: false)
     ]) {
 
     node('jenkins-agent'){
