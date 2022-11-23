@@ -21,7 +21,7 @@ public class PfExceptionServiceImpl extends BaseTkServiceImpl<PfException, Long>
     private PfExceptionDao pfExceptionDao;
 
     @Override
-    public BaseDao<PfException, Long> selectDao() {
+    public BaseDao<PfException, Long> getTkDao() {
         return pfExceptionDao;
     }
 }

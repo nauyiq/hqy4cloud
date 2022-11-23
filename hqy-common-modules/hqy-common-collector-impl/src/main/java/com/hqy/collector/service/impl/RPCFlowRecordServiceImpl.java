@@ -20,7 +20,7 @@ public class RPCFlowRecordServiceImpl extends BaseTkServiceImpl<RPCFlowRecord, L
     private final RPCMinuteFlowRecordDao dao;
 
     @Override
-    public BaseDao<RPCFlowRecord, Long> selectDao() {
+    public BaseDao<RPCFlowRecord, Long> getTkDao() {
         return dao;
     }
 }

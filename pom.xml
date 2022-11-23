@@ -58,7 +58,8 @@
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
 
         <!-- dao -->
-        <mysql.version>5.1.47</mysql.version>
+<!--        <mysql.version>5.1.47</mysql.version>-->
+        <mysql.version>8.0.27</mysql.version>
         <tk.mybatis.version>2.1.2</tk.mybatis.version>
         <pagehelper.version>5.1.2</pagehelper.version>
         <org.redisson.version>3.13.6</org.redisson.version>
