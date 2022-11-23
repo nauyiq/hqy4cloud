@@ -3,7 +3,7 @@ def image_name = "${registry}/hqy-parent-all/collector-service:1.0"
 def jnlp_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jnlp-slave:latest"
 def podman_image = "registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/podman:latest"
 
-def aliyun_hub = "aliyun-hub"
+def aliyun_hub = "aliyun_hub"
 
 def base_dir = "/home/jenkins/agent/workspace/common-collector-service"
 def service_jar = "common-collector-service.jar"
