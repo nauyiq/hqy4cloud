@@ -22,7 +22,8 @@ podTemplate(
                         image: "${podman_image}",
                         alwaysPullImage: false,
                         privileged: true,
-                        ttyEnabled: true)
+                        ttyEnabled: true,
+                        command: '--cgroup-manager=cgroupfs --events-backend=file')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/lib/containers', hostPath: '/var/lib/containers'),
