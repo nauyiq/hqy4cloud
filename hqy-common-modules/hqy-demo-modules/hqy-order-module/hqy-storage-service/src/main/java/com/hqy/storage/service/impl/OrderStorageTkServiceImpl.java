@@ -21,7 +21,7 @@ public class OrderStorageTkServiceImpl extends BaseTkServiceImpl<OrderStorage, L
     private OrderStorageDao dao;
 
     @Override
-    public BaseDao<OrderStorage, Long> selectDao() {
+    public BaseDao<OrderStorage, Long> getTkDao() {
         return dao;
     }
 }

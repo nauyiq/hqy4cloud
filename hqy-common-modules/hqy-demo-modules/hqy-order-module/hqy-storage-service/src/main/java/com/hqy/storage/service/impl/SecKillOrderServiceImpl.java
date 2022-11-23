@@ -20,7 +20,7 @@ public class SecKillOrderServiceImpl extends BaseTkServiceImpl<SecKillOrder, Lon
     private SecKillOrderDao dao;
 
     @Override
-    public BaseDao<SecKillOrder, Long> selectDao() {
+    public BaseDao<SecKillOrder, Long> getTkDao() {
         return dao;
     }
 }

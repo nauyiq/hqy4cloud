@@ -21,7 +21,7 @@ public class OrderTkServiceImpl extends BaseTkServiceImpl<Order, Long> implement
     private OrderDao dao;
 
     @Override
-    public BaseDao<Order, Long> selectDao() {
+    public BaseDao<Order, Long> getTkDao() {
         return dao;
     }
 }

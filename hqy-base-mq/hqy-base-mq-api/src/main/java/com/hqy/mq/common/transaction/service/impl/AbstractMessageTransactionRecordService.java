@@ -1,6 +1,5 @@
 package com.hqy.mq.common.transaction.service.impl;
 
-import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.mq.common.MessageQueueType;
 import com.hqy.mq.common.transaction.entity.CommonMessageRecord;
@@ -23,21 +22,10 @@ public abstract class AbstractMessageTransactionRecordService<T extends CommonMe
     private static final Logger log = LoggerFactory.getLogger(AbstractMessageTransactionRecordService.class);
 
     /**
-     * 由子类注入的orm dao 对象
-     * @return BaseDao<T, Long>
-     */
-    public abstract BaseDao<T, Long> registryDao();
-
-    /**
      * 由子类决定使用何种的消息队列中间件
      * @return MessageQueueType
      */
     public abstract MessageQueueType registryQueueType();
-
-    @Override
-    public BaseDao<T, Long> selectDao() {
-        return registryDao();
-    }
 
     @Override
     public boolean preCommit(T payload) {

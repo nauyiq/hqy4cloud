@@ -94,7 +94,11 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     boolean delete(T t);
 
-    BaseDao<T, PK> getDao();
+    /**
+     * 返回tk-mapper
+     * @return {@link BaseDao}
+     */
+    BaseDao<T, PK> getTkDao();
 
 
 }

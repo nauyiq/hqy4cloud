@@ -22,7 +22,7 @@ public class AccountOauthClientTkServiceImpl extends BaseTkServiceImpl<AccountOa
     private AccountOauthClientDao accountOauthClientDao;
 
     @Override
-    public BaseDao<AccountOauthClient, Long> selectDao() {
+    public BaseDao<AccountOauthClient, Long> getTkDao() {
         return accountOauthClientDao;
     }
 

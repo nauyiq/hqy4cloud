@@ -17,15 +17,8 @@ import java.util.List;
  */
 public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements BaseTkService<T, PK> {
 
-
-    /**
-     * 交给子类选择需要使用那个tk.dao
-     * @return 返回tk dao层对象
-     */
-    public abstract BaseDao<T, PK> selectDao();
-
     private BaseDao<T, PK> checkDao() {
-        BaseDao<T, PK> dao = selectDao();
+        BaseDao<T, PK> dao = getTkDao();
         AssertUtil.notNull(dao, "base dao注入异常, 请检查配置.");
         return dao;
     }
@@ -106,10 +99,5 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     public boolean delete(T t) {
         BaseDao<T, PK> dao = checkDao();
         return dao.delete(t) > 0;
-    }
-
-    @Override
-    public BaseDao<T, PK> getDao() {
-        return selectDao();
     }
 }

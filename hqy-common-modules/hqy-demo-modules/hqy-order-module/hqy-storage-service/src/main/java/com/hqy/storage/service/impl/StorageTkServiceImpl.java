@@ -21,7 +21,7 @@ public class StorageTkServiceImpl extends BaseTkServiceImpl<Storage, Long> imple
     private StorageDao storageDao;
 
     @Override
-    public BaseDao<Storage, Long> selectDao() {
+    public BaseDao<Storage, Long> getTkDao() {
         return storageDao;
     }
 

@@ -21,7 +21,7 @@ public class OrderWalletTkServiceImpl extends BaseTkServiceImpl<OrderWallet, Lon
     private OrderWalletDao dao;
 
     @Override
-    public BaseDao<OrderWallet, Long> selectDao() {
+    public BaseDao<OrderWallet, Long> getTkDao() {
         return dao;
     }
 }
