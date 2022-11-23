@@ -24,7 +24,7 @@ public class AuthoritiesTkServiceImpl extends BaseTkServiceImpl<Authorities, Int
     private final AuthoritiesDao authoritiesDao;
 
     @Override
-    public BaseDao<Authorities, Integer> selectDao() {
+    public BaseDao<Authorities, Integer> getTkDao() {
         return authoritiesDao;
     }
 

@@ -19,7 +19,7 @@ public class AccountRoleTkServiceImpl extends BaseTkServiceImpl<AccountRole, Int
     private final AccountRoleDao accountRoleDao;
 
     @Override
-    public BaseDao<AccountRole, Integer> selectDao() {
+    public BaseDao<AccountRole, Integer> getTkDao() {
         return accountRoleDao;
     }
 }

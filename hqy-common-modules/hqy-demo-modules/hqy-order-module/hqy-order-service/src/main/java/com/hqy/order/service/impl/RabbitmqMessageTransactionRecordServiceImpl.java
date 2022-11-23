@@ -22,7 +22,7 @@ public class RabbitmqMessageTransactionRecordServiceImpl extends AbstractMessage
 
 
     @Override
-    public BaseDao<OrderMessageRecord, Long> registryDao() {
+    public BaseDao<OrderMessageRecord, Long> getTkDao() {
         return messageRecordDao;
     }
 

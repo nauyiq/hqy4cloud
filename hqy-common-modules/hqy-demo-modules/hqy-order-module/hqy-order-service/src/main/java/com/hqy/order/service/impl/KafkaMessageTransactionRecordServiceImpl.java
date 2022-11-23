@@ -21,7 +21,7 @@ public class KafkaMessageTransactionRecordServiceImpl extends AbstractMessageTra
     private OrderMessageRecordDao messageRecordDao;
 
     @Override
-    public BaseDao<OrderMessageRecord, Long> registryDao() {
+    public BaseDao<OrderMessageRecord, Long> getTkDao() {
         return messageRecordDao;
     }
 

@@ -23,7 +23,7 @@ public class ResourceTkServiceImpl extends BaseTkServiceImpl<Resource, Integer> 
     private final ResourceDao resourceDao;
 
     @Override
-    public BaseDao<Resource, Integer> selectDao() {
+    public BaseDao<Resource, Integer> getTkDao() {
         return resourceDao;
     }
 

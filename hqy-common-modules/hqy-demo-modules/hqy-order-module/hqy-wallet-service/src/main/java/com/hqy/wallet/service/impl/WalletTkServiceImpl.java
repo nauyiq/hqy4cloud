@@ -21,7 +21,7 @@ public class WalletTkServiceImpl extends BaseTkServiceImpl<Wallet, Long> impleme
     private WalletDao dao;
 
     @Override
-    public BaseDao<Wallet, Long> selectDao() {
+    public BaseDao<Wallet, Long> getTkDao() {
         return dao;
     }
 }

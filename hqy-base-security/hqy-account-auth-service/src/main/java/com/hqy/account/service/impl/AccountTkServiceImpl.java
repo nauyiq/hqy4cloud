@@ -24,7 +24,7 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     private AccountDao accountDao;
 
     @Override
-    public BaseDao<Account, Long> selectDao() {
+    public BaseDao<Account, Long> getTkDao() {
         return accountDao;
     }
 
