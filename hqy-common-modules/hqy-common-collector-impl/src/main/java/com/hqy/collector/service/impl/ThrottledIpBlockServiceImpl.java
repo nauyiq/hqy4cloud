@@ -20,7 +20,7 @@ public class ThrottledIpBlockServiceImpl extends BaseTkServiceImpl<ThrottledIpBl
     private ThrottledIpBlockDao throttledIpBlockDao;
 
     @Override
-    public BaseDao<ThrottledIpBlock, Long> selectDao() {
+    public BaseDao<ThrottledIpBlock, Long> getTkDao() {
         return this.throttledIpBlockDao;
     }
 }

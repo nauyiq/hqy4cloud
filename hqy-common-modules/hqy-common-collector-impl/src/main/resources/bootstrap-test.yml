@@ -1,6 +1,6 @@
 nacos:
 #  server-addr: nacos-headless:8848
-  server-addr: nacos-headless.app.svc.cluster.local:8848
+  server-addr: nacos-headless.hqy-parent-all.svc.cluster.local:8848
   group: TEST_GROUP
   namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
 
