@@ -22,8 +22,7 @@ podTemplate(
                         image: "${podman_image}",
                         alwaysPullImage: false,
                         privileged: true,
-                        ttyEnabled: true,
-                        args: '--cgroup-manager=cgroupfs --events-backend=file')
+                        ttyEnabled: true)
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/lib/containers', hostPath: '/var/lib/containers'),
@@ -62,9 +61,9 @@ podTemplate(
                               cd ${base_dir}/hqy-common-modules/hqy-common-collector-impl/deploy
                               cp -rf ../target/lib .
                               cp -rf ../target/${service_jar} .
-                              podman build -t ${image_name} .
-                              podman login -u ${username} -p '${password}' ${registry}
-                              podman push ${image_name}
+                              podman --cgroup-manager=cgroupfs --events-backend=file build -t ${image_name} .
+                              podman --cgroup-manager=cgroupfs --events-backend=file login -u ${username} -p '${password}' ${registry}
+                              podman --cgroup-manager=cgroupfs --events-backend=file push ${image_name}
                               """
                      }
                 }
