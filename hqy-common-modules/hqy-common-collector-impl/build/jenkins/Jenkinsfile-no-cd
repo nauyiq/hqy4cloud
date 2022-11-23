@@ -23,7 +23,7 @@ podTemplate(
                         alwaysPullImage: false,
                         privileged: true,
                         ttyEnabled: true,
-                        command: '--cgroup-manager=cgroupfs --events-backend=file')
+                        args: '--cgroup-manager=cgroupfs --events-backend=file')
     ],
     volumes: [
         hostPathVolume(mountPath: '/var/lib/containers', hostPath: '/var/lib/containers'),
