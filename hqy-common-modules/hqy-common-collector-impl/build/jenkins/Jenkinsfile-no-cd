@@ -55,7 +55,7 @@ podTemplate(
          }
 
         stage('Build Image') {
-            container('docker') {
+            container('podman') {
                 stage('Package Image') {
                      withCredentials([usernamePassword(credentialsId: "${aliyun_hub}", passwordVariable: 'password', usernameVariable: 'username')]) {
                            sh """
