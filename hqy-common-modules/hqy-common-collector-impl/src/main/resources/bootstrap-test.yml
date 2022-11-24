@@ -4,7 +4,6 @@ nacos:
   group: TEST_GROUP
   namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
 
-#开发环境
 spring:
   cloud:
     nacos:
