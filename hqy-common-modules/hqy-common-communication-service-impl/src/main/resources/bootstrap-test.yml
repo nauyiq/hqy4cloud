@@ -1,0 +1,23 @@
+nacos:
+  #  server-addr: nacos-headless:8848
+  server-addr: nacos-headless.hqy-parent-all.svc.cluster.local:8848
+  group: TEST_GROUP
+  namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
+
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        file-extension: yaml
+        extension-configs[0]:
+          data-id: redis-config.yaml
+          group: ${nacos.group}
+          refresh: true
+      discovery:
+        ephemeral: false # false为永久实例，true表示临时实例
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
