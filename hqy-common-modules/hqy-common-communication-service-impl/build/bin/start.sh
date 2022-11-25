@@ -1,7 +1,8 @@
 #!/bin/bash
-set -x
+
+
 export CUSTOM_SEARCH_NAMES="application,custom"
-export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
+export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 
 
 # -XX:+UseSerialGC 年轻代和老年代都用串行收集器
@@ -13,8 +14,10 @@ export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
 # -XX:+UseZGC 使用 ZGC 垃圾回收器
 
 
+set -x
+
 #堆内存大小
-JAVA_OPT="${JAVA_OPT} -Xmx512m -Xms256m"
+JAVA_OPT="${JAVA_OPT} -Xmx${JVM_XMX} -Xms${JVM_XMS}"
 # 年轻代和年老代比例为1:2 G1垃圾回收期 如果指定NewRatio 或-Xmn参数 则G1 设定的这个目标 即MaxGCPauseMillis失效
 #JAVA_OPT="${JAVA_OPT} -XX:NewRatio=2"
 # 采用G1垃圾回收器
@@ -25,11 +28,11 @@ JAVA_OPT="${JAVA_OPT} -XX:+ParallelRefProcEnabled"
 # 用于控制对象经过GC多少次仍然存活后晋升到老年代的最大阈值 默认15
 JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 # 元数据空间, 默认为20M
-JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=100m"
+JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=${JVM_MS}"
 # 最大元数据空间 注意：metaspace太小会引起full gc
-JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=100m"
+JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=${JVM_MMS}"
 # 最大的可使用的直接内存
-JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=40M"
+#JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=40M"
 # MaxTenuringThreshold设置垃圾的最大年龄. 默认为15 年轻代经历gc进入年老代的年龄
 JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 # 服务启动的时候真实的分配物理内存给jvm
@@ -41,29 +44,21 @@ JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
 JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=200"
 
 # gc日志打印
-JAVA_OPT="${JAVA_OPT} -verbose:gc"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintGCDetails"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintGCDateStamps"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintHeapAtGC"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationStoppedTime"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintGCApplicationConcurrentTime"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintTenuringDistribution"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramBeforeFullGC"
-JAVA_OPT="${JAVA_OPT} -XX:+PrintClassHistogramAfterFullGC"
-JAVA_OPT="${JAVA_OPT} -Xloggc:/home/services/common-communication-service/logs/gc-$(date +%Y%m%d-%H%M).log"
+JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log"
+JAVA_OPT="${JAVA_OPT} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCApplicationConcurrentTime -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
+
 # 发生内存溢出时打印堆栈快照
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"
 JAVA_OPT="${JAVA_OPT} -XX:HeapDumpPath=${BASE_DIR}/heap-dump.hprof"
+JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 # 虚拟机启动的时候以UTF-8字符集编码来解析class字节码
 JAVA_OPT="${JAVA_OPT} -Dfile.encoding=UTF-8"
+#JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 
 #JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/target/logback.xml"
 #JAVA_OPT="${JAVA_OPT} --logging.file.path=${BASE_DIR}/logs/"
 
-ls ${BASE_DIR}/target/
-ls ${BASE_DIR}/target/lib
-
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/${JAVA_JAR}"
 
-
+echo "Service is starting, you can docker logs your container."
 exec $JAVA ${JAVA_OPT}
