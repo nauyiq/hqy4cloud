@@ -8,7 +8,7 @@ spring:
   application:
     name: common-communication-service
   profiles:
-    active: dev
+    active: test
   mail:
     host: smtp.qq.com
     username: 759428167@qq.com
