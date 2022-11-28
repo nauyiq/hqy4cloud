@@ -37,11 +37,11 @@ public class EndpointAuthorizationManager {
     static {
         //静态白名单endpoint.
         ENDPOINTS.addAll(Arrays.asList(
-                "favicon.io",
+                "/favicon.io","/favicon.ico",
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**",
                 //端点监控
-                "/**/actuator/**", "/**/actuator/**/**", "/**/doc.html", "/doc.html",
+                "/actuator/** /**/actuator/**", "/**/actuator/**/**", "/**/doc.html", "/doc.html",
                 //swagger
                 "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
                 "/**/v2/api-docs/**", "/**/swagger-ui.html", "/**/swagger-resources/**", "/**/webjars/**",
