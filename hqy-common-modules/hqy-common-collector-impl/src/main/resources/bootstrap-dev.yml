@@ -23,6 +23,7 @@ spring:
       discovery:
         ephemeral: false # false为永久实例，true表示临时实例
         server-addr: ${nacos.server-addr}
+        group: ${nacos.group}
         namespace: ${nacos.namespace}
 
     sentinel:
