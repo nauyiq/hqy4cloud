@@ -21,6 +21,7 @@ public class EndpointAuthorizationManager {
 
     public static final Set<String> ENDPOINTS = new CopyOnWriteArraySet<>();
     private static final Set<String> ADMIN_ENDPOINTS = new CopyOnWriteArraySet<>();
+    private static final Set<String> UPLOAD_FILES = new CopyOnWriteArraySet<>();
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
     public static EndpointAuthorizationManager getInstance() {
@@ -37,6 +38,7 @@ public class EndpointAuthorizationManager {
     static {
         //静态白名单endpoint.
         ENDPOINTS.addAll(Arrays.asList(
+                "/code",
                 "/favicon.io","/favicon.ico",
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**",
@@ -52,6 +54,11 @@ public class EndpointAuthorizationManager {
         //必须进行身份验证的endpoint.
         ADMIN_ENDPOINTS.addAll(Arrays.asList(
                 "/admin/**", "/**/admin/**"
+        ));
+
+        //文件上传endpoint.
+        UPLOAD_FILES.addAll(Arrays.asList(
+                "/upload/**", "**/upload/**"
         ));
     }
 
@@ -73,6 +80,10 @@ public class EndpointAuthorizationManager {
 
     public boolean isAdminRequest(String accessUri) {
         return ADMIN_ENDPOINTS.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, accessUri));
+    }
+
+    public boolean isUploadFileRequest(String accessUri) {
+        return UPLOAD_FILES.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, accessUri));
     }
 
 

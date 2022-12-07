@@ -31,15 +31,19 @@ public class MicroServiceConstants {
     public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
 
     /**
+     * 通用通讯服务
+     */
+    public static final String COMMUNICATION_SERVICE = "common-communication-service";
+
+    /**
      * 博客服务.
      */
     public static final String BLOG_SERVICE = "apps-blog-service";
 
     /**
-     * 通用通讯服务
+     * 后台管理服务
      */
-    public static final String COMMUNICATION_SERVICE = "common-communication-service";
-
+    public static final String ADMIN_SERVICE = "apps-admin-service";
 
 
 

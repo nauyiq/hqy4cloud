@@ -3,6 +3,8 @@ package com.hqy.gateway.config;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
 import com.hqy.access.auth.Oauth2Access;
+import com.hqy.access.auth.UploadFileSecurityChecker;
+import com.hqy.access.auth.support.DefaultUploadFileSecurityChecker;
 import com.hqy.access.auth.support.EndpointAuthorizationManager;
 import com.hqy.access.auth.support.NacosOauth2Access;
 import com.hqy.access.auth.support.ResourceInRoleCacheServer;
@@ -36,6 +38,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -89,6 +92,11 @@ public class ResourceServerConfiguration {
     }
 
     @Bean
+    public UploadFileSecurityChecker uploadFileSecurityChecker() {
+        return new DefaultUploadFileSecurityChecker();
+    }
+
+    @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
@@ -117,6 +125,9 @@ public class ResourceServerConfiguration {
         ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
         http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
 
+        //处理登录认证失败逻辑
+        http.formLogin().authenticationFailureHandler(authenticationFailureHandler());
+
         http.authorizeExchange()
                 //鉴权管理器配置
                 .anyExchange().access(authorizationManager)
@@ -130,6 +141,22 @@ public class ResourceServerConfiguration {
     }
 
 
+    @Bean
+    ServerAuthenticationFailureHandler authenticationFailureHandler() {
+        /*return (webFilterExchange, exception) -> Mono.defer(() -> {
+            ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
+            return
+        });*/
+        return (webFilterExchange, exception) -> {
+            ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
+            return Mono.defer(() -> {
+                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_USER);
+                DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.OK);
+                return response.writeWith(Flux.just(buffer));
+            });
+        };
+    }
+
     /**
      * 自定义未授权响应
      */
@@ -137,8 +164,7 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-//            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
-            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.INVALID_AUTHORIZATION);
+            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
             DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
@@ -154,8 +180,7 @@ public class ResourceServerConfiguration {
             log.warn("@@@ RestAuthenticationEntryPoint访问受限, e:{}", e.getMessage());
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
-//                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
-                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
+                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
