@@ -3,7 +3,6 @@ package com.hqy.gateway.server.auth;
 import com.hqy.access.auth.Oauth2Access;
 import com.hqy.access.auth.Oauth2Request;
 import com.hqy.access.auth.RolesAuthoritiesChecker;
-import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     private final RolesAuthoritiesChecker rolesAuthoritiesChecker;
     private final Oauth2Access oauth2Access;
 
-
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
         ServerHttpRequest request = authorizationContext.getExchange().getRequest();
@@ -50,12 +48,11 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         if (oauth2Access.isPermitRequest(oauth2Request)) {
             return Mono.just(new AuthorizationDecision(true));
         }
+
         // 判断JWT中携带的用户角色是否有权限访问
         return mono
                 .filter(Authentication::isAuthenticated)
                 .map(authorities -> getAuthorizationDecision(oauth2Request, authorities));
-//                .defaultIfEmpty(new AuthorizationDecision(true));
-
     }
 
     private AuthorizationDecision getAuthorizationDecision(Oauth2Request oauth2Request, Authentication authorities) {

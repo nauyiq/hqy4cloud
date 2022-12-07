@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.hqy.account.entity.AccountProfile;
 import com.hqy.account.service.AccountAuthService;
 import com.hqy.account.service.AccountProfileTkService;
+import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountProfileRemoteService;
 import com.hqy.account.struct.AccountProfileStruct;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
@@ -28,6 +29,7 @@ import java.util.List;
 public class AccountProfileRemoteServiceImpl extends AbstractRPCService implements AccountProfileRemoteService {
 
     private final AccountAuthService accountAuthService;
+    private final AccountBaseInfoCacheService baseInfoCacheService;
 
 
     @Override
@@ -63,6 +65,10 @@ public class AccountProfileRemoteServiceImpl extends AbstractRPCService implemen
             accountProfile.setAvatar(profileStruct.avatar);
         }
 
-        return accountProfileTkService.update(accountProfile);
+        boolean update = accountProfileTkService.update(accountProfile);
+        if (update) {
+            baseInfoCacheService.invalid(id);
+        }
+        return update;
     }
 }

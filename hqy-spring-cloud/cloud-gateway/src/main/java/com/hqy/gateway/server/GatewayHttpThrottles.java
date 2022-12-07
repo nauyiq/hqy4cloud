@@ -1,5 +1,6 @@
 package com.hqy.gateway.server;
 
+import com.hqy.access.auth.UploadFileSecurityChecker;
 import com.hqy.access.flow.FlowResult;
 import com.hqy.access.flow.server.HttpAccessFlowControlCenter;
 import com.hqy.base.common.base.lang.StringConstants;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +35,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
     private final HttpAccessFlowControlCenter flowControlCenter;
     private final ThrottlesProcess throttlesProcess;
+    private final UploadFileSecurityChecker uploadFileSecurityChecker;
 
     /**
      * 是否允许本次客户端请求
      * 针对WEB Flux的http请求封装
-     * @param request
-     * @return
+     * @param request request.
+     * @return        LimitResult.
      */
     public LimitResult limitValue(ServerHttpRequest request) {
 
@@ -104,13 +107,15 @@ public class GatewayHttpThrottles implements HttpThrottles {
             log.warn("@@@ MANUAL BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[MBK]"), LimitResult.ReasonEnum.MANUAL_BLOCKED_IP_NG);
         }
+
         // 是否是行为分析的黑名单ip
         if (throttlesProcess.isBiBlockedIp(requestIp)) {
             log.warn("@@@ BI BLOCKED IP REJECT !!! " + errMsg);
             return new LimitResult(true, errMsg.concat("[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
         //是否校验请求中的xss 聚合浓缩黑客判定方法
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
+        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
+                !uploadFileSecurityChecker.isUploadFileRequest(request.getHeader(HttpHeaders.CONTENT_TYPE), request.getUri())) {
             LimitResult hackCheckLimitResult;
             if (url.contains(StringConstants.Symbol.QUESTION_MARK)) {
                 //有?就走正常的url校验

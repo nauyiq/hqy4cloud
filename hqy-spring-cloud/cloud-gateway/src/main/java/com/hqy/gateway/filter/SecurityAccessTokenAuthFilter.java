@@ -43,8 +43,8 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        String realToken = authorization.replace(StringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
         try {
-            String realToken = authorization.replace(StringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
             String payload = JWSObject.parse(realToken).getPayload().toString();
             if (StringUtils.isBlank(payload)) {
                 return chain.filter(exchange);
@@ -54,9 +54,8 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
                         URLEncoder.encode(payload, StandardCharsets.UTF_8.name())).build();
                 exchange = exchange.mutate().request(request).build();
             }
-
-        } catch (Exception e) {
-            log.warn("Failed execute parse jwt token, cause: {}", e.getMessage());
+        } catch (Throwable cause) {
+            log.info("Failed execute to parse jwt obj, cause: {}.", cause.getMessage());
         }
 
         return chain.filter(exchange);
