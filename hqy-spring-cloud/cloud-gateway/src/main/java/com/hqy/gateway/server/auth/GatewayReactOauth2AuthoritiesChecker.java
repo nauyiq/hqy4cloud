@@ -36,7 +36,7 @@ public class GatewayReactOauth2AuthoritiesChecker extends RbacAuthoritiesChecker
         for (ResourcesInRoleStruct struct : caches) {
             List<ResourceStruct> resources = struct.getResources();
             if (CollectionUtils.isNotEmpty(resources)) {
-                allResources.addAll(resources.stream().map(e -> new ResourceConfig(e.path, e.status)).collect(Collectors.toList()));
+                allResources.addAll(resources.stream().map(e -> new ResourceConfig(e.path, e.id)).collect(Collectors.toList()));
             }
         }
         return allResources;

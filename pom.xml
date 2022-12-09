@@ -28,7 +28,7 @@
         <!-- rpc module -->
         <module>hqy-rpc</module>
         <!-- 安全模块 -->
-        <module>hqy-base-security</module>
+        <module>hqy-common-auth-security-center</module>
         <!-- 消息队列模块 -->
         <module>hqy-base-mq</module>
     </modules>

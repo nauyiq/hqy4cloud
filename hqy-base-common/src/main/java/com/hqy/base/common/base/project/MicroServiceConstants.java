@@ -43,7 +43,7 @@ public class MicroServiceConstants {
     /**
      * 后台管理服务
      */
-    public static final String ADMIN_SERVICE = "apps-admin-service";
+    public static final String ADMIN_SERVICE = "admin-manager-service";
 
 
 
