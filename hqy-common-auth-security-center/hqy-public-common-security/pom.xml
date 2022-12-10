@@ -32,12 +32,6 @@
             <groupId>com.hqy</groupId>
             <artifactId>hqy-account-auth-service-api</artifactId>
             <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.hqy</groupId>
-                    <artifactId>hqy-base-common-dao-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 

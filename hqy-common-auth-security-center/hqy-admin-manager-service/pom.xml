@@ -10,15 +10,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-account-auth-service</artifactId>
+    <groupId>com.hqy.admin</groupId>
+    <artifactId>hqy-admin-manager-service</artifactId>
 
-    <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
-        <!-- common-security -->
         <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-public-common-security</artifactId>
+            <groupId>com.hqy.auth</groupId>
+            <artifactId>hqy-common-auth-dao-service</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
@@ -30,19 +33,7 @@
 
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-account-auth-service-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.auth</groupId>
-            <artifactId>hqy-common-auth-dao-service</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-common-communication-service-api</artifactId>
+            <artifactId>hqy-common-web-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -52,12 +43,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- rpc-server starter -->
-        <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>thrift-rpc-nacos-springboot-server-starter</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
 
 
         <!--nacos-config-->
@@ -72,25 +57,15 @@
             </exclusions>
         </dependency>
 
-        <!-- spring-security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- spring-cloud-security-oauth2 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-oauth2</artifactId>
-        </dependency>
-
 
     </dependencies>
 
 
+
     <build>
-        <finalName>account-auth-service</finalName>
+        <finalName>admin-manager-service</finalName>
         <plugins>
+            <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -99,7 +74,7 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.Main</mainClass>
+                            <mainClass>com.hqy.AdminServiceMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>

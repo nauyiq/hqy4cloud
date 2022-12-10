@@ -2,7 +2,7 @@ package com.hqy.account.service.impl;
 
 import com.hqy.account.dto.AccountBaseInfoDTO;
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.entity.AccountProfile;
+import com.hqy.auth.entity.AccountProfile;
 import com.hqy.account.service.AccountAuthService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.result.CommonResultCode;

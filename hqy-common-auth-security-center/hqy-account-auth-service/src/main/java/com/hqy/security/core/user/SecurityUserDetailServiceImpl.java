@@ -1,7 +1,7 @@
 package com.hqy.security.core.user;
 
-import com.hqy.account.entity.Account;
-import com.hqy.account.service.AccountTkService;
+import com.hqy.auth.entity.Account;
+import com.hqy.auth.service.AccountTkService;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.JsonUtil;
 import lombok.RequiredArgsConstructor;

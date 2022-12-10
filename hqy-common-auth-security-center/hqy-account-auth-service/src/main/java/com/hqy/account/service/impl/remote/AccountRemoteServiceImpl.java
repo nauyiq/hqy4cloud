@@ -2,10 +2,10 @@ package com.hqy.account.service.impl.remote;
 
 import com.hqy.account.dto.AccountBaseInfoDTO;
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.entity.Account;
-import com.hqy.account.entity.AccountOauthClient;
-import com.hqy.account.entity.AccountProfile;
-import com.hqy.account.entity.AccountRole;
+import com.hqy.auth.entity.Account;
+import com.hqy.auth.entity.AccountOauthClient;
+import com.hqy.auth.entity.AccountProfile;
+import com.hqy.auth.entity.AccountRole;
 import com.hqy.account.service.AccountAuthService;
 import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountRemoteService;

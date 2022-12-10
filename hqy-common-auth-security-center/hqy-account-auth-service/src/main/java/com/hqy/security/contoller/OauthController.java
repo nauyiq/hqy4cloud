@@ -1,8 +1,8 @@
 package com.hqy.security.contoller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.hqy.account.entity.Account;
-import com.hqy.account.service.AccountTkService;
+import com.hqy.auth.entity.Account;
+import com.hqy.auth.service.AccountTkService;
 import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;

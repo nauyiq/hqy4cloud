@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hqy.auth.dao.ResourceDao">
+
+    <resultMap id="getResourcesByRolesMap" type="com.hqy.account.struct.ResourcesInRoleStruct">
+        <result property="role" column="role_name"/>
+        <collection property="resources" ofType="com.hqy.account.struct.ResourceStruct">
+            <result column="resource_path" property="path"/>
+            <result column="resource_id" property="id"/>
+            <result column="status" property="status"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getResourcesByRoles" resultMap="getResourcesByRolesMap">
+        SELECT `role_name`, `resource_path`, `status`
+        FROM t_authorities
+        WHERE `role_name` IN
+        <foreach collection="roles" item="role" open="(" close=")" separator=",">
+            #{role}
+        </foreach>
+    </select>
+
+
+</mapper>

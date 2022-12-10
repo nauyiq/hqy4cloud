@@ -2,9 +2,9 @@ package com.hqy.account.service.impl.remote;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.hqy.account.entity.AccountProfile;
+import com.hqy.auth.entity.AccountProfile;
 import com.hqy.account.service.AccountAuthService;
-import com.hqy.account.service.AccountProfileTkService;
+import com.hqy.auth.service.AccountProfileTkService;
 import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountProfileRemoteService;
 import com.hqy.account.struct.AccountProfileStruct;

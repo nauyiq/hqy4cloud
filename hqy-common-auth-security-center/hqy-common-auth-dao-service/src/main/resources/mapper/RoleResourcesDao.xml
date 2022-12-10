@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hqy.auth.dao.RoleResourcesDao">
+
+
+    <insert id="insertOrUpdateRoleResources">
+        INSERT INTO t_role_resources
+        (
+        `role_id`,
+        `role_name`,
+        `resource_id`,
+        `resource_path`
+        ) VALUES
+        <foreach collection="resources" item="resource" separator=",">
+            (
+            #{roleId},
+            #{role},
+            #{resource.id},
+            #{resource.path}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        `resource_path` = VALUES(`resource_path`),
+        `role` = VALUES(`role`)
+    </insert>
+
+
+</mapper>

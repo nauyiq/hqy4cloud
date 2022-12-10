@@ -1,9 +1,9 @@
 package com.hqy.security.service.impl;
 
-import com.hqy.account.entity.Account;
-import com.hqy.account.entity.AccountOauthClient;
-import com.hqy.account.service.AccountOauthClientTkService;
-import com.hqy.account.service.AccountTkService;
+import com.hqy.auth.entity.Account;
+import com.hqy.auth.entity.AccountOauthClient;
+import com.hqy.auth.service.AccountOauthClientTkService;
+import com.hqy.auth.service.AccountTkService;
 import com.hqy.security.dto.OauthAccountRegistryDTO;
 import com.hqy.security.service.OauthAccountService;
 import com.hqy.base.common.bind.MessageResponse;

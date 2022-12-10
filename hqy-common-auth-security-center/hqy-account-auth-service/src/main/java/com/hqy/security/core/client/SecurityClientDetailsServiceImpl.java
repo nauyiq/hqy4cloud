@@ -2,8 +2,8 @@ package com.hqy.security.core.client;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.account.entity.AccountOauthClient;
-import com.hqy.account.service.AccountOauthClientTkService;
+import com.hqy.auth.entity.AccountOauthClient;
+import com.hqy.auth.service.AccountOauthClientTkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.oauth2.provider.ClientDetails;

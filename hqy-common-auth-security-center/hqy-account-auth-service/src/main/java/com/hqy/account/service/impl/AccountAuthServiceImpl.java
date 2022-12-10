@@ -3,6 +3,7 @@ package com.hqy.account.service.impl;
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.*;
 import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.auth.service.*;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;

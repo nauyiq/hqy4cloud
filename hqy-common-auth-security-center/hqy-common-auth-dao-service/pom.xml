@@ -10,14 +10,26 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-account-auth-service-api</artifactId>
+    <groupId>com.hqy.auth</groupId>
+    <artifactId>hqy-common-auth-dao-service</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+
     <dependencies>
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-base-common-dao-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <dependency>
-            <groupId>com.hqy.rpc</groupId>
-            <artifactId>thrift-rpc-api</artifactId>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-account-auth-service-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

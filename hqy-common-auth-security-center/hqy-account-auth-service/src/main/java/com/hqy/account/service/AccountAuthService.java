@@ -2,6 +2,7 @@ package com.hqy.account.service;
 
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.auth.service.*;
 
 import java.util.List;
 
