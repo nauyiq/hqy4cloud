@@ -6,7 +6,10 @@ import com.hqy.auth.service.AccountRoleTkService;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -21,5 +24,13 @@ public class AccountRoleTkServiceImpl extends BaseTkServiceImpl<AccountRole, Int
     @Override
     public BaseDao<AccountRole, Integer> getTkDao() {
         return accountRoleDao;
+    }
+
+    @Override
+    public List<Integer> selectIdByNames(List<String> roleList) {
+        if (CollectionUtils.isEmpty(roleList)) {
+            return null;
+        }
+        return accountRoleDao.selectIdByNames(roleList);
     }
 }

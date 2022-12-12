@@ -1,9 +1,10 @@
 package com.hqy.auth.service.impl;
 
+import com.hqy.account.struct.ResourceStruct;
+import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.auth.dao.RoleResourcesDao;
 import com.hqy.auth.entity.RoleResources;
 import com.hqy.auth.service.RoleResourcesTkService;
-import com.hqy.account.struct.ResourceStruct;
 import com.hqy.base.PrimaryLessTkDao;
 import com.hqy.base.impl.PrimaryLessTkServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,10 @@ public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleRes
             return;
         }
         dao.insertOrUpdateRoleResources(roleId, role, resourceStructs);
+    }
+
+    @Override
+    public List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles) {
+        return dao.getResourcesByRoles(roles);
     }
 }

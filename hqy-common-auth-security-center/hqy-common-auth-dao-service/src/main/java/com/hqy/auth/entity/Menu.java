@@ -1,6 +1,6 @@
 package com.hqy.auth.entity;
 
-import com.hqy.base.BaseEntity;
+import com.hqy.base.PrimaryLessBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,8 +17,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "t_admin_menu")
-@EqualsAndHashCode(callSuper = true)
-public class Menu extends BaseEntity<Long> {
+public class Menu implements PrimaryLessBaseEntity {
     private static final long serialVersionUID = 6353760484084075881L;
 
     private String name;

@@ -22,6 +22,7 @@ import java.util.List;
 public final class ResourcesInRoleStruct implements Serializable {
 
     private static final long serialVersionUID = 4255955611344964526L;
+
     /**
      * 角色
      */

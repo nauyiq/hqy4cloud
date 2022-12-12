@@ -16,10 +16,5 @@ import java.util.List;
 @Repository
 public interface ResourceDao extends BaseDao<Resource, Integer> {
 
-    /**
-     * 根据角色列表获取资源
-     * @param roles 角色列表
-     * @return      ResourcesInRoleStruct.
-     */
-    List<ResourcesInRoleStruct> getResourcesByRoles(@Param("roles") List<String> roles);
+
 }

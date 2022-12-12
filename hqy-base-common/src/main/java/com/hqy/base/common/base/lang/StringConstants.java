@@ -85,6 +85,11 @@ public interface StringConstants {
         String JWT_PREFIX = "bearer ";
 
         /**
+         * JWT令牌前缀
+         */
+        String UPPERCASE_JWT_PREFIX = "Bearer ";
+
+        /**
          * Basic认证前缀
          */
         String BASIC_PREFIX = "Basic ";

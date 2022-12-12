@@ -3,6 +3,13 @@
 
 <mapper namespace="com.hqy.auth.dao.RoleResourcesDao">
 
+    <resultMap id="getResourcesByRolesMap" type="com.hqy.account.struct.ResourcesInRoleStruct">
+        <result property="role" column="role_name"/>
+        <collection property="resources" ofType="com.hqy.account.struct.ResourceStruct">
+            <result column="resource_path" property="path"/>
+            <result column="resource_id" property="id"/>
+        </collection>
+    </resultMap>
 
     <insert id="insertOrUpdateRoleResources">
         INSERT INTO t_role_resources
@@ -24,6 +31,15 @@
         `resource_path` = VALUES(`resource_path`),
         `role` = VALUES(`role`)
     </insert>
+
+    <select id="getResourcesByRoles" resultMap="getResourcesByRolesMap">
+        SELECT `role_name`, `resource_path`, `resource_id`
+        FROM t_role_resources
+        WHERE `role_name` IN
+        <foreach collection="roles" item="role" open="(" close=")" separator=",">
+            #{role}
+        </foreach>
+    </select>
 
 
 </mapper>

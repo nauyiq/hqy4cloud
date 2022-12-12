@@ -1,6 +1,7 @@
 package com.hqy.util;
 
 import com.hqy.base.common.base.lang.StringConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -131,6 +132,17 @@ public class OauthRequestUtil {
         return servletRequestAttributes.getRequest();
     }
 
+
+    public static boolean checkAuthorization(String authorization) {
+        if(authorization.startsWith(StringConstants.Auth.JWT_PREFIX) || authorization.startsWith(StringConstants.Auth.UPPERCASE_JWT_PREFIX)) {
+            return true;
+        } else if (authorization.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
+            }
+        }
+        return false;
+    }
 
 
 

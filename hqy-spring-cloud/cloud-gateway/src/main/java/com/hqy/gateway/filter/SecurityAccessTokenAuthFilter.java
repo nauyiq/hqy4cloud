@@ -2,6 +2,7 @@ package com.hqy.gateway.filter;
 
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.util.OauthRequestUtil;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -34,12 +35,9 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String authorization = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isBlank(authorization) || !authorization.startsWith(StringConstants.Auth.JWT_PREFIX)) {
+        if (StringUtils.isBlank(authorization)) {
             return chain.filter(exchange);
-        } else if (authorization.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
-            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
-            }
+        } else if (!OauthRequestUtil.checkAuthorization(authorization)) {
             return chain.filter(exchange);
         }
 

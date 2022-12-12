@@ -3,13 +3,10 @@ package com.hqy.auth.service.impl;
 import com.hqy.auth.dao.ResourceDao;
 import com.hqy.auth.entity.Resource;
 import com.hqy.auth.service.ResourceTkService;
-import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -27,8 +24,5 @@ public class ResourceTkServiceImpl extends BaseTkServiceImpl<Resource, Integer> 
         return resourceDao;
     }
 
-    @Override
-    public List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles) {
-        return resourceDao.getResourcesByRoles(roles);
-    }
+
 }
