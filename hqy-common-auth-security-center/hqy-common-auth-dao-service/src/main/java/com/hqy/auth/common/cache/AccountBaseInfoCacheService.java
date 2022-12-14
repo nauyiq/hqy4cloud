@@ -1,9 +1,8 @@
-package com.hqy.account.service.impl;
+package com.hqy.auth.common.cache;
 
-import com.hqy.account.dto.AccountBaseInfoDTO;
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.auth.entity.AccountProfile;
-import com.hqy.account.service.AccountAuthService;
+import com.hqy.auth.service.AccountAuthService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.fundation.cache.support.RedisHashCache;

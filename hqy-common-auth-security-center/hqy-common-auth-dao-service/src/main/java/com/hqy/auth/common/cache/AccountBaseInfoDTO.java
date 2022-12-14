@@ -1,4 +1,4 @@
-package com.hqy.account.dto;
+package com.hqy.auth.common.cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

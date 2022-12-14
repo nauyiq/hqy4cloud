@@ -3,6 +3,7 @@ package com.hqy.auth.dao;
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.auth.entity.Account;
 import com.hqy.base.BaseDao;
+import com.hqy.base.common.result.PageResult;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -36,4 +37,13 @@ public interface AccountDao extends BaseDao<Account, Long> {
      * @return    AccountInfoDTO Set.
      */
     List<AccountInfoDTO> getAccountInfos(@Param("ids") List<Long> ids);
+
+    /**
+     * 分页查询查询用户列表
+     * @param username     用户名
+     * @param nickname     昵称
+     * @param maxRoleLevel 用户最大角色级别
+     * @return             AccountInfoDTO.
+     */
+    List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname, @Param("maxLevel") Integer maxRoleLevel);
 }

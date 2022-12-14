@@ -1,8 +1,8 @@
-package com.hqy.admin.vo;
+package com.hqy.auth.common.vo;
 
 import cn.hutool.core.date.DateUtil;
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.auth.utils.AvatarHostUtil;
+import com.hqy.auth.common.utils.AvatarHostUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

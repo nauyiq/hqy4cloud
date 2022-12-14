@@ -3,7 +3,6 @@ package com.hqy.account.struct;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.hqy.account.dto.AccountBaseInfoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,12 +33,4 @@ public final class AccountBaseInfoStruct {
     @ThriftField(6)
     public String roles;
 
-    public AccountBaseInfoStruct(AccountBaseInfoDTO info) {
-        this.id = info.getId();
-        this.nickname = info.getNickname();
-        this.username = info.getUsername();
-        this.email = info.getEmail();
-        this.avatar = info.getAvatar();
-        this.roles = info.getRoles();
-    }
 }

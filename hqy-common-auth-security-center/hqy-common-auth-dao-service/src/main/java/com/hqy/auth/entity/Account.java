@@ -2,6 +2,8 @@ package com.hqy.auth.entity;
 
 import com.hqy.base.BaseEntity;
 import com.hqy.util.ValidationUtil;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Table;
@@ -12,9 +14,13 @@ import java.util.Date;
  * @author qiyuan.hong
  * @date 2022-03-10 21:12
  */
+
 @Slf4j
+@Data
 @Table(name = "t_account")
+@EqualsAndHashCode(callSuper = true)
 public class Account extends BaseEntity<Long> {
+    private static final long serialVersionUID = -7814298685660847656L;
 
     /**
      * 用户名
@@ -45,6 +51,11 @@ public class Account extends BaseEntity<Long> {
      * 状态
      */
     private Boolean status = true;
+
+    /**
+     * 是否删除
+     */
+    private Boolean deleted = false;
 
 
     public Account() {
@@ -89,52 +100,4 @@ public class Account extends BaseEntity<Long> {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
 }

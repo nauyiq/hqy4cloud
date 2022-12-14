@@ -4,13 +4,4 @@
 <mapper namespace="com.hqy.auth.dao.AccountRoleDao">
 
 
-    <select id="selectIdByNames" resultType="java.lang.Integer">
-        SELECT id
-        FROM t_account_role
-        WHERE name IN
-        <foreach collection="roles" open="(" close=")" separator="," item="item">
-            #{item}
-        </foreach>
-    </select>
-
 </mapper>

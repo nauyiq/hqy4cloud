@@ -1,10 +1,10 @@
-package com.hqy.account.service.impl;
+package com.hqy.auth.service.impl;
 
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.service.AccountAuthService;
+import com.hqy.auth.service.AccountAuthService;
 import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.auth.service.*;
-import com.hqy.auth.utils.AvatarHostUtil;
+import com.hqy.auth.common.utils.AvatarHostUtil;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hqy.auth.utils.AvatarHostUtil.settingAvatar;
+import static com.hqy.auth.common.utils.AvatarHostUtil.settingAvatar;
 
 /**
  * Account Auth Service Crud.
@@ -32,7 +32,7 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     private final AccountTkService accountTkService;
     private final AccountProfileTkService accountProfileTkService;
     private final AccountOauthClientTkService accountOauthClientTkService;
-    private final AccountRoleTkService accountRoleTkService;
+    private final RoleTkService roleTkService;
     private final ResourceTkService resourceTkService;
     private final RoleResourcesTkService roleResourcesTkService;
 
@@ -89,10 +89,9 @@ public class AccountAuthServiceImpl implements AccountAuthService {
         return resourceTkService;
     }
 
-
     @Override
-    public AccountRoleTkService getAccountRoleTkService() {
-        return accountRoleTkService;
+    public RoleTkService getRoleTkService() {
+        return roleTkService;
     }
 
     @Override

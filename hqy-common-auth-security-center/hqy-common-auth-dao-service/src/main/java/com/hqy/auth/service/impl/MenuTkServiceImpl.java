@@ -1,5 +1,6 @@
 package com.hqy.auth.service.impl;
 
+import com.hqy.auth.common.vo.menu.AdminMenuInfoVO;
 import com.hqy.auth.dao.MenuDao;
 import com.hqy.auth.entity.Menu;
 import com.hqy.auth.service.MenuTkService;
@@ -8,6 +9,8 @@ import com.hqy.base.impl.PrimaryLessTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -24,5 +27,11 @@ public class MenuTkServiceImpl extends PrimaryLessTkServiceImpl<Menu> implements
     @Override
     public PrimaryLessTkDao<Menu> getTkDao() {
         return menuDao;
+    }
+
+
+    @Override
+    public List<AdminMenuInfoVO> getAdminMenuInfoByParentId(long parentId) {
+        return menuDao.getAdminMenuByParentId(parentId);
     }
 }

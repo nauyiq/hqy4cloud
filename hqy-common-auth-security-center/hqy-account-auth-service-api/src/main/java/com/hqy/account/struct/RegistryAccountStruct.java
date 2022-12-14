@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * RegistryAccountStruct.
  * @author qiyuan.hong
@@ -28,10 +30,18 @@ public final class RegistryAccountStruct {
     public String nickname;
     @ThriftField(5)
     public String avatar;
+    @ThriftField(6)
+    public List<String> roles;
+    @ThriftField(7)
+    public Long createBy;
 
     public RegistryAccountStruct(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
+
+
+
+
 }

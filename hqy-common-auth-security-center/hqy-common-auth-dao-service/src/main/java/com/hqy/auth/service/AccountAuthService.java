@@ -1,4 +1,4 @@
-package com.hqy.account.service;
+package com.hqy.auth.service;
 
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.struct.ResourcesInRoleStruct;
@@ -61,10 +61,10 @@ public interface AccountAuthService {
 
 
     /**
-     * simple table crud for t_account_role
+     * simple table crud for t_role
      * @return AccountRoleTkService
      */
-    AccountRoleTkService getAccountRoleTkService();
+    RoleTkService getRoleTkService();
 
     /**
      * simple table crud for t_role_resources

@@ -1,4 +1,4 @@
-package com.hqy.auth.utils;
+package com.hqy.auth.common.utils;
 
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.base.common.base.lang.StringConstants;

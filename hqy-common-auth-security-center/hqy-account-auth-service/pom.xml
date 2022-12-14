@@ -38,6 +38,12 @@
             <groupId>com.hqy.auth</groupId>
             <artifactId>hqy-common-auth-dao-service</artifactId>
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -116,9 +116,15 @@ public enum CommonResultCode {
     EMAIL_EXIST(2005, "Account email already exist."),
 
     /**
+     * 电话已经存在
+     */
+    PHONE_EXIST(2006,"This phone already exist."),
+
+
+    /**
      * 验证码错误
      */
-    VERIFY_CODE_ERROR(2006, "Verify code error, please input right code."),
+    VERIFY_CODE_ERROR(2007, "Verify code error, please input right code."),
 
 
     /**
@@ -130,6 +136,16 @@ public enum CommonResultCode {
      * 密码错误
      */
     PASSWORD_ERROR(3002, "Please input the correct password."),
+
+    /**
+     * 注册账号失败
+     */
+    REGISTRY_ACCOUNT_ERROR(3003, "Failed execute to registry account, please check params and try again later."),
+
+    /**
+     * 空数据
+     */
+    DATA_EMPTY(4000, "Data is empty."),
 
 
     /**

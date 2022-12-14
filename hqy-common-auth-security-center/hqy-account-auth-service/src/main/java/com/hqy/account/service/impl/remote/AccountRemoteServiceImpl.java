@@ -1,15 +1,16 @@
 package com.hqy.account.service.impl.remote;
 
-import com.hqy.account.dto.AccountBaseInfoDTO;
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.auth.entity.Account;
-import com.hqy.auth.entity.AccountOauthClient;
-import com.hqy.auth.entity.AccountProfile;
-import com.hqy.auth.entity.AccountRole;
-import com.hqy.account.service.AccountAuthService;
-import com.hqy.account.service.impl.AccountBaseInfoCacheService;
 import com.hqy.account.service.remote.AccountRemoteService;
 import com.hqy.account.struct.*;
+import com.hqy.auth.common.cache.AccountBaseInfoCacheService;
+import com.hqy.auth.common.cache.AccountBaseInfoDTO;
+import com.hqy.auth.common.dto.UserDTO;
+import com.hqy.auth.entity.Account;
+import com.hqy.auth.entity.AccountOauthClient;
+import com.hqy.auth.entity.Role;
+import com.hqy.auth.service.AccountAuthService;
+import com.hqy.auth.service.AccountInfoOperationService;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.UpdateDbException;
 import com.hqy.base.common.result.CommonResultCode;
@@ -18,7 +19,6 @@ import com.hqy.rpc.thrift.struct.CommonResultStruct;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.JsonUtil;
 import com.hqy.util.ValidationUtil;
-import com.hqy.util.identity.ProjectSnowflakeIdWorker;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.hqy.auth.common.Constants.DEFAULT_COMMON_ROLE;
+
 /**
  * @author qiyuan.hong
  * @date 2022-03-16 11:18
@@ -41,6 +43,7 @@ import java.util.stream.Collectors;
 public class AccountRemoteServiceImpl extends AbstractRPCService implements AccountRemoteService {
     private static final Logger log = LoggerFactory.getLogger(AccountRemoteServiceImpl.class);
 
+    private final AccountInfoOperationService accountInfoOperationService;
     private final AccountAuthService accountAuthService;
     private final AccountBaseInfoCacheService baseInfoCacheService;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -81,8 +84,14 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
         if (accountBaseInfoDTO == null) {
             return new AccountBaseInfoStruct();
         }
-        return new AccountBaseInfoStruct(accountBaseInfoDTO);
+        return buildAccountBaseInfoStruct(accountBaseInfoDTO);
     }
+
+    private AccountBaseInfoStruct buildAccountBaseInfoStruct(AccountBaseInfoDTO accountBaseInfoDTO) {
+        return new AccountBaseInfoStruct(accountBaseInfoDTO.getId(), accountBaseInfoDTO.getNickname(), accountBaseInfoDTO.getUsername(),
+                accountBaseInfoDTO.getEmail(), accountBaseInfoDTO.getAvatar(), accountBaseInfoDTO.getRoles());
+    }
+
 
     @Override
     public List<AccountBaseInfoStruct> getAccountBaseInfos(List<Long> ids) {
@@ -91,7 +100,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
             return Collections.emptyList();
         }
 
-        return caches.stream().map(AccountBaseInfoStruct::new).collect(Collectors.toList());
+        return caches.stream().map(this::buildAccountBaseInfoStruct).collect(Collectors.toList());
     }
 
     @Override
@@ -99,46 +108,43 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
         if (!ValidationUtil.validateEmail(email)) {
             return new CommonResultStruct(false, CommonResultCode.INVALID_EMAIL.code, CommonResultCode.INVALID_EMAIL.message);
         }
-        Account account = accountAuthService.getAccountTkService().queryAccountByUsernameOrEmail(email);
-        if (account != null) {
+        if (accountInfoOperationService.checkParamExist(null, email, null)) {
             return new CommonResultStruct(false, CommonResultCode.EMAIL_EXIST.code, CommonResultCode.EMAIL_EXIST.message);
         }
-        account = accountAuthService.getAccountTkService().queryAccountByUsernameOrEmail(username);
-        if (account != null) {
+        if (accountInfoOperationService.checkParamExist(username, null, null)) {
             return new CommonResultStruct(false, CommonResultCode.USERNAME_EXIST.code, CommonResultCode.USERNAME_EXIST.message);
         }
-
         return new CommonResultStruct(true, CommonResultCode.SUCCESS.code, CommonResultCode.SUCCESS.message);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public CommonResultStruct registryAccount(RegistryAccountStruct struct) {
         if (StringUtils.isAnyBlank(struct.username, struct.email, struct.password)) {
             return new CommonResultStruct(false, CommonResultCode.ERROR_PARAM.code, CommonResultCode.ERROR_PARAM.message);
         }
+
+        //注册角色为空时 使用默认角色名
+        if (CollectionUtils.isEmpty(struct.roles)) {
+            struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
+        }
+
+        // check params
+        if (accountInfoOperationService.checkParamExist(struct.username, struct.email, null)) {
+            return new CommonResultStruct(false, CommonResultCode.ERROR_PARAM.code, "username or email already exist.");
+        }
+
+        //check roles.
+        List<Role> roles = accountAuthService.getRoleTkService().queryRolesByNames(struct.roles);
+        if (struct.createBy != null && !accountInfoOperationService.checkEnableModifyRoles(struct.createBy, roles)) {
+            return new CommonResultStruct(false, CommonResultCode.ERROR_PARAM.code, "Not permission create user.");
+        }
+
         try {
-            long id = ProjectSnowflakeIdWorker.getInstance().nextId();
-            String nickname = StringUtils.isBlank(struct.nickname) ? struct.username : struct.nickname;
-            String password = passwordEncoder.encode(struct.password);
-
-            // insert account.
-            Account account = new Account(id, struct.username, password, struct.email);
-            if (!accountAuthService.getAccountTkService().insert(account)) {
-                return new CommonResultStruct(false, CommonResultCode.SYSTEM_ERROR_INSERT_FAIL.code, "Failed execute to insert account.");
+            UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, null,
+                    struct.password, struct.avatar, true, struct.roles);
+            if (!accountInfoOperationService.registryAccount(userDTO, roles)) {
+                return new CommonResultStruct(CommonResultCode.SYSTEM_ERROR_INSERT_FAIL);
             }
-            // insert oauth client.
-            AccountOauthClient oauthClient = new AccountOauthClient(id, struct.username, password);
-            if (!accountAuthService.getAccountOauthClientTkService().insert(oauthClient)) {
-                throw new UpdateDbException("Failed execute to insert to oauth2 client.");
-            }
-
-            //insert Account profile
-            AccountProfile accountProfile = new AccountProfile(id, nickname, struct.avatar);
-            if (!accountAuthService.getAccountProfileTkService().insert(accountProfile)) {
-                throw new UpdateDbException("Failed execute to insert to account profile.");
-            }
-
             return new CommonResultStruct();
         } catch (Throwable cause) {
             log.error("Failed execute to registry account. struct: {}, cause: {}.", JsonUtil.toJson(struct), cause.getMessage());
@@ -208,7 +214,7 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
             return;
         }
         //获取对应role数据。
-        AccountRole accountRole = accountAuthService.getAccountRoleTkService().queryOne(new AccountRole(role));
+        Role accountRole = accountAuthService.getRoleTkService().queryOne(new Role(role));
         AssertUtil.notNull(accountRole, "Not found role name: " + role);
         accountAuthService.getRoleResourcesTkService().insertOrUpdateRoleResources(accountRole.getId(), role, resourceStructs);
 
