@@ -1,7 +1,7 @@
 package com.hqy.auth.service.impl;
 
 import com.hqy.account.struct.ResourceStruct;
-import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.account.struct.AuthenticationStruct;
 import com.hqy.auth.dao.RoleResourcesDao;
 import com.hqy.auth.entity.RoleResources;
 import com.hqy.auth.service.RoleResourcesTkService;
@@ -34,16 +34,21 @@ public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleRes
 
 
     @Override
-    public void insertOrUpdateRoleResources(Integer roleId, String role, List<ResourceStruct> resourceStructs) {
+    public boolean insertOrUpdateRoleResources(Integer roleId, String role, List<ResourceStruct> resourceStructs) {
         if (role == null || StringUtils.isBlank(role) || CollectionUtils.isEmpty(resourceStructs)) {
             log.warn("Failed execute to insertOrUpdateRoleResources, params: {}, {}, {}", roleId, role, resourceStructs);
-            return;
+            return false;
         }
-        dao.insertOrUpdateRoleResources(roleId, role, resourceStructs);
+        return dao.insertOrUpdateRoleResources(roleId, role, resourceStructs) > 0;
     }
 
     @Override
-    public List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles) {
-        return dao.getResourcesByRoles(roles);
+    public List<AuthenticationStruct> getAuthoritiesResourcesByRoles(List<String> roles) {
+        return dao.getAuthoritiesResourcesByRoles(roles);
+    }
+
+    @Override
+    public boolean deleteByRoleAndResourceIds(Integer roleId, List<Integer> resourceIds) {
+        return dao.deleteByRoleAndResourceIds(roleId, resourceIds) > 0;
     }
 }

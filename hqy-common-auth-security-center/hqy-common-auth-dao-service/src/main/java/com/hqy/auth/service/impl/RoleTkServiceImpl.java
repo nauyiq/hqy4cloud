@@ -1,9 +1,13 @@
 package com.hqy.auth.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hqy.auth.common.vo.AccountRoleVO;
 import com.hqy.auth.dao.RoleDao;
 import com.hqy.auth.entity.Role;
 import com.hqy.auth.service.RoleTkService;
 import com.hqy.base.BaseDao;
+import com.hqy.base.common.result.PageResult;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -48,7 +52,13 @@ public class RoleTkServiceImpl extends BaseTkServiceImpl<Role, Integer> implemen
     }
 
     @Override
-    public List<Role> queryByIds(List<Integer> roleIds) {
-        return roleDao.queryByIds(roleIds);
+    public PageResult<AccountRoleVO> getPageRoles(String roleName, String note, Integer maxRoleLevel, Integer current, Integer size) {
+        PageHelper.startPage(current, size);
+        List<AccountRoleVO> accountRoleVOS = roleDao.getPageRoleVo(roleName, note, maxRoleLevel);
+        if (CollectionUtils.isEmpty(accountRoleVOS)) {
+            return new PageResult<>();
+        }
+        PageInfo<AccountRoleVO> pageInfo = new PageInfo<>(accountRoleVOS);
+        return new PageResult<>(pageInfo.getPageNum(), pageInfo.getTotal(), pageInfo.getPages(), pageInfo.getList());
     }
 }

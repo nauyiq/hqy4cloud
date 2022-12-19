@@ -3,19 +3,19 @@ package com.hqy.access.auth;
 import com.hqy.base.common.base.lang.StringConstants;
 
 /**
- * OathRequest.
- * @see Oauth2Access
+ * AuthenticationRequest.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/10/10 13:56
  */
-public interface Oauth2Request {
+public interface AuthenticationRequest {
 
     /**
      * 当前请求的ip.
      * @return ip.
      */
     String requestIp();
+
 
     /**
      * 当前请求的uri
@@ -38,6 +38,14 @@ public interface Oauth2Request {
      * @return access_token
      */
     default String requestAccessToken() {
+        return StringConstants.EMPTY;
+    }
+
+    /**
+     * 获取当前请求的方法
+     * @return HTTP_METHOD
+     */
+    default String method() {
         return StringConstants.EMPTY;
     }
 

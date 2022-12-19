@@ -1,9 +1,12 @@
 package com.hqy.auth.entity;
 
 import com.hqy.base.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Table;
-import java.util.Date;
 
 /**
  *
@@ -12,7 +15,11 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/10/21 17:55
  */
+@Data
 @Table(name = "t_resource")
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Resource extends BaseEntity<Integer> {
     private static final long serialVersionUID = -8196411527093312895L;
 
@@ -27,38 +34,24 @@ public class Resource extends BaseEntity<Integer> {
     private String path;
 
     /**
+     * http method?
+     */
+    private String method;
+
+    /**
+     * 权限标识
+     */
+    private String permission;
+
+    /**
+     * 是否删除
+     */
+    private Boolean deleted = false;
+
+
+    /**
      * 状态
      */
     private Boolean status;
 
-    public Resource(Date date, String name, String path) {
-        super(date);
-        this.name = name;
-        this.path = path;
-        this.status = true;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 }

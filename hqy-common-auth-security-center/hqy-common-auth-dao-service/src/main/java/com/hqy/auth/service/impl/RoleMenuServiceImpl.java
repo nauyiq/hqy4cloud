@@ -7,6 +7,7 @@ import com.hqy.base.PrimaryLessTkDao;
 import com.hqy.base.impl.PrimaryLessTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * @author qiyuan.hong
@@ -23,5 +24,13 @@ public class RoleMenuServiceImpl extends PrimaryLessTkServiceImpl<RoleMenu> impl
     @Override
     public PrimaryLessTkDao<RoleMenu> getTkDao() {
         return dao;
+    }
+
+    @Override
+    public boolean deleteByRoleId(Integer id) {
+        Example example = new Example(RoleMenu.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleId", id);
+        return dao.deleteByExample(example) > 0;
     }
 }

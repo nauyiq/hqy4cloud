@@ -113,10 +113,8 @@ public class AccountInfoOperationServiceImpl implements AccountInfoOperationServ
         AssertUtil.isTrue(accountAuthService.getAccountOauthClientTkService().insert(accountOauthClient),
                 "Failed execute to insert to oauth2 client, data: " + JsonUtil.toJson(accountOauthClient));
 
-
         return true;
     }
-
 
     private Account buildAccount(UserDTO userDTO, List<Role> roles) {
         List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
@@ -145,7 +143,6 @@ public class AccountInfoOperationServiceImpl implements AccountInfoOperationServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editAccount(UserDTO userDTO, List<Role> roles, Account account, List<Role> oldRoles) {
-
         // update account.
         setAccountInfo(account, userDTO, roles);
         AssertUtil.isTrue(accountAuthService.getAccountTkService().update(account), INVALID_UPLOAD_FILE.message);
@@ -190,17 +187,16 @@ public class AccountInfoOperationServiceImpl implements AccountInfoOperationServ
         account.setRoles(org.apache.commons.lang3.StringUtils.join(roleNames, COMMA));
     }
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(Account account) {
         account.setDeleted(true);
         AssertUtil.isTrue(accountAuthService.getAccountTkService().update(account), "Failed execute to update account.");
-
         AccountOauthClient accountOauthClient = accountAuthService.getAccountOauthClientTkService().queryById(account.getId());
         if (accountOauthClient != null) {
             accountOauthClient.setStatus(false);
             AssertUtil.isTrue(accountAuthService.getAccountOauthClientTkService().update(accountOauthClient), "Failed execute to update oauth client.");
         }
     }
+
 }

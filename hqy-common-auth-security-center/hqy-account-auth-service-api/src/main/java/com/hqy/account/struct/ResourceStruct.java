@@ -21,6 +21,7 @@ import java.io.Serializable;
 public final class ResourceStruct implements Serializable {
 
     private static final long serialVersionUID = -7981979868867409270L;
+
     /**
      * 资源id
      */
@@ -33,4 +34,20 @@ public final class ResourceStruct implements Serializable {
     @ThriftField(2)
     public String path;
 
+    /**
+     * 请求方法
+     */
+    @ThriftField(3)
+    public String method;
+
+    /**
+     * 权限标志
+     */
+    @ThriftField(4)
+    public String permission;
+
+    public ResourceStruct(Integer id, String path) {
+        this.id = id;
+        this.path = path;
+    }
 }

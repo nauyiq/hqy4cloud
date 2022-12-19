@@ -17,4 +17,21 @@ public interface AdminMenuRequestService {
      */
     DataResponse getAdminMenu(Long id);
 
+
+    /**
+     * 获取某个角色拥有的菜单权限
+     * @param roleId 角色id
+     * @return       response
+     */
+    DataResponse getMenuPermissionsIdByRoleId(Integer roleId);
+
+
+    /**
+     * 获取树形结构的菜单栏
+     * @param id 用户id
+     * @return   response.
+     */
+    DataResponse getAdminTreeMenu(Long id);
+
+
 }

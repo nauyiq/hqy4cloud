@@ -25,11 +25,13 @@ public interface PrimaryLessTkService<T extends PrimaryLessBaseEntity> {
      */
     List<T> queryList(T t);
 
+
     /**
      * 查询所有
      * @return 查询表中所有的数据.
      */
     List<T> queryAll();
+
 
 
     /**
@@ -69,7 +71,6 @@ public interface PrimaryLessTkService<T extends PrimaryLessBaseEntity> {
      * @return      是否删除数据成功
      */
     boolean delete(T t);
-
 
     /**
      * 返回tk-mapper

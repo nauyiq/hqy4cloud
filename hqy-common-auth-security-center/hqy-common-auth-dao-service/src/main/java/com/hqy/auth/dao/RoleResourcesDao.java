@@ -1,6 +1,6 @@
 package com.hqy.auth.dao;
 
-import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.account.struct.AuthenticationStruct;
 import com.hqy.auth.entity.RoleResources;
 import com.hqy.account.struct.ResourceStruct;
 import com.hqy.base.PrimaryLessTkDao;
@@ -24,12 +24,20 @@ public interface RoleResourcesDao extends PrimaryLessTkDao<RoleResources> {
      * @param role            角色名
      * @param resourceStructs 角色资源.
      */
-    void insertOrUpdateRoleResources(@Param("roleId") Integer roleId, @Param("role") String role, @Param("resources") List<ResourceStruct> resourceStructs);
+    int insertOrUpdateRoleResources(@Param("roleId") Integer roleId, @Param("role") String role, @Param("resources") List<ResourceStruct> resourceStructs);
 
     /**
      * 根据角色列表获取资源
      * @param roles 角色列表
      * @return      ResourcesInRoleStruct.
      */
-    List<ResourcesInRoleStruct> getResourcesByRoles(@Param("roles") List<String> roles);
+    List<AuthenticationStruct> getAuthoritiesResourcesByRoles(@Param("roles") List<String> roles);
+
+    /**
+     * 根据角色id和资源id列表删除数据
+     * @param roleId      角色id
+     * @param resourceIds 资源表id集合
+     * @return            result.
+     */
+    int deleteByRoleAndResourceIds(@Param("roleId") Integer roleId, @Param("resourceIds") List<Integer> resourceIds);
 }

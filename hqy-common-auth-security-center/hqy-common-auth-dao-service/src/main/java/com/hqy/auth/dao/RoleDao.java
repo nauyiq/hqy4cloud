@@ -1,5 +1,6 @@
 package com.hqy.auth.dao;
 
+import com.hqy.auth.common.vo.AccountRoleVO;
 import com.hqy.auth.entity.Role;
 import com.hqy.base.BaseDao;
 import org.apache.ibatis.annotations.Param;
@@ -43,5 +44,14 @@ public interface RoleDao extends BaseDao<Role, Integer> {
      * @return        roles
      */
     List<Role> queryByIds(@Param("ids") List<Integer> roleIds);
+
+    /**
+     * 分页获取角色vo
+     * @param roleName      模糊查询-角色名
+     * @param note          模糊查询-备注
+     * @param maxRoleLevel  最大可访问角色等级
+     * @return              List for AccountRoleVO.
+     */
+    List<AccountRoleVO> getPageRoleVo(@Param("roleName") String roleName, @Param("note")String note, @Param("maxRoleLevel")Integer maxRoleLevel);
 
 }

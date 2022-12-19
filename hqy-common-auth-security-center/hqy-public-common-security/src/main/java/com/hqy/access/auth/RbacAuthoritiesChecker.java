@@ -1,9 +1,8 @@
 package com.hqy.access.auth;
 
+import com.hqy.access.auth.dto.ResourceConfig;
+import com.hqy.access.auth.dto.RoleAuthenticationDTO;
 import com.hqy.access.auth.support.EndpointAuthorizationManager;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * RbacAuthoritiesChecker.
@@ -31,49 +31,57 @@ public abstract class RbacAuthoritiesChecker implements RolesAuthoritiesChecker 
 
 
     @Override
-    public boolean isPermitAuthority(String role, String resource) {
-        return isPermitAuthorities(Collections.singletonList(role), resource);
+    public boolean isPermitAuthority(String role, AuthenticationRequest request) {
+        return isPermitAuthorities(Collections.singletonList(role), request);
     }
 
     @Override
-    public boolean isPermitAuthorities(List<String> roles, String resource) {
-        // Not found access roles.
-        if (CollectionUtils.isEmpty(roles) || StringUtils.isBlank(resource)) {
-            return false;
-        }
-
-        // If 'root', any resource can access.
+    public boolean isPermitAuthorities(List<String> roles, AuthenticationRequest request) {
+        // If 'root', any request can access.
         if (roles.stream().anyMatch(role -> role.equalsIgnoreCase(ROOT))) {
             return true;
         }
 
+        // Not found access roles.
+        if (CollectionUtils.isEmpty(roles) || Objects.isNull(request)) {
+            return false;
+        }
+
         // 获取角色对资源的配置项.
-        List<ResourceConfig> accessResources = accessResourcesInRoles(roles);
+        List<RoleAuthenticationDTO> accessResources = accessResourcesInRoles(roles);
         if (CollectionUtils.isNotEmpty(accessResources)) {
-            AntPathMatcher antPathMatcher = EndpointAuthorizationManager.getInstance().getAntPathMatcher();
-            for (ResourceConfig resourceConfig : accessResources) {
-                if (antPathMatcher.match(resourceConfig.path, resource)) {
-                    return true;
+            for (RoleAuthenticationDTO accessResource : accessResources) {
+               if (checkResourceMatch(accessResource.getResourceConfigs(), request)) {
+                   return true;
                 }
             }
         }
         return false;
     }
 
+    private boolean checkResourceMatch(List<ResourceConfig> resourceConfigs, AuthenticationRequest request) {
+        if (CollectionUtils.isEmpty(resourceConfigs)) {
+            return false;
+        }
+        AntPathMatcher antPathMatcher = EndpointAuthorizationManager.getInstance().getAntPathMatcher();
+        String method = request.method();
+        String uri = request.requestUri();
+        return resourceConfigs.stream().anyMatch(resourceConfig ->  {
+            String resourceConfigMethod = resourceConfig.getMethod();
+            if (StringUtils.isBlank(resourceConfigMethod)) {
+                return antPathMatcher.match(resourceConfig.getPath(), uri);
+            } else {
+                return method.equals(resourceConfigMethod) && antPathMatcher.match(resourceConfig.getPath(), uri);
+            }
+        });
+    }
+
+
     /**
      * 根据角色列表获取可以访问的资源列表
      * @param roles 角色列表
      * @return      资源列表.
      */
-    protected abstract List<ResourceConfig> accessResourcesInRoles(List<String> roles);
-
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ResourceConfig {
-        private String path;
-        private Integer id;
-    }
+    protected abstract List<RoleAuthenticationDTO> accessResourcesInRoles(List<String> roles);
 
 }

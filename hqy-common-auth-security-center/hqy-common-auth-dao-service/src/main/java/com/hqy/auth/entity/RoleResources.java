@@ -27,7 +27,11 @@ public class RoleResources implements PrimaryLessBaseEntity, Serializable {
 
     private Integer resourceId;
 
-    private String resourcePath;
+    public RoleResources(Integer roleId) {
+        this.roleId = roleId;
+    }
 
-
+    public RoleResources(String roleName) {
+        this.roleName = roleName;
+    }
 }

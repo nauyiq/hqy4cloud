@@ -73,4 +73,5 @@ public abstract class PrimaryLessTkServiceImpl<T extends PrimaryLessBaseEntity> 
         PrimaryLessTkDao<T> dao = checkDao();
         return dao.delete(t) > 0;
     }
+
 }

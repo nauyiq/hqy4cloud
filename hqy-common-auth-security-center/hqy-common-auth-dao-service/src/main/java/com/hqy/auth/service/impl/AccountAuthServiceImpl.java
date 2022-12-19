@@ -1,16 +1,22 @@
 package com.hqy.auth.service.impl;
 
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.auth.service.AccountAuthService;
-import com.hqy.account.struct.ResourcesInRoleStruct;
-import com.hqy.auth.service.*;
+import com.hqy.account.struct.AuthenticationStruct;
+import com.hqy.account.struct.ResourceStruct;
 import com.hqy.auth.common.utils.AvatarHostUtil;
+import com.hqy.auth.entity.AccountRole;
+import com.hqy.auth.entity.Resource;
+import com.hqy.auth.entity.Role;
+import com.hqy.auth.entity.RoleResources;
+import com.hqy.auth.service.*;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +41,7 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     private final RoleTkService roleTkService;
     private final ResourceTkService resourceTkService;
     private final RoleResourcesTkService roleResourcesTkService;
-
+    private final AccountRoleTkService accountRoleTkService;
 
     @Override
     public AccountInfoDTO getAccountInfo(Long id) {
@@ -62,11 +68,57 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     }
 
     @Override
-    public List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles) {
+    public List<AuthenticationStruct> getAuthoritiesResourcesByRoles(List<String> roles) {
         if (CollectionUtils.isEmpty(roles)) {
             return Collections.emptyList();
         }
-        return roleResourcesTkService.getResourcesByRoles(roles);
+        return roleResourcesTkService.getAuthoritiesResourcesByRoles(roles);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteRole(Role role) {
+        role.setDeleted(true);
+        if (!roleTkService.update(role)) {
+            return false;
+        }
+
+        // delete account_role
+        List<AccountRole> accountRoles = accountRoleTkService.queryList(new AccountRole(role.getId()));
+        if (CollectionUtils.isNotEmpty(accountRoles)) {
+            AssertUtil.isTrue(accountRoleTkService.deleteByAccountRoles(accountRoles), "Failed execute to delete account role.");
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateRoleResources(Role role, List<Integer> resourceIds) {
+        List<Resource> resources = resourceTkService.queryByIds(resourceIds);
+        if (CollectionUtils.isEmpty(resources)) {
+            return false;
+        }
+        roleResourcesTkService.insertOrUpdateRoleResources(role.getId(), role.getName(),
+                resources.stream().map(resource -> new ResourceStruct(resource.getId(), resource.getPath(), resource.getMethod(), resource.getPermission())).collect(Collectors.toList()));
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean modifyRoleResources(Role role, List<Resource> resources) {
+        // 获取修改之前的角色资源数据.
+        List<AuthenticationStruct> authoritiesResourcesByRoles = getAuthoritiesResourcesByRoles(Collections.singletonList(role.getName()));
+        if (CollectionUtils.isNotEmpty(authoritiesResourcesByRoles) && CollectionUtils.isNotEmpty(authoritiesResourcesByRoles.get(0).getResources())) {
+            List<ResourceStruct> resourceStructs = authoritiesResourcesByRoles.get(0).getResources();
+            // permission表示是menu表需要进行校验的资源数据.
+            List<Integer> resourceIds = resourceStructs.stream().filter(e -> StringUtils.isNotBlank(e.getPermission())).map(ResourceStruct::getId).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(resourceIds)) {
+                AssertUtil.isTrue(roleResourcesTkService.deleteByRoleAndResourceIds(role.getId(), resourceIds), "Failed execute to delete role resources.");
+            }
+        }
+        List<ResourceStruct> structs = resources.stream().map(resource -> new ResourceStruct(resource.getId(), resource.getPath())).collect(Collectors.toList());
+        return roleResourcesTkService.insertOrUpdateRoleResources(role.getId(), role.getName(), structs);
     }
 
     @Override
@@ -92,6 +144,11 @@ public class AccountAuthServiceImpl implements AccountAuthService {
     @Override
     public RoleTkService getRoleTkService() {
         return roleTkService;
+    }
+
+    @Override
+    public AccountRoleTkService getAccountRoleTkService() {
+        return accountRoleTkService;
     }
 
     @Override

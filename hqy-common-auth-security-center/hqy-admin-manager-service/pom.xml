@@ -31,6 +31,19 @@
             </exclusions>
         </dependency>
 
+        <!-- common-security -->
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-public-common-security</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy</groupId>
             <artifactId>hqy-common-web-service</artifactId>
@@ -42,7 +55,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
 
 
         <!--nacos-config-->

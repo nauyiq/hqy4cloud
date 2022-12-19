@@ -1,6 +1,6 @@
 package com.hqy.auth.service;
 
-import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.account.struct.AuthenticationStruct;
 import com.hqy.auth.entity.RoleResources;
 import com.hqy.account.struct.ResourceStruct;
 import com.hqy.base.PrimaryLessTkService;
@@ -20,14 +20,22 @@ public interface RoleResourcesTkService extends PrimaryLessTkService<RoleResourc
      * @param roleId          角色id
      * @param role            角色名
      * @param resourceStructs 角色资源.
+     * @return                result.
      */
-    void insertOrUpdateRoleResources(Integer roleId, String role, List<ResourceStruct> resourceStructs);
+    boolean insertOrUpdateRoleResources(Integer roleId, String role, List<ResourceStruct> resourceStructs);
 
     /**
      * 根据角色列表获取资源
      * @param roles 角色列表
      * @return      ResourcesInRoleStruct.
      */
-    List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles);
+    List<AuthenticationStruct> getAuthoritiesResourcesByRoles(List<String> roles);
 
+    /**
+     * 根据角色id和资源id列表删除数据
+     * @param roleId      角色id
+     * @param resourceIds 资源表id集合
+     * @return            result.
+     */
+    boolean deleteByRoleAndResourceIds(Integer roleId, List<Integer> resourceIds);
 }

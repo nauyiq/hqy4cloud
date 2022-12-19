@@ -1,5 +1,6 @@
 package com.hqy.auth.dao;
 
+import com.hqy.auth.entity.Resource;
 import com.hqy.auth.entity.RoleMenu;
 import com.hqy.base.PrimaryLessTkDao;
 import org.apache.ibatis.annotations.Param;
@@ -22,4 +23,6 @@ public interface RoleMenuDao extends PrimaryLessTkDao<RoleMenu>  {
      * @return      权限列表
      */
     List<String> getManuPermissionsByRoleIds(@Param("ids") List<Integer> ids);
+
+
 }

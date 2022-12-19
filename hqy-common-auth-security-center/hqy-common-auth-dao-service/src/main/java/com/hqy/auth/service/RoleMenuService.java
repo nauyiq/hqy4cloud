@@ -10,4 +10,11 @@ import com.hqy.base.PrimaryLessTkService;
  * @date 2022/12/10 19:25
  */
 public interface RoleMenuService extends PrimaryLessTkService<RoleMenu> {
+
+    /**
+     * 删除角色菜单
+     * @param id role id
+     * @return   result.
+     */
+    boolean deleteByRoleId(Integer id);
 }

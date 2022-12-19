@@ -5,6 +5,8 @@ import com.hqy.base.BaseEntity;
 import com.hqy.base.BaseTkService;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.ReflectUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,21 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     public T queryOne(T t) {
         BaseDao<T, PK> dao = checkDao();
         return dao.selectOne(t);
+    }
+
+    @Override
+    public List<T> queryByIds(List<PK> pks) {
+        return queryByIds("id", pks);
+    }
+
+    @Override
+    public List<T> queryByIds(String pkName, List<PK> pks) {
+        BaseDao<T, PK> dao = checkDao();
+        Class<T> targetGenericClass = ReflectUtils.getTargetGenericClass(getClass(), 0);
+        Example example = new Example(targetGenericClass);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn(pkName, pks);
+        return dao.selectByExample(example);
     }
 
     @Override

@@ -4,6 +4,10 @@ import com.hqy.auth.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author qiyuan.hong
@@ -16,7 +20,12 @@ import lombok.NoArgsConstructor;
 public class AccountRoleVO {
 
     private Integer id;
+    @NotEmpty(message = "Role name should not be empty.")
     private String name;
+    private String note;
+    @NotNull(message = "Role level should not be null.")
+    private Integer level;
+    private String created;
 
     public AccountRoleVO(Role role) {
         this.id = role.getId();

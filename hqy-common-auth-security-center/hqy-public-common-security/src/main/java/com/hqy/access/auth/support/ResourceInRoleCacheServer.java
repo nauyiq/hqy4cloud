@@ -1,7 +1,7 @@
 package com.hqy.access.auth.support;
 
 import com.hqy.account.service.remote.AccountRemoteService;
-import com.hqy.account.struct.ResourcesInRoleStruct;
+import com.hqy.account.struct.AuthenticationStruct;
 import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.fundation.cache.support.RedisHashCache;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
@@ -22,34 +22,34 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2022/10/24 14:08
  */
-public class ResourceInRoleCacheServer extends RedisHashCache<ResourcesInRoleStruct, String> {
+public class ResourceInRoleCacheServer extends RedisHashCache<AuthenticationStruct, String> {
     private static final Logger log = LoggerFactory.getLogger(ResourceInRoleCacheServer.class);
 
     public ResourceInRoleCacheServer(RedissonClient redissonClient) {
-        super(MicroServiceConstants.ACCOUNT_SERVICE, ResourcesInRoleStruct.class.getSimpleName(), redissonClient);
+        super(MicroServiceConstants.ACCOUNT_SERVICE, AuthenticationStruct.class.getSimpleName(), redissonClient);
     }
 
     @Override
-    protected List<ResourcesInRoleStruct> getCachesFromDb(List<String> roles) {
+    protected List<AuthenticationStruct> getCachesFromDb(List<String> roles) {
         AccountRemoteService accountRemoteService = RPCClient.getRemoteService(AccountRemoteService.class);
-        List<ResourcesInRoleStruct> resources = accountRemoteService.getAuthoritiesResourcesByRoles(roles);
+        List<AuthenticationStruct> resources = accountRemoteService.getAuthoritiesResourcesByRoles(roles);
         if (CollectionUtils.isEmpty(resources)) {
             return Collections.emptyList();
         }
-        return resources.stream().map(e -> new ResourcesInRoleStruct(e.getRole(), e.getResources())).collect(Collectors.toList());
+        return resources.stream().map(e -> new AuthenticationStruct(e.getRole(), e.getResources())).collect(Collectors.toList());
     }
 
     @Override
-    protected ResourcesInRoleStruct getCacheFromDb(String role) {
-        List<ResourcesInRoleStruct> cachesFromDb = getCachesFromDb(Collections.singletonList(role));
+    protected AuthenticationStruct getCacheFromDb(String role) {
+        List<AuthenticationStruct> cachesFromDb = getCachesFromDb(Collections.singletonList(role));
         if (CollectionUtils.isEmpty(cachesFromDb)) {
-            return new ResourcesInRoleStruct();
+            return new AuthenticationStruct();
         }
         return cachesFromDb.get(0);
     }
 
     @Override
-    protected void updateDb(String role, ResourcesInRoleStruct cache) {
+    protected void updateDb(String role, AuthenticationStruct cache) {
         if (StringUtils.isBlank(role) || cache == null) {
             return;
         }

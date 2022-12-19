@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * ResourceInRoleStruct.
+ * AuthenticationStruct.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/10/24 14:32
@@ -19,7 +19,7 @@ import java.util.List;
 @ThriftStruct
 @NoArgsConstructor
 @AllArgsConstructor
-public final class ResourcesInRoleStruct implements Serializable {
+public final class AuthenticationStruct implements Serializable {
 
     private static final long serialVersionUID = 4255955611344964526L;
 
@@ -30,12 +30,9 @@ public final class ResourcesInRoleStruct implements Serializable {
     public String role;
 
     /**
-     * 资源
+     * 资源配置
      */
     @ThriftField(2)
     public List<ResourceStruct> resources;
-
-
-
 
 }

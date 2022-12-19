@@ -200,11 +200,11 @@ public class AccountRemoteServiceImpl extends AbstractRPCService implements Acco
     }
 
     @Override
-    public List<ResourcesInRoleStruct> getAuthoritiesResourcesByRoles(List<String> roles) {
+    public List<AuthenticationStruct> getAuthoritiesResourcesByRoles(List<String> roles) {
         if (CollectionUtils.isEmpty(roles)) {
             return Collections.emptyList();
         }
-        return accountAuthService.getResourcesByRoles(roles);
+        return accountAuthService.getAuthoritiesResourcesByRoles(roles);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.hqy.auth.service;
 
+import com.hqy.auth.common.vo.AccountRoleVO;
 import com.hqy.auth.entity.Role;
 import com.hqy.base.BaseTkService;
+import com.hqy.base.common.result.PageResult;
 
 import java.util.List;
 
@@ -34,10 +36,15 @@ public interface RoleTkService extends BaseTkService<Role, Integer> {
      */
     List<Role> getRolesList(Integer maxRoleLevel, Boolean status);
 
+
     /**
-     * 根据ids查询角色列表
-     * @param roleIds roles 角色id集合
-     * @return              角色列表.
+     * 分页获取角色列表
+     * @param roleName      角色名
+     * @param note          备注
+     * @param maxRoleLevel  最大可访问等级
+     * @param current       第几页
+     * @param size          一共几页
+     * @return              PageResult for AccountRoleVO.
      */
-    List<Role> queryByIds(List<Integer> roleIds);
+    PageResult<AccountRoleVO> getPageRoles(String roleName, String note, Integer maxRoleLevel, Integer current, Integer size);
 }

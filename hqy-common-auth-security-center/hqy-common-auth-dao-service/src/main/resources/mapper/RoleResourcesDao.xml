@@ -3,11 +3,13 @@
 
 <mapper namespace="com.hqy.auth.dao.RoleResourcesDao">
 
-    <resultMap id="getResourcesByRolesMap" type="com.hqy.account.struct.ResourcesInRoleStruct">
+    <resultMap id="AuthenticationStructMap" type="com.hqy.account.struct.AuthenticationStruct">
         <result property="role" column="role_name"/>
         <collection property="resources" ofType="com.hqy.account.struct.ResourceStruct">
-            <result column="resource_path" property="path"/>
-            <result column="resource_id" property="id"/>
+            <result column="path" property="path"/>
+            <result column="id" property="id"/>
+            <result column="method" property="method"/>
+            <result column="permission" property="permission"/>
         </collection>
     </resultMap>
 
@@ -16,26 +18,38 @@
         (
         `role_id`,
         `role_name`,
-        `resource_id`,
-        `resource_path`
+        `resource_id`
         ) VALUES
         <foreach collection="resources" item="resource" separator=",">
             (
             #{roleId},
             #{role},
-            #{resource.id},
-            #{resource.path}
+            #{resource.id}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
-        `resource_path` = VALUES(`resource_path`),
-        `role` = VALUES(`role`)
+        `role_name` = VALUES(`role_name`)
     </insert>
 
-    <select id="getResourcesByRoles" resultMap="getResourcesByRolesMap">
-        SELECT `role_name`, `resource_path`, `resource_id`
-        FROM t_role_resources
-        WHERE `role_name` IN
+    <delete id="deleteByRoleAndResourceIds">
+        DELETE
+        FROM `t_role_resources`
+        WHERE role_id = #{roleId} AND resource_id IN
+        <foreach collection="resourceIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getAuthoritiesResourcesByRoles" resultMap="AuthenticationStructMap">
+        SELECT
+        rr.role_name,
+        r.id,
+        r.path,
+        r.method,
+        r.permission
+        FROM t_role_resources rr
+        LEFT JOIN `t_resource` r ON rr.resource_id = r.id
+        WHERE rr.`role_name` IN
         <foreach collection="roles" item="role" open="(" close=")" separator=",">
             #{role}
         </foreach>

@@ -4,4 +4,8 @@
 <mapper namespace="com.hqy.auth.dao.AccountRoleDao">
 
 
+    <update id="updateRoleLevel">
+        UPDATE `t_account_role` SET level = #{level}
+        WHERE role_id = #{roleId}
+    </update>
 </mapper>

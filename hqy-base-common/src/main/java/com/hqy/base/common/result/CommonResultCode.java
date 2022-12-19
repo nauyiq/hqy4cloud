@@ -143,6 +143,23 @@ public enum CommonResultCode {
     REGISTRY_ACCOUNT_ERROR(3003, "Failed execute to registry account, please check params and try again later."),
 
     /**
+     * 权限不够，无法设置的账户权限
+     */
+    LIMITED_SETTING_ROLE_LEVEL(3004, "Access authority limit ro modify role level."),
+
+    /**
+     * 角色名已经存在
+     */
+    ROLE_NAME_EXIST(3005, "This role name already exist."),
+
+
+    /**
+     * 找不到该角色
+     */
+    NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
+
+
+    /**
      * 空数据
      */
     DATA_EMPTY(4000, "Data is empty."),

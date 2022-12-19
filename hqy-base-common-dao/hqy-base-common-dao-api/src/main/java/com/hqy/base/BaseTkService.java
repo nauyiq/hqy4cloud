@@ -26,6 +26,20 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     T queryOne(T t);
 
+    /**
+     * 根据主键批量查询,
+     * @param pks    主键集合
+     * @return       返回实体的集合
+     */
+    List<T> queryByIds(List<PK> pks);
+
+    /**
+     * 根据主键批量查询,
+     * @param pkName 主键属性名, 默认id
+     * @param pks    主键集合
+     * @return       返回实体的集合
+     */
+    List<T> queryByIds(String pkName, List<PK> pks);
 
     /**
      * 根据实体属性查找 t不能为null

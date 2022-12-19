@@ -1,12 +1,8 @@
 package com.hqy.auth.dao;
 
 import com.hqy.auth.entity.Resource;
-import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.BaseDao;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author qiyuan.hong

@@ -29,7 +29,6 @@
     </resultMap>
 
 
-
     <select id="getAdminMenuByParentId" resultMap="adminMenuInfoResultMap">
         SELECT
             parent.id,
@@ -56,4 +55,16 @@
         WHERE parent.parent_id = #{parentId} AND parent.deleted = 0 AND children.deleted = 0
         ORDER BY children.sort_order,children.id ASC
     </select>
+
+    <select id="queryResourcesByMenuIds" resultType="com.hqy.auth.entity.Resource">
+        SELECT r.*
+        FROM `t_admin_menu` m
+                 LEFT JOIN `t_resource` r ON m.`permission` = r.`permission`
+        WHERE m.`deleted` = 0  AND  m.`id` IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
 </mapper>

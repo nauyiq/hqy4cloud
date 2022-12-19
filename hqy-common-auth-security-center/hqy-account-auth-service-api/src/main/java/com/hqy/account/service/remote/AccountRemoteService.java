@@ -109,7 +109,7 @@ public interface AccountRemoteService extends RPCService {
      * @return       ResourcesInRoleStruct.
      */
     @ThriftMethod
-    List<ResourcesInRoleStruct> getAuthoritiesResourcesByRoles(@ThriftField(1)List<String> roles);
+    List<AuthenticationStruct> getAuthoritiesResourcesByRoles(@ThriftField(1)List<String> roles);
 
 
     /**

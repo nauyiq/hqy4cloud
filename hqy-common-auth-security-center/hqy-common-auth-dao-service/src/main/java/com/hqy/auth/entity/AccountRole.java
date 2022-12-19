@@ -26,4 +26,13 @@ public class AccountRole implements PrimaryLessBaseEntity {
     public AccountRole(Long accountId) {
         this.accountId = accountId;
     }
+
+    public AccountRole(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public AccountRole(Long accountId, Integer roleId) {
+        this.accountId = accountId;
+        this.roleId = roleId;
+    }
 }

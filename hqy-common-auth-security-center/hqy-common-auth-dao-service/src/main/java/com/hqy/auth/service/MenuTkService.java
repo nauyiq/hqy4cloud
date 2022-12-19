@@ -2,7 +2,7 @@ package com.hqy.auth.service;
 
 import com.hqy.auth.common.vo.menu.AdminMenuInfoVO;
 import com.hqy.auth.entity.Menu;
-import com.hqy.base.PrimaryLessTkService;
+import com.hqy.base.BaseTkService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/12/10 19:15
  */
-public interface MenuTkService extends PrimaryLessTkService<Menu> {
+public interface MenuTkService extends BaseTkService<Menu, Long> {
 
     /**
      * 获取目录菜单
@@ -20,4 +20,5 @@ public interface MenuTkService extends PrimaryLessTkService<Menu> {
      * @return                  AdminMenuInfoVO.
      */
     List<AdminMenuInfoVO> getAdminMenuInfoByParentId(long firstMenuParentId);
+
 }

@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class BaseMenuVO {
 
-    private Integer id;
+    private Long id;
     private Integer parentId;
     private Integer menuType;
     private String icon;
@@ -19,7 +19,7 @@ public class BaseMenuVO {
     private String label;
     private String path;
     private Integer sortOrder;
-    private String keepAlive;
+    private String keepAlive = "0";
     private Integer status;
     private String visible;
 

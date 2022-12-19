@@ -23,4 +23,9 @@ public class RoleMenu implements PrimaryLessBaseEntity {
 
     private Integer menuId;
 
+    public RoleMenu(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+
 }

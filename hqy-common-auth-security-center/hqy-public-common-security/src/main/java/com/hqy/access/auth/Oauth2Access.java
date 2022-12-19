@@ -10,10 +10,10 @@ public interface Oauth2Access {
 
     /**
      * 此次请求是否允许放行.
-     * @param request {@link Oauth2Request}
+     * @param request {@link AuthenticationRequest}
      * @return         result.
      */
-    boolean isPermitRequest(Oauth2Request request);
+    boolean isPermitRequest(AuthenticationRequest request);
 
 
 }

@@ -1,7 +1,11 @@
 package com.hqy.admin.service;
 
+import com.hqy.auth.common.dto.RoleMenuDTO;
 import com.hqy.auth.common.vo.menu.AdminMenuInfoVO;
+import com.hqy.auth.common.vo.menu.AdminTreeMenuVo;
+import com.hqy.auth.entity.Role;
 import com.hqy.auth.service.MenuTkService;
+import com.hqy.auth.service.RoleMenuService;
 
 import java.util.List;
 
@@ -28,10 +32,33 @@ public interface AdminOperationService {
     List<AdminMenuInfoVO> getAdminMenuInfo(List<String> roles);
 
     /**
+     * 获取树形菜单
+     * @param roles 角色列表
+     * @return      {@link AdminTreeMenuVo}
+     */
+    List<AdminTreeMenuVo> getAdminTreeMenu(List<String> roles);
+
+    /**
+     * 更新角色拥有的菜单权限
+     * @param role      角色
+     * @param roleMenus 拥有的菜单
+     * @return          result.
+     */
+    boolean updateRoleMenus(Role role, RoleMenuDTO roleMenus);
+
+    /**
      * menuTkService.
      * @return MenuTkService.
      */
     MenuTkService menuTkService();
+
+
+    /**
+     * roleMenuService
+     * @return RoleMenuService.
+     */
+    RoleMenuService roleMenuService();
+
 
 
 }

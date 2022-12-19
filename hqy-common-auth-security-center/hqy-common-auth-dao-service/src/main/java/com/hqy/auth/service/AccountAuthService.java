@@ -1,8 +1,9 @@
 package com.hqy.auth.service;
 
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.struct.ResourcesInRoleStruct;
-import com.hqy.auth.service.*;
+import com.hqy.account.struct.AuthenticationStruct;
+import com.hqy.auth.entity.Resource;
+import com.hqy.auth.entity.Role;
 
 import java.util.List;
 
@@ -33,7 +34,31 @@ public interface AccountAuthService {
      * @param roles 资源
      * @return      ResourcesInRoleStruct
      */
-    List<ResourcesInRoleStruct> getResourcesByRoles(List<String> roles);
+    List<AuthenticationStruct> getAuthoritiesResourcesByRoles(List<String> roles);
+
+    /**
+     * 删除角色
+     * @param role 角色
+     * @return     result.
+     */
+    boolean deleteRole(Role role);
+
+    /**
+     * 更新角色资源
+     * @param role        角色
+     * @param resourceIds 资源ids.
+     * @return            result.
+     */
+    boolean updateRoleResources(Role role, List<Integer> resourceIds);
+
+    /**
+     * 更新角色资源
+     * @param role      角色
+     * @param resources 资源列表
+     * @return          result.
+     */
+    boolean modifyRoleResources(Role role, List<Resource> resources);
+
 
     /**
      * simple table crud for t_account.
@@ -62,14 +87,22 @@ public interface AccountAuthService {
 
     /**
      * simple table crud for t_role
-     * @return AccountRoleTkService
+     * @return RoleTkService
      */
     RoleTkService getRoleTkService();
+
+    /**
+     * simple table crud for t_account_role
+     * @return AccountRoleTkService
+     */
+    AccountRoleTkService getAccountRoleTkService();
+
 
     /**
      * simple table crud for t_role_resources
      * @return RoleResourcesTkService.
      */
     RoleResourcesTkService getRoleResourcesTkService();
+
 
 }

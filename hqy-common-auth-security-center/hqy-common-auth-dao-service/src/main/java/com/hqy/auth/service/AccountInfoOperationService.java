@@ -60,4 +60,6 @@ public interface AccountInfoOperationService {
      * @param account 用户
      */
     void deleteUser(Account account);
+
+
 }

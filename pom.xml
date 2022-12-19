@@ -74,6 +74,7 @@
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
+        <mapstruct.version>1.5.2.Final</mapstruct.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
@@ -320,6 +321,20 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
+        <!--mapstruct核心-->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <!--mapstruct编译-->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>log4j</groupId>
