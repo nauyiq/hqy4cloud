@@ -1,6 +1,5 @@
 package com.hqy.auth.dao;
 
-import com.hqy.auth.entity.Resource;
 import com.hqy.auth.entity.RoleMenu;
 import com.hqy.base.PrimaryLessTkDao;
 import org.apache.ibatis.annotations.Param;

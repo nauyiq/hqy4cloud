@@ -2,7 +2,7 @@ package com.hqy.admin.service.impl;
 
 import com.hqy.access.auth.support.ResourceInRoleCacheServer;
 import com.hqy.admin.service.AdminOperationService;
-import com.hqy.auth.common.convert.TreeMenuVoConverter;
+import com.hqy.auth.common.convert.MenuConverter;
 import com.hqy.auth.common.dto.RoleMenuDTO;
 import com.hqy.auth.common.vo.menu.AdminMenuInfoVO;
 import com.hqy.auth.common.vo.menu.AdminTreeMenuVo;
@@ -74,9 +74,11 @@ public class AdminOperationServiceImpl implements AdminOperationService {
     }
 
     @Override
-    public List<AdminTreeMenuVo> getAdminTreeMenu(List<String> roles) {
-        // 查询所有的菜单.
-        List<Menu> menus = menuTkService.queryList(new Menu());
+    public List<AdminTreeMenuVo> getAdminTreeMenu(List<String> roles, Boolean status) {
+        // 查询菜单.
+        Menu queryMenu = new Menu();
+        queryMenu.setStatus(status);
+        List<Menu> menus = menuTkService.queryList(queryMenu);
         if (CollectionUtils.isEmpty(menus)) {
             return Collections.emptyList();
         }
@@ -121,7 +123,7 @@ public class AdminOperationServiceImpl implements AdminOperationService {
 
 
     private AdminTreeMenuVo menuConvertMenuInfo(Menu menu, List<String> permissions) {
-        AdminTreeMenuVo treeMenuVo = TreeMenuVoConverter.CONVERTER.convert(menu);
+        AdminTreeMenuVo treeMenuVo = MenuConverter.CONVERTER.convert(menu);
         String permission = menu.getPermission();
         if (StringUtils.isNotBlank(permission)) {
             treeMenuVo.setVisible(permissions.contains(permission) ? "1" : "0");

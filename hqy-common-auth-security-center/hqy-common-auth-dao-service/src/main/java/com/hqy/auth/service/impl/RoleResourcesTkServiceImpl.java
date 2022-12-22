@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -50,5 +51,14 @@ public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleRes
     @Override
     public boolean deleteByRoleAndResourceIds(Integer roleId, List<Integer> resourceIds) {
         return dao.deleteByRoleAndResourceIds(roleId, resourceIds) > 0;
+    }
+
+    @Override
+    public boolean deleteByResourceIdAndRoleIds(Integer resourceId, List<Integer> roleIds) {
+        Example example = new Example(RoleResources.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("resourceId", resourceId);
+        criteria.andIn("roleId", roleIds);
+        return dao.deleteByExample(example) > 0;
     }
 }

@@ -4,6 +4,7 @@ import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.foundation.limit.LimitResult;
+import com.hqy.gateway.server.CodeAuthorizationChecker;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.gateway.util.ResponseUtil;
@@ -23,6 +24,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
+import static com.hqy.gateway.server.AbstractCodeServer.RANDOM_KEY;
+
 /**
  * HTTP节流过滤器 判断当前请求是否是安全的、ip是否超限等。
  * @author qiyuan.hong
@@ -34,6 +39,7 @@ import reactor.core.publisher.Mono;
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     private final GatewayHttpThrottles httpThrottles;
+    private final CodeAuthorizationChecker codeAuthorizationChecker;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -47,12 +53,16 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS || httpThrottles.isWhiteURI(uri)) {
             return chain.filter(exchange);
         }
-
-        String requestIp = RequestUtil.getIpAddress(request);
-        //如果是人工白名单则放行
-        if (httpThrottles.isManualWhiteIp(requestIp)) {
+        // 白名单
+        if (httpThrottles.isManualWhiteIp( RequestUtil.getIpAddress(request))) {
             return chain.filter(exchange);
         }
+
+        //TODO 是否需要校验二维码
+        /*if (!codeAuthorizationChecker.checkCode(uri, request.getQueryParams().getFirst(RANDOM_KEY),  request.getQueryParams().getFirst("code"))) {
+
+        }*/
+
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
             //没有启用限流器...继续执行责任链 ->

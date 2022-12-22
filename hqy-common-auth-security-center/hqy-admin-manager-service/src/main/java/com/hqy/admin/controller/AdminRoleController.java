@@ -42,6 +42,15 @@ public class AdminRoleController {
         return requestService.getPageRoles(roleName, note, id, current, size);
     }
 
+    @GetMapping("/roles")
+    public DataResponse getRoles(HttpServletRequest request) {
+        Long id = OauthRequestUtil.idFromOauth2Request(request);
+        if (id == null) {
+            return CommonResultCode.dataResponse(USER_NOT_FOUND);
+        }
+        return requestService.getRoles(id);
+    }
+
     @GetMapping("/role/checkLevel")
     public DataResponse checkLevel(Integer level, HttpServletRequest request) {
         if (level == null) {

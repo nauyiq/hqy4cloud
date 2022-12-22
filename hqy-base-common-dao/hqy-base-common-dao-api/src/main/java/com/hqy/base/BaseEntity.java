@@ -47,4 +47,10 @@ public abstract class BaseEntity<PK> implements Serializable {
         this.created = date;
         this.updated = date;
     }
+
+    public void setDateTime() {
+        Date now = new Date();
+        this.created = now;
+        this.updated = now;
+    }
 }

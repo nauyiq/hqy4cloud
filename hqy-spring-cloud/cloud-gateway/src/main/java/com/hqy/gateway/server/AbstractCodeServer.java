@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @date 2022/12/7 10:23
  */
-public abstract class AbstractImageCodeServer  {
+public abstract class AbstractCodeServer {
 
     public static final String RANDOM_KEY = "randomStr";
     protected final static DefaultKeyGenerator KEY_GENERATOR = new DefaultKeyGenerator(MicroServiceConstants.GATEWAY, RANDOM_KEY);

@@ -25,6 +25,13 @@ public interface AdminRoleRequestService {
     DataResponse getPageRoles(String roleName, String note, Long id, Integer current, Integer size);
 
     /**
+     * 获取角色列表
+     * @param id 角色id
+     * @return   response.
+     */
+    DataResponse getRoles(Long id);
+
+    /**
      * 检查当前账号需要设置的角色level是否合法
      * @param id    账号id
      * @param level 角色level
@@ -68,4 +75,6 @@ public interface AdminRoleRequestService {
      * @return          response.
      */
     DataResponse updateRoleMenus(RoleMenuDTO roleMenus);
+
+
 }

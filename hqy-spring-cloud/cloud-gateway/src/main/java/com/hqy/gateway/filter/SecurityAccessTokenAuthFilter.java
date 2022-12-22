@@ -1,7 +1,7 @@
 package com.hqy.gateway.filter;
 
+import cn.hutool.core.net.URLEncoder;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.util.OauthRequestUtil;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 
@@ -49,7 +48,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
             } else {
                 // 从token中解析用户信息并设置到Header中去
                 request = request.mutate().header(StringConstants.Auth.JWT_PAYLOAD_KEY,
-                        URLEncoder.encode(payload, StandardCharsets.UTF_8.name())).build();
+                        URLEncoder.DEFAULT.encode(payload, StandardCharsets.UTF_8)).build();
                 exchange = exchange.mutate().request(request).build();
             }
         } catch (Throwable cause) {

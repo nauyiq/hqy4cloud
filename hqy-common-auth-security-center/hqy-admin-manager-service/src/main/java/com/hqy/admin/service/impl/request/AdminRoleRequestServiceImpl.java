@@ -48,6 +48,13 @@ public class AdminRoleRequestServiceImpl implements AdminRoleRequestService {
     }
 
     @Override
+    public DataResponse getRoles(Long id) {
+        Integer maxRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
+        List<Role> rolesList = accountAuthService.getRoleTkService().getRolesList(maxRoleLevel, true);
+        return CommonResultCode.dataResponse(rolesList);
+    }
+
+    @Override
     public DataResponse checkLevel(Long id, Integer level) {
         int maxAuthorityRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
         if (maxAuthorityRoleLevel <= level) {

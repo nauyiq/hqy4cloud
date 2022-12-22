@@ -130,7 +130,7 @@ public enum CommonResultCode {
     /**
      * 错误的用户名或者密码
      */
-    INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
+    INVALID_ACCESS_USER(3001, "Username or password incorrect."),
 
     /**
      * 密码错误
@@ -163,6 +163,21 @@ public enum CommonResultCode {
      * 空数据
      */
     DATA_EMPTY(4000, "Data is empty."),
+
+    /**
+     * 获取不到Menu
+     */
+    NOT_FOUND_MENU(5001, "Not found menu, please check you input again."),
+
+    /**
+     * 无效的菜单类型
+     */
+    INVALID_MENU_TYPE(5002, "Invalid menu type, please check your input again."),
+
+    /**
+     * 获取不到资源
+     */
+    NOT_FOUND_RESOURCE(5002, "Not found resource, please check you input again."),
 
 
     /**

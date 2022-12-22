@@ -117,16 +117,14 @@ public class ResourceServerConfiguration {
                 .publicKey(rsaPublicKey());
 
         //自定义处理JWT请求头过期或签名错误的结果
-        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint())
+        http.oauth2ResourceServer()
+                .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
         //option请求放行
         .authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
         ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
         http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
-
-        //处理登录认证失败逻辑
-        http.formLogin().authenticationFailureHandler(authenticationFailureHandler());
 
         http.authorizeExchange()
                 //鉴权管理器配置
@@ -143,10 +141,6 @@ public class ResourceServerConfiguration {
 
     @Bean
     ServerAuthenticationFailureHandler authenticationFailureHandler() {
-        /*return (webFilterExchange, exception) -> Mono.defer(() -> {
-            ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
-            return
-        });*/
         return (webFilterExchange, exception) -> {
             ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
             return Mono.defer(() -> {

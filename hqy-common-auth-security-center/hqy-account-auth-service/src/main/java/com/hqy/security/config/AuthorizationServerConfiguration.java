@@ -2,6 +2,8 @@ package com.hqy.security.config;
 
 import com.hqy.security.core.client.SecurityClientDetailsServiceImpl;
 import com.hqy.security.core.user.SecurityUserDetailServiceImpl;
+import com.hqy.security.endpoint.CustomAuthenticationEntryPoint;
+import com.hqy.security.endpoint.CustomClientCredentialsTokenEndpointFilter;
 import com.hqy.security.server.PasswordEnhanceTokenGranter;
 import com.hqy.security.server.RedisAuthorizationCodeServer;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +59,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private final RedisAuthorizationCodeServer redisAuthorizationCodeServer;
 
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-    /**
-     * 客户端信息配置
-     * @param clients
-     * @throws Exception
-     */
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients
-                .withClientDetails(clientDetailsService);
+        clients.withClientDetails(clientDetailsService);
     }
 
     /**
@@ -83,7 +82,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-
         // Token增强
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         List<TokenEnhancer> tokenEnhancers = new ArrayList<>();
@@ -93,10 +91,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
         //token存储模式设定 默认为InMemoryTokenStore模式存储到内存中
         endpoints.tokenStore(tokenStore);
-
         //处理授权码
         endpoints.authorizationCodeServices(redisAuthorizationCodeServer);
-
         //处理oauth 模式
         ClientDetailsService clientDetails = endpoints.getClientDetailsService();
         AuthorizationServerTokenServices tokenServices = endpoints.getTokenServices();
@@ -133,10 +129,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        CustomClientCredentialsTokenEndpointFilter endpointFilter = new CustomClientCredentialsTokenEndpointFilter(security);
+        endpointFilter.afterPropertiesSet();
+        endpointFilter.setAuthenticationEntryPoint(authenticationEntryPoint);
+        security.addTokenEndpointAuthenticationFilter(endpointFilter);
+        security.authenticationEntryPoint(authenticationEntryPoint);
+
         security
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients();
+                .checkTokenAccess("isAuthenticated()");
+//                .allowFormAuthenticationForClients();
     }
 
 
@@ -149,7 +151,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
 
         DefaultTokenServices tokenServices = new DefaultTokenServices();
-        //令牌存储策略
         tokenServices.setTokenStore(endpoints.getTokenStore());
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setClientDetailsService(clientDetailsService);

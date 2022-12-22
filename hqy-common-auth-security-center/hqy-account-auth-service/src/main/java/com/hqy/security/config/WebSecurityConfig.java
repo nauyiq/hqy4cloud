@@ -25,11 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-
-
 
     @Bean
     @Override
@@ -52,22 +49,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.csrf().disable();
-
         http.authorizeRequests().antMatchers(EndpointAuthorizationManager.ENDPOINTS.toArray(new String[0])).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
                 .and().httpBasic();
-
-        // 基于密码 等模式可以无session,不支持授权码模式
-        /*if (authenticationEntryPoint == null) {
-            http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-            http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        } else {
-            // 授权码模式单独处理，需要session的支持，此模式可以支持所有oauth2的认证
-            http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-        }*/
 
         http.headers().frameOptions().disable();
         http.headers().cacheControl();

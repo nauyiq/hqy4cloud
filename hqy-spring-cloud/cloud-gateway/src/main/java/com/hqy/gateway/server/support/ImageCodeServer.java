@@ -1,10 +1,8 @@
-package com.hqy.gateway.handler;
+package com.hqy.gateway.server.support;
 
 import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
-import com.hqy.fundation.cache.redis.support.SmartRedisManager;
-import com.hqy.gateway.server.AbstractImageCodeServer;
+import com.hqy.gateway.server.AbstractCodeServer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,7 +24,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ImageCodeHandler extends AbstractImageCodeServer implements HandlerFunction<ServerResponse> {
+public class ImageCodeServer extends AbstractCodeServer implements HandlerFunction<ServerResponse> {
 
     private static final Integer DEFAULT_IMAGE_WIDTH = 100;
     private static final Integer DEFAULT_IMAGE_HEIGHT = 40;

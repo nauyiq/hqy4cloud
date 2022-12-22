@@ -1,8 +1,6 @@
 package com.hqy.auth.common.convert;
 
-import cn.hutool.core.date.DateUtil;
-
-import java.util.Date;
+import org.mapstruct.Named;
 
 /**
  * @author qiyuan.hong
@@ -11,12 +9,21 @@ import java.util.Date;
  */
 public class CommonConverter {
 
-    public Integer booleanConvert(boolean value) {
-        return value ? 1 : 0;
+    @Named("booleanToInteger")
+    public static Integer booleanToInteger(Boolean status) {
+        return status ? 1 : 0;
     }
 
-    public String dateConvert(Date date) {
-        return DateUtil.formatDateTime(date);
+
+    @Named("IntegerToBoolean")
+    public static Boolean IntegerToBoolean(Integer status) {
+        return status == 1;
     }
+
+    @Named("statusConvertString")
+    public static String statusConvertString(Boolean status) {
+        return status.toString();
+    }
+
 
 }

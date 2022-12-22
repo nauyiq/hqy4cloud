@@ -75,7 +75,7 @@ public class AccountOauthClient extends BaseEntity<Long> {
     /**
      * 是否可用
      */
-    private Boolean status = true;
+    private Boolean status;
 
     public AccountOauthClient() {
     }

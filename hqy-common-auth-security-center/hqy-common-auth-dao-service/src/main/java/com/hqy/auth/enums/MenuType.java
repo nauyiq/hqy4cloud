@@ -3,6 +3,10 @@ package com.hqy.auth.enums;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -24,6 +28,16 @@ public enum MenuType {
     ;
 
     public final int type;
+
+
+    public static MenuType findMenuType(int type) {
+        for (MenuType value : values()) {
+            if (value.type == type) {
+                return value;
+            }
+        }
+        return null;
+    }
 
 
 }

@@ -33,10 +33,11 @@ public interface AdminOperationService {
 
     /**
      * 获取树形菜单
-     * @param roles 角色列表
+     * @param roles  角色列表
+     * @param status 菜单栏状态
      * @return      {@link AdminTreeMenuVo}
      */
-    List<AdminTreeMenuVo> getAdminTreeMenu(List<String> roles);
+    List<AdminTreeMenuVo> getAdminTreeMenu(List<String> roles, Boolean status);
 
     /**
      * 更新角色拥有的菜单权限

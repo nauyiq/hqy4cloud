@@ -1,18 +1,21 @@
 package com.hqy.admin.controller;
 
 import com.hqy.admin.service.request.AdminMenuRequestService;
+import com.hqy.auth.common.dto.MenuDTO;
+import com.hqy.auth.enums.MenuType;
 import com.hqy.base.common.bind.DataResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.OauthRequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import static com.hqy.base.common.result.CommonResultCode.INVALID_MENU_TYPE;
+import static com.hqy.base.common.result.CommonResultCode.NOT_FOUND_MENU;
 
 /**
  * @author qiyuan.hong
@@ -34,11 +37,42 @@ public class AdminMenuController {
         return requestService.getAdminMenu(id);
     }
 
-    /**
-     * 获取这个角色拥有菜单权限jihe
-     * @param roleId
-     * @return
-     */
+    @PostMapping("/menu")
+    public DataResponse addMenu(@Valid @RequestBody MenuDTO menuDTO) {
+        if (MenuType.findMenuType(menuDTO.getMenuType()) == null) {
+            return CommonResultCode.dataResponse(INVALID_MENU_TYPE);
+        }
+        return requestService.addMenu(menuDTO);
+    }
+
+    @PutMapping("/menu")
+    public DataResponse editMenu(@Valid @RequestBody MenuDTO menuDTO) {
+        if (MenuType.findMenuType(menuDTO.getMenuType()) == null) {
+            return CommonResultCode.dataResponse(INVALID_MENU_TYPE);
+        }
+        if (menuDTO.getId() == null) {
+            return CommonResultCode.dataResponse(NOT_FOUND_MENU);
+        }
+        return requestService.editMenu(menuDTO);
+    }
+
+    @DeleteMapping("/menu/{menuId}")
+    public DataResponse deleteMenu(@PathVariable("menuId") Long menuId) {
+        if (menuId == null) {
+            return CommonResultCode.dataResponse(NOT_FOUND_MENU);
+        }
+        return requestService.deleteMenu(menuId);
+    }
+
+    @GetMapping("/menu/{menuId}")
+    public DataResponse getMenuById(@PathVariable Long menuId) {
+        if (menuId == null) {
+            return CommonResultCode.dataResponse(NOT_FOUND_MENU);
+        }
+        return requestService.getMenuById(menuId);
+    }
+
+
     @GetMapping("/menu/tree/{roleId}")
     public DataResponse getMenuPermissionsIdByRoleId(@PathVariable("roleId") Integer roleId) {
         if (roleId == null) {
@@ -48,10 +82,10 @@ public class AdminMenuController {
     }
 
     @GetMapping("/menu/tree")
-    public DataResponse getTreeMenu(HttpServletRequest request) {
+    public DataResponse getTreeMenu(HttpServletRequest request, Boolean status) {
         Long id = OauthRequestUtil.idFromOauth2Request(request);
         AssertUtil.notNull(id, "Access account id should not be null.");
-        return requestService.getAdminTreeMenu(id);
+        return requestService.getAdminTreeMenu(id, status);
     }
 
 

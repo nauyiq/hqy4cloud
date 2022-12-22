@@ -1,7 +1,5 @@
 package com.hqy.security.core.client;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.hqy.auth.entity.AccountOauthClient;
 import com.hqy.auth.service.AccountOauthClientTkService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,6 @@ import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author qiyuan.hong
@@ -24,19 +21,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class SecurityClientDetailsServiceImpl implements ClientDetailsService {
 
-    private static final Cache<String, AccountOauthClient> CACHE = CacheBuilder.newBuilder().initialCapacity(512).expireAfterAccess(15L, TimeUnit.MINUTES).build();
 
     private final AccountOauthClientTkService accountOauthClientTkService;
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-        AccountOauthClient accountOauthClient = CACHE.getIfPresent(clientId);
+        AccountOauthClient  accountOauthClient = accountOauthClientTkService.queryOne(new AccountOauthClient(clientId));
         if (Objects.isNull(accountOauthClient)) {
-            accountOauthClient = accountOauthClientTkService.queryOne(new AccountOauthClient(clientId));
-            if (Objects.isNull(accountOauthClient)) {
-                throw new NoSuchClientException("No client with requested id: " + clientId);
-            }
-            CACHE.put(clientId, accountOauthClient);
+            throw new NoSuchClientException("No client with requested id: " + clientId);
         }
 
         if (!accountOauthClient.getStatus()) {

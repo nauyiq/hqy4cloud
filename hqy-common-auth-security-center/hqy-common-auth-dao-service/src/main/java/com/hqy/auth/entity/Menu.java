@@ -37,7 +37,7 @@ public class Menu extends BaseEntity<Long> {
 
     private Integer sortOrder;
 
-    private Boolean status;
+    private Boolean status = true;
 
     private Boolean deleted = false;
 

@@ -1,6 +1,6 @@
 package com.hqy.gateway.config;
 
-import com.hqy.gateway.handler.ImageCodeHandler;
+import com.hqy.gateway.server.support.ImageCodeServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -19,14 +19,14 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class RouterFunctionConfiguration {
 
     @Bean
-    public ImageCodeHandler imageCodeHandler() {
-        return new ImageCodeHandler();
+    public ImageCodeServer imageCodeHandler() {
+        return new ImageCodeServer();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routerFunction(ImageCodeHandler imageCodeHandler) {
+    public RouterFunction<ServerResponse> routerFunction(ImageCodeServer imageImageCodeServer) {
         return RouterFunctions.route(
-                RequestPredicates.path("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), imageCodeHandler);
+                RequestPredicates.path("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), imageImageCodeServer);
     }
 
 }
