@@ -1,5 +1,7 @@
 package com.hqy.multiple.aop;
 
+import com.hqy.multiple.MultipleDataSourceProvider;
+
 import java.lang.annotation.*;
 
 /**
@@ -12,6 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DataSourceType {
-    String value() default "default";
+
+    String value() default MultipleDataSourceProvider.DEFAULT_DATASOURCE;
 
 }
