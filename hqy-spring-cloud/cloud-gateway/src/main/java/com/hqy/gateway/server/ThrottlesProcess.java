@@ -41,7 +41,6 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isHackAccess(String paramStringOrUri, int mode) {
-
         if (StringUtils.isBlank(paramStringOrUri)) {
             return false;
         } else {
@@ -60,7 +59,6 @@ public class ThrottlesProcess implements ThrottlesServer {
             return HtmlCommonUtil.HACK_WORDS_IN_URI.stream()
                     .anyMatch(word -> StringUtils.containsIgnoreCase(finalParamStringOrUri, word));
         }
-
         return false;
     }
 

@@ -1,7 +1,7 @@
 package com.hqy.collector.dao;
 
 import com.hqy.base.BaseDao;
-import com.hqy.collector.entity.ThrottledIpBlock;
+import com.hqy.collector.entity.ThrottledBlock;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 2021-08-10 14:03
  */
 @Repository
-public interface ThrottledIpBlockDao extends BaseDao<ThrottledIpBlock, Long> {
+public interface ThrottledBlockDao extends BaseDao<ThrottledBlock, Long> {
 }

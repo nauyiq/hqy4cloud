@@ -4,7 +4,6 @@ import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.foundation.limit.LimitResult;
-import com.hqy.gateway.server.CodeAuthorizationChecker;
 import com.hqy.gateway.server.GatewayHttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
 import com.hqy.gateway.util.ResponseUtil;
@@ -24,9 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-import static com.hqy.gateway.server.AbstractCodeServer.RANDOM_KEY;
+import static com.hqy.gateway.config.Constants.GLOBAL_HTTP_THROTTLE_FILER_ORDER;
 
 /**
  * HTTP节流过滤器 判断当前请求是否是安全的、ip是否超限等。
@@ -39,7 +36,6 @@ import static com.hqy.gateway.server.AbstractCodeServer.RANDOM_KEY;
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     private final GatewayHttpThrottles httpThrottles;
-    private final CodeAuthorizationChecker codeAuthorizationChecker;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -47,6 +43,7 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getPath().pathWithinApplication().value();
         String uri = request.getURI().getPath();
+        String requestIp = RequestUtil.getIpAddress(request);
         ServerHttpResponse httpResponse = exchange.getResponse();
 
         // 静态资源 | option请求 | uri白名单
@@ -54,25 +51,18 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         // 白名单
-        if (httpThrottles.isManualWhiteIp( RequestUtil.getIpAddress(request))) {
+        if (httpThrottles.isManualWhiteIp(requestIp)) {
             return chain.filter(exchange);
         }
 
-        //TODO 是否需要校验二维码
-        /*if (!codeAuthorizationChecker.checkCode(uri, request.getQueryParams().getFirst(RANDOM_KEY),  request.getQueryParams().getFirst("code"))) {
-
-        }*/
-
-
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
-            //没有启用限流器...继续执行责任链 ->
+            //没有启用限流器...继续执行责任链
             return chain.filter(exchange);
         } else {
-            //获取限流结果
             LimitResult limitResult = httpThrottles.limitValue(request);
             if (limitResult.isNeedLimit()) {
-                log.warn("### Throttle limit current request: {}, {}", url, limitResult);
                 String resultTip = StringUtils.isBlank(limitResult.getTip()) ? CommonResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
+                log.warn("HttpThrottled the request: {}, {}, {}.", requestIp, url, resultTip);
                 MessageResponse response = new MessageResponse(false, resultTip, HttpStatus.FORBIDDEN.value());
                 return Mono.defer(() -> {
                     DataBuffer buffer = ResponseUtil.outputBuffer(response, httpResponse, HttpStatus.FORBIDDEN);
@@ -86,6 +76,6 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 1;
+        return GLOBAL_HTTP_THROTTLE_FILER_ORDER;
     }
 }

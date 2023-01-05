@@ -16,15 +16,16 @@ import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import static com.hqy.gateway.config.Constants.CORS_FILTER_ORDER;
+
 /**
  * cors网关全局过滤器
  * @author qiyuan.hong
  * @date  2021/7/25 22:42
  */
-//@Component
 @Slf4j
+@Component
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
-
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -72,6 +73,6 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return CORS_FILTER_ORDER;
     }
 }

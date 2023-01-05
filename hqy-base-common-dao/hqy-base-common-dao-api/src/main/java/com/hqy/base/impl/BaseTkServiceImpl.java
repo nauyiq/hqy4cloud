@@ -10,6 +10,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 基础的crud单表逻辑 基于tk实现
@@ -68,6 +69,11 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     @Override
     public boolean insert(T t) {
         AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        if (Objects.isNull(t.getCreated()) || Objects.isNull(t.getUpdated())) {
+            Date now = new Date();
+            t.setCreated(now);
+            t.setUpdated(now);
+        }
         BaseDao<T, PK> dao = checkDao();
         int i = dao.insert(t);
         return i > 0;

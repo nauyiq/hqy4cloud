@@ -5,8 +5,10 @@ import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.base.common.base.project.MicroServiceConstants;
-import com.hqy.coll.struct.ThrottledIpBlockStruct;
+import com.hqy.coll.struct.PageThrottledBlockResultStruct;
+import com.hqy.coll.struct.ThrottledBlockStruct;
 import com.hqy.rpc.api.service.RPCService;
+import com.hqy.rpc.thrift.struct.PageStruct;
 
 /**
  * 采集服务RPC接口
@@ -21,6 +23,27 @@ public interface CollPersistService extends RPCService {
      * @param struct thrift rpc struct
      */
     @ThriftMethod(oneway = true)
-    void saveThrottledIpBlockHistory(@ThriftField(1) ThrottledIpBlockStruct struct);
+    void saveThrottledBlockHistory(@ThriftField(1) ThrottledBlockStruct struct);
+
+    /**
+     * 删除一条网关封禁记录
+     * @param id ThrottledBlock ID
+     */
+    @ThriftMethod(oneway = true)
+    void deleteThrottledBlockHistory(@ThriftField(1) Long id);
+
+    /**
+     * 分页查询节流封禁数据
+     * @param type       类型
+     * @param throttleBy 模糊查询-节流方式
+     * @param ip         模糊查询-ip
+     * @param uri        模糊查询-uri
+     * @param struct     分页参数
+     * @return           {@link PageThrottledBlockResultStruct}
+     */
+    @ThriftMethod
+    PageThrottledBlockResultStruct getPageThrottledBlock(@ThriftField(1)Integer type, @ThriftField(2)String throttleBy,
+                                                         @ThriftField(3)String ip, @ThriftField(2)String uri, @ThriftField(5)PageStruct struct);
+
 
 }

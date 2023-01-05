@@ -1,8 +1,9 @@
 package com.hqy.coll.struct;
 
-import com.facebook.swift.codec.ThriftConstructor;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * @author qiyuan.hong
@@ -10,46 +11,57 @@ import com.facebook.swift.codec.ThriftStruct;
  * @date 2022/3/1 17:57
  */
 @ThriftStruct
-public final class ThrottledIpBlockStruct {
+@NoArgsConstructor
+@AllArgsConstructor
+public final class ThrottledBlockStruct {
+
+    /**
+     * id
+     */
+    @ThriftField(1)
+    private Long id;
 
     /**
      * 被什么方式节流的
      */
-    @ThriftField(1)
+    @ThriftField(2)
     public String throttleBy;
 
     /**
      * 请求的客户端ip
      */
-    @ThriftField(2)
+    @ThriftField(3)
     public String ip;
 
     /**
      * 请求url
      */
-    @ThriftField(3)
+    @ThriftField(4)
     public String url;
 
     /**
      * request json
      */
-    @ThriftField(4)
+    @ThriftField(5)
     public String accessJson ;
 
     /**
      * 封禁时间 单位s
      */
-    @ThriftField(5)
+    @ThriftField(6)
     public Integer blockedSeconds;
 
     /**
      * 所属环境
      */
-    @ThriftField(6)
+    @ThriftField(7)
     public String env;
 
+    /**
+     * 创建时间
+     */
+    @ThriftField(8)
+    public String created;
 
-    public ThrottledIpBlockStruct() {
-    }
 
 }

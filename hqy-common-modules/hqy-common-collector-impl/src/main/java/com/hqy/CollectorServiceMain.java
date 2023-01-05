@@ -17,16 +17,17 @@ import java.util.List;
 
 /**
  * 提供各个模块的采集服务 <br>
- * 或对外暴露rest风格接口/RPC等服务 接收各模块的数据上报...
+ * 或对外暴露RPC服务 接收各模块的数据上报...
  * @author qy
- * @date  2021/8/19 22:13
+ * @date 2021/8/19 22:13
  */
 @MapperScan(basePackages = "com.hqy.*.dao")
 @SpringBootApplication
 @EnableDiscoveryClient
-public class Main {
+public class CollectorServiceMain {
+
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(CollectorServiceMain.class, args);
         ProjectContextInfo.startPrintf();
     }
 

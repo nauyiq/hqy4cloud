@@ -1,6 +1,7 @@
 package com.hqy.collector.entity;
 
 import com.hqy.base.BaseEntity;
+import com.hqy.coll.struct.ThrottledBlockStruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,15 +11,17 @@ import javax.persistence.Table;
 import java.util.Date;
 
 /**
+ * 节流封禁记录表 entity
  * @author qy
  * @date 2021-08-10 11:43
  */
-@Table(name = "t_throttle_ip_block_history")
 @Data
+@Table(name = "t_throttle_block_history")
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ThrottledIpBlock extends BaseEntity<Long> {
+public class ThrottledBlock extends BaseEntity<Long> {
+    private static final long serialVersionUID = 7973842091244776229L;
 
     /**
      * 被什么方式节流的
@@ -50,15 +53,13 @@ public class ThrottledIpBlock extends BaseEntity<Long> {
      */
     private String env;
 
-    public ThrottledIpBlock(String throttleBy, String url, String accessJson, Integer blockedSeconds, String env, String ip) {
-        this.throttleBy = throttleBy;
-        this.url = url;
-        this.accessJson = accessJson;
-        this.blockedSeconds = blockedSeconds;
-        this.env = env;
-        this.ip = ip;
-        Date now = new Date();
-        super.setCreated(now);
-        super.setUpdated(now);
+    public ThrottledBlock(ThrottledBlockStruct struct) {
+        super(new Date());
+        this.throttleBy = struct.throttleBy;
+        this.ip = struct.ip;
+        this.url = struct.url;
+        this.accessJson = struct.accessJson;
+        this.blockedSeconds = struct.blockedSeconds;
+        this.env = struct.env;
     }
 }

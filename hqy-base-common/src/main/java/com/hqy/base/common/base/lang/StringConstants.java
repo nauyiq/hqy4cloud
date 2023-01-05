@@ -208,6 +208,22 @@ public interface StringConstants {
          * ,
          */
         String COMMA = ",";
+
+        /**
+         * %
+         */
+        String PERCENT = "%";
+
+        /**
+         * =
+         */
+        String EQUALS = "=";
+
+        /**
+         * &
+         */
+        String AND = "&";
+
     }
 
     interface File {

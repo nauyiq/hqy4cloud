@@ -18,6 +18,8 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.hqy.gateway.config.Constants.TOKEN_AUTH_FILTER_ORDER;
+
 
 /**
  * access token 全局过滤器
@@ -60,7 +62,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 0;
+        return TOKEN_AUTH_FILTER_ORDER;
     }
 }
 

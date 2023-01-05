@@ -3,6 +3,7 @@ package com.hqy.auth.common.convert;
 import com.hqy.auth.common.dto.ResourceDTO;
 import com.hqy.auth.common.vo.AdminResourceVO;
 import com.hqy.auth.entity.Resource;
+import com.hqy.base.common.base.converter.CommonConverter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -58,7 +58,7 @@ public class EndpointAuthorizationManager {
 
         //文件上传endpoint.
         UPLOAD_FILES.addAll(Arrays.asList(
-                "/upload/**", "**/upload/**"
+                "/upload/**", "**/upload/**", "**/**/upload/**", "/admin/blog/upload/music"
         ));
     }
 
