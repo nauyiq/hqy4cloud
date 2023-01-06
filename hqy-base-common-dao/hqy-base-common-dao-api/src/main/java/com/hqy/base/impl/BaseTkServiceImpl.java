@@ -69,9 +69,11 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     @Override
     public boolean insert(T t) {
         AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
-        if (Objects.isNull(t.getCreated()) || Objects.isNull(t.getUpdated())) {
-            Date now = new Date();
+        Date now = new Date();
+        if (Objects.isNull(t.getCreated())) {
             t.setCreated(now);
+        }
+        if (Objects.isNull(t.getUpdated())) {
             t.setUpdated(now);
         }
         BaseDao<T, PK> dao = checkDao();

@@ -1,11 +1,16 @@
-package com.hqy.web.service.collect;
+package com.hqy.fundation.collector.support;
 
-import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
+import com.hqy.base.common.base.project.MicroServiceConstants;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.foundation.common.enums.ExceptionLevel;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.util.JsonUtil;
+import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -28,6 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Lazy
 @Component
+@RefreshScope
 public class ExceptionCollActionEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionCollActionEventHandler.class);
@@ -50,8 +56,13 @@ public class ExceptionCollActionEventHandler {
 
     private static final Set<String> IGNORE_EXCEPTION_CLASS_LIST = new HashSet<>();
 
+    @Value("exception.ignore.class:''")
+    private Set<String> ignoreExceptionClassFromConfig;
+
 
     private final AtomicInteger concurrent = new AtomicInteger(0);
+
+
 
 
     public ExceptionCollActionEventHandler() {
@@ -71,12 +82,17 @@ public class ExceptionCollActionEventHandler {
 
 
     @Async
-    @EventListener
+    @EventListener(classes = ExceptionCollActionEvent.class)
     public void eventListener(ExceptionCollActionEvent event) {
         if (Objects.isNull(event) || Objects.isNull(event.getSource())) {
             log.warn("[ExceptionCollActionEventHandler] event or event.source is null.");
             return;
         }
+
+        if (SpringContextHolder.getProjectContextInfo().getNameEn().equals(MicroServiceConstants.COMMON_COLLECTOR)) {
+            return;
+        }
+
         Throwable exception = event.getException();
         if (ignoreException(exception)) {
             log.warn("[ExceptionCollActionEventHandler] ignoreException: {}", exception.getClass().getName());
@@ -121,7 +137,7 @@ public class ExceptionCollActionEventHandler {
         try {
             boolean flag = !event.isFilter() || count % event.getStep() == 0;
             if (flag) {
-                ExceptionCollectorUtils.collect(event.getException(), event.getParam(), event.getResultCode(), ExceptionLevel.WARN);
+                ExceptionCollectorUtils.collect(event);
             }
         } catch (Exception e) {
             log.warn("[ExceptionCollActionEventHandler] doCollection fail.");
@@ -133,7 +149,7 @@ public class ExceptionCollActionEventHandler {
 
     private boolean ignoreException(Throwable exception) {
         String exceptionName = exception.getClass().getName();
-        return IGNORE_EXCEPTION_CLASS_LIST.stream().anyMatch(clazz -> clazz.equals(exceptionName));
+        return IGNORE_EXCEPTION_CLASS_LIST.stream().anyMatch(clazz -> clazz.equals(exceptionName)) || ignoreExceptionClassFromConfig.stream().anyMatch(clazz -> clazz.equals(exceptionName));
     }
 
 

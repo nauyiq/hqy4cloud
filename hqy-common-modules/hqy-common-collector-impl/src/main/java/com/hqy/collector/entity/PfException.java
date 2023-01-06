@@ -2,18 +2,27 @@ package com.hqy.collector.entity;
 
 import com.hqy.base.BaseEntity;
 
+import javax.persistence.Table;
+
 /**
  * 异常采集表
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/3/7 14:08
  */
+@Table(name = "t_pf_exception")
 public class PfException extends BaseEntity<Long> {
+    private static final long serialVersionUID = 7193595069568313712L;
 
     /**
      * 服务名
      */
     private String serviceName;
+
+    /**
+     * 异常类型
+     */
+    private String type;
 
     /**
      * 环境
@@ -103,5 +112,13 @@ public class PfException extends BaseEntity<Long> {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

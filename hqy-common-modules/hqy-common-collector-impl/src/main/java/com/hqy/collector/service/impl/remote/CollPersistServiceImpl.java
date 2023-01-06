@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.coll.struct.PageThrottledBlockResultStruct;
 import com.hqy.coll.struct.ThrottledBlockStruct;
-import com.hqy.collector.converter.ThrottledBlockStructConverter;
+import com.hqy.collector.converter.CollectorServiceConverter;
 import com.hqy.collector.entity.ThrottledBlock;
 import com.hqy.collector.service.ThrottledBlockService;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
@@ -63,7 +63,7 @@ public class CollPersistServiceImpl extends AbstractRPCService implements CollPe
         if (CollectionUtils.isEmpty(throttledBlocks)) {
             pageThrottledBlockResultStruct = new PageThrottledBlockResultStruct();
         } else {
-            List<ThrottledBlockStruct> blockStructs = throttledBlocks.stream().map(ThrottledBlockStructConverter.CONVERTER::convert).collect(Collectors.toList());
+            List<ThrottledBlockStruct> blockStructs = throttledBlocks.stream().map(CollectorServiceConverter.CONVERTER::convert).collect(Collectors.toList());
             pageThrottledBlockResultStruct = new PageThrottledBlockResultStruct(pageInfo.getPageNum(), pageInfo.getTotal(), pageInfo.getPages(), blockStructs);
         }
         return pageThrottledBlockResultStruct;

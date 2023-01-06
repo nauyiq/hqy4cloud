@@ -1,7 +1,9 @@
 package com.hqy.collector.converter;
 
 import com.hqy.base.common.base.converter.CommonConverter;
+import com.hqy.coll.struct.PfExceptionStruct;
 import com.hqy.coll.struct.ThrottledBlockStruct;
+import com.hqy.collector.entity.PfException;
 import com.hqy.collector.entity.ThrottledBlock;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,9 +16,9 @@ import org.mapstruct.factory.Mappers;
  * @date 2023/1/5 11:18
  */
 @Mapper(uses = CommonConverter.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface ThrottledBlockStructConverter {
+public interface CollectorServiceConverter {
 
-    ThrottledBlockStructConverter CONVERTER =  Mappers.getMapper(ThrottledBlockStructConverter.class);
+    CollectorServiceConverter CONVERTER =  Mappers.getMapper(CollectorServiceConverter.class);
 
     /**
      * ThrottledBlock convert to ThrottledBlockStruct.
@@ -24,8 +26,15 @@ public interface ThrottledBlockStructConverter {
      * @return               {@link ThrottledBlockStruct}
      */
     @Mapping(target = "created", source = "created", qualifiedByName = "dateConvertString")
-    @Mapping(target = "id", source = "id")
     ThrottledBlockStruct convert(ThrottledBlock throttledBlock);
+
+    /**
+     * PfExceptionStruct convert to PfException.
+     * @param struct {@link PfExceptionStruct}
+     * @return       {@link PfException}
+     */
+    @Mapping(target = "created", source = "created", qualifiedByName = "StringConvertDate")
+    PfException convert(PfExceptionStruct struct);
 
 
 

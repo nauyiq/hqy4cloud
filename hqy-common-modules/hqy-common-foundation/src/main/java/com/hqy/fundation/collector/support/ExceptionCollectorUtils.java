@@ -1,8 +1,10 @@
-package com.hqy.web.service.collect;
+package com.hqy.fundation.collector.support;
 
+import cn.hutool.core.date.DateUtil;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.coll.service.ExceptionCollectionService;
-import com.hqy.foundation.common.enums.ExceptionLevel;
+import com.hqy.coll.struct.PfExceptionStruct;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.util.spring.SpringContextHolder;
@@ -51,13 +53,10 @@ public class ExceptionCollectorUtils {
     }
 
 
-    /**
-     * 异常采集 通过rpc发送
-     * @param exception 异常
-     * @param param 拓展参数
-     * @param code 业务code
-     */
-    public static void collect(Throwable exception, String param, CommonResultCode code, ExceptionLevel exceptionLevel) {
+    public static void collect(ExceptionCollActionEvent event) {
+        Throwable exception = event.getException();
+        String param = event.getParam();
+        CommonResultCode code = event.getResultCode();
 
         if (ParentExecutorService.getInstance().isQueueHundredthFull()) {
             //队列长度是否达到百分之一
@@ -67,15 +66,27 @@ public class ExceptionCollectorUtils {
 
         ParentExecutorService.getInstance().execute(() -> {
             ExceptionCollectionService exceptionCollectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
-            long now = System.currentTimeMillis();
             String exceptionStackTrace = getExceptionStackTrace(exception);
-            int resultCode = code.code;
             String env = EnvironmentConfig.getInstance().getEnvironment();
             String nameEn = SpringContextHolder.getProjectContextInfo().getNameWithIpPort();
-            exceptionCollectionService.collect(now, exception.getClass().getSimpleName(), exceptionStackTrace,
-                    resultCode, env, nameEn, exceptionLevel, param);
+            PfExceptionStruct struct = buildStruct(env, nameEn, exceptionStackTrace, event);
+            exceptionCollectionService.collect(struct);
         }, ExecutorServiceProject.PRIORITY_LOW);
 
+    }
+
+    private static PfExceptionStruct buildStruct(String env, String nameEn, String exceptionStackTrace, ExceptionCollActionEvent event) {
+        return PfExceptionStruct.builder()
+                .ip(event.getIp())
+                .url(event.getUrl())
+                .environment(env)
+                .exceptionClass(event.getException().getClass().getSimpleName())
+                .serviceName(nameEn)
+                .stackTrace(exceptionStackTrace)
+                .type(event.getType().name())
+                .resultCode(event.getResultCode().code)
+                .params(event.getParam())
+                .created(DateUtil.formatDateTime(event.getTime())).build();
     }
 
 

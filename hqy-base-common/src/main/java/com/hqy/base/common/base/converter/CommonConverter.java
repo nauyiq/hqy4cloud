@@ -1,8 +1,10 @@
 package com.hqy.base.common.base.converter;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.mapstruct.Named;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -30,5 +32,14 @@ public class CommonConverter {
     @Named("dateConvertString")
     public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
 
+
+    @Named("StringConvertDate")
+    public static Date StringConvertDate(String date) {
+        try {
+            return DateUtils.parseDate(date, "yyyy-MM-dd HH:mm:ss");
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 
 }

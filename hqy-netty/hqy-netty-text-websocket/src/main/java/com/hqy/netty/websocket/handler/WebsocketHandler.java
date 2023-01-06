@@ -3,6 +3,7 @@ package com.hqy.netty.websocket.handler;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.hqy.foundation.common.enums.ExceptionType;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.base.common.base.lang.exception.PublishedException;
@@ -191,7 +192,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
                     responseMsg = (String) ChannelWsSessionManager.getSession(channelId).onMessage(WsMessageType.TEXT, text);
                 } catch (Exception e) {
                     log.warn(e.getMessage());
-                    ExceptionCollActionEvent event = new ExceptionCollActionEvent(this.getClass().getName(), e, 5000);
+                    ExceptionCollActionEvent event = new ExceptionCollActionEvent(ExceptionType.WEBSOCKET, this.getClass().getName(), e, 5000);
                     SpringContextHolder.publishEvent(event);
                 }
 
@@ -212,7 +213,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
                     responseMsg = (ByteBuf) ChannelWsSessionManager.getSession(channelId).onMessage(WsMessageType.BINARY, byteBuf);
                 } catch (Exception e) {
                     log.warn(e.getMessage());
-                    ExceptionCollActionEvent event = new ExceptionCollActionEvent(this.getClass().getName(), e, 5000);
+                    ExceptionCollActionEvent event = new ExceptionCollActionEvent(ExceptionType.WEBSOCKET, this.getClass().getName(), e, 5000);
                     SpringContextHolder.publishEvent(event);
                 }
 

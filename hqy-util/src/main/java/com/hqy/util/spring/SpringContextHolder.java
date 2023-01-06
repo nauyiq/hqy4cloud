@@ -1,12 +1,14 @@
 package com.hqy.util.spring;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiyuan.hong
  * @date 2021-07-22 16:25
  **/
+@Slf4j
 @Component
 public class SpringContextHolder implements ApplicationContextAware {
 
@@ -134,16 +137,18 @@ public class SpringContextHolder implements ApplicationContextAware {
     public static void publishEvent(ApplicationEvent event) {
         if (event != null && applicationContext != null) {
             try {
+//                ApplicationEventPublisher applicationEventPublisher = applicationContext.getBean(ApplicationEventPublisher.class);
+                applicationContext.publishEvent(event);
                 ////获取父容器发送事件
-                if (applicationContext.getParent() == null) {
+                /*if (applicationContext.getParent() == null) {
                     //MVC 容器
                     applicationContext.publishEvent(event);
                 } else {
                     //通过父容器来发送事件，防止mvc + spring 场景发送了两次
                     applicationContext.getParent().publishEvent(event);
-                }
+                }*/
             } catch (Exception ex) {
-                System.err.println("Error applicationContext.publishEvent: " + ex.getClass().getName() + ", " + ex.getMessage());
+                log.error("Error applicationContext.publishEvent: " + ex.getClass().getName() + ", " + ex.getMessage());
             }
         }
     }
