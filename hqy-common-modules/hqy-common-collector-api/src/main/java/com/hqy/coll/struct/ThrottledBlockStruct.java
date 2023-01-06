@@ -19,7 +19,7 @@ public final class ThrottledBlockStruct {
      * id
      */
     @ThriftField(1)
-    private Long id;
+    public Long id;
 
     /**
      * 被什么方式节流的

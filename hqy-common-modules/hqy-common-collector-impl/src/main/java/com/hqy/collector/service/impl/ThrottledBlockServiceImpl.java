@@ -14,9 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
 
 import static com.hqy.base.common.base.lang.StringConstants.Symbol.PERCENT;
 
@@ -36,12 +34,9 @@ public class ThrottledBlockServiceImpl extends BaseTkServiceImpl<ThrottledBlock,
 
 
     @Override
-    public PageInfo<ThrottledBlock> queryPage(Integer type, String throttleBy, String ip, String url, PageStruct struct) {
+    public PageInfo<ThrottledBlock> queryPage(String throttleBy, String ip, String url, PageStruct struct) {
         Example example = new Example(ThrottledBlock.class);
         Example.Criteria criteria = example.createCriteria();
-        if (Objects.nonNull(type)) {
-            criteria.andEqualTo("type", type);
-        }
         if (StringUtils.isNotBlank(throttleBy)) {
             criteria.andLike("throttleBy", PERCENT + throttleBy + PERCENT);
         }

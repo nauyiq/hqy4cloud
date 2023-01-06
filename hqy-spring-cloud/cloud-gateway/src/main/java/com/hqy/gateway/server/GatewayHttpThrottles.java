@@ -13,6 +13,7 @@ import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
 import com.hqy.gateway.util.RequestUtil;
+import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -128,7 +129,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         //是否校验请求中的xss 聚合浓缩黑客判定方法
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
                 !uploadFileSecurityChecker.isUploadFileRequest(request.getHeader(HttpHeaders.CONTENT_TYPE), uri)) {
-            LimitResult hackCheckLimitResult = checkHackAccess(uri, StringUtils.isBlank(requestParams) ? url : requestParams , request.getRequestBody(), requestIp);
+            LimitResult hackCheckLimitResult = checkHackAccess(uri, url, requestParams, request.getRequestBody(), requestIp);
             if (hackCheckLimitResult.isNeedLimit()) {
                 hackCheckLimitResult.setTip(printErrorMessage(requestIp, url, "[HAK]"));
                 return hackCheckLimitResult;
@@ -162,20 +163,20 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
 
     @Override
-    public LimitResult checkHackAccess(String uri, String urlOrQueryString, String requestBody, String requestIp) {
+    public LimitResult checkHackAccess(String uri, String url, String QueryString, String requestBody, String requestIp) {
         //聚合浓缩黑客判定方法....
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             //检查请求体
             if (StringUtils.isNotBlank(requestBody)) {
                 if (throttlesProcess.isHackAccess(requestBody, ThrottlesProcess.PARAMS_CHECK_MODE)) {
-                    return limitHackAccessAndPersistBlockIp(requestIp, urlOrQueryString, BiBlockType.HACK_ACCESS_PARAM.value, requestBody);
+                    return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_PARAM.value, requestBody);
                 }
             }
 
             //检查url或请求参数
-            if (StringUtils.isNotBlank(urlOrQueryString)) {
-                if (throttlesProcess.isHackAccess(urlOrQueryString, ThrottlesProcess.URI_CHECK_MODE)) {
-                    return limitHackAccessAndPersistBlockIp(requestIp, urlOrQueryString, BiBlockType.HACK_ACCESS_URI.value, requestBody);
+            if (StringUtils.isNotBlank(QueryString)) {
+                if (throttlesProcess.isHackAccess(QueryString, ThrottlesProcess.URI_CHECK_MODE)) {
+                    return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_URI.value, requestBody);
                 }
             }
 
@@ -183,7 +184,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             if (StringUtils.isNotBlank(uri) && !INCLINED_ROD.equals(uri)) {
                 if (throttlesProcess.isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE)) {
                     if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
-                        return limitHackAccessAndPersistBlockIp(requestIp, urlOrQueryString, BiBlockType.HACK_ACCESS_URI.value, requestBody);
+                        return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_URI.value, requestBody);
                     }
                 }
             }
@@ -241,6 +242,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         struct.accessJson = accessParamJson;
         struct.blockedSeconds = blockSeconds;
         struct.url = url;
+        struct.env = EnvironmentConfig.getInstance().getEnvironment();
         struct.throttleBy = createdBy;
         CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
         remoteService.saveThrottledBlockHistory(struct);

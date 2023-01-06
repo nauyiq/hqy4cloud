@@ -2,6 +2,7 @@ package com.hqy.gateway.filter;
 
 import com.hqy.base.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -53,17 +54,18 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         HttpHeaders requestHeaders = request.getHeaders();
         HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
         HttpHeaders headers = response.getHeaders();
-        //设置允许跨域头
-        if (StringUtils.isBlank(requestHeaders.getOrigin())) {
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        } else {
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
+        //SETTING CORS RESPONSE HEADER.
+        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN))) {
+            String origin = requestHeaders.getOrigin();
+            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, StringUtils.isBlank(origin) ? "*" : origin);
         }
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-
-        headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
-
-        if (requestMethod != null) {
+        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS))) {
+            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+        }
+        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))) {
+            headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
+        }
+        if (requestMethod != null && CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS))) {
             headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestMethod.name());
         }
 

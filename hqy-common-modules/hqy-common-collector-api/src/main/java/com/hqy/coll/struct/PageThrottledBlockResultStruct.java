@@ -5,6 +5,7 @@ import com.facebook.swift.codec.ThriftStruct;
 import com.hqy.rpc.thrift.struct.PageResultStruct;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,8 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public final class PageThrottledBlockResultStruct extends PageResultStruct {
 
-    @ThriftField(1)
-    public List<ThrottledBlockStruct> throttledBlockList;
+    @ThriftField(4)
+    public List<ThrottledBlockStruct> throttledBlockList = Collections.emptyList();
 
 
     public PageThrottledBlockResultStruct(int currentPage, long total, int pages, List<ThrottledBlockStruct> throttledBlockList) {

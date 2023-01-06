@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface BlockedIpService {
 
-    long DELAY = 3 * 60;
+    long DELAY = 30;
     long PERIOD = 3 * 60;
 
     /**

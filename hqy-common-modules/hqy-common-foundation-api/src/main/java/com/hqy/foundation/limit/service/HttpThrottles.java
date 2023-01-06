@@ -22,12 +22,13 @@ public interface HttpThrottles {
     /**
      * 检查是否是黑客访问.....
      * @param uri              请求uri
-     * @param urlOrQueryString 请求url或请求参数
+     * @param url              请求url
+     * @param QueryString QueryString
      * @param requestBody      请求的body
      * @param requestIp        请求ip
      * @return                 LimitResult.
      */
-    LimitResult checkHackAccess(String uri, String urlOrQueryString, String requestBody, String requestIp);
+    LimitResult checkHackAccess(String uri, String url, String QueryString, String requestBody, String requestIp);
 
     /**
      * 是否是uri白名单

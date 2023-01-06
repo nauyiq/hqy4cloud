@@ -56,8 +56,8 @@ public class CollPersistServiceImpl extends AbstractRPCService implements CollPe
     }
 
     @Override
-    public PageThrottledBlockResultStruct getPageThrottledBlock(Integer type, String throttleBy, String ip, String uri, PageStruct struct) {
-        PageInfo<ThrottledBlock> pageInfo = throttledBlockService.queryPage(type, throttleBy, ip, uri, struct);
+    public PageThrottledBlockResultStruct getPageThrottledBlock(String throttleBy, String ip, String uri, PageStruct struct) {
+        PageInfo<ThrottledBlock> pageInfo = throttledBlockService.queryPage(throttleBy, ip, uri, struct);
         List<ThrottledBlock> throttledBlocks = pageInfo.getList();
         PageThrottledBlockResultStruct pageThrottledBlockResultStruct;
         if (CollectionUtils.isEmpty(throttledBlocks)) {

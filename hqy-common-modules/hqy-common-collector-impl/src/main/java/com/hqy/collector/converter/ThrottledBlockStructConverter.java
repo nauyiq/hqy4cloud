@@ -24,6 +24,7 @@ public interface ThrottledBlockStructConverter {
      * @return               {@link ThrottledBlockStruct}
      */
     @Mapping(target = "created", source = "created", qualifiedByName = "dateConvertString")
+    @Mapping(target = "id", source = "id")
     ThrottledBlockStruct convert(ThrottledBlock throttledBlock);
 
 

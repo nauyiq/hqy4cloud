@@ -13,11 +13,6 @@
     <groupId>com.hqy.admin</groupId>
     <artifactId>hqy-admin-manager-service</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.hqy.auth</groupId>
@@ -43,6 +38,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-collector-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>-->
 
         <dependency>
             <groupId>com.hqy</groupId>

@@ -34,7 +34,6 @@ public interface CollPersistService extends RPCService {
 
     /**
      * 分页查询节流封禁数据
-     * @param type       类型
      * @param throttleBy 模糊查询-节流方式
      * @param ip         模糊查询-ip
      * @param uri        模糊查询-uri
@@ -42,8 +41,8 @@ public interface CollPersistService extends RPCService {
      * @return           {@link PageThrottledBlockResultStruct}
      */
     @ThriftMethod
-    PageThrottledBlockResultStruct getPageThrottledBlock(@ThriftField(1)Integer type, @ThriftField(2)String throttleBy,
-                                                         @ThriftField(3)String ip, @ThriftField(2)String uri, @ThriftField(5)PageStruct struct);
+    PageThrottledBlockResultStruct getPageThrottledBlock(@ThriftField(1)String throttleBy,
+                                                         @ThriftField(2)String ip, @ThriftField(3)String uri, @ThriftField(4)PageStruct struct);
 
 
 }
