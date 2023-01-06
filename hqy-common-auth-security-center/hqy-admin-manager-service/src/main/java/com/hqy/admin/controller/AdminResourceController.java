@@ -1,6 +1,7 @@
 package com.hqy.admin.controller;
 
 import com.hqy.admin.service.request.AdminResourceRequestService;
+import com.hqy.auth.common.convert.ResourceConverter;
 import com.hqy.auth.common.dto.ResourceDTO;
 import com.hqy.auth.common.dto.RoleResourcesDTO;
 import com.hqy.base.common.bind.DataResponse;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.stream.Collectors;
+
+import static com.hqy.base.common.base.project.MicroServiceConstants.SERVICES;
 import static com.hqy.base.common.result.CommonResultCode.ERROR_PARAM_UNDEFINED;
 import static com.hqy.base.common.result.CommonResultCode.NOT_FOUND_RESOURCE;
 
@@ -41,6 +45,11 @@ public class AdminResourceController {
             return CommonResultCode.dataResponse(ERROR_PARAM_UNDEFINED);
         }
         return requestService.getResourceTree(resourceId);
+    }
+
+    @GetMapping("/resource/services")
+    public DataResponse getServices() {
+        return CommonResultCode.dataResponse(SERVICES.stream().map(ResourceConverter.CONVERTER::convert).collect(Collectors.toList()));
     }
 
     @PostMapping("/resource")

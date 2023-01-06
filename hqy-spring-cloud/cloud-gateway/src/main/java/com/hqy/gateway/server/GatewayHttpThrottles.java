@@ -139,6 +139,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             return new LimitResult(false, null, LimitResult.ReasonEnum.NOT_ENABLE_HTTP_THROTTLE_OK);
         } else {
+            //检查ip是否访问超限
             try {
                 FlowResult flowResult = flowControlCenter.needLimitPerTimeWindow(requestIp, request.getMethod(), uri);
                 boolean needLimit = flowResult.isOverLimit();

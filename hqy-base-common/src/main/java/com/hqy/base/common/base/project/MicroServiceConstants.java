@@ -1,4 +1,7 @@
-    package com.hqy.base.common.base.project;
+package com.hqy.base.common.base.project;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 微服务的模块定义。用在@ThriftService注解上面<br>
@@ -14,38 +17,48 @@ public class MicroServiceConstants {
      * 全局网关gateway服务
      */
     public static final String GATEWAY = "gateway-service";
+    public static final ProjectInfo GATEWAY_INFO = new ProjectInfo("网关服务", GATEWAY);
 
     /**
      * 通用的采集服务
      */
     public static final String COMMON_COLLECTOR = "common-collector";
+    public static final ProjectInfo COLLECTOR_INFO = new ProjectInfo("采集服务", COMMON_COLLECTOR);
 
     /**
      * 账号-授权服务
      */
     public static final String ACCOUNT_SERVICE = "account-auth-service";
+    public static final ProjectInfo ACCOUNT_AUTH_INFO = new ProjectInfo("账号授权服务", ACCOUNT_SERVICE);
 
     /**
      * 聊天消息服务
      */
     public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
+    public static final ProjectInfo MESSAGE_NETTY_INFO = new ProjectInfo("聊天消息服务", MESSAGE_NETTY_SERVICE);
 
     /**
      * 通用通讯服务
      */
     public static final String COMMUNICATION_SERVICE = "common-communication-service";
+    public static final ProjectInfo COMMUNICATION_INFO = new ProjectInfo("通讯服务", COMMUNICATION_SERVICE);
 
     /**
      * 博客服务.
      */
     public static final String BLOG_SERVICE = "apps-blog-service";
+    public static final ProjectInfo BLOG_INFO = new ProjectInfo("博客服务", BLOG_SERVICE);
 
     /**
      * 后台管理服务
      */
     public static final String ADMIN_SERVICE = "admin-manager-service";
+    public static final ProjectInfo ADMIN_INFO = new ProjectInfo("后台管理服务", ADMIN_SERVICE);
 
-
+    /**
+     * 服务列表
+     */
+    public static final List<ProjectInfo> SERVICES = Arrays.asList(GATEWAY_INFO, COLLECTOR_INFO, ACCOUNT_AUTH_INFO, MESSAGE_NETTY_INFO, COMMUNICATION_INFO, BLOG_INFO, ADMIN_INFO);
 
     public static final String DEMO_ORDER_SERVICE = "demo-order-service";
 

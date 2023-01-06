@@ -36,6 +36,14 @@ public interface CollectorServiceConverter {
     @Mapping(target = "created", source = "created", qualifiedByName = "StringConvertDate")
     PfException convert(PfExceptionStruct struct);
 
+    /**
+     * PfException convert to PfExceptionStruct.
+     * @param pfException {@link PfException}
+     * @return            {@link PfExceptionStruct}
+     */
+    @Mapping(target = "created", source = "created", qualifiedByName = "dateConvertString")
+    PfExceptionStruct convert(PfException pfException);
+
 
 
 }

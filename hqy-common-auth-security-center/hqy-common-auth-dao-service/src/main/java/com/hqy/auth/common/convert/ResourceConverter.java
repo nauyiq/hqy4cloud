@@ -1,9 +1,11 @@
 package com.hqy.auth.common.convert;
 
+import com.hqy.auth.common.dto.MicroServiceType;
 import com.hqy.auth.common.dto.ResourceDTO;
 import com.hqy.auth.common.vo.AdminResourceVO;
 import com.hqy.auth.entity.Resource;
 import com.hqy.base.common.base.converter.CommonConverter;
+import com.hqy.base.common.base.project.ProjectInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -35,6 +37,14 @@ public interface ResourceConverter {
      * @return            {@link Resource}
      */
     Resource convert(ResourceDTO resourceDTO);
+
+    /**
+     * ProjectInfo convert to MicroServiceType.
+     * @param projectInfo {@link ProjectInfo}
+     * @return            {@link MicroServiceType}
+     */
+    @Mapping(target = "label", source = "name")
+    MicroServiceType convert(ProjectInfo projectInfo);
 
     /**
      * update resource from resourceDTO， not set null property.
