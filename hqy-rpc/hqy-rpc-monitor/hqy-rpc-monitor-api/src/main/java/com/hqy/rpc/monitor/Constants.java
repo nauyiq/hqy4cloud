@@ -8,7 +8,11 @@ package com.hqy.rpc.monitor;
 public interface Constants {
 
 
+    String DEV_PROVIDER_PREFIX = "DEV_GROUP@@";
 
+    String TEST_PROVIDER_PREFIX = "TEST_GROUP@@";
+
+    String PROD_PROVIDER_PREFIX = "PROD_GROUP@@";
 
 
 

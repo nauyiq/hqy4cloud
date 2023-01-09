@@ -53,7 +53,7 @@ public class RPCContext {
         this.request = request;
     }
 
-    public static boolean needCollect(String methodName) {
+    public boolean needCollect(String methodName) {
         return RemoteContextChecker.needCollect(methodName);
     }
 
