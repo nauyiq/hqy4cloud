@@ -15,12 +15,12 @@ public interface AdminThrottleRequestService {
      * 分页获取节流历史记录
      * @param throttleBy 模糊查询-被什么节流
      * @param ip         模糊查询-ip
-     * @param uri        模糊查询-uri
+     * @param url        模糊查询-url
      * @param current    当前页
      * @param size       页行数
      * @return           DataResponse.
      */
-    DataResponse getPageThrottledHistory(String throttleBy, String ip, String uri, Integer current, Integer size);
+    DataResponse getPageThrottledHistory(String throttleBy, String ip, String url, Integer current, Integer size);
 
     /**
      * 删除一条节流历史记录

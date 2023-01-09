@@ -24,8 +24,8 @@ public class AdminThrottleController {
     private final AdminThrottleRequestService service;
 
     @GetMapping("/page")
-    public DataResponse getPageThrottledHistory(String throttleBy, String ip, String uri,  Integer current, Integer size) {
-        return service.getPageThrottledHistory(throttleBy, ip, uri, current, size);
+    public DataResponse getPageThrottledHistory(String throttleBy, String ip, String url,  Integer current, Integer size) {
+        return service.getPageThrottledHistory(throttleBy, ip, url, current, size);
     }
 
     @DeleteMapping("{id}")
