@@ -2,6 +2,7 @@ package com.hqy;
 
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.coll.service.ExceptionCollectionService;
+import com.hqy.coll.service.RpcLogRemoteService;
 import com.hqy.rpc.api.service.RPCService;
 import com.hqy.rpc.monitor.thrift.api.ThriftMonitorService;
 import com.hqy.rpc.thrift.service.ThriftServerLauncher;
@@ -39,10 +40,11 @@ public class CollectorServiceMain {
         private final CollPersistService collPersistService;
         private final ThriftMonitorService thriftMonitorService;
         private final ExceptionCollectionService exceptionCollectionService;
+        private final RpcLogRemoteService rpcLogRemoteService;
 
         @Override
         public List<RPCService> getRpcServices() {
-            return Arrays.asList(collPersistService, thriftMonitorService, exceptionCollectionService);
+            return Arrays.asList(collPersistService, thriftMonitorService, exceptionCollectionService, rpcLogRemoteService);
         }
     }
 

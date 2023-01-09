@@ -1,5 +1,7 @@
 package com.hqy.base.common.base.converter;
 
+import com.hqy.base.common.base.lang.StringConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.mapstruct.Named;
@@ -12,6 +14,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/12/16 10:45
  */
+@Slf4j
 public class CommonConverter {
 
     @Named("booleanToInteger")
@@ -32,13 +35,23 @@ public class CommonConverter {
     @Named("dateConvertString")
     public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
 
-
     @Named("StringConvertDate")
     public static Date StringConvertDate(String date) {
         try {
             return DateUtils.parseDate(date, "yyyy-MM-dd HH:mm:ss");
         } catch (ParseException e) {
             return null;
+        }
+    }
+
+    @Named("timeStampConvertString")
+    public static String timeStampConvertString(Long timestamp) {
+        try {
+            Date date = new Date(timestamp);
+            return dateConvertString(date);
+        } catch (Throwable cause) {
+            log.error(cause.getMessage());
+            return StringConstants.EMPTY;
         }
     }
 

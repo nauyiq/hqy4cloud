@@ -38,7 +38,7 @@ public class CollectionClientEventHandler implements ThriftContextClientHandleSe
         boolean needCollect = false;
         RPCContext rpcContext = thriftContext.getRpcContext();
         if (rpcContext != null) {
-            needCollect = RPCContext.needCollect(methodName);
+            needCollect = rpcContext.needCollect(methodName);
         }
 
         if (!needCollect) {

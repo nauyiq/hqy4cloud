@@ -1,12 +1,22 @@
 package com.hqy.collector.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.hqy.base.BaseDao;
 import com.hqy.base.impl.BaseTkServiceImpl;
 import com.hqy.collector.dao.RPCExceptionRecordDao;
 import com.hqy.collector.entity.RPCExceptionRecord;
 import com.hqy.collector.service.RPCExceptionRecordService;
+import com.hqy.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
+import java.util.Objects;
+
+import static com.hqy.base.common.base.lang.StringConstants.Symbol.PERCENT;
 
 /**
  * @author qiyuan.hong
@@ -22,5 +32,26 @@ public class RPCExceptionRecordServiceImpl extends BaseTkServiceImpl<RPCExceptio
     @Override
     public BaseDao<RPCExceptionRecord, Long> getTkDao() {
         return dao;
+    }
+
+    @Override
+    public PageInfo<RPCExceptionRecord> queryPage(String application, String serviceClassName, Integer type, PageStruct struct) {
+        Example example = new Example(RPCExceptionRecord.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotBlank(application)) {
+            criteria.andEqualTo("application", application);
+        }
+        if (StringUtils.isNotBlank(serviceClassName)) {
+            criteria.andLike("serviceClassName", PERCENT + serviceClassName + PERCENT);
+        }
+        if (Objects.nonNull(type)) {
+            criteria.andEqualTo("type", type);
+        }
+        example.orderBy("id").desc();
+        List<RPCExceptionRecord> records = dao.selectByExample(example);
+        if (CollectionUtils.isEmpty(records)) {
+            return new PageInfo<>();
+        }
+        return new PageInfo<>(records);
     }
 }

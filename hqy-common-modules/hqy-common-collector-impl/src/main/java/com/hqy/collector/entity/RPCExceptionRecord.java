@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -47,6 +48,7 @@ public class RPCExceptionRecord extends BaseEntity<Long> {
     /**
      * 请求时间戳
      */
+    @Column(name = "request_time")
     private Long requestTime;
 
     /**

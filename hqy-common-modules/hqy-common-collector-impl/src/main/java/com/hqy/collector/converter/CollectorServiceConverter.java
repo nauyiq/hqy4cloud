@@ -2,8 +2,12 @@ package com.hqy.collector.converter;
 
 import com.hqy.base.common.base.converter.CommonConverter;
 import com.hqy.coll.struct.PfExceptionStruct;
+import com.hqy.coll.struct.RpcExceptionRecordStruct;
+import com.hqy.coll.struct.RpcFlowRecordStruct;
 import com.hqy.coll.struct.ThrottledBlockStruct;
 import com.hqy.collector.entity.PfException;
+import com.hqy.collector.entity.RPCExceptionRecord;
+import com.hqy.collector.entity.RPCFlowRecord;
 import com.hqy.collector.entity.ThrottledBlock;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -43,6 +47,23 @@ public interface CollectorServiceConverter {
      */
     @Mapping(target = "created", source = "created", qualifiedByName = "dateConvertString")
     PfExceptionStruct convert(PfException pfException);
+
+    /**
+     * RPCFlowRecord convert to RpcFlowRecordStruct.
+     * @param record {@link RPCFlowRecord}
+     * @return       {@link RpcFlowRecordStruct}
+     */
+    @Mapping(target = "created", source = "created", qualifiedByName = "dateConvertString")
+    RpcFlowRecordStruct convert(RPCFlowRecord record);
+
+
+    /**
+     * RPCExceptionRecord convert to RpcExceptionRecordStruct.
+     * @param record {@link RPCExceptionRecord}
+     * @return       {@link RpcExceptionRecordStruct}
+     */
+    @Mapping(target = "requestTime", source = "requestTime", qualifiedByName = "timeStampConvertString")
+    RpcExceptionRecordStruct convert(RPCExceptionRecord record);
 
 
 

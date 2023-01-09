@@ -49,6 +49,6 @@ public class ThriftMonitorServiceImpl implements ThriftMonitorService {
         if (struct == null) {
             return;
         }
-        ParentExecutorService.getInstance().execute(() -> rpcExceptionRecordService.insert(new RPCExceptionRecord(struct)));
+        rpcExceptionRecordService.insert(new RPCExceptionRecord(struct));
     }
 }
