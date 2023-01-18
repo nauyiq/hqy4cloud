@@ -8,7 +8,7 @@ spring:
   application:
     name: admin-manager-service
   profiles:
-    active: dev
+    active: test
 
 management:
   endpoints:
