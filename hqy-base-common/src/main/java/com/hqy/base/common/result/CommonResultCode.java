@@ -116,20 +116,68 @@ public enum CommonResultCode {
     EMAIL_EXIST(2005, "Account email already exist."),
 
     /**
+     * 电话已经存在
+     */
+    PHONE_EXIST(2006,"This phone already exist."),
+
+
+    /**
      * 验证码错误
      */
-    VERIFY_CODE_ERROR(2006, "Verify code error, please input right code."),
+    VERIFY_CODE_ERROR(2007, "Verify code error, please input right code."),
 
 
     /**
      * 错误的用户名或者密码
      */
-    INVALID_ACCESS_USER(3001, "Username or password incorrect!"),
+    INVALID_ACCESS_USER(3001, "Username or password incorrect."),
 
     /**
      * 密码错误
      */
     PASSWORD_ERROR(3002, "Please input the correct password."),
+
+    /**
+     * 注册账号失败
+     */
+    REGISTRY_ACCOUNT_ERROR(3003, "Failed execute to registry account, please check params and try again later."),
+
+    /**
+     * 权限不够，无法设置的账户权限
+     */
+    LIMITED_SETTING_ROLE_LEVEL(3004, "Access authority limit ro modify role level."),
+
+    /**
+     * 角色名已经存在
+     */
+    ROLE_NAME_EXIST(3005, "This role name already exist."),
+
+
+    /**
+     * 找不到该角色
+     */
+    NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
+
+
+    /**
+     * 空数据
+     */
+    DATA_EMPTY(4000, "Data is empty."),
+
+    /**
+     * 获取不到Menu
+     */
+    NOT_FOUND_MENU(5001, "Not found menu, please check you input again."),
+
+    /**
+     * 无效的菜单类型
+     */
+    INVALID_MENU_TYPE(5002, "Invalid menu type, please check your input again."),
+
+    /**
+     * 获取不到资源
+     */
+    NOT_FOUND_RESOURCE(5002, "Not found resource, please check you input again."),
 
 
     /**

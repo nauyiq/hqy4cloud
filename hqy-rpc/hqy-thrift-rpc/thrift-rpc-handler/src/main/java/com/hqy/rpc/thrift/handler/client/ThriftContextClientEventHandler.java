@@ -166,6 +166,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
             context.setResult(true);
         } else {
             context.setException(exception);
+            context.setResult(false);
         }
     }
 

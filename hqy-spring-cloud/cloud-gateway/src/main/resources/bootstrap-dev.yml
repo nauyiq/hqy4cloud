@@ -72,6 +72,6 @@ gateway:
   dynamicRoute:
     dataId: gateway-routing.json
     group: ${nacos.group}
-    enabled: true
+    enabled: false
     type: nacos
 

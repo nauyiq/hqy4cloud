@@ -5,9 +5,12 @@ import com.hqy.base.BaseEntity;
 import com.hqy.base.BaseTkService;
 import com.hqy.base.common.result.CommonResultCode;
 import com.hqy.util.AssertUtil;
+import com.hqy.util.ReflectUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 基础的crud单表逻辑 基于tk实现
@@ -37,6 +40,21 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     }
 
     @Override
+    public List<T> queryByIds(List<PK> pks) {
+        return queryByIds("id", pks);
+    }
+
+    @Override
+    public List<T> queryByIds(String pkName, List<PK> pks) {
+        BaseDao<T, PK> dao = checkDao();
+        Class<T> targetGenericClass = ReflectUtils.getTargetGenericClass(getClass(), 0);
+        Example example = new Example(targetGenericClass);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn(pkName, pks);
+        return dao.selectByExample(example);
+    }
+
+    @Override
     public List<T> queryList(T t) {
         BaseDao<T, PK> dao = checkDao();
         return dao.select(t);
@@ -51,6 +69,13 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
     @Override
     public boolean insert(T t) {
         AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        Date now = new Date();
+        if (Objects.isNull(t.getCreated())) {
+            t.setCreated(now);
+        }
+        if (Objects.isNull(t.getUpdated())) {
+            t.setUpdated(now);
+        }
         BaseDao<T, PK> dao = checkDao();
         int i = dao.insert(t);
         return i > 0;

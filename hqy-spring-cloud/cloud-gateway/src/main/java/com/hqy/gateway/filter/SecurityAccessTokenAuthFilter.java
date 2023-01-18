@@ -1,7 +1,8 @@
 package com.hqy.gateway.filter;
 
+import cn.hutool.core.net.URLEncoder;
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.util.OauthRequestUtil;
 import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
+import static com.hqy.gateway.config.Constants.TOKEN_AUTH_FILTER_ORDER;
 
 
 /**
@@ -34,29 +36,25 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String authorization = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
-        if (StringUtils.isBlank(authorization) || !authorization.startsWith(StringConstants.Auth.JWT_PREFIX)) {
+        if (StringUtils.isBlank(authorization)) {
             return chain.filter(exchange);
-        } else if (authorization.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
-            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-                log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
-            }
+        } else if (!OauthRequestUtil.checkAuthorization(authorization)) {
             return chain.filter(exchange);
         }
 
+        String realToken = authorization.replace(StringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
         try {
-            String realToken = authorization.replace(StringConstants.Auth.JWT_PREFIX, Strings.EMPTY);
             String payload = JWSObject.parse(realToken).getPayload().toString();
             if (StringUtils.isBlank(payload)) {
                 return chain.filter(exchange);
             } else {
                 // 从token中解析用户信息并设置到Header中去
                 request = request.mutate().header(StringConstants.Auth.JWT_PAYLOAD_KEY,
-                        URLEncoder.encode(payload, StandardCharsets.UTF_8.name())).build();
+                        URLEncoder.DEFAULT.encode(payload, StandardCharsets.UTF_8)).build();
                 exchange = exchange.mutate().request(request).build();
             }
-
-        } catch (Exception e) {
-            log.warn("Failed execute parse jwt token, cause: {}", e.getMessage());
+        } catch (Throwable cause) {
+            log.info("Failed execute to parse jwt obj, cause: {}.", cause.getMessage());
         }
 
         return chain.filter(exchange);
@@ -64,7 +62,7 @@ public class SecurityAccessTokenAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 0;
+        return TOKEN_AUTH_FILTER_ORDER;
     }
 }
 

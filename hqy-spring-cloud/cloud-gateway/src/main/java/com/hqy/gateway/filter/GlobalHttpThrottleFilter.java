@@ -23,6 +23,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static com.hqy.gateway.config.Constants.GLOBAL_HTTP_THROTTLE_FILER_ORDER;
+
 /**
  * HTTP节流过滤器 判断当前请求是否是安全的、ip是否超限等。
  * @author qiyuan.hong
@@ -41,28 +43,26 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getPath().pathWithinApplication().value();
         String uri = request.getURI().getPath();
+        String requestIp = RequestUtil.getIpAddress(request);
         ServerHttpResponse httpResponse = exchange.getResponse();
 
         // 静态资源 | option请求 | uri白名单
         if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS || httpThrottles.isWhiteURI(uri)) {
             return chain.filter(exchange);
         }
-
-        String requestIp = RequestUtil.getIpAddress(request);
-        //如果是人工白名单则放行
+        // 白名单
         if (httpThrottles.isManualWhiteIp(requestIp)) {
             return chain.filter(exchange);
         }
 
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
-            //没有启用限流器...继续执行责任链 ->
+            //没有启用限流器...继续执行责任链
             return chain.filter(exchange);
         } else {
-            //获取限流结果
             LimitResult limitResult = httpThrottles.limitValue(request);
             if (limitResult.isNeedLimit()) {
-                log.warn("### Throttle limit current request: {}, {}", url, limitResult);
                 String resultTip = StringUtils.isBlank(limitResult.getTip()) ? CommonResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
+                log.warn("HttpThrottled the request: {}, {}, {}.", requestIp, url, resultTip);
                 MessageResponse response = new MessageResponse(false, resultTip, HttpStatus.FORBIDDEN.value());
                 return Mono.defer(() -> {
                     DataBuffer buffer = ResponseUtil.outputBuffer(response, httpResponse, HttpStatus.FORBIDDEN);
@@ -76,6 +76,6 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 1;
+        return GLOBAL_HTTP_THROTTLE_FILER_ORDER;
     }
 }

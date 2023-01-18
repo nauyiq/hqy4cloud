@@ -8,45 +8,51 @@ public interface HttpRequestInfo {
 
     /**
      * 获取uri
-     * @return
+     * @return request uri
      */
     String getUri();
 
     /**
      * 获取请求的url
-     * @return
+     * @return request url
      */
     String getRequestUrl();
 
     /**
      * 获取请求方法
-     * @return
+     * @return request method
      */
     String getMethod() ;
 
     /**
      * 获取请求IP
-     * @return
+     * @return request ip
      */
     String getRequestIp() ;
 
     /**
      * 获取ip国家
-     * @return
+     * @return request country.
      */
     String getIpCountry();
 
     /**
      * 获取相应的请求头值
-     * @param header
-     * @return
+     * @param header header key.
+     * @return       header value.
      */
     String getHeader(String header);
 
     /**
      * 获取请求参数
-     * @return
+     * @return get request params.
      */
     String getRequestParams();
+
+    /**
+     * 获取请求中的body数据
+     * @return get request body.
+     */
+    String getRequestBody();
 
 }

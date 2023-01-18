@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.reactive.result.view.ViewResolver;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,7 @@ public class GatewayExceptionConfiguration {
 
         /**
          * Create a new {@code DefaultErrorWebExceptionHandler} instance.
+         *
          * @param errorAttributes    the error attributes
          * @param resourceProperties the resources configuration properties
          * @param errorProperties    the error configuration properties
@@ -83,7 +85,10 @@ public class GatewayExceptionConfiguration {
             Throwable error = super.getError(request);
             if (error instanceof BlockException) {
                 return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.INTERFACE_LIMITED));
+            } else if (error instanceof ResponseStatusException) {
+                return super.getErrorAttributes(request, options);
             }
+
             log.error(error.getMessage(), error);
             return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR));
         }
@@ -97,17 +102,20 @@ public class GatewayExceptionConfiguration {
 
         @Override
         protected int getHttpStatus(Map<String, Object> errorAttributes) {
+            Object status = errorAttributes.get("status");
+            if (status instanceof Integer) {
+                return (int)status;
+            }
             Object code = errorAttributes.get("code");
             if (code instanceof Integer) {
                 if (code.equals(CommonResultCode.INTERFACE_LIMITED.code)) {
                     return HttpStatus.FORBIDDEN.value();
                 }
             }
-            return  HttpStatus.INTERNAL_SERVER_ERROR.value();
+            return HttpStatus.INTERNAL_SERVER_ERROR.value();
         }
 
     }
-
 
 
 }

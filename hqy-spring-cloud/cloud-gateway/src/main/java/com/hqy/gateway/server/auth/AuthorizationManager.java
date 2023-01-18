@@ -1,9 +1,8 @@
 package com.hqy.gateway.server.auth;
 
 import com.hqy.access.auth.Oauth2Access;
-import com.hqy.access.auth.Oauth2Request;
+import com.hqy.access.auth.AuthenticationRequest;
 import com.hqy.access.auth.RolesAuthoritiesChecker;
-import com.hqy.account.struct.ResourcesInRoleStruct;
 import com.hqy.base.common.base.lang.StringConstants;
 import com.hqy.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +37,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     private final RolesAuthoritiesChecker rolesAuthoritiesChecker;
     private final Oauth2Access oauth2Access;
 
-
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
         ServerHttpRequest request = authorizationContext.getExchange().getRequest();
@@ -46,26 +45,25 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(true));
         }
 
-        Oauth2Request oauth2Request = new ReactAccess2Request(request);
-        if (oauth2Access.isPermitRequest(oauth2Request)) {
+        AuthenticationRequest authenticationRequest = new ReactAccess2Request(request);
+        if (oauth2Access.isPermitRequest(authenticationRequest)) {
             return Mono.just(new AuthorizationDecision(true));
         }
+
         // 判断JWT中携带的用户角色是否有权限访问
         return mono
                 .filter(Authentication::isAuthenticated)
-                .map(authorities -> getAuthorizationDecision(oauth2Request, authorities));
-//                .defaultIfEmpty(new AuthorizationDecision(true));
-
+                .map(authorities -> getAuthorizationDecision(authenticationRequest, authorities));
     }
 
-    private AuthorizationDecision getAuthorizationDecision(Oauth2Request oauth2Request, Authentication authorities) {
+    private AuthorizationDecision getAuthorizationDecision(AuthenticationRequest authenticationRequest, Authentication authorities) {
         Collection<? extends GrantedAuthority> authoritiesAuthorities = authorities.getAuthorities();
         if (CollectionUtils.isEmpty(authoritiesAuthorities)) {
             return new AuthorizationDecision(true);
         } else {
             List<String> roles = authoritiesAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
             try {
-                boolean isPermitAuthorities = rolesAuthoritiesChecker.isPermitAuthorities(roles, oauth2Request.requestUri());
+                boolean isPermitAuthorities = rolesAuthoritiesChecker.isPermitAuthorities(roles, authenticationRequest);
                 return new AuthorizationDecision(isPermitAuthorities);
             } catch (Throwable cause) {
                 log.warn("Failed execute to check permit authorities, roles: {}.", roles, cause);
@@ -74,18 +72,20 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         }
     }
 
-    public static class ReactAccess2Request implements Oauth2Request {
+    public static class ReactAccess2Request implements AuthenticationRequest {
 
         private final String requestIp;
         private final String requestUri;
         private final String requestUserAgent;
         private final String requestAccessToken;
+        private final String method;
 
         public ReactAccess2Request(ServerHttpRequest request) {
             this.requestIp = RequestUtil.getIpAddress(request);
             this.requestUri = request.getURI().getPath();
             this.requestUserAgent = request.getHeaders().getFirst(HttpHeaders.USER_AGENT);
             this.requestAccessToken = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
+            this.method = Objects.requireNonNull(request.getMethod()).name();
         }
 
         @Override
@@ -106,6 +106,11 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         @Override
         public String requestAccessToken() {
             return requestAccessToken;
+        }
+
+        @Override
+        public String method() {
+            return method;
         }
     }
 

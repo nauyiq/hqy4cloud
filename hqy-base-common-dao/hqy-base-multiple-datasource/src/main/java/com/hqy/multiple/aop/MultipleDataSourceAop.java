@@ -1,10 +1,11 @@
 package com.hqy.multiple.aop;
 
-import com.hqy.multiple.DynamicMultipleDataSource;
+import com.hqy.base.common.swticher.CommonSwitcher;
+import com.hqy.multiple.support.DynamicMultipleDataSourceContextHolder;
 import com.hqy.util.proxy.ProxyUtil;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -39,46 +40,40 @@ public class MultipleDataSourceAop {
      * @param joinPoint
      * @throws Throwable
      */
-    @Before("dataSourcePointCut()")
-    public void dynamicDataSource(JoinPoint joinPoint) throws Throwable {
+    @Around("dataSourcePointCut()")
+    public Object dynamicDataSource(ProceedingJoinPoint joinPoint) throws Throwable {
         // 拦截的实体类，就是当前正在执行的service
         Object target = ProxyUtil.getTarget(joinPoint.getTarget());
         if (target.getClass().isAnnotationPresent(DataSourceType.class)) {
             DataSourceType dataSourceType = target.getClass().getAnnotation(DataSourceType.class);
             String type = dataSourceType.value();
-            log.debug("### 数据源切换至--->{}", type);
-            DynamicMultipleDataSource.setDataSourceKey(type);
-            return;
+            DynamicMultipleDataSourceContextHolder.setDataSourceName(type);
+            try {
+                return joinPoint.proceed();
+            } finally {
+                DynamicMultipleDataSourceContextHolder.clearDataSourceName();
+            }
         }
+
         //检查方法签名，是否有注解
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Method m = target.getClass().getMethod(method.getName());
-
         if (m.isAnnotationPresent(DataSourceType.class)) {
             DataSourceType dataSourceType = m.getAnnotation(DataSourceType.class);
             String type = dataSourceType.value();
-            log.debug("### 数据源切换至 ---> {}", type);
-            DynamicMultipleDataSource.setDataSourceKey(type);
-            return;
+            DynamicMultipleDataSourceContextHolder.setDataSourceName(type);
+            try {
+                return joinPoint.proceed();
+            } finally {
+                DynamicMultipleDataSourceContextHolder.clearDataSourceName();
+            }
         }
 
-        log.debug("此{}不涉及数据源操作.", target.getClass());
-    }
-
-    /**
-     * 方法结束后，移除动态数据源
-     * @throws Throwable
-     */
-    @Before("dataSourcePointCut()")
-    public void afterReturning() throws Throwable {
-        try {
-            DynamicMultipleDataSource.clearDataSource();
-            log.debug("### 数据源已移除！");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("### 数据源移除报错！");
+        if (log.isDebugEnabled() && CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+            log.debug("此{}不涉及数据源操作.", target.getClass());
         }
+        return joinPoint.proceed();
     }
 
 

@@ -15,6 +15,7 @@ import java.util.Date;
  */
 @Data
 public abstract class BaseEntity<PK> implements Serializable {
+    private static final long serialVersionUID = 6377578732656651520L;
 
     /**
      * 主键：id
@@ -45,5 +46,11 @@ public abstract class BaseEntity<PK> implements Serializable {
         this.id = id;
         this.created = date;
         this.updated = date;
+    }
+
+    public void setDateTime() {
+        Date now = new Date();
+        this.created = now;
+        this.updated = now;
     }
 }

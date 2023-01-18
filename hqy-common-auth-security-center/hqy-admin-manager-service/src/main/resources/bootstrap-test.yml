@@ -1,0 +1,26 @@
+nacos:
+#  server-addr: nacos-headless.app.svc.cluster.local:8848
+  server-addr: nacos-cloud.hongqy1024.cn:8848
+  group: TEST_GROUP
+  namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
+
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+        file-extension: yaml
+        extension-configs[0]:
+          data-id: redis-config.yaml
+          group: ${nacos.group}
+          refresh: true
+        extension-configs[1]:
+          data-id: db-app-config.yaml
+          group: ${nacos.group}
+          refresh: true
+      discovery:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}

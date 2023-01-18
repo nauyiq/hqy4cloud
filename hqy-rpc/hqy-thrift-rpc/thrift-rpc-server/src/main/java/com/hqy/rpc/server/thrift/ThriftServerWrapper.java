@@ -19,11 +19,13 @@ import com.hqy.rpc.thrift.support.ThriftServerProperties;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.IpUtil;
 import com.hqy.util.NetUtils;
+import com.hqy.util.spring.SpringContextHolder;
 import com.hqy.util.thread.NamedThreadFactory;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -115,10 +117,11 @@ public class ThriftServerWrapper implements RPCServer {
             }
         } catch (Throwable cause) {
             log.warn("Failed execute to create rpc server, cause: {}", cause.getMessage(), cause);
-        } finally {
-            this.serverAddress = new RPCServerAddress(threadServerProperties.getRpcPort(), host, pid);
+            ConfigurableApplicationContext cyx = (ConfigurableApplicationContext) SpringContextHolder.getApplicationContext();
+            cyx.close();
         }
 
+        this.serverAddress = new RPCServerAddress(threadServerProperties.getRpcPort(), host, pid);
         return thriftServer;
     }
 

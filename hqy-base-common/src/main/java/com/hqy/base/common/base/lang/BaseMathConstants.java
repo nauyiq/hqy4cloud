@@ -23,6 +23,16 @@ public interface BaseMathConstants {
     long ONE_MINUTES_4MILLISECONDS = 60 * ONE_SECONDS_4MILLISECONDS;
 
     /**
+     * 5分钟 毫秒单位
+     */
+    long FIVE_MINUTES_4MILLISECONDS = 5  * ONE_MINUTES_4MILLISECONDS;
+
+    /**
+     * 10分钟 毫秒单位
+     */
+    long TEN_MINUTES_4MILLISECONDS = 10 * ONE_MINUTES_4MILLISECONDS;
+
+    /**
      * 一小时 毫秒单位
      */
     long ONE_HOUR_4MILLISECONDS = ONE_MINUTES_4MILLISECONDS * 60;

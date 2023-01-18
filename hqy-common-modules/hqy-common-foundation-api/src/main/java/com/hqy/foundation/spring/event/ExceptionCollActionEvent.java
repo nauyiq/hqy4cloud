@@ -1,6 +1,8 @@
 package com.hqy.foundation.spring.event;
 
 import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.foundation.common.enums.ExceptionType;
+import lombok.Data;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Date;
@@ -20,40 +22,23 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         super(source);
     }
 
-    public ExceptionCollActionEvent(Object source, Throwable exception, String param) {
-        super(source);
-        this.exception = exception;
-        this.param = param;
+    public ExceptionCollActionEvent(ExceptionType type, Object source) {
+        this(source);
+        this.type = type;
     }
 
-    public ExceptionCollActionEvent(Object source, Throwable exception, String param, int step) {
+    public ExceptionCollActionEvent(ExceptionType type, Object source, Throwable exception, int step) {
         super(source);
-        this.exception = exception;
-        this.param = param;
-        this.step = step;
-    }
-
-    public ExceptionCollActionEvent(Object source, Throwable exception, int step, CommonResultCode resultCode) {
-        super(source);
-        this.exception = exception;
-        this.step = step;
-        this.resultCode = resultCode;
-    }
-
-    public ExceptionCollActionEvent(Object source, Throwable exception, int step) {
-        super(source);
+        this.type = type;
         this.exception = exception;
         this.step = step;
     }
 
-    public ExceptionCollActionEvent(Object source, Throwable exception, String param, int step, boolean filter) {
-        super(source);
-        this.exception = exception;
-        this.param = param;
-        this.step = step;
-        this.filter = filter;
-    }
 
+    /**
+     * 异常类型
+     */
+    private ExceptionType type;
 
     /**
      * 发生的异常
@@ -71,6 +56,16 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
     private final Date time = new Date();
 
     /**
+     * url
+     */
+    private String url;
+
+    /**
+     * 客户端ip
+     */
+    private String ip;
+
+    /**
      * 需要携带的异常的信息
      */
     private String param;
@@ -83,7 +78,7 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
     /**
      * 异常的状态码
      */
-    private CommonResultCode resultCode = CommonResultCode.SYSTEM_BUSY;
+    private CommonResultCode resultCode = CommonResultCode.SYSTEM_ERROR;
 
     @Override
     public boolean equals(Object o) {
@@ -109,12 +104,12 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         return result;
     }
 
-    public CommonResultCode getResultCode() {
-        return resultCode;
+    public ExceptionType getType() {
+        return type;
     }
 
-    public void setResultCode(CommonResultCode resultCode) {
-        this.resultCode = resultCode;
+    public void setType(ExceptionType type) {
+        this.type = type;
     }
 
     public Throwable getException() {
@@ -137,6 +132,22 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         return time;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     public String getParam() {
         return param;
     }
@@ -151,5 +162,13 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
 
     public void setStep(int step) {
         this.step = step;
+    }
+
+    public CommonResultCode getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(CommonResultCode resultCode) {
+        this.resultCode = resultCode;
     }
 }

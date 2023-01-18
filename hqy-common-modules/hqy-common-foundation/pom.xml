@@ -30,6 +30,11 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy</groupId>
+            <artifactId>hqy-common-collector-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <!-- Springboot Redisson, Redisson redis客户端 偏向分布式-->
         <dependency>

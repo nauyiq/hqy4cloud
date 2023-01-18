@@ -17,6 +17,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+import static com.hqy.gateway.config.Constants.WRAPPER_REQUEST_FILTER_ORDER;
+
 /**
  * 基于gateway webFlux 请求体内容被截断、不可重复读的包装过滤器
  * @author qy
@@ -42,8 +44,7 @@ public class WrapperRequestGlobalFilter implements GlobalFilter, Ordered {
             return DataBufferUtils.join(exchange.getRequest().getBody())
                     .flatMap(dataBuffer -> {
                         DataBufferUtils.retain(dataBuffer);
-                        Flux<DataBuffer> cachedFlux = Flux
-                                .defer(() -> Flux.just(dataBuffer.slice(0, dataBuffer.readableByteCount())));
+                        Flux<DataBuffer> cachedFlux = Flux.defer(() -> Flux.just(dataBuffer.slice(0, dataBuffer.readableByteCount())));
                         ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(
                                 exchange.getRequest()) {
                             @Override
@@ -59,6 +60,6 @@ public class WrapperRequestGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return WRAPPER_REQUEST_FILTER_ORDER;
     }
 }

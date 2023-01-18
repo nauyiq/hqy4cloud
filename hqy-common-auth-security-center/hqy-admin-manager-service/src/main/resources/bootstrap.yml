@@ -1,0 +1,17 @@
+logging:
+  config: classpath:logback.xml
+
+server:
+  port: 8090
+
+spring:
+  application:
+    name: admin-manager-service
+  profiles:
+    active: dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

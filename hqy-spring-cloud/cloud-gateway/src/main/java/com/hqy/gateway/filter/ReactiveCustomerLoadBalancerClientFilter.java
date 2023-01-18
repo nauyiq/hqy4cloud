@@ -22,6 +22,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.net.URI;
 
+import static com.hqy.gateway.config.Constants.LOAD_BALANCER_FILTER_ORDER;
 import static org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools.reconstructURI;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
@@ -117,6 +118,6 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
     @Override
     public int getOrder() {
         //10149 刚好在原生过滤器ReactiveLoadBalancerClientFilter前面
-        return 10149;
+        return LOAD_BALANCER_FILTER_ORDER;
     }
 }

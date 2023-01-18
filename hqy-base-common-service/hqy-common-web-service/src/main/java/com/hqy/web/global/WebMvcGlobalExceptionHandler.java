@@ -2,6 +2,10 @@ package com.hqy.web.global;
 
 import com.hqy.base.common.bind.MessageResponse;
 import com.hqy.base.common.result.CommonResultCode;
+import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
+import com.hqy.util.IpUtil;
+import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.util.Objects;
 
@@ -25,9 +30,19 @@ public class WebMvcGlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(RuntimeException.class)
-    public MessageResponse handler(RuntimeException e) {
+    public MessageResponse handler(RuntimeException e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
+        collectionException(e, request);
         return CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR);
+    }
+
+    private void collectionException(RuntimeException e, HttpServletRequest request) {
+        String requestIp = IpUtil.getRequestIp(request);
+        String url = request.getRequestURL().toString();
+        ExceptionCollActionEvent event = new ExceptionCollActionEvent(ExceptionType.WEB, this.getClass().getName(), e, 10);
+        event.setIp(requestIp);
+        event.setUrl(url);
+        SpringContextHolder.publishEvent(event);
     }
 
     /**

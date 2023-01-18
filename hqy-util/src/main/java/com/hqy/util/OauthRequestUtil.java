@@ -1,6 +1,8 @@
 package com.hqy.util;
 
+import cn.hutool.core.net.URLDecoder;
 import com.hqy.base.common.base.lang.StringConstants;
+import com.hqy.base.common.swticher.CommonSwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +12,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -60,7 +60,7 @@ public class OauthRequestUtil {
         String basic = request.getHeader(StringConstants.Auth.AUTHORIZATION_KEY);
         if (StringUtils.isNotEmpty(basic) && basic.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
             basic = basic.replace(StringConstants.Auth.BASIC_PREFIX, Strings.EMPTY);
-            String basicPlainText = new String(Base64.getDecoder().decode(basic.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+            String basicPlainText = URLDecoder.decode(basic, StandardCharsets.UTF_8);
             //client:secret
             clientId = basicPlainText.split(StringConstants.Symbol.COLON)[0];
         }
@@ -111,7 +111,7 @@ public class OauthRequestUtil {
             return null;
         }
         try {
-            payload = URLDecoder.decode(payload, StandardCharsets.UTF_8.name());
+            payload = URLDecoder.decode(payload, StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -131,6 +131,17 @@ public class OauthRequestUtil {
         return servletRequestAttributes.getRequest();
     }
 
+
+    public static boolean checkAuthorization(String authorization) {
+        if(authorization.startsWith(StringConstants.Auth.JWT_PREFIX) || authorization.startsWith(StringConstants.Auth.UPPERCASE_JWT_PREFIX)) {
+            return true;
+        } else if (authorization.startsWith(StringConstants.Auth.BASIC_PREFIX)) {
+            if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+                log.debug("@@@ Authorization Basic client Id, Authorization = {}", authorization);
+            }
+        }
+        return false;
+    }
 
 
 

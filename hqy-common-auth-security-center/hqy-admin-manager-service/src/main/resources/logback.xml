@@ -1,0 +1,76 @@
+<configuration>
+    <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
+    <!-- appender是configuration的子节点，是负责写日志的组件。 -->
+    <!-- ConsoleAppender：把日志输出到控制台 -->
+    <appender name="STDOUT" class="com.hqy.foundation.common.logback.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
+            <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文 乱码 -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <substitutionProperty name="LOG_HOME" value="/home/services/apps-blog-service/logs"/>
+
+    <!-- RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
+    <!-- 以下的大概意思是：1.先按日期存日志，日期变了，将前一天的日志文件名重命名为XXX%日期%索引，新的日志仍然是sys.log -->
+    <!--             2.如果日期没有发生变化，但是当前日志的文件大小超过1KB时，对当前日志进行分割 重命名-->
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/sys.log</File>
+        <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+        <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+            <fileNamePattern>${LOG_HOME}/stdout.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- maxFileSize:这是活动文件的大小，默认值是10MB  -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date [%-5level %logger{80}] %line - %msg%n</pattern>
+            <!-- 格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>-->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+
+<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>www.hongqy1024.cn:</destination>-->
+<!--    </appender>-->
+
+
+    <appender name ="ASYNC" class= "ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold >20</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>1000</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref ="rollingFile"/>
+    </appender>
+
+
+    <!-- 控制台输出日志级别 -->
+    <root value="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+    <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
+    <!-- com.cloud.sirius为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
+    <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
+    <logger name="ch.qos" level="WARN"/>
+    <logger name="org.quartz" level="WARN"/>
+    <logger name="org.mybatis" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="tk.mybatis" level="WARN"/>
+    <logger name="com.alibaba" level="INFO"/>
+    <logger name="io.netty" level="WARN"/>
+    <logger name="io.lettuce" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.redisson" level="INFO"/>
+</configuration>
