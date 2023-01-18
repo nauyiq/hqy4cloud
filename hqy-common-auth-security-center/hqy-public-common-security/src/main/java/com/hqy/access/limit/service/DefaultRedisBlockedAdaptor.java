@@ -1,6 +1,8 @@
 package com.hqy.access.limit.service;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.map.MapUtil;
 import com.hqy.base.common.swticher.CommonSwitcher;
 import com.hqy.base.common.swticher.HttpGeneralSwitcher;
 import com.hqy.foundation.limit.service.BlockedIpService;
@@ -31,17 +33,20 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
 
     private final String KEY;
 
-    public DefaultRedisBlockedAdaptor(String KEY) {
+    public DefaultRedisBlockedAdaptor(String KEY, boolean startScheduled) {
         this.KEY = KEY;
         timestampMap = new ConcurrentHashMap<>();
         ipSetCache = new CopyOnWriteArraySet<>();
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory(KEY));
-        executorService.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                reloadDataToCache();
-            }
-        }, DELAY, PERIOD, TimeUnit.SECONDS);
+        if (startScheduled) {
+            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory(KEY));
+            executorService.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    reloadDataToCache();
+                }
+            }, DELAY, PERIOD, TimeUnit.SECONDS);
+        }
+
     }
 
     /**
@@ -106,19 +111,12 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
 
     @Override
     public Set<String> getAllBlockIpSet() {
-        // 静态IP黑名单列表.
-        Set<String> attributeSetString =
-                SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY);
-
-        if (CollectionUtils.isNotEmpty(attributeSetString)) {
-            ipSetCache.addAll(attributeSetString);
-        }
-
+        //添加静态黑名单
+        addStaticIpBlackList();
         if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             //未开启redis共享封禁列表 直接return.
             return ipSetCache;
         }
-
         Map<String, String> ipTimeMap = SmartRedisManager.getInstance().hGetAll(KEY);
         if (MapUtils.isEmpty(ipTimeMap)) {
             return ipSetCache;
@@ -133,7 +131,37 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
         return ipSetCache;
     }
 
+    private void addStaticIpBlackList() {
+        // 静态IP黑名单列表.
+        Set<String> attributeSetString =
+                SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY);
 
+        if (CollectionUtils.isNotEmpty(attributeSetString)) {
+            ipSetCache.addAll(attributeSetString);
+        }
+    }
+
+    @Override
+    public Map<String, Long> getAllBlockIp() {
+        //添加静态黑名单
+        addStaticIpBlackList();
+        Map<String, Long> map = MapUtil.newHashMap(ipSetCache.size());
+        ipSetCache.forEach(s -> map.put(s, null));
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            return map;
+        }
+
+        Map<String, String> ipTimeMap = SmartRedisManager.getInstance().hGetAll(KEY);
+        if (MapUtil.isEmpty(ipTimeMap)) {
+            return map;
+        }
+
+        long now = System.currentTimeMillis();
+        Map<String, Long> stringMap = ipTimeMap.entrySet().stream().filter(entry -> !checkExpire(entry.getKey(), Long.parseLong(entry.getValue()), now))
+                .map(Map.Entry::getKey).collect(Collectors.toMap(key -> key, Convert::toLong));
+        map.putAll(stringMap);
+        return map;
+    }
 
     @Override
     public boolean isBlockIp(String ip) {

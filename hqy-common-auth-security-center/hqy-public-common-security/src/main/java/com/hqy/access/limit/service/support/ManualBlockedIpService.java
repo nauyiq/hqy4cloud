@@ -12,7 +12,9 @@ import com.hqy.util.spring.ProjectContextInfo;
  */
 public class ManualBlockedIpService extends DefaultRedisBlockedAdaptor {
 
-    public ManualBlockedIpService() {
-        super(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY);
+    public static String NAME = " ManualBlock";
+
+    public ManualBlockedIpService(boolean startScheduled) {
+        super(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY, startScheduled);
     }
 }

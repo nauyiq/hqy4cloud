@@ -11,7 +11,9 @@ import com.hqy.util.spring.ProjectContextInfo;
  */
 public class BiBlockedIpRedisService extends DefaultRedisBlockedAdaptor {
 
-    public BiBlockedIpRedisService() {
-        super(ProjectContextInfo.BI_BLOCKED_IP_KEY);
+    public static String NAME = "BiBlock";
+
+    public BiBlockedIpRedisService(boolean startScheduled) {
+        super(ProjectContextInfo.BI_BLOCKED_IP_KEY, startScheduled);
     }
 }

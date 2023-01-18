@@ -1,5 +1,6 @@
 package com.hqy.foundation.limit.service;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,6 +36,12 @@ public interface BlockedIpService {
      * @return 黑名单集合
      */
     Set<String> getAllBlockIpSet();
+
+    /**
+     * 查询所有的黑名单集合 包括对应的过期时间
+     * @return 黑名单集合
+     */
+    Map<String, Long> getAllBlockIp();
 
     /**
      * 是否是黑名单的阻塞ip

@@ -77,12 +77,12 @@ public class ResourceServerConfiguration {
 
     @Bean
     public BlockedIpService biBlockedIpService() {
-        return new BiBlockedIpRedisService();
+        return new BiBlockedIpRedisService(true);
     }
 
     @Bean
     public BlockedIpService manualBlockedIpService() {
-        return new ManualBlockedIpService();
+        return new ManualBlockedIpService(true);
     }
 
 
