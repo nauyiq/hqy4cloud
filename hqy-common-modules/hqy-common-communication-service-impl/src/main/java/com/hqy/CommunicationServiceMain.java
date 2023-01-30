@@ -21,10 +21,10 @@ import java.util.List;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-public class Main {
+public class CommunicationServiceMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(CommunicationServiceMain.class, args);
         ProjectContextInfo.startPrintf();
     }
 
