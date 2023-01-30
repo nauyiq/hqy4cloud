@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import tk.mybatis.spring.annotation.MapperScan;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,10 +24,10 @@ import java.util.List;
 @MapperScan(basePackages = "com.hqy.*.dao")
 @SpringBootApplication
 @EnableDiscoveryClient
-public class Main {
+public class AccountAuthMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(AccountAuthMain.class, args);
         ProjectContextInfo.startPrintf();
     }
 
