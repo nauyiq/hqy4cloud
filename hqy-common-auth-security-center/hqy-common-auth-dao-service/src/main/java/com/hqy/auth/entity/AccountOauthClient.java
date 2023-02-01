@@ -12,6 +12,7 @@ import java.util.Date;
  */
 @Table(name = "t_account_oauth_client")
 public class AccountOauthClient extends BaseEntity<Long> {
+    private static final long serialVersionUID = -8627114377849486540L;
 
     /**
      * 用于唯一标识每一个客户端(client)
@@ -33,12 +34,12 @@ public class AccountOauthClient extends BaseEntity<Long> {
     /**
      * 指定客户端申请的权限范围,可选值包括read,write,trust
      */
-    private String scope;
+    private String scope = "all";
 
     /**
      * 指定客户端支持的grant_type,可选值包括authorization_code,password,refresh_token,implicit,client_credentials
      */
-    private String authorizedGrantTypes;
+    private String authorizedGrantTypes = "password,refresh_token,authorization_code";
 
     /**
      * 客户端的重定向URI,可为空
@@ -75,7 +76,7 @@ public class AccountOauthClient extends BaseEntity<Long> {
     /**
      * 是否可用
      */
-    private Boolean status;
+    private Boolean status = true;
 
     public AccountOauthClient() {
     }
@@ -86,7 +87,7 @@ public class AccountOauthClient extends BaseEntity<Long> {
         this.clientId = clientId;
     }
 
-    public AccountOauthClient(long id, String clientId, String clientSecret) {
+    public  AccountOauthClient(long id, String clientId, String clientSecret) {
         super(new Date());
         super.setId(id);
         this.clientId = clientId;
