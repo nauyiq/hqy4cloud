@@ -30,7 +30,7 @@
         <!-- 安全模块 -->
         <module>hqy-common-auth-security-center</module>
         <!-- 消息队列模块 -->
-        <module>hqy-base-mq</module>
+        <module>hqy-mq-modules</module>
     </modules>
 
     <properties>

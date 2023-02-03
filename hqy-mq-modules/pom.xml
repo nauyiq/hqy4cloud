@@ -11,10 +11,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.hqy.mq</groupId>
-    <artifactId>hqy-base-mq</artifactId>
+    <artifactId>hqy-mq-modules</artifactId>
     <modules>
         <module>hqy-mq-rabbitmq</module>
-        <module>hqy-base-mq-api</module>
+        <module>hqy-common-mq</module>
         <module>hqy-mq-kafka</module>
         <module>hqy-mq-rocketmq</module>
     </modules>

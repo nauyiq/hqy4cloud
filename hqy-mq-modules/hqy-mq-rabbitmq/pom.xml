@@ -3,22 +3,40 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hqy-base-mq</artifactId>
+        <artifactId>hqy-mq-modules</artifactId>
         <groupId>com.hqy.mq</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy-base-mq-api</artifactId>
+    <artifactId>hqy-mq-rabbitmq</artifactId>
     <packaging>jar</packaging>
 
+
     <dependencies>
+
+        <!-- springboot rabbitmq support. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- hqy util module. -->
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
+            <artifactId>hqy-util</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <!-- mq-api -->
+        <dependency>
+            <groupId>com.hqy.mq</groupId>
+            <artifactId>hqy-base-mq-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
     </dependencies>
+
 
 </project>
