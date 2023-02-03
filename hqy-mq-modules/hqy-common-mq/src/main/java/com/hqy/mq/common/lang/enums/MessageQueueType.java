@@ -1,4 +1,4 @@
-package com.hqy.mq.common;
+package com.hqy.mq.common.lang.enums;
 
 import com.hqy.mq.common.transaction.stategy.AbstractKafkaDeliveryMessageAdaptor;
 import com.hqy.mq.common.transaction.stategy.AbstractRabbitMqDeliveryMessageAdaptor;

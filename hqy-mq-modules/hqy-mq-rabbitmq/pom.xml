@@ -32,7 +32,7 @@
         <!-- mq-api -->
         <dependency>
             <groupId>com.hqy.mq</groupId>
-            <artifactId>hqy-base-mq-api</artifactId>
+            <artifactId>hqy-common-mq</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

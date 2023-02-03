@@ -1,7 +1,7 @@
 package com.hqy.mq.rabbitmq.listener;
 
 import com.hqy.base.common.base.lang.exception.MessageMqException;
-import com.hqy.mq.common.listener.payload.MessagePayload;
+import com.hqy.mq.common.server.MqMessage;
 import com.hqy.mq.rabbitmq.config.RabbitmqAutoConfiguration;
 import com.hqy.mq.rabbitmq.listener.strategy.ListenerStrategy;
 import com.hqy.util.AssertUtil;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2022/5/6 17:15
  */
 @Component
-public abstract class AbstractRabbitListener<T extends MessagePayload> {
+public abstract class AbstractRabbitListener<T extends MqMessage> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractRabbitListener.class);
 
@@ -42,7 +41,7 @@ public abstract class AbstractRabbitListener<T extends MessagePayload> {
 
 
     @RabbitHandler
-    public void process(@Payload T payload, Channel channel, Message message) throws IOException {
+    public void process(@org.springframework.messaging.handler.annotation.Payload T payload, Channel channel, Message message) throws IOException {
         try {
             ListenerStrategy<T> strategy = strategy();
             AssertUtil.notNull(strategy, "Not found strategy, payload: = " + JsonUtil.toJson(payload));
@@ -51,7 +50,7 @@ public abstract class AbstractRabbitListener<T extends MessagePayload> {
             //No throw exception, return ack ok.
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (MessageMqException mqException) {
-            String messageId = payload.obtainMessageId();
+            String messageId = payload.messageId();
             log.warn("@@@ Consumer message throwException, messageId:{}", messageId);
             int retryTime = 1;
             if (RETRY_MAP.containsKey(messageId)) {

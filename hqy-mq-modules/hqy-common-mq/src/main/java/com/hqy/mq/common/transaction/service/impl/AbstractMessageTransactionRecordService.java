@@ -1,7 +1,7 @@
 package com.hqy.mq.common.transaction.service.impl;
 
 import com.hqy.base.impl.BaseTkServiceImpl;
-import com.hqy.mq.common.MessageQueueType;
+import com.hqy.mq.common.lang.enums.MessageQueueType;
 import com.hqy.mq.common.transaction.entity.CommonMessageRecord;
 import com.hqy.mq.common.transaction.service.MessageTransactionService;
 import com.hqy.mq.common.transaction.stategy.DeliveryMessageContext;

@@ -1,6 +1,6 @@
 package com.hqy.mq.common.transaction.stategy;
 
-import com.hqy.mq.common.MessageQueueType;
+import com.hqy.mq.common.lang.enums.MessageQueueType;
 import com.hqy.util.AssertUtil;
 import com.hqy.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
