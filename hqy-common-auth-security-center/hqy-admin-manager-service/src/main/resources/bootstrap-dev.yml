@@ -1,7 +1,7 @@
 nacos:
-  server-addr: hongqy1024.cn:8848
-  group: DEV_GROUP
-  namespace: 9cd8de3b-030a-49f1-9256-f04de35cdb9e
+  server-addr: ${NACOS_HOST:hongqy1024.cn:8848}:${NACOS_PORT:8848}
+  group: ${NACOS_GROUP:DEV_GROUP}
+  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
 
 #开发环境
 spring:
