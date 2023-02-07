@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
+            <artifactId>hqy-util</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

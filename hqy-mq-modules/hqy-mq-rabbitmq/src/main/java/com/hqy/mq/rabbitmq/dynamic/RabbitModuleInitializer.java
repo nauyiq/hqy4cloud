@@ -1,7 +1,7 @@
 package com.hqy.mq.rabbitmq.dynamic;
 
 import cn.hutool.core.convert.Convert;
-import com.hqy.mq.rabbitmq.RabbitmqConstants;
+import com.hqy.mq.rabbitmq.lang.RabbitConstants;
 import com.hqy.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,8 +70,8 @@ public class RabbitModuleInitializer implements SmartInitializingSingleton {
         Map<String, Object> arguments = queue.getArguments();
 
         // 转换ttl的类型为long
-        if (arguments != null && arguments.containsKey(RabbitmqConstants.TTL)) {
-            arguments.put(RabbitmqConstants.TTL, Convert.toLong(arguments.get(RabbitmqConstants.TTL)));
+        if (arguments != null && arguments.containsKey(RabbitConstants.TTL)) {
+            arguments.put(RabbitConstants.TTL, Convert.toLong(arguments.get(RabbitConstants.TTL)));
         }
 
         // 是否需要绑定死信队列
@@ -81,8 +81,8 @@ public class RabbitModuleInitializer implements SmartInitializingSingleton {
             if (arguments == null) {
                 arguments = new HashMap<>(2);
             }
-            arguments.put(RabbitmqConstants.DEAD_EXCHANGE, deadLetterExchange);
-            arguments.put(RabbitmqConstants.DEAD_EXCHANGE_ROOTING_KEY, deadLetterRoutingKey);
+            arguments.put(RabbitConstants.DEAD_EXCHANGE, deadLetterExchange);
+            arguments.put(RabbitConstants.DEAD_EXCHANGE_ROOTING_KEY, deadLetterRoutingKey);
         }
         return new Queue(queue.getName(), queue.isDurable(), queue.isExclusive(), queue.isAutoDelete(), arguments);
     }

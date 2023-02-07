@@ -1,0 +1,66 @@
+package com.hqy.base.common.base.lang.exception;
+
+import com.hqy.base.common.result.CommonResultCode;
+
+/**
+ * @author qiyuan.hong
+ * @version 1.0
+ * @date 2022/5/6 17:25
+ */
+public class MessageQueueException extends RuntimeException {
+    private static final long serialVersionUID = -3601156255152951538L;
+
+    public int code;
+
+    public MessageQueueException(String message) {
+        this(CommonResultCode.SYSTEM_BUSY.code, message);
+    }
+
+    public MessageQueueException(int code, String message) {
+        super(message);
+        this.code = code;
+    }
+
+    public MessageQueueException(String message, Throwable cause) {
+        this(CommonResultCode.SYSTEM_BUSY.code, message, cause);
+    }
+
+    public MessageQueueException(int code, String message, Throwable cause) {
+        super(message, cause);
+        this.code = code;
+    }
+
+    public MessageQueueException(Throwable cause) {
+        this(CommonResultCode.SYSTEM_BUSY.code, cause);
+    }
+
+    public MessageQueueException(int code, Throwable cause) {
+        super(cause);
+        this.code = code;
+    }
+
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    /**
+     * 消息为空
+     */
+    public static final int EMPTY_MESSAGE_CODE = 1;
+
+    /**
+     * 业务执行异常
+     */
+    public static final int BUSINESS_EXCEPTION = 2;
+
+    /**
+     * 发送消息失败
+     */
+    public static final int FAILED_SEND_MESSAGE = 3;
+
+}
