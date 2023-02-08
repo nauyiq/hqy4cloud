@@ -54,13 +54,18 @@ public class MessageQueueException extends RuntimeException {
     public static final int EMPTY_MESSAGE_CODE = 1;
 
     /**
+     * 消息参数为空
+     */
+    public static final int EMPTY_MESSAGE_PARAMS = 2;
+
+    /**
      * 业务执行异常
      */
-    public static final int BUSINESS_EXCEPTION = 2;
+    public static final int BUSINESS_EXCEPTION = 3;
 
     /**
      * 发送消息失败
      */
-    public static final int FAILED_SEND_MESSAGE = 3;
+    public static final int FAILED_SEND_MESSAGE = 4;
 
 }

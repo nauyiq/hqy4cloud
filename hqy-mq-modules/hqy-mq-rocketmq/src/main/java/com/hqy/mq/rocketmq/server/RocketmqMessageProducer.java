@@ -1,12 +1,11 @@
 package com.hqy.mq.rocketmq.server;
 
 import com.hqy.base.common.base.lang.exception.MessageQueueException;
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.lang.enums.MessageQueue;
 import com.hqy.mq.common.lang.enums.MessageType;
 import com.hqy.mq.common.server.support.AbstractProducer;
 import com.hqy.mq.rocketmq.lang.RocketmqConstants;
-import com.hqy.mq.rocketmq.lang.RocketmqMessageModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.SendCallback;
@@ -16,7 +15,7 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import java.util.Objects;
+import static com.hqy.base.common.base.lang.exception.MessageQueueException.FAILED_SEND_MESSAGE;
 
 /**
  * @author qiyuan.hong
@@ -31,34 +30,32 @@ public abstract class RocketmqMessageProducer extends AbstractProducer {
         this.rocketMQTemplate = rocketMQTemplate;
     }
 
-    protected abstract <T extends MessageModel> RocketmqMessageModel buildMessage(T message);
 
-    protected void doSuccess(RocketmqMessageModel model) {
+    protected <T extends MessageModel> void doSuccess(T message) {
         if (log.isDebugEnabled()) {
-            log.debug("Send message to rocketmq success, payload: {}.", model.payload());
+            log.debug("Send message to rocketmq success, message: {} -> {}.", message.messageId(), message.jsonPayload());
         }
     }
 
-    protected void doFailure(RocketmqMessageModel model, SendStatus status) {
-        log.error("Failed execute to send message to rocketmq, status: {}, message: {}.", status, model.payload());
+    protected <T extends MessageModel> void doFailure(T message, Throwable ex) {
+        log.error("Failed execute to send message to rocketmq, message: {}.", message.jsonPayload(), ex);
     }
 
 
     @Override
     protected <T extends MessageModel> void sendMessage(T message) throws MessageQueueException {
-        RocketmqMessageModel model = buildMessage(message);
-        if (Objects.isNull(model) ||
-                StringUtils.isAnyBlank(model.topic(), model.payload())) {
-            throw new MessageQueueException(MessageQueueException.EMPTY_MESSAGE_CODE, "Rabbitmq message should not be null.");
+        //主题
+        String topic = message.getParameters().getTarget();
+        //消息内容json
+        String payload = message.jsonPayload();
+        if (StringUtils.isAnyBlank(topic, payload)) {
+            throw new MessageQueueException(MessageQueueException.EMPTY_MESSAGE_PARAMS, "Rabbitmq message params should not be empty.");
         }
 
-        String topic = model.topic();
-        String payload = model.payload();
-        Message<String> rocketMessage = MessageBuilder.withPayload(payload).setHeader(RocketmqConstants.ID_KEYS, model.messageId()).build();
-
-
+        //构建Rocketmq消息对象
+        Message<String> rocketMessage = MessageBuilder.withPayload(payload).setHeader(RocketmqConstants.ID_KEYS, message.messageId()).build();
         //消息类型
-        MessageType messageType = model.messageType();
+        MessageType messageType = message.messageType();
         switch (messageType) {
             case ONEWAY:
                 rocketMQTemplate.sendOneWay(topic, rocketMessage);
@@ -67,30 +64,29 @@ public abstract class RocketmqMessageProducer extends AbstractProducer {
                 SendResult sendResult = rocketMQTemplate.syncSend(topic, payload);
                 SendStatus sendStatus = sendResult.getSendStatus();
                 if (sendStatus.equals(SendStatus.SEND_OK)) {
-                    doSuccess(model);
+                    doSuccess(message);
                 } else {
-                    doFailure(model, sendStatus);
+                    doFailure(message, new MessageQueueException(FAILED_SEND_MESSAGE, "Failed execute to sync send message to rocketmq."));
                 }
                 break;
             default:
                 rocketMQTemplate.asyncSend(topic, rocketMessage, new SendCallback() {
                     @Override
                     public void onSuccess(SendResult sendResult) {
-                        doSuccess(model);
+                        doSuccess(message);
                     }
 
                     @Override
                     public void onException(Throwable e) {
-                        doFailure(model, null);
+                        doFailure(message, e);
                     }
                 });
 
         }
 
-
-
     }
 
-
-
+    public RocketMQTemplate getRocketMQTemplate() {
+        return rocketMQTemplate;
+    }
 }

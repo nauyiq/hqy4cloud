@@ -1,18 +1,17 @@
 package com.hqy.mq.kafka.server;
 
 import com.hqy.base.common.base.lang.exception.MessageQueueException;
+import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.lang.enums.MessageQueue;
-import com.hqy.mq.common.MessageModel;
 import com.hqy.mq.common.server.support.AbstractProducer;
-import com.hqy.mq.kafka.lang.KafkaMessageModel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.lang.Nullable;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import java.util.Objects;
+import static com.hqy.mq.kafka.lang.Constants.PARTITION_KEY;
+import static com.hqy.mq.kafka.lang.Constants.TIMESTAMP_KEY;
 
 /**
  * kafka消息生产者.
@@ -30,15 +29,9 @@ public abstract class KafkaMessageProducer extends AbstractProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    /**
-     * 由具体业务构建kafka请求的消息
-     * @param messageModel kafka消息
-     * @return KafkaMessage.
-     */
-    protected abstract <T extends MessageModel> KafkaMessageModel buildMessage(T messageModel);
 
-    protected void doFailure(KafkaMessageModel message, Throwable ex) {
-        log.error("Failed execute to send message to kafka, message: {}.", message.payload(), ex);
+    protected <T extends MessageModel> void doFailure(T message, Throwable ex) {
+        log.error("Failed execute to send message to kafka, message: {} -> {}.", message.messageId(), message.jsonPayload(), ex);
     }
 
     protected void doSuccess(SendResult<String, Object> result) {
@@ -48,18 +41,14 @@ public abstract class KafkaMessageProducer extends AbstractProducer {
 
     @Override
     protected <T extends MessageModel> void sendMessage(T message) throws MessageQueueException {
-        KafkaMessageModel kafkaMessage = buildMessage(message);
-        if (Objects.isNull(kafkaMessage) || StringUtils.isBlank(kafkaMessage.topic())) {
-            throw new MessageQueueException(MessageQueueException.EMPTY_MESSAGE_CODE, "Kafka message should not be null.");
-        }
-        String topic = kafkaMessage.topic();
-        String key = kafkaMessage.key();
-        Integer partition = kafkaMessage.partition();
-        Long timestamp = kafkaMessage.timestamp();
-        kafkaTemplate.send(topic, partition, timestamp, key, kafkaMessage.payload()).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+        String topic = message.getParameters().getTarget();
+        String key = message.getParameters().getKey();
+        Integer partition = message.getParameters().getInt(PARTITION_KEY);
+        Long timestamp = message.getParameters().getLong(TIMESTAMP_KEY);
+        kafkaTemplate.send(topic, partition, timestamp, key, message.jsonPayload()).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
             @Override
             public void onFailure(@Nullable Throwable ex) {
-                doFailure(kafkaMessage, ex);
+                doFailure(message, ex);
             }
 
             @Override
@@ -67,5 +56,9 @@ public abstract class KafkaMessageProducer extends AbstractProducer {
                 doSuccess(result);
             }
         });
+    }
+
+    public KafkaTemplate<String, Object> getKafkaTemplate() {
+        return kafkaTemplate;
     }
 }

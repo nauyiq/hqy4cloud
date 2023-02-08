@@ -1,6 +1,6 @@
 package com.hqy.mq.rabbitmq.server;
 
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.server.Consumer;
 import com.hqy.mq.common.server.support.AbstractMqListener;
 import com.rabbitmq.client.Channel;

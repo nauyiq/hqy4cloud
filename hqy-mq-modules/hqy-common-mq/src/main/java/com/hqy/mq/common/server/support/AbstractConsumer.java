@@ -1,7 +1,7 @@
 package com.hqy.mq.common.server.support;
 
 import cn.hutool.core.thread.NamedThreadFactory;
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.lang.enums.MessageQueue;
 import com.hqy.mq.common.server.Consumer;
 import lombok.extern.slf4j.Slf4j;

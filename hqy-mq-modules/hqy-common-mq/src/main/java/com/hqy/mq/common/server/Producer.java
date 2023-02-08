@@ -1,7 +1,7 @@
 package com.hqy.mq.common.server;
 
 import com.hqy.base.common.base.lang.exception.MessageQueueException;
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 
 /**
  * 生产者.

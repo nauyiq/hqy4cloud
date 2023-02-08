@@ -1,6 +1,6 @@
 package com.hqy.mq.common.server;
 
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 
 /**
  * 监听器.

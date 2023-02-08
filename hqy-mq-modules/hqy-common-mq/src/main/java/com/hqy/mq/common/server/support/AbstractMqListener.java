@@ -2,7 +2,7 @@ package com.hqy.mq.common.server.support;
 
 import com.hqy.base.common.base.lang.exception.MessageQueueException;
 import com.hqy.base.common.swticher.CommonSwitcher;
-import com.hqy.mq.common.MessageModel;
+import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.server.Consumer;
 import com.hqy.mq.common.server.MqNotifyListener;
 import com.hqy.util.AssertUtil;
@@ -33,7 +33,7 @@ public abstract class AbstractMqListener<T extends MessageModel> implements MqNo
             throw new MessageQueueException(MessageQueueException.EMPTY_MESSAGE_CODE, "Mq message should not be null.");
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn() && log.isDebugEnabled()) {
-            log.debug("Receive mq message, payload:{}.", message.payload());
+            log.debug("Receive mq message, payload:{}.", message.jsonPayload());
         }
 
         try {

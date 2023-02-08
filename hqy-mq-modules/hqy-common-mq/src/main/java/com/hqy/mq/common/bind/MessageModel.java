@@ -1,7 +1,6 @@
-package com.hqy.mq.common;
+package com.hqy.mq.common.bind;
 
 import cn.hutool.core.lang.UUID;
-import com.hqy.base.common.support.Parameters;
 import com.hqy.mq.common.lang.enums.MessageType;
 
 /**
@@ -27,16 +26,16 @@ public interface MessageModel {
     }
 
     /**
-     * json消息体.
-     * @return 无特殊情况为json数据.
+     * 获取json消息体.
+     * @return json消息体.
      */
-    String payload();
+    String jsonPayload();
 
     /**
      * 获取发送消息参数
      * @return 消息参数.
      */
-    default Parameters parameters() { return null; }
+    MessageParams getParameters();
 
     /**
      * 消息id
