@@ -1,6 +1,7 @@
 package com.hqy.mq.common.bind;
 
 import cn.hutool.core.lang.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.mq.common.lang.enums.MessageType;
 
 /**
@@ -11,11 +12,6 @@ import com.hqy.mq.common.lang.enums.MessageType;
  */
 public interface MessageModel {
 
-    /**
-     * 获取消息体Class.
-     * @return  消息体Class
-     */
-    <T> Class<T> payloadClass();
 
     /**
      * 消息类型 默认为异步
@@ -26,16 +22,17 @@ public interface MessageModel {
     }
 
     /**
+     * 获取发送消息参数
+     * @return 消息参数.
+     */
+    @JsonIgnore
+    MessageParams getParameters();
+
+    /**
      * 获取json消息体.
      * @return json消息体.
      */
     String jsonPayload();
-
-    /**
-     * 获取发送消息参数
-     * @return 消息参数.
-     */
-    MessageParams getParameters();
 
     /**
      * 消息id

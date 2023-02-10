@@ -46,8 +46,10 @@
         <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
         <!-- spring-boot -->
+<!--        <springboot.version>2.6.11</springboot.version>-->
         <springboot.version>2.3.8.RELEASE</springboot.version>
         <springcloud.version>Hoxton.SR10</springcloud.version>
+<!--        <springcloud.version>2021.0.4</springcloud.version>-->
         <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
 
         <!-- alibaba -->
@@ -56,6 +58,7 @@
         <druid.version>1.1.16</druid.version>
         <springboot.druid.version>1.1.10</springboot.druid.version>
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
+<!--        <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>-->
 
         <!-- dao -->
 <!--        <mysql.version>5.1.47</mysql.version>-->
@@ -174,12 +177,6 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.spring.boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
             </dependency>
 
             <dependency>
@@ -335,7 +332,6 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -379,12 +375,6 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
 
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-devtools</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -401,6 +391,20 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
     </dependencies>
 
@@ -414,6 +418,7 @@
                     <include>**/*.lua</include>
                     <include>*.properties</include>
                     <include>*.yml</include>
+                    <include>*.yaml</include>
                     <include>*.key</include>
                     <include>**/*.factories</include>
                     <include>*.jks</include>

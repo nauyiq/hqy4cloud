@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TopicMetadata {
+public class Topics {
 
     /**
      * 主题
@@ -28,7 +28,7 @@ public class TopicMetadata {
     /**
      * 分区副本数
      */
-    private Integer replicationFactor;
+    private Integer replications;
 
 
 

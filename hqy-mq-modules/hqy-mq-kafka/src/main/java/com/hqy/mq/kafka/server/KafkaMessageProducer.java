@@ -20,11 +20,11 @@ import static com.hqy.mq.kafka.lang.Constants.TIMESTAMP_KEY;
  * @date 2023/2/6 14:22
  */
 @Slf4j
-public abstract class KafkaMessageProducer extends AbstractProducer {
+public class KafkaMessageProducer extends AbstractProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public KafkaMessageProducer(KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaMessageProducer(KafkaTemplate<String, String> kafkaTemplate) {
         super(MessageQueue.KAFKA);
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -34,7 +34,7 @@ public abstract class KafkaMessageProducer extends AbstractProducer {
         log.error("Failed execute to send message to kafka, message: {} -> {}.", message.messageId(), message.jsonPayload(), ex);
     }
 
-    protected void doSuccess(SendResult<String, Object> result) {
+    protected void doSuccess(SendResult<String, String> result) {
         log.info("Send message to kafka success, topic:{}, partition:{}, offset:{}",
                 result.getRecordMetadata().topic(), result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
     }
@@ -45,20 +45,20 @@ public abstract class KafkaMessageProducer extends AbstractProducer {
         String key = message.getParameters().getKey();
         Integer partition = message.getParameters().getInt(PARTITION_KEY);
         Long timestamp = message.getParameters().getLong(TIMESTAMP_KEY);
-        kafkaTemplate.send(topic, partition, timestamp, key, message.jsonPayload()).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+        kafkaTemplate.send(topic, partition, timestamp, key, message.jsonPayload()).addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onFailure(@Nullable Throwable ex) {
                 doFailure(message, ex);
             }
 
             @Override
-            public void onSuccess(SendResult<String, Object> result) {
+            public void onSuccess(SendResult<String, String> result) {
                 doSuccess(result);
             }
         });
     }
 
-    public KafkaTemplate<String, Object> getKafkaTemplate() {
+    public KafkaTemplate<String, String> getKafkaTemplate() {
         return kafkaTemplate;
     }
 }

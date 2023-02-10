@@ -4,6 +4,7 @@ import com.hqy.base.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -15,7 +16,7 @@ import java.util.function.Predicate;
  */
 public abstract class Parameters {
 
-    protected transient Map<String, String> parameters;
+    protected transient Map<String, String> parameters = new HashMap<>();
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;

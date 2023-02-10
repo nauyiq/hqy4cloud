@@ -19,7 +19,6 @@ import static com.hqy.base.common.base.lang.exception.MessageQueueException.BUSI
  */
 @Slf4j
 public abstract class AbstractMqListener<T extends MessageModel> implements MqNotifyListener<T> {
-
     private final Consumer<T> consumer;
 
     public AbstractMqListener(Consumer<T> consumer) {

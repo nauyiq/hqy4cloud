@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.hqy.mq.kafka.dynamic.KafkaTopicsInitializer,\
+com.hqy.mq.kafka.config.KafkaDefaultAutoConfiguration,\
 com.hqy.mq.kafka.dynamic.KafkaTopicsProperties

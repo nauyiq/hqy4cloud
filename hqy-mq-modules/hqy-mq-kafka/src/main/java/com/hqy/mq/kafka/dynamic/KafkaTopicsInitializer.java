@@ -35,7 +35,7 @@ public class KafkaTopicsInitializer implements SmartInitializingSingleton {
     }
 
     private void declareKafkaTopics() {
-        List<TopicMetadata> topics = topicProperties.getTopics();
+        List<Topics> topics = topicProperties.getTopics();
         if (CollectionUtils.isNotEmpty(topics)) {
             AdminClient client = AdminClient.create(properties.buildAdminProperties());
             if (Objects.isNull(client)) {
@@ -56,13 +56,13 @@ public class KafkaTopicsInitializer implements SmartInitializingSingleton {
 
     }
 
-    private NewTopic buildTopic(TopicMetadata metadata) {
+    private NewTopic buildTopic(Topics metadata) {
         String name = metadata.getName();
         if (StringUtils.isBlank(name)) {
             throw new IllegalArgumentException("Topic name should not be empty.");
         }
         Integer partition = metadata.getPartition();
-        Integer replicationFactor = metadata.getReplicationFactor();
+        Integer replicationFactor = metadata.getReplications();
         partition = partition == null ? 1 : partition;
         replicationFactor = replicationFactor == null ? 1 : replicationFactor;
         return new NewTopic(name, partition, Convert.toShort(replicationFactor));
