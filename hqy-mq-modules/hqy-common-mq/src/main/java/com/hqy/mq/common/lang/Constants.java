@@ -7,6 +7,10 @@ package com.hqy.mq.common.lang;
  */
 public interface Constants {
 
+    /**
+     * 顺序消息
+     */
+    String ORDERLY_MESSAGE_KEY = "orderly_message_key";
 
 
 

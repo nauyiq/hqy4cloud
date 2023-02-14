@@ -3,6 +3,7 @@ package com.hqy.mq.common.bind;
 import cn.hutool.core.lang.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.mq.common.lang.enums.MessageType;
+import com.hqy.util.JsonUtil;
 
 /**
  * 消息中间件的消息.
@@ -18,7 +19,7 @@ public interface MessageModel {
      * @return MessageType.
      */
     default MessageType messageType() {
-        return MessageType.ASYNC;
+        return MessageType.SYNC;
     }
 
     /**
@@ -32,7 +33,9 @@ public interface MessageModel {
      * 获取json消息体.
      * @return json消息体.
      */
-    String jsonPayload();
+    default String jsonPayload() {
+        return JsonUtil.toJson(this);
+    }
 
     /**
      * 消息id

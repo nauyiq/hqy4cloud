@@ -47,6 +47,15 @@ public class MessageParams extends Parameters {
         return StringUtils.isNotBlank(parameter) ? Convert.toLong(parameter) : defaultValue;
     }
 
+    public Boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    public Boolean getBoolean(String key, Boolean defaultValue) {
+        String parameter = getParameter(key);
+        return StringUtils.isNotBlank(parameter) ? Convert.toBool(parameter) : defaultValue;
+    }
+
 
     public String getTarget() {
         return target;

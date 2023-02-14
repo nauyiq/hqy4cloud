@@ -56,6 +56,7 @@
         <nacos.version>2.0.3</nacos.version>
         <seata.version>1.4.2</seata.version>
         <druid.version>1.1.16</druid.version>
+        <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
         <springboot.druid.version>1.1.10</springboot.druid.version>
         <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
 <!--        <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>-->
@@ -156,6 +157,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+
+            <!-- rocket mq -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${apache.rocketmq.version}</version>
             </dependency>
 
             <!-- springboot-druid -->

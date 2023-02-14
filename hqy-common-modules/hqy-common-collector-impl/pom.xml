@@ -82,19 +82,12 @@
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
 
-
-        <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.csp</groupId>-->
-<!--            <artifactId>sentinel-datasource-nacos</artifactId>-->
-<!--        </dependency>-->
-
-        <!--Spring cloud alibaba dubbo-->
-        <!--<dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-dubbo</artifactId>
-        </dependency>-->
-
+        <dependency>
+            <groupId>com.hqy.mq</groupId>
+            <artifactId>hqy-mq-rocketmq</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
