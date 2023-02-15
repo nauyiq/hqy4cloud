@@ -5,6 +5,7 @@ import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.bind.MessageParams;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 
 /**
  * @author qiyuan.hong
@@ -25,7 +26,9 @@ public class TestRocketmqMessage implements MessageModel {
 
     @Override
     public MessageParams getParameters() {
-        return new MessageParams("hahahahaha", "rocketmq-producer-group-test");
+        MessageParams messageParams = new MessageParams("hahahahaha", "rocketmq-producer-group-test");
+        messageParams.setParameter(RocketMQHeaders.DELAY, "3");
+        return messageParams;
 
     }
 }

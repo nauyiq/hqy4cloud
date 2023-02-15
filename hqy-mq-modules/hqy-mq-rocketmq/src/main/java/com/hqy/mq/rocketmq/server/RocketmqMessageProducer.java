@@ -19,7 +19,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import java.util.Objects;
 
 import static com.hqy.base.common.base.lang.exception.MessageQueueException.FAILED_SEND_MESSAGE;
-import static com.hqy.mq.common.lang.Constants.ORDERLY_MESSAGE_KEY;
+import static com.hqy.mq.common.lang.Constants.*;
 
 /**
  * @author qiyuan.hong
@@ -60,10 +60,11 @@ public class RocketmqMessageProducer extends AbstractProducer {
         if (StringUtils.isNotBlank(tag)) {
             destination = destination.concat(StringConstants.Symbol.COLON).concat(tag);
         }
-        //构建Rocketmq消息对象
-        Message<String> rocketMessage = MessageBuilder.withPayload(payload).setHeader(RocketMQHeaders.KEYS, message.messageId()).build();
+
         //顺序消息的hashkey
         String orderly = message.getParameters().getParameter(ORDERLY_MESSAGE_KEY);
+        //构建Rocketmq消息对象
+        Message<String> rocketMessage = MessageBuilder.withPayload(payload).setHeader(RocketMQHeaders.KEYS, message.messageId()).build();
         //消息类型
         MessageType messageType = message.messageType();
         switch (messageType) {
