@@ -2,12 +2,15 @@ package com.hqy.rpc.nacos.starter;
 
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosDiscoveryClientConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
 import com.hqy.rpc.common.RPCServerAddress;
+import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.rpc.server.thrift.ThriftServerWrapper;
 import com.hqy.rpc.thrift.service.ThriftServerLauncher;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,12 +29,14 @@ import org.springframework.context.annotation.Primary;
  * @date 2022/7/22 15:46
  */
 @Configuration
+@RequiredArgsConstructor
 @ConditionalOnNacosDiscoveryEnabled
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class, CommonsClientAutoConfiguration.class, NacosDiscoveryClientConfiguration.class})
 public class NacosThriftServerStarterAutoConfiguration {
 
     @Value("${server.port}")
     private int port;
+    private final EnvironmentConfig environmentConfig;
 
     private static final Logger log = LoggerFactory.getLogger(NacosThriftServerStarterAutoConfiguration.class);
 
@@ -39,7 +44,8 @@ public class NacosThriftServerStarterAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean
     public NacosThriftStarter nacosThriftStarter(ThriftServerLauncher thriftServerLauncher, NacosDiscoveryProperties properties, ThriftServerWrapper thriftServer) {
-        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), thriftServerLauncher.getWight(), ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), properties.getGroup()) {
+        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), thriftServerLauncher.getWight(),
+                ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), properties.getGroup(), environmentConfig) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {
                 return thriftServer.getServerAddr();
@@ -51,12 +57,12 @@ public class NacosThriftServerStarterAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = {"spring.cloud.nacos.discovery.watch.enabled"}, matchIfMissing = true)
-    public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosThriftStarter nacosThriftStarter) {
+    public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosThriftStarter nacosThriftStarter, NacosServiceManager nacosServiceManager) {
         //register project context info.
         try {
             nacosThriftStarter.registerProjectContextInfo();
             nacosDiscoveryProperties.setMetadata(nacosThriftStarter.getMetadata().toMetadataMap());
-            return new NacosWatch(nacosDiscoveryProperties);
+            return new NacosWatch(nacosServiceManager, nacosDiscoveryProperties);
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
             System.exit(1);

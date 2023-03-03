@@ -6,8 +6,8 @@ import com.hqy.rpc.cluster.support.FailBackCluster;
 import com.hqy.rpc.cluster.support.FailFastCluster;
 import com.hqy.rpc.cluster.support.FailSafeCluster;
 import com.hqy.rpc.cluster.support.FailoverCluster;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.spring.SpringContextHolder;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

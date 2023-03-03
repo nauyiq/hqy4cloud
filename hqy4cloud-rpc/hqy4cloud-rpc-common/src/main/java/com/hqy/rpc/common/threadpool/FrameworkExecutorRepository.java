@@ -1,7 +1,7 @@
 package com.hqy.rpc.common.threadpool;
 
 import com.hqy.rpc.common.CloseableService;
-import com.hqy.util.thread.NamedThreadFactory;
+import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,7 +3,7 @@ package com.hqy.mq.common.bind;
 import cn.hutool.core.lang.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.mq.common.lang.enums.MessageType;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 
 /**
  * 消息中间件的消息.

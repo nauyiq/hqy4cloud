@@ -2,9 +2,9 @@ package com.hqy.socketio.service.support;
 
 import com.hqy.ex.NettyContextHelper;
 import com.hqy.socketio.service.ThriftSocketIoPushService;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.thread.ExecutorServiceProject;
-import com.hqy.util.thread.ParentExecutorService;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.thread.ExecutorServiceProject;
+import com.hqy.cloud.util.thread.ParentExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -80,6 +80,13 @@
             <scope>provided</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>3.5</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
@@ -95,7 +102,6 @@
 
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-<!--                <version>3.7.0</version>-->
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

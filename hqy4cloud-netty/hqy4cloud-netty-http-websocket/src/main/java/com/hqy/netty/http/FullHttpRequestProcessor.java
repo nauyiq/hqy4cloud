@@ -2,8 +2,8 @@ package com.hqy.netty.http;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.IpUtil;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.IpUtil;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.commons.lang3.StringUtils;

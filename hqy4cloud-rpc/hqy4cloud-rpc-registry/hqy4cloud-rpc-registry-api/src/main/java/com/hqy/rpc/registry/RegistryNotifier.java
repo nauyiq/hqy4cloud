@@ -1,7 +1,7 @@
 package com.hqy.rpc.registry;
 
 import com.hqy.rpc.common.support.RPCModel;
-import com.hqy.util.thread.NamedThreadFactory;
+import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,7 +3,7 @@ package com.hqy.rpc.registry.api;
 import com.hqy.rpc.api.service.RPCModelService;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.RegistryService;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 
 import static com.hqy.rpc.common.CommonConstants.DEFAULT_DELAY_NOTIFICATION_TIME;
 import static com.hqy.rpc.common.CommonConstants.REGISTRY_DELAY_NOTIFICATION_KEY;

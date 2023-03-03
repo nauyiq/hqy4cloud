@@ -1,0 +1,21 @@
+logging:
+  config: classpath:logback.xml
+
+server:
+  port: 9527
+
+spring:
+  profiles:
+     active: dev
+  application:
+    name: gateway-service
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+
+#暴露所有
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

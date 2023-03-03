@@ -2,7 +2,7 @@ package com.hqy.ex.listener;
 
 import com.hqy.ex.SocketProjectContext;
 import com.hqy.socketio.HandshakeData;
-import com.hqy.util.JwtUtil;
+import com.hqy.cloud.util.JwtUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

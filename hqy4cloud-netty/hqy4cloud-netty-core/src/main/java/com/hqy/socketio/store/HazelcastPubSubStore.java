@@ -54,13 +54,10 @@ public class HazelcastPubSubStore implements PubSubStore {
     public <T extends PubSubMessage> void subscribe(PubSubType type, final PubSubListener<T> listener, Class<T> clazz) {
         String name = type.toString();
         ITopic<T> topic = hazelcastSub.getTopic(name);
-        String regId = topic.addMessageListener(new MessageListener<T>() {
-            @Override
-            public void onMessage(Message<T> message) {
-                PubSubMessage msg = message.getMessageObject();
-                if (!nodeId.equals(msg.getNodeId())) {
-                    listener.onMessage(message.getMessageObject());
-                }
+        String regId = topic.addMessageListener(message -> {
+            PubSubMessage msg = message.getMessageObject();
+            if (!nodeId.equals(msg.getNodeId())) {
+                listener.onMessage(message.getMessageObject());
             }
         });
 

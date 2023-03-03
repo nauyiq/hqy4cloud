@@ -9,8 +9,8 @@ import com.hqy.rpc.registry.retry.FailRegisteredTask;
 import com.hqy.rpc.registry.retry.FailSubscribedTask;
 import com.hqy.rpc.registry.retry.FailUnRegisteredTask;
 import com.hqy.rpc.registry.retry.FailUnsubscribedTask;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.thread.DefaultThreadFactory;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.thread.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,7 +2,7 @@ package com.hqy.web.global;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.util.OauthRequestUtil;
+import com.hqy.cloud.util.OauthRequestUtil;
 import com.hqy.web.service.account.AccountRpcUtil;
 import com.hqy.web.service.account.dto.AccountPayloadDTO;
 import org.slf4j.Logger;

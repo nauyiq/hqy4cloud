@@ -2,7 +2,7 @@ package com.hqy.foundation.common.support;
 
 import com.hqy.foundation.common.AccountEmailTemplate;
 import com.hqy.foundation.common.bind.EmailTemplateInfo;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**

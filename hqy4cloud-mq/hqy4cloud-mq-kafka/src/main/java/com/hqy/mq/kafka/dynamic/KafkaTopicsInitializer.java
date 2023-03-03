@@ -1,7 +1,7 @@
 package com.hqy.mq.kafka.dynamic;
 
 import cn.hutool.core.convert.Convert;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

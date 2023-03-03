@@ -7,7 +7,7 @@ import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.cluster.router.AbstractRouter;
 import com.hqy.rpc.cluster.router.RouterResult;
 import com.hqy.rpc.common.support.RPCModel;
-import com.hqy.util.IpUtil;
+import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

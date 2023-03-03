@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.hqy.util.FieldUtils.getFieldValue;
+import static com.hqy.cloud.util.FieldUtils.getFieldValue;
 import static java.lang.reflect.Modifier.*;
 
 /**

@@ -2,7 +2,7 @@ package com.hqy.socketio.support;
 
 import com.hqy.socketio.AbstractServerLauncher;
 import com.hqy.socketio.SocketIOServer;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

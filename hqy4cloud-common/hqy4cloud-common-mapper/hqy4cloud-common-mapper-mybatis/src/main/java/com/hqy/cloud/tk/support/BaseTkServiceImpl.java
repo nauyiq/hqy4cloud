@@ -4,8 +4,8 @@ import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.tk.BaseTkMapper;
 import com.hqy.cloud.tk.BaseTkService;
 import com.hqy.cloud.tk.model.BaseEntity;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.ReflectUtils;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.ReflectUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;

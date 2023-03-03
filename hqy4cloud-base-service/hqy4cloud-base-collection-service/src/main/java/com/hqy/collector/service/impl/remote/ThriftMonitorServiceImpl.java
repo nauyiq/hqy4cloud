@@ -7,7 +7,7 @@ import com.hqy.collector.service.RPCFlowRecordService;
 import com.hqy.rpc.monitor.thrift.api.ThriftMonitorService;
 import com.hqy.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import com.hqy.rpc.thrift.struct.ThriftRpcFlowStruct;
-import com.hqy.util.thread.ParentExecutorService;
+import com.hqy.cloud.util.thread.ParentExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

@@ -1,7 +1,7 @@
 package com.hqy.foundation.timer;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.util.ReflectUtils;
+import com.hqy.cloud.util.ReflectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

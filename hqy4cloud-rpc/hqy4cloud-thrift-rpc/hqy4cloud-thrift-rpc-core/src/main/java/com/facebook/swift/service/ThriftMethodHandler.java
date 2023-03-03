@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.hqy.rpc.core.ThriftRequestPram;
-import com.hqy.util.ArgsUtil;
+import com.hqy.cloud.util.ArgsUtil;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TMessage;

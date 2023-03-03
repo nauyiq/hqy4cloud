@@ -7,7 +7,7 @@ import com.hqy.rpc.common.CommonConstants;
 import com.hqy.rpc.common.PubMode;
 import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.rpc.common.support.RPCModel;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;

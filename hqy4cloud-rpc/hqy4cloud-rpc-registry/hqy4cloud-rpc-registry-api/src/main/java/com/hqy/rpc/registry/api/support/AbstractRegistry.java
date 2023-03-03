@@ -5,7 +5,7 @@ import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.Registry;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

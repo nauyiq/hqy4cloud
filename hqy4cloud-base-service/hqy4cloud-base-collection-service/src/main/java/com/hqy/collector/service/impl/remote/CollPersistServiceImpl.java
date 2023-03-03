@@ -10,7 +10,7 @@ import com.hqy.collector.entity.ThrottledBlock;
 import com.hqy.collector.service.ThrottledBlockService;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.rpc.thrift.struct.PageStruct;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

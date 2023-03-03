@@ -5,7 +5,7 @@ import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.bind.MessageParams;
 import com.hqy.mq.kafka.config.KafkaDefaultAutoConfiguration;
 import com.hqy.mq.kafka.server.KafkaMessageProducer;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import lombok.Data;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

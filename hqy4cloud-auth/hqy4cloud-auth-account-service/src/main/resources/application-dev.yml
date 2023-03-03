@@ -1,0 +1,27 @@
+nacos:
+  server-addr: ${NACOS_HOST:hongqy1024.cn:8848}:${NACOS_PORT:8848}
+  group: ${NACOS_GROUP:DEV_GROUP}
+  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
+
+spring:
+  config:
+    import:
+      - optional:nacos:redis-config.yaml
+      - optional:nacos:db-app-config.yaml
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server-addr}
+        file-extension: yaml
+        namespace: ${nacos.namespace}
+        group: ${nacos.group}
+      discovery:
+        server-addr: ${nacos.server-addr}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
+        ephemeral: true # false为永久实例，true表示临时实例
+
+
+
+
+

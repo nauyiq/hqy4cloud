@@ -16,6 +16,11 @@ public enum CommonResultCode {
     SUCCESS(0, "OK."),
 
     /**
+     * 失败
+     */
+    FAILED(1, "Failed."),
+
+    /**
      * 系统异常
      */
     SYSTEM_ERROR(9999, "System internal error, please try again later."),

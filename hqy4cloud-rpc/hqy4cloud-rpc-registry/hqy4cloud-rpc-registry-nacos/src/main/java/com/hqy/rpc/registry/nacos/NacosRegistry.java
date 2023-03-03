@@ -14,7 +14,7 @@ import com.hqy.rpc.registry.api.Registry;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
 import com.hqy.rpc.registry.nacos.naming.NamingServiceWrapper;
 import com.hqy.rpc.registry.nacos.util.NacosInstanceUtils;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

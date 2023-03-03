@@ -2,7 +2,7 @@ package com.hqy.mq.rabbitmq.dynamic;
 
 import cn.hutool.core.convert.Convert;
 import com.hqy.mq.rabbitmq.lang.RabbitConstants;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

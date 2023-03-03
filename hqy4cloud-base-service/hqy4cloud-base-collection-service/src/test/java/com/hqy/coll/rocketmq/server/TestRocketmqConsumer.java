@@ -3,7 +3,7 @@ package com.hqy.coll.rocketmq.server;
 import com.hqy.cloud.common.base.lang.exception.MessageQueueException;
 import com.hqy.mq.common.lang.enums.MessageQueue;
 import com.hqy.mq.common.server.support.AbstractConsumer;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

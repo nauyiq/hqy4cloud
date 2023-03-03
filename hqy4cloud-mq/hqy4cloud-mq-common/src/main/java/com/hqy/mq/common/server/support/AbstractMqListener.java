@@ -5,7 +5,7 @@ import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.mq.common.bind.MessageModel;
 import com.hqy.mq.common.server.Consumer;
 import com.hqy.mq.common.server.MqNotifyListener;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;

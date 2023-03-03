@@ -61,8 +61,6 @@ public class CollectionClientEventHandler implements ThriftContextClientHandleSe
     }
 
 
-
-
     private String subStringProvider(String provider) {
         if (StringUtils.isBlank(provider)) {
             return provider;

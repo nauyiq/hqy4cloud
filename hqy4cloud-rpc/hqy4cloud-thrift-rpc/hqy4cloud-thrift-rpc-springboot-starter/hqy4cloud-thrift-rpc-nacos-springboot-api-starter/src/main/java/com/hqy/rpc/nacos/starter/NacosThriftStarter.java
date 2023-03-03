@@ -6,6 +6,11 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.IpUtil;
+import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.rpc.common.PubMode;
 import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.rpc.common.config.EnvironmentConfig;
@@ -13,11 +18,6 @@ import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.common.support.RegistryInfo;
 import com.hqy.rpc.registry.nacos.node.Metadata;
 import com.hqy.rpc.registry.nacos.util.NacosConfigurationUtils;
-import com.hqy.util.AssertUtil;
-import com.hqy.util.IpUtil;
-import com.hqy.util.JsonUtil;
-import com.hqy.util.spring.ProjectContextInfo;
-import com.hqy.util.spring.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,26 +31,19 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private static final Logger log = LoggerFactory.getLogger(NacosThriftStarter.class);
 
     private final String application;
-
     private final int serverPort;
-
     private final String serverAddress;
-
     private final int wight;
-
     private final String hashFactor;
-
     private final String group;
-
     private RPCModel rpcModel;
-
     private final Metadata metadata;
-
     private final ActuatorNodeEnum actuatorType;
-
     private final PubMode pubMode;
+    private final EnvironmentConfig environmentConfig;
 
-    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType, String hashFactor, String group) {
+    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType, String hashFactor, String group, EnvironmentConfig environmentConfig) {
+        this.environmentConfig = environmentConfig;
         this.application = application;
         this.serverPort = serverPort;
         this.serverAddress = serverAddress;
@@ -106,7 +99,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
                 RPCServerAddress serverAddress = rpcModel.getServerAddress();
                 UsingIpPort usingIpPort = new UsingIpPort(serverAddress.getHostAddr(), rpcModel.getServerPort(), serverAddress.getPort(), serverAddress.getPid());
                 projectContextInfo = new ProjectContextInfo(rpcModel.getName(),
-                        EnvironmentConfig.getInstance().getEnvironment(), rpcModel.getPubMode(), usingIpPort , actuatorType);
+                        environmentConfig.getEnvironment(), rpcModel.getPubMode(), usingIpPort , actuatorType);
                 //register project context info.
                 SpringContextHolder.registerContextInfo(projectContextInfo);
                 log.info("Register ProjectContextInfo success, {}.", JsonUtil.toJson(projectContextInfo));
@@ -119,10 +112,10 @@ public abstract class NacosThriftStarter implements RPCStarter {
     }
 
     private PubMode initPubMode() {
-        if (EnvironmentConfig.getInstance().isTestEnvironment()) {
+        if (environmentConfig.isTestEnvironment()) {
             CommonSwitcher.ENABLE_GRAY_MECHANISM.setStatus(true);
             return PubMode.WHITE;
-        } else if (EnvironmentConfig.getInstance().isDevEnvironment() || EnvironmentConfig.getInstance().isUatEnvironment()) {
+        } else if (environmentConfig.isDevEnvironment() || environmentConfig.isUatEnvironment()) {
             CommonSwitcher.ENABLE_GRAY_MECHANISM.setStatus(false);
             return PubMode.GRAY;
         } else {

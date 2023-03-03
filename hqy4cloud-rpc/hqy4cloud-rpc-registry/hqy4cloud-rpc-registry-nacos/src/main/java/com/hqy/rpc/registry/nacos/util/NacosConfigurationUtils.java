@@ -1,7 +1,7 @@
 package com.hqy.rpc.registry.nacos.util;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.util.config.ConfigurationContext;
+import com.hqy.cloud.util.config.ConfigurationContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -13,7 +13,7 @@ import com.hqy.collector.service.RPCExceptionRecordService;
 import com.hqy.collector.service.RPCFlowRecordService;
 import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.rpc.thrift.struct.PageStruct;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;

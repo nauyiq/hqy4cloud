@@ -4,7 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.tk.support.Parameters;
 import com.hqy.rpc.common.CommonConstants;
-import com.hqy.util.IpUtil;
+import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;

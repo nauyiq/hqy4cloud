@@ -1,7 +1,7 @@
 package com.hqy.web.service.support;
 
 import com.hqy.foundation.common.FileResponse;
-import com.hqy.util.file.FileUtil;
+import com.hqy.cloud.util.file.FileUtil;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

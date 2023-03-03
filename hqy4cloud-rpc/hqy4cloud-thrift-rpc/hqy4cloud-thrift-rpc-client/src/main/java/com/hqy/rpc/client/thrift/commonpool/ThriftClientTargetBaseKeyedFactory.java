@@ -9,7 +9,7 @@ import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.client.thrift.ThriftNiftyFramedClientUtils;
 import com.hqy.rpc.client.thrift.support.ThriftClientManagerWrapper;
 import com.hqy.rpc.common.RPCServerAddress;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;

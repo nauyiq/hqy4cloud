@@ -32,12 +32,10 @@
         <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
         <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
-        <!-- spring-boot -->
-<!--        <springboot.version>2.6.11</springboot.version>-->
-        <springboot.version>2.3.8.RELEASE</springboot.version>
-        <springcloud.version>Hoxton.SR10</springcloud.version>
-<!--        <springcloud.version>2021.0.4</springcloud.version>-->
-        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
+        <!-- spring -->
+        <springboot.version>2.7.9</springboot.version>
+        <springcloud.version>2021.0.5</springcloud.version>
+        <spring.authorization.version>0.4.0</spring.authorization.version>
 
         <!-- alibaba -->
         <nacos.version>2.0.3</nacos.version>
@@ -45,8 +43,7 @@
         <druid.version>1.1.16</druid.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
         <springboot.druid.version>1.1.10</springboot.druid.version>
-        <springcloud.alibaba.version>2.2.1.RELEASE</springcloud.alibaba.version>
-<!--        <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>-->
+        <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>
 
         <!-- dao -->
 <!--        <mysql.version>5.1.47</mysql.version>-->
@@ -55,7 +52,7 @@
         <org.redisson.version>3.13.6</org.redisson.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
-        <pagehelper-spring-boot-starter.version>1.3.0</pagehelper-spring-boot-starter.version>
+        <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
 
         <!-- log -->
         <log4j.version>1.2.17</log4j.version>
@@ -107,6 +104,12 @@
                 <type>pom</type>
                 <scope>import</scope>
                 <version>${springcloud.alibaba.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.alibaba.nacos</groupId>
+                        <artifactId>nacos-client</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- version2以上基于grpc的 spring cloud alibaba client-->
@@ -138,11 +141,22 @@
                 </exclusions>
             </dependency>
 
-            <!-- oauth2 -->
             <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${security-oauth2.version}</version>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-core</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>2.6.11</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-authorization-server</artifactId>
+                <version>${spring.authorization.version}</version>
             </dependency>
 
             <dependency>
@@ -151,16 +165,12 @@
                 <version>${pagehelper-spring-boot-starter.version}</version>
             </dependency>
 
-
-            <!-- spring data redis -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>2.2.2.RELEASE</version>
             </dependency>
 
-
-            <!-- mysql-connector -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -296,18 +306,8 @@
                 <version>${org.redisson.version}</version>
             </dependency>
 
-            <!-- seata -->
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-spring-boot-starter</artifactId>
-                <version>${seata.version}</version>
-            </dependency>
 
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-core</artifactId>
-                <version>${seata.version}</version>
-            </dependency>
+
 
             <dependency>
                 <groupId>org.javassist</groupId>
@@ -378,13 +378,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>

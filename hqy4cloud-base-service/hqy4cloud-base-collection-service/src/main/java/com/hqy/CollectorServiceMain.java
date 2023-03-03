@@ -6,7 +6,7 @@ import com.hqy.coll.service.RpcLogRemoteService;
 import com.hqy.rpc.api.service.RPCService;
 import com.hqy.rpc.monitor.thrift.api.ThriftMonitorService;
 import com.hqy.rpc.thrift.service.ThriftServerLauncher;
-import com.hqy.util.spring.ProjectContextInfo;
+import com.hqy.cloud.util.spring.ProjectContextInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

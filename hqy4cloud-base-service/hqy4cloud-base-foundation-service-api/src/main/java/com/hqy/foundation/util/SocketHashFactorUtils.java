@@ -1,7 +1,7 @@
 package com.hqy.foundation.util;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 
 /**
  * SocketHashFactorUtils.

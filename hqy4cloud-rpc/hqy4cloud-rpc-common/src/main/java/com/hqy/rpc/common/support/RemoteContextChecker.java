@@ -2,7 +2,7 @@ package com.hqy.rpc.common.support;
 
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.util.JsonUtil;
+import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

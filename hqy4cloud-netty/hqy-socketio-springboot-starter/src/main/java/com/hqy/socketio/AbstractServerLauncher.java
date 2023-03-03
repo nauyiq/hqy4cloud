@@ -1,8 +1,8 @@
 package com.hqy.socketio;
 
 import com.hqy.base.common.base.lang.StringConstants;
-import com.hqy.util.spring.ProjectContextInfo;
-import com.hqy.util.spring.SpringContextHolder;
+import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

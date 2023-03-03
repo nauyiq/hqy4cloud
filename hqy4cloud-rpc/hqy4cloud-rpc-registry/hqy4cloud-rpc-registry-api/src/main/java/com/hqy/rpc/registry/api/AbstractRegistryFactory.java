@@ -2,7 +2,7 @@ package com.hqy.rpc.registry.api;
 
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.support.RegistryManager;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package com.hqy.rpc.common;
 
 import com.hqy.cloud.common.base.project.UsingIpPort;
-import com.hqy.util.IpUtil;
-import com.hqy.util.NetUtils;
+import com.hqy.cloud.util.IpUtil;
+import com.hqy.cloud.util.NetUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;

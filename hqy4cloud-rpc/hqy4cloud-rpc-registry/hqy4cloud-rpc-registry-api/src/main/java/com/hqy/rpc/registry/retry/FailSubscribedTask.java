@@ -4,7 +4,7 @@ import com.hqy.foundation.timer.Timeout;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.NotifyListener;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 
 /**
  * @author qiyuan.hong

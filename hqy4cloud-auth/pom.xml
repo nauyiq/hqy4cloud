@@ -17,9 +17,7 @@
         <module>hqy4cloud-auth-account-service</module>
         <module>hqy4cloud-auth-account-service-api</module>
         <module>hqy4cloud-auth-admin-service</module>
-        <module>hqy4cloud-auth-mapper-interface</module>
-        <module>hqy4cloud-security-sentinel</module>
-        <module>hqy4cloud-auth-security-core</module>
+        <module>hqy4cloud-auth-core</module>
     </modules>
 
 

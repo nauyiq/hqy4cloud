@@ -5,7 +5,7 @@ import com.hqy.foundation.timer.Timer;
 import com.hqy.foundation.timer.TimerTask;
 import com.hqy.rpc.common.support.RPCModel;
 import com.hqy.rpc.registry.api.support.FailBackRegistry;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

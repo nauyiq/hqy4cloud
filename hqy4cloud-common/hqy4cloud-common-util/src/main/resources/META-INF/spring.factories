@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hqy.cloud.util.spring.SpringContextHolder,\
+com.hqy.cloud.util.spring.SpringApplicationConfiguration

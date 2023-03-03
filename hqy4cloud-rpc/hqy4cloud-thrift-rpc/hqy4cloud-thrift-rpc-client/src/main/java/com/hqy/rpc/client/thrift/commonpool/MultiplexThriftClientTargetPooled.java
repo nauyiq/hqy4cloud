@@ -4,7 +4,7 @@ import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.client.thrift.support.ThriftClientManagerWrapper;
 import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.rpc.common.support.RPCModel;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.slf4j.Logger;

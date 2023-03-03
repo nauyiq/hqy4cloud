@@ -5,7 +5,7 @@ import com.hqy.rpc.api.Invocation;
 import com.hqy.rpc.api.Invoker;
 import com.hqy.rpc.cluster.directory.Directory;
 import com.hqy.rpc.cluster.loadbalance.LoadBalance;
-import com.hqy.util.IpUtil;
+import com.hqy.cloud.util.IpUtil;
 
 import java.util.List;
 

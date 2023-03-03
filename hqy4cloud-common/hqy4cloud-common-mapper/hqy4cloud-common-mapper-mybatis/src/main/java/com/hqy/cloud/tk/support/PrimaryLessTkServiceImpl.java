@@ -4,7 +4,7 @@ import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.tk.PrimaryLessBaseEntity;
 import com.hqy.cloud.tk.PrimaryLessTkMapper;
 import com.hqy.cloud.tk.PrimaryLessTkService;
-import com.hqy.util.AssertUtil;
+import com.hqy.cloud.util.AssertUtil;
 
 import java.util.List;
 
@@ -20,6 +20,12 @@ public abstract class PrimaryLessTkServiceImpl<T extends PrimaryLessBaseEntity> 
         PrimaryLessTkMapper<T> dao = getTkDao();
         AssertUtil.notNull(dao, "base dao注入异常, 请检查配置.");
         return dao;
+    }
+
+    @Override
+    public T queryById(Object id) {
+        PrimaryLessTkMapper<T> dao= checkDao();
+        return dao.selectByPrimaryKey(id);
     }
 
     @Override

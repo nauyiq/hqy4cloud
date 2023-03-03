@@ -11,6 +11,13 @@ import java.util.List;
 public interface PrimaryLessTkService<T extends PrimaryLessBaseEntity> {
 
     /**
+     * 根据id查询数据
+     * @param id 主键id
+     * @return   实体对象
+     */
+    T queryById(Object id);
+
+    /**
      * 根据实体属性查找 t不能为null
      * @param t 实体Entity
      * @return 返回唯一确定的一行数据

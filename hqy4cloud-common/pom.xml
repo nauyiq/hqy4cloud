@@ -20,7 +20,10 @@
         <module>hqy4cloud-common-mapper</module>
         <module>hqy4cloud-common-service</module>
         <module>hqy4cloud-common-util</module>
+        <module>hqy4cloud-common-security</module>
+        <module>hqy4cloud-common-sentinel</module>
     </modules>
+
 
 
 </project>
