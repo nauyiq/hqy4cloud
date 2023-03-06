@@ -3,7 +3,7 @@ package com.hqy.cloud.foundation.common.authentication;
 import cn.hutool.core.net.URLDecoder;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.base.lang.exception.NotFoundAuthenticationException;
+import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.RequestUtil;
 import lombok.experimental.UtilityClass;
@@ -38,7 +38,7 @@ public class AuthenticationRequestContext {
             return JsonUtil.toBean(payload, AuthenticationInfo.class);
         } catch (Throwable cause) {
             log.error("Failed execute to decode authentication payload.", cause);
-            throw new NotFoundAuthenticationException(cause);
+            throw new NotAuthenticationException(cause);
         }
     }
 

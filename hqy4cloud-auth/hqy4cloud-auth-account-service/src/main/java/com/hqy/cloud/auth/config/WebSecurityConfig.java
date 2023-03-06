@@ -11,6 +11,7 @@ import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -67,6 +68,22 @@ public class WebSecurityConfig {
         http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         return http.build();
     }
+
+    /**
+     * 暴露静态资源
+     * https://github.com/spring-projects/spring-security/issues/10938
+     * @param http
+     * @return
+     * @throws Exception
+     */
+    /*@Bean
+    @Order(0)
+    SecurityFilterChain resources(HttpSecurity http) throws Exception {
+        http.requestMatchers((matchers) -> matchers.antMatchers("/actuator/**", "/css/**", "/error"))
+                .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll()).requestCache().disable()
+                .securityContext().disable().sessionManagement().disable();
+        return http.build();
+    }*/
 
 
 

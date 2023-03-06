@@ -42,7 +42,7 @@ public class EndpointAuthorizationManager {
                 "/token",
                 "/favicon.io","/favicon.ico",
                 //Oauth2 Endpoint
-                "/oauth/**", "/auth/**", "/oauth2/**",
+                "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**",
                 //端点监控
                 "/actuator/**" , "/doc.html"
                 //swagger

@@ -430,12 +430,15 @@
                 <includes>
                     <include>**/*.xml</include>
                     <include>**/*.lua</include>
-                    <include>**/*.lua</include>
                     <include>*.properties</include>
+                    <include>**/*.properties</include>
                     <include>*.yml</include>
                     <include>*.yaml</include>
                     <include>*.key</include>
                     <include>**/*.factories</include>
+                    <include>**/*.css</include>
+                    <include>**/*.html</include>
+                    <include>**/*.ftl</include>
                     <include>*.jks</include>
                 </includes>
             </resource>

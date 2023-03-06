@@ -2,9 +2,16 @@ logging:
   config: classpath:logback.xml
 
 
+
 server:
   port: 8088
 spring:
+  mvc:
+   static-path-pattern: /static/**
+  freemarker:
+    template-loader-path:
+      - classpath:/template/
+    suffix: .ftl
   application:
     name: account-auth-service
   profiles:
