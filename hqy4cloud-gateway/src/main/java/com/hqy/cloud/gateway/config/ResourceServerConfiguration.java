@@ -1,46 +1,30 @@
 package com.hqy.cloud.gateway.config;
 
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.io.IoUtil;
 import com.hqy.cloud.auth.core.support.CustomReactiveOpaqueTokenIntrospector;
-import com.hqy.cloud.auth.limit.support.BiBlockedIpRedisService;
-import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
-import com.hqy.cloud.auth.limit.support.ManualWhiteIpRedisService;
-import com.hqy.cloud.auth.server.Oauth2Access;
-import com.hqy.cloud.auth.server.RolesAuthoritiesChecker;
-import com.hqy.cloud.auth.server.UploadFileSecurityChecker;
-import com.hqy.cloud.auth.server.support.DefaultUploadFileSecurityChecker;
 import com.hqy.cloud.auth.server.support.EndpointAuthorizationManager;
-import com.hqy.cloud.auth.server.support.NacosOauth2Access;
-import com.hqy.cloud.auth.server.support.ResourceInRoleCacheServer;
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
-import com.hqy.cloud.gateway.server.auth.DefaultJwtGrantedAuthoritiesConverter;
-import com.hqy.cloud.gateway.server.auth.GatewayReactOauth2AuthoritiesChecker;
 import com.hqy.cloud.gateway.util.ResponseUtil;
-import com.hqy.cloud.util.AssertUtil;
-import com.hqy.foundation.limit.service.BlockedIpService;
-import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.introspection.ReactiveOpaqueTokenIntrospector;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
@@ -51,10 +35,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.InputStream;
-import java.security.KeyFactory;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 
 /**
@@ -65,50 +45,13 @@ import java.util.ArrayList;
 @Slf4j
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 @RequiredArgsConstructor
 public class ResourceServerConfiguration {
 
     private final OAuth2AuthorizationService oAuth2AuthorizationService;
+    private final MessageSource messageSource;
 
-    @Bean
-    public ResourceInRoleCacheServer resourceInRoleCacheServer(RedissonClient redissonClient) {
-        return new ResourceInRoleCacheServer(redissonClient);
-    }
-
-    @Bean
-    public Oauth2Access oauth2Access(ManualWhiteIpService manualWhiteIpService) {
-        return new NacosOauth2Access(manualWhiteIpService);
-    }
-
-    @Bean
-    public GatewayReactOauth2AuthoritiesChecker gatewayReactOauth2AuthoritiesChecker(ResourceInRoleCacheServer resourceInRoleCacheServer) {
-        return new GatewayReactOauth2AuthoritiesChecker(resourceInRoleCacheServer);
-    }
-
-    @Bean
-    public AuthorizationManager authorizationManager(RolesAuthoritiesChecker gatewayReactOauth2AuthoritiesChecker, Oauth2Access oauth2Access) {
-        return new AuthorizationManager(gatewayReactOauth2AuthoritiesChecker, oauth2Access);
-    }
-
-    @Bean
-    public ManualWhiteIpService manualWhiteIpService(RedissonClient redisson) {
-        return new ManualWhiteIpRedisService(redisson);
-    }
-
-    @Bean
-    public BlockedIpService biBlockedIpService() {
-        return new BiBlockedIpRedisService(true);
-    }
-
-    @Bean
-    public BlockedIpService manualBlockedIpService() {
-        return new ManualBlockedIpService(true);
-    }
-
-    @Bean
-    public UploadFileSecurityChecker uploadFileSecurityChecker() {
-        return new DefaultUploadFileSecurityChecker();
-    }
 
     @Bean
     public ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector() {
@@ -131,10 +74,10 @@ public class ResourceServerConfiguration {
     public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http, AuthorizationManager authorizationManager) {
         http.oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer  ->
                         httpSecurityOAuth2ResourceServerConfigurer.opaqueToken()
-                                .introspector(opaqueTokenIntrospector()));
+                                .introspector(opaqueTokenIntrospector()))
+                        .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST);
 
-//        http.authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-
+        http.authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
         ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
         http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
 
@@ -170,61 +113,30 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            MessageResponse code =  CommonResultCode.messageResponse(CommonResultCode.LIMITED_AUTHORITY);
-            DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.FORBIDDEN);
+            R<String> result = R.setResult(false, CommonResultCode.LIMITED_AUTHORITY, denied.getMessage());
+            DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
     }
 
 
-    /**
-     * token过期或者无效
-     */
     @Bean
     public ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, e) -> {
-            log.warn("@@@ RestAuthenticationEntryPoint访问受限, e:{}", e.getMessage());
+            R<String> result = R.setResult(false, CommonResultCode.INVALID_ACCESS_TOKEN, e.getMessage());
+            if (e instanceof InvalidBearerTokenException
+                    || e instanceof InsufficientAuthenticationException) {
+                result.setMessage(this.messageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired",
+                        null, LocaleContextHolder.getLocale()));
+            }
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
-                DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
+                DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
         };
     }
 
 
-//    @Bean
-    @SneakyThrows
-    public RSAPublicKey rsaPublicKey() {
-        String fileName = "public.key";
-        try(InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
-            AssertUtil.notNull(inputStream, "Get resources public key failure, filename = " + fileName);
-            String data = IoUtil.read(inputStream).toString();
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec((Base64.decode(data)));
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return (RSAPublicKey)keyFactory.generatePublic(keySpec);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw e;
-        }
-    }
-
-
-//    @Bean
-    public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-//        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        DefaultJwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new DefaultJwtGrantedAuthoritiesConverter();
-//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.Auth.AUTHORITY_PREFIX);
-        //取消权限的前缀，默认会加上SCOPE_
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(StringConstants.EMPTY);
-        //从哪个字段中获取权限
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-//        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(StringConstants.Auth.JWT_AUTHORITIES_KEY);
-
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
-    }
 
 }

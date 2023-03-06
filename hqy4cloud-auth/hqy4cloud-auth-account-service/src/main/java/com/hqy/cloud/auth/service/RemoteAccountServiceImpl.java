@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.service;
 
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.RemoteAccountService;
 import com.hqy.account.struct.*;
 import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheService;
@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.auth.base.lang.Constants.DEFAULT_COMMON_ROLE;
+import static com.hqy.cloud.auth.base.Constants.DEFAULT_COMMON_ROLE;
 
 /**
  * @author qiyuan.hong

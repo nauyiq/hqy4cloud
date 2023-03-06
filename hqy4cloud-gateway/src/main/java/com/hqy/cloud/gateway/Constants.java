@@ -1,4 +1,4 @@
-package com.hqy.cloud.gateway.config;
+package com.hqy.cloud.gateway;
 
 import org.springframework.core.Ordered;
 

@@ -3,7 +3,7 @@ package com.hqy.cloud.foundation.common.support;
 import cn.hutool.core.util.RandomUtil;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import com.hqy.cloud.foundation.cache.redis.key.support.DefaultKeyGenerator;
-import com.hqy.cloud.foundation.common.AccountRandomCodeServer;
+import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
 import com.hqy.cloud.util.AssertUtil;
 
 import java.util.concurrent.TimeUnit;

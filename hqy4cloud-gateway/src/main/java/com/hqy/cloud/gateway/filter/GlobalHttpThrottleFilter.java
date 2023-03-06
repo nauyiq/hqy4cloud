@@ -3,7 +3,7 @@ package com.hqy.cloud.gateway.filter;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
-import com.hqy.cloud.gateway.config.Constants;
+import com.hqy.cloud.gateway.Constants;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.gateway.util.ResponseUtil;
 import com.hqy.foundation.limit.LimitResult;
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @date  2021-07-27 16:42
  */
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 

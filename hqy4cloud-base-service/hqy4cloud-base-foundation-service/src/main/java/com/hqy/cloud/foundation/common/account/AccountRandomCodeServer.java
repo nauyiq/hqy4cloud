@@ -1,4 +1,4 @@
-package com.hqy.cloud.foundation.common;
+package com.hqy.cloud.foundation.common.account;
 
 /**
  * RedisRandomCodeServer.

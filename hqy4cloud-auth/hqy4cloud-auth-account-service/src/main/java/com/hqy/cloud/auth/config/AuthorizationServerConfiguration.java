@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.config;
 
+import com.hqy.cloud.auth.base.lang.SecurityConstants;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.DefaultOauth2TokenCustomizer;
 import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
@@ -8,7 +9,6 @@ import com.hqy.cloud.auth.support.handler.DefaultAuthenticationSuccessHandler;
 import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
 import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
 import com.hqy.cloud.auth.support.server.DefaultOauth2AccessTokenGenerator;
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -35,11 +35,13 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
+ * 资源服务器配置.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/2/24 11:30
  */
 @Configuration
+@SuppressWarnings({"rawtypes", "unchecked"})
 @RequiredArgsConstructor
 public class AuthorizationServerConfiguration {
 
@@ -84,7 +86,6 @@ public class AuthorizationServerConfiguration {
             // 个性化客户端认证
             .clientAuthentication(oAuth2ClientAuthenticationConfigurer ->
             // 处理客户端认证异常
-//             oAuth2ClientAuthenticationConfigurer.authenticationConverter(accessTokenRequestConverter())
             oAuth2ClientAuthenticationConfigurer.errorResponseHandler(new DefaultAuthenticationFailureHandler()))
             //授权码端点个性化confirm页面
             .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI)));
@@ -98,26 +99,22 @@ public class AuthorizationServerConfiguration {
                 .and().apply(new FormIdentityLoginConfigurer()).and().build();
 
         // 注入自定义授权模式实现
-        addOauth2GrantAuthenticationProvider(http, oAuth2TokenGenerator, securityMessageSource);
+        addOauth2GrantAuthenticationProvider(http, securityMessageSource);
         return securityFilterChain;
     }
 
-
-    private void addOauth2GrantAuthenticationProvider(HttpSecurity http, OAuth2TokenGenerator oAuth2TokenGenerator, MessageSource securityMessageSource) {
+    private void addOauth2GrantAuthenticationProvider(HttpSecurity http, MessageSource securityMessageSource) {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
 
         Oauth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new Oauth2ResourceOwnerPasswordAuthenticationProvider(
-                authenticationManager, authorizationService, oAuth2TokenGenerator, securityMessageSource);
+                authenticationManager, authorizationService, oAuth2TokenGenerator(), securityMessageSource);
 
         // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
     }
-
-
-
 
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(

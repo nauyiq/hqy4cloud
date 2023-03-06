@@ -1,11 +1,13 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminRoleService;
+import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.RoleDTO;
 import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
 import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.cloud.util.OauthRequestUtil;
+import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,22 +34,16 @@ public class AdminRoleController {
 
     @GetMapping("/role/page")
     public DataResponse getAdminRolePage(String roleName, String note, Integer current, Integer size, HttpServletRequest servletRequest) {
-        Long id = OauthRequestUtil.idFromOauth2Request(servletRequest);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(servletRequest);
         current = current == null ? 1 : current;
         size = size == null ? 10 : size;
-        return requestService.getPageRoles(roleName, note, id, current, size);
+        return requestService.getPageRoles(roleName, note, authentication.getId(), current, size);
     }
 
     @GetMapping("/roles")
     public DataResponse getRoles(HttpServletRequest request) {
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.getRoles(id);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.getRoles(authentication.getId());
     }
 
     @GetMapping("/role/checkLevel")
@@ -55,11 +51,8 @@ public class AdminRoleController {
         if (level == null) {
             return CommonResultCode.dataResponse(ERROR_PARAM_UNDEFINED);
         }
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.checkLevel(id, level);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.checkLevel(authentication.getId(), level);
     }
 
     @GetMapping("/role/check/{roleName}")
@@ -73,11 +66,8 @@ public class AdminRoleController {
 
     @PostMapping("/role")
     public DataResponse addRole(HttpServletRequest request, @Valid @RequestBody RoleDTO role) {
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.addRole(id, role);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.addRole(authentication.getId(), role);
     }
 
     @PutMapping("/role")
@@ -85,12 +75,7 @@ public class AdminRoleController {
         if (role.getId() == null || role.getLevel() == null) {
             return CommonResultCode.dataResponse(ERROR_PARAM_UNDEFINED);
         }
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-
-        return requestService.editRole(id, role);
+        return requestService.editRole(AuthenticationRequestContext.getAuthentication(request).getId(), role);
     }
 
     @DeleteMapping("/role/{id}")

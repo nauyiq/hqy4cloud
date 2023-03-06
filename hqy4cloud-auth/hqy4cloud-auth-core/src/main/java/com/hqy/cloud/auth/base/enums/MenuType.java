@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.base.lang;
+package com.hqy.cloud.auth.base.enums;
 
 import lombok.AllArgsConstructor;
 

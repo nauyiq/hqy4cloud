@@ -1,10 +1,10 @@
 package com.hqy.web.service.account;
 
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.RemoteAccountService;
 import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.cloud.util.JsonUtil;
+import com.hqy.rpc.nacos.client.starter.RPCClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
  */
 public class AccountRpcUtil {
 
-
     public static AccountInfoDTO getAccountInfo(Long id) {
         if (id == null) {
             return null;
@@ -31,8 +30,6 @@ public class AccountRpcUtil {
         String accountInfoJson = remoteAccountService.getAccountInfoJson(id);
         return StringUtils.isBlank(accountInfoJson) ? null : JsonUtil.toBean(accountInfoJson, AccountInfoDTO.class);
     }
-
-
 
 
     public static AccountBaseInfoStruct getAccountBaseInfo(Long id) {

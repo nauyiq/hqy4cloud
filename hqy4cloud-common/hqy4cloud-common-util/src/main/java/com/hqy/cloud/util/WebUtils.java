@@ -1,7 +1,6 @@
 package com.hqy.cloud.util;
 
 import cn.hutool.core.codec.Base64;
-import com.sun.istack.internal.NotNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -124,7 +123,6 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         return null;
     }
 
-    @NotNull
     private static String[] splitClient(String header) {
         if (header == null || !header.startsWith(BASIC_)) {
             throw new IllegalArgumentException("请求头中client信息为空");

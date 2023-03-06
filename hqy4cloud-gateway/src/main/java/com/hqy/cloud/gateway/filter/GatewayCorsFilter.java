@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.gateway.config.Constants;
+import com.hqy.cloud.gateway.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

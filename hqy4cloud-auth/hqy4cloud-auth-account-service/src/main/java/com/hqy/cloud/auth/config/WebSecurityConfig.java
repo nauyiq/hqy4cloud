@@ -1,13 +1,13 @@
 package com.hqy.cloud.auth.config;
 
-import com.hqy.cloud.auth.server.support.EndpointAuthorizationManager;
-import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
-import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
 import com.hqy.cloud.auth.server.DefaultRegisteredClientRepository;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
+import com.hqy.cloud.auth.server.support.EndpointAuthorizationManager;
 import com.hqy.cloud.auth.service.security.support.CustomerUserDetailServiceImpl;
 import com.hqy.cloud.auth.service.security.support.RedisOAuth2AuthorizationConsentServiceImpl;
+import com.hqy.cloud.auth.service.tk.AccountTkService;
+import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
+import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
+import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,7 @@ public class WebSecurityConfig {
      * spring security 默认的安全策略
      * @param http security注入点
      * @return SecurityFilterChain
-     * @throws Exception
+     * @throws Exception e
      */
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, MessageSource securityMessageSource) throws Exception {

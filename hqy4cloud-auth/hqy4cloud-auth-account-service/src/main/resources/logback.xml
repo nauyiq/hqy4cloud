@@ -47,7 +47,7 @@
 
 
     <!-- 控制台输出日志级别 -->
-    <root value="DEBUG">
+    <root value="TRACE">
         <appender-ref ref="stdout"/>
         <appender-ref ref="ASYNC"/>
     </root>
@@ -60,7 +60,7 @@
     <logger name="ch.qos" level="WARN"/>
     <logger name="org.quartz" level="WARN"/>
     <logger name="org.mybatis" level="WARN"/>
-    <logger name="org.springframework" level="WARN"/>
+<!--    <logger name="org.springframework" level="WARN"/>-->
     <logger name="org.apache" level="WARN"/>
     <logger name="tk.mybatis" level="WARN"/>
     <logger name="com.alibaba" level="INFO"/>

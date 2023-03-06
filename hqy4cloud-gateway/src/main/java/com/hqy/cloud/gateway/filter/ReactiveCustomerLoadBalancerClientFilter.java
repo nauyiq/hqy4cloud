@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.gateway.config.Constants;
+import com.hqy.cloud.gateway.Constants;
 import com.hqy.cloud.gateway.loadbalance.GatewayLoadBalanceStrategyContext;
 import com.hqy.cloud.gateway.loadbalance.LoadBalancer;
 import org.slf4j.Logger;

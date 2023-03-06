@@ -1,12 +1,12 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminMenuService;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
+import com.hqy.cloud.auth.base.enums.MenuType;
+import com.hqy.cloud.common.base.AuthenticationInfo;
+import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.cloud.auth.base.lang.MenuType;
-import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.OauthRequestUtil;
+import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +32,8 @@ public class AdminMenuController {
 
     @GetMapping("/menu")
     public DataResponse getMenu(HttpServletRequest request) {
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        AssertUtil.notNull(id, "Access account id should not be null.");
-        return requestService.getAdminMenu(id);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.getAdminMenu(authentication.getId());
     }
 
     @PostMapping("/menu")
@@ -83,9 +82,8 @@ public class AdminMenuController {
 
     @GetMapping("/menu/tree")
     public DataResponse getTreeMenu(HttpServletRequest request, Boolean status) {
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        AssertUtil.notNull(id, "Access account id should not be null.");
-        return requestService.getAdminTreeMenu(id, status);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.getAdminTreeMenu(authentication.getId(), status);
     }
 
 

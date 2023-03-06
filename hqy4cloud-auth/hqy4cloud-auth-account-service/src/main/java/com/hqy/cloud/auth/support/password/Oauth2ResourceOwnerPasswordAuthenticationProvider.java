@@ -41,7 +41,6 @@ public class Oauth2ResourceOwnerPasswordAuthenticationProvider extends Oauth2Res
     public boolean supports(Class<?> authentication) {
         boolean supports = Oauth2ResourceOwnerPasswordAuthenticationToken.class.isAssignableFrom(authentication);
         log.debug("supports authentication=" + authentication + " returning " + supports);
-//        return true;
         return supports;
     }
 

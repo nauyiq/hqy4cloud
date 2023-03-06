@@ -3,7 +3,7 @@ package com.hqy.cloud.admin.service.impl;
 import com.hqy.cloud.admin.converter.MenuConverter;
 import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.admin.service.RequestAdminMenuService;
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.auth.base.lang.Constants.FIRST_MENU_PARENT_ID;
+import static com.hqy.cloud.auth.base.Constants.FIRST_MENU_PARENT_ID;
 import static com.hqy.cloud.common.result.CommonResultCode.*;
 
 /**

@@ -7,7 +7,7 @@ import com.hqy.cloud.admin.service.RequestAdminSystemSettingService;
 import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
-import com.hqy.cloud.auth.base.lang.WhiteListType;
+import com.hqy.cloud.auth.base.enums.WhiteListType;
 import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import lombok.RequiredArgsConstructor;

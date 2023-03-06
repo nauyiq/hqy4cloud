@@ -16,7 +16,7 @@
         WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail} AND deleted = 0
     </select>
 
-    <select id="getAccountInfo" resultType="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
+    <select id="getAccountInfo" resultType="com.hqy.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
         p.avatar,p.nickname,p.intro,p.birthday
@@ -27,7 +27,7 @@
     </select>
 
 
-    <select id="getAccountInfos" resultType="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
+    <select id="getAccountInfos" resultType="com.hqy.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
         p.avatar,p.nickname,p.intro,p.birthday
@@ -41,7 +41,7 @@
     </select>
 
 
-    <select id="getPageAccountInfos" resultType="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
+    <select id="getPageAccountInfos" resultType="com.hqy.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,a.created,
         p.avatar,p.nickname,p.intro,p.birthday

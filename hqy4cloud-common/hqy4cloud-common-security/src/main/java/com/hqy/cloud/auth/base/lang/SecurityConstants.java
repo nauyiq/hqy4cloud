@@ -82,10 +82,6 @@ public interface SecurityConstants {
      */
     String ROLES = "roles";
 
-    /**
-     * 用户信息
-     */
-    String DETAILS_USER = "user_info";
 
     /**
      * 协议字段

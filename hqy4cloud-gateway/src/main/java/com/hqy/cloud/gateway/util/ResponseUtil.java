@@ -2,6 +2,7 @@ package com.hqy.cloud.gateway.util;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,13 @@ public class ResponseUtil {
      */
     public static DataBuffer outputBuffer(MessageResponse code, ServerHttpResponse response, HttpStatus status) {
         byte[] bytes = JsonUtil.toJson(code).getBytes(StandardCharsets.UTF_8);
+        response.getHeaders().add(StringConstants.Headers.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        response.setStatusCode(status);
+        return response.bufferFactory().wrap(bytes);
+    }
+
+    public static <T> DataBuffer outputBuffer(R<T> result, ServerHttpResponse response, HttpStatus status) {
+        byte[] bytes = JsonUtil.toJson(result).getBytes(StandardCharsets.UTF_8);
         response.getHeaders().add(StringConstants.Headers.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatusCode(status);
         return response.bufferFactory().wrap(bytes);

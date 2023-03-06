@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.service;
 
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.AuthenticationDTO;
 import com.hqy.cloud.auth.entity.Resource;
 import com.hqy.cloud.auth.entity.Role;

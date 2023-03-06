@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.base.dto;
+package com.hqy.account.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

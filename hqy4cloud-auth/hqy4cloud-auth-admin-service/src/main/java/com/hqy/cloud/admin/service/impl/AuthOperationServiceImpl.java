@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.auth.base.lang.Constants.FIRST_MENU_PARENT_ID;
+import static com.hqy.cloud.auth.base.Constants.FIRST_MENU_PARENT_ID;
 
 /**
  * @author qiyuan.hong

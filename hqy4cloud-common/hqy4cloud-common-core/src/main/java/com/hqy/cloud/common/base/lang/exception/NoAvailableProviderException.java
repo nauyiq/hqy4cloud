@@ -5,7 +5,7 @@ package com.hqy.cloud.common.base.lang.exception;
  * @version 1.0
  * @date 2022/2/23 17:07
  */
-public class NoAvailableProviderException extends RuntimeException{
+public class NoAvailableProviderException extends RuntimeException {
 
     private static final long serialVersionUID = -5285574021908791013L;
 

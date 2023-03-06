@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
-import static com.hqy.cloud.gateway.config.Constants.WRAPPER_REQUEST_FILTER_ORDER;
+import static com.hqy.cloud.gateway.Constants.WRAPPER_REQUEST_FILTER_ORDER;
 
 /**
  * 基于gateway webFlux 请求体内容被截断、不可重复读的包装过滤器

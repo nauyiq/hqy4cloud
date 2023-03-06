@@ -1,8 +1,7 @@
 package com.hqy.cloud.auth.core.support;
 
-import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.foundation.cache.redis.support.RedisManager;
-import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
+import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -38,7 +37,7 @@ public class RedisOAuth2AuthorizationServiceImpl implements OAuth2AuthorizationS
 
         if (isState(authorization)) {
             String token = authorization.getAttribute(OAuth2ParameterNames.STATE);
-            SmartRedisManager.getInstance().set(buildKey(OAuth2ParameterNames.STATE, token), authorization, TIMEOUT, TimeUnit.MINUTES);
+            RedisManager.getInstance().set(buildKey(OAuth2ParameterNames.STATE, token), authorization, TIMEOUT, TimeUnit.MINUTES);
         }
 
         if (isCode(authorization)) {
@@ -94,7 +93,7 @@ public class RedisOAuth2AuthorizationServiceImpl implements OAuth2AuthorizationS
             keys.add(buildKey(OAuth2ParameterNames.ACCESS_TOKEN, accessToken.getTokenValue()));
         }
 
-        SmartRedisManager.getInstance().del(keys.toArray(new String[0]));
+        RedisManager.getInstance().del(keys.toArray(new String[0]));
     }
 
     @Override
@@ -106,7 +105,7 @@ public class RedisOAuth2AuthorizationServiceImpl implements OAuth2AuthorizationS
     public OAuth2Authorization findByToken(String token, @Nullable OAuth2TokenType tokenType) {
         Assert.hasText(token, "token cannot be empty");
         Assert.notNull(tokenType, "tokenType cannot be empty");
-        return SmartRedisManager.getInstance().get(buildKey(tokenType.getValue(), token), OAuth2Authorization.class);
+        return RedisManager.getInstance().get(buildKey(tokenType.getValue(), token));
     }
 
     private String buildKey(String type, String id) {

@@ -1,18 +1,17 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminAccountService;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.common.base.AuthenticationInfo;
+import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.cloud.util.OauthRequestUtil;
+import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.hqy.cloud.common.result.CommonResultCode.USER_NOT_FOUND;
 
 /**
  * 后台管理-账号相关接口API
@@ -30,31 +29,22 @@ public class AdminAccountController {
 
     @GetMapping("/userInfo")
     public DataResponse getAdminLoginUserInfo(HttpServletRequest request) {
-        Long id = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.getLoginUserInfo(id);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.getLoginUserInfo(authentication.getId());
     }
 
     @GetMapping("/user/page")
     public DataResponse getAdminUserPage(String username, String nickname, Integer current, Integer size, HttpServletRequest servletRequest) {
-        Long id = OauthRequestUtil.idFromOauth2Request(servletRequest);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(servletRequest);
         current = current == null ? 1 : current;
         size = size == null ? 20 : size;
-        return requestService.getPageUsers(username, nickname, id, current, size);
+        return requestService.getPageUsers(username, nickname, authentication.getId(), current, size);
     }
 
     @GetMapping("/user/roles")
     public DataResponse getUserRoles(HttpServletRequest servletRequest) {
-        Long id = OauthRequestUtil.idFromOauth2Request(servletRequest);
-        if (id == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.getUserRoles(id);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(servletRequest);
+        return requestService.getUserRoles(authentication.getId());
     }
 
     @GetMapping("/user/check/exist")
@@ -71,8 +61,8 @@ public class AdminAccountController {
         if (userDTO == null || !userDTO.checkAddUser()) {
             return CommonResultCode.dataResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
         }
-        Long accessAccountId = OauthRequestUtil.idFromOauth2Request(request);
-        return requestService.addUser(accessAccountId, userDTO);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.addUser(authentication.getId(), userDTO);
     }
 
 
@@ -81,17 +71,14 @@ public class AdminAccountController {
         if (userDTO == null || !userDTO.checkUpdateUser()) {
             return CommonResultCode.dataResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
         }
-        Long accessAccountId = OauthRequestUtil.idFromOauth2Request(request);
-        return requestService.editUser(accessAccountId, userDTO);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.editUser(authentication.getId(), userDTO);
     }
 
     @DeleteMapping("/user/{id}")
     public DataResponse deleteUser(HttpServletRequest request, @PathVariable("id")Long id) {
-        Long accessId = OauthRequestUtil.idFromOauth2Request(request);
-        if (id == null || accessId == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
-        }
-        return requestService.deleteUser(accessId, id);
+        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
+        return requestService.deleteUser(authentication.getId(), id);
     }
 
 

@@ -1,6 +1,8 @@
 package com.hqy.web.global;
 
+import com.hqy.cloud.common.base.lang.exception.NotFoundAuthenticationException;
 import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.Response;
 import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.foundation.common.enums.ExceptionType;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
@@ -27,6 +29,12 @@ import java.util.Objects;
 public class WebMvcGlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(WebMvcGlobalExceptionHandler.class);
+
+    @ResponseBody
+    @ExceptionHandler(NotFoundAuthenticationException.class)
+    public MessageResponse handle(NotFoundAuthenticationException exception, HttpServletRequest request) {
+        return CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+    }
 
     @ResponseBody
     @ExceptionHandler(RuntimeException.class)
