@@ -1,6 +1,5 @@
 package com.hqy.cloud.admin;
 
-import com.hqy.cloud.auth.config.SecurityAutoConfiguration;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +14,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @EnableDiscoveryClient
 @MapperScan(basePackages = {"com.hqy.cloud.**.mapper"})
-@SpringBootApplication(scanBasePackages = {"com.hqy.cloud.auth", "com.hqy.cloud.admin"}, exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = {"com.hqy.cloud.auth", "com.hqy.cloud.admin"})
 public class AdminServiceMain {
 
     public static void main(String[] args) {

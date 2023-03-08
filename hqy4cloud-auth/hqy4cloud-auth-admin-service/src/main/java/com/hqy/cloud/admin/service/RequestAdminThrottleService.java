@@ -1,7 +1,7 @@
 package com.hqy.cloud.admin.service;
 
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.coll.struct.PageThrottledBlockResultStruct;
 
 /**
  * AdminThrottleRequestService.
@@ -18,14 +18,14 @@ public interface RequestAdminThrottleService {
      * @param url        模糊查询-url
      * @param current    当前页
      * @param size       页行数
-     * @return           DataResponse.
+     * @return           R.
      */
-    DataResponse getPageThrottledHistory(String throttleBy, String ip, String url, Integer current, Integer size);
+    R<PageThrottledBlockResultStruct> getPageThrottledHistory(String throttleBy, String ip, String url, Integer current, Integer size);
 
     /**
      * 删除一条节流历史记录
      * @param id 节流封禁历史记录id
-     * @return   MessageResponse.
+     * @return   R.
      */
-    MessageResponse deleteThrottledHistory(Long id);
+    R<Boolean> deleteThrottledHistory(Long id);
 }

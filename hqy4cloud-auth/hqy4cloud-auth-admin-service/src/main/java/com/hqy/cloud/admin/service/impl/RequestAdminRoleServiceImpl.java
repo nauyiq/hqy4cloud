@@ -1,28 +1,27 @@
 package com.hqy.cloud.admin.service.impl;
 
-import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.admin.service.RequestAdminRoleService;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.RoleDTO;
 import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
-import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
 import com.hqy.cloud.auth.entity.AccountRole;
 import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.auth.service.AccountAuthOperationService;
-import com.hqy.cloud.auth.service.AccountInfoOperationService;
-import com.hqy.cloud.auth.service.tk.RoleTkService;
+import com.hqy.cloud.auth.service.AccountOperationService;
+import com.hqy.cloud.auth.service.AuthOperationService;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
-import static com.hqy.cloud.common.result.CommonResultCode.*;
+import static com.hqy.cloud.common.result.CommonResultCode.NOT_FOUND_ROLE;
+import static com.hqy.cloud.common.result.CommonResultCode.ROLE_NAME_EXIST;
 
 /**
  * @author qiyuan.hong
@@ -34,114 +33,119 @@ import static com.hqy.cloud.common.result.CommonResultCode.*;
 @RequiredArgsConstructor
 public class RequestAdminRoleServiceImpl implements RequestAdminRoleService {
 
-    private final AccountInfoOperationService accountInfoOperationService;
-    private final AuthOperationService operationService;
-    private final AccountAuthOperationService accountAuthOperationService;
+    private final TransactionTemplate transactionTemplate;
+    private final AuthOperationService authoperationService;
+    private final AccountOperationService accountOperationService;
 
     @Override
-    public DataResponse getPageRoles(String roleName, String note, Long id, Integer current, Integer size) {
-        AssertUtil.notNull(id, "Account id should no be null.");
-
-        Integer maxRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
-        PageResult<AccountRoleVO> result = accountAuthOperationService.getRoleTkService().getPageRoles(roleName, note, maxRoleLevel, current, size);
-        return CommonResultCode.dataResponse(SUCCESS, result);
+    public R<PageResult<AccountRoleVO>> getPageRoles(String roleName, String note, Long id, Integer current, Integer size) {
+        Integer maxRoleLevel = authoperationService.getAccountMaxAuthorityRoleLevel(id);
+        PageResult<AccountRoleVO> result = accountOperationService.getRoleTkService().getPageRoles(roleName, note, maxRoleLevel, current, size);
+        return R.ok(result);
     }
 
     @Override
-    public DataResponse getRoles(Long id) {
-        Integer maxRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
-        List<Role> rolesList = accountAuthOperationService.getRoleTkService().getRolesList(maxRoleLevel, true);
-        return CommonResultCode.dataResponse(rolesList);
+    public R<List<Role>> getRoles(Long id) {
+        Integer maxRoleLevel = authoperationService.getAccountMaxAuthorityRoleLevel(id);
+        List<Role> rolesList = accountOperationService.getRoleTkService().getRolesList(maxRoleLevel, true);
+        return R.ok(rolesList);
     }
 
     @Override
-    public DataResponse checkLevel(Long id, Integer level) {
-        int maxAuthorityRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
-        if (maxAuthorityRoleLevel <= level) {
-            return CommonResultCode.dataResponse();
+    public R<Boolean> checkLevel(Long id, Integer level) {
+        int maxAuthorityRoleLevel = authoperationService.getAccountMaxAuthorityRoleLevel(id);
+        return maxAuthorityRoleLevel <= level ? R.ok() : R.failed();
+    }
+
+    @Override
+    public R<Boolean> checkRoleNameExist(String roleName) {
+        Role role = accountOperationService.getRoleTkService().queryOne(new Role(roleName));
+        return Objects.nonNull(role) ? R.failed(ROLE_NAME_EXIST) : R.ok();
+    }
+
+    @Override
+    public R<Boolean> addRole(Long id, RoleDTO roleDTO) {
+        R<Boolean> r = checkLevel(id, roleDTO.getLevel());
+        if (!r.isResult()) {
+            return r;
         }
-        return CommonResultCode.dataResponse(LIMITED_SETTING_ROLE_LEVEL);
-    }
-
-    @Override
-    public DataResponse checkRoleNameExist(String roleName) {
-        Role role = accountAuthOperationService.getRoleTkService().queryOne(new Role(roleName));
-        if (role != null) {
-            return CommonResultCode.dataResponse(ROLE_NAME_EXIST);
-        }
-        return CommonResultCode.dataResponse();
-    }
-
-    @Override
-    public DataResponse addRole(Long id, RoleDTO roleDTO) {
-        DataResponse dataResponse = checkLevel(id, roleDTO.getLevel());
-        if (!dataResponse.isResult()) {
-            return dataResponse;
-        }
-        Role role = accountAuthOperationService.getRoleTkService().queryOne(new Role(roleDTO.getName()));
-        if (role != null) {
-            return CommonResultCode.dataResponse(ROLE_NAME_EXIST);
+        Role role = accountOperationService.getRoleTkService().queryOne(new Role(roleDTO.getName()));
+        if (Objects.nonNull(role)) {
+            return R.failed(ROLE_NAME_EXIST);
         } else {
             role = new Role(roleDTO.getName(), roleDTO.getLevel(), roleDTO.getNote());
         }
 
-        if (!accountAuthOperationService.getRoleTkService().insert(role)) {
-            return CommonResultCode.dataResponse(SYSTEM_ERROR_INSERT_FAIL);
-        }
-        return CommonResultCode.dataResponse();
+        return accountOperationService.getRoleTkService().insert(role) ? R.ok() : R.failed();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public DataResponse editRole(Long id, RoleDTO role) {
-        Role roleEntity = accountAuthOperationService.getRoleTkService().queryById(role.getId());
-        if (roleEntity == null) {
-            return CommonResultCode.dataResponse(NOT_FOUND_ROLE);
+    public R<Boolean> editRole(Long id, RoleDTO role) {
+        Role oldRole = accountOperationService.getRoleTkService().queryById(role.getId());
+        if (Objects.isNull(oldRole)) {
+            return R.failed(NOT_FOUND_ROLE);
         }
 
-        if (!role.getLevel().equals(roleEntity.getLevel())) {
-            roleEntity.setLevel(role.getLevel());
-            List<AccountRole> accountRoles = accountAuthOperationService.getAccountRoleTkService().queryList(new AccountRole(role.getId()));
-            if (CollectionUtils.isNotEmpty(accountRoles)) {
-                AssertUtil.isTrue(accountAuthOperationService.getAccountRoleTkService().updateRoleLevel(roleEntity.getId(), roleEntity.getLevel()), "Failed execute to update account Role");
+        oldRole.setNote(role.getNote());
+        Integer level = role.getLevel();
+        boolean modifyLevel = Objects.nonNull(level) && !level.equals(oldRole.getLevel());
+        List<AccountRole> accountRoles = null;
+        if (modifyLevel) {
+            oldRole.setLevel(level);
+            accountRoles = accountOperationService.getAccountRoleTkService().queryList(new AccountRole(role.getId()));
+        }
+
+        List<AccountRole> finalAccountRoles = accountRoles;
+        Boolean result = transactionTemplate.execute(status -> {
+            try {
+                if (modifyLevel) {
+                    if (CollectionUtils.isNotEmpty(finalAccountRoles)) {
+                        AssertUtil.isTrue(accountOperationService.getAccountRoleTkService().updateRoleLevel(oldRole.getId(), level), "Failed execute to update account Role");
+                    }
+                }
+                AssertUtil.isTrue(accountOperationService.getRoleTkService().update(oldRole), "Failed execute to update role.");
+                return true;
+            } catch (Throwable cause) {
+                status.setRollbackOnly();
+                log.error(cause.getMessage(), cause);
+                return false;
             }
-        }
+        });
 
-        roleEntity.setNote(role.getNote());
-        AssertUtil.isTrue(accountAuthOperationService.getRoleTkService().update(roleEntity), "Failed execute to update role.");
-        return CommonResultCode.dataResponse();
+        return Boolean.TRUE.equals(result) ? R.ok() : R.failed();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public DataResponse deleteRole(Integer roleId) {
-        RoleTkService roleTkService = accountAuthOperationService.getRoleTkService();
-        Role role = roleTkService.queryById(roleId);
-        if (role == null) {
-            return CommonResultCode.dataResponse(NOT_FOUND_ROLE);
+    public R<Boolean> deleteRole(Integer roleId) {
+        Role role =  accountOperationService.getRoleTkService().queryById(roleId);
+        if (Objects.isNull(role)) {
+            return R.failed(NOT_FOUND_ROLE);
         }
 
-        if (!accountAuthOperationService.deleteRole(role)) {
-            return CommonResultCode.dataResponse(SYSTEM_BUSY);
+        Boolean result = transactionTemplate.execute(status -> {
+            try {
+                AssertUtil.isTrue(accountOperationService.deleteAccountRole(role), "Failed execute to delete role, roleId = " + roleId);
+                AssertUtil.isTrue(authoperationService.roleMenuService().deleteByRoleId(roleId), "Failed execute to delete role menu");
+                return true;
+            } catch (Throwable cause) {
+                status.setRollbackOnly();
+                return false;
+            }
+        });
+
+        if (Objects.isNull(result) || !result) {
+            return R.failed();
         }
-
-        // delete role_menu
-        AssertUtil.isTrue(operationService.roleMenuService().deleteByRoleId(roleId), "Failed execute to delete role menu");
-
-        return CommonResultCode.dataResponse();
+        return R.ok();
     }
 
     @Override
-    public DataResponse updateRoleMenus(RoleMenuDTO roleMenus) {
+    public R<Boolean> updateRoleMenus(RoleMenuDTO roleMenus) {
         Integer roleId = roleMenus.getRoleId();
-        Role role = accountAuthOperationService.getRoleTkService().queryById(roleId);
-        if (role == null) {
-            return CommonResultCode.dataResponse(NOT_FOUND_ROLE);
+        Role role = accountOperationService.getRoleTkService().queryById(roleId);
+        if (Objects.isNull(role)) {
+            return R.failed(NOT_FOUND_ROLE);
         }
-
-        if (!operationService.updateRoleMenus(role, roleMenus)) {
-            return CommonResultCode.dataResponse(SYSTEM_BUSY);
-        }
-        return CommonResultCode.dataResponse(SUCCESS);
+        return authoperationService.updateRoleMenus(role, roleMenus) ? R.ok() : R.failed();
     }
 }

@@ -1,7 +1,8 @@
 package com.hqy.cloud.admin.service;
 
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.coll.struct.PageRpcExceptionRecordStruct;
+import com.hqy.coll.struct.PageRpcFlowRecordStruct;
 
 /**
  * @author qiyuan.hong
@@ -16,16 +17,16 @@ public interface RequestAdminRpcLogService {
      * @param provider 请求方
      * @param current  当前页
      * @param size     页行数
-     * @return         DataResponse.
+     * @return         R.
      */
-    DataResponse queryRpcFlowPage(String caller, String provider, Integer current, Integer size);
+    R<PageRpcFlowRecordStruct> queryRpcFlowPage(String caller, String provider, Integer current, Integer size);
 
     /**
      * 删除rpc流量日志
      * @param id id
-     * @return   MessageResponse.
+     * @return   R.
      */
-    MessageResponse deleteRpcFlowRecord(Long id);
+    R<Boolean> deleteRpcFlowRecord(Long id);
 
     /**
      * 分页查询RPC错误日志
@@ -34,15 +35,15 @@ public interface RequestAdminRpcLogService {
      * @param type             类型
      * @param current          当前页
      * @param size             页行数
-     * @return                 DataResponse.
+     * @return                 R.
      */
-    DataResponse queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size);
+    R<PageRpcExceptionRecordStruct> queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size);
 
 
     /**
      * 删除rpc异常日志
      * @param id id.
-     * @return   MessageResponse.
+     * @return   R.
      */
-    MessageResponse deleteRpcExceptionRecord(Long id);
+    R<Boolean> deleteRpcExceptionRecord(Long id);
 }

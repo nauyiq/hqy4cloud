@@ -3,6 +3,7 @@ package com.hqy.cloud.admin.service.impl;
 import com.hqy.cloud.admin.service.RequestAdminRpcLogService;
 import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.coll.service.RpcLogRemoteService;
 import com.hqy.coll.struct.PageRpcExceptionRecordStruct;
@@ -23,30 +24,30 @@ public class RequestAdminRpcLogServiceImpl implements RequestAdminRpcLogService 
 
 
     @Override
-    public DataResponse queryRpcFlowPage(String caller, String provider, Integer current, Integer size) {
+    public R<PageRpcFlowRecordStruct> queryRpcFlowPage(String caller, String provider, Integer current, Integer size) {
         RpcLogRemoteService service = RPCClient.getRemoteService(RpcLogRemoteService.class);
         PageRpcFlowRecordStruct pageRpcFlowRecordStruct = service.pageRpcFlowLog(caller, provider, new PageStruct(current, size));
-        return CommonResultCode.dataResponse(pageRpcFlowRecordStruct);
+        return R.ok(pageRpcFlowRecordStruct);
     }
 
     @Override
-    public MessageResponse deleteRpcFlowRecord(Long id) {
+    public R<Boolean> deleteRpcFlowRecord(Long id) {
         RpcLogRemoteService service = RPCClient.getRemoteService(RpcLogRemoteService.class);
         service.deleteRpcFlowLogRecord(id);
-        return CommonResultCode.messageResponse();
+        return R.ok();
     }
 
     @Override
-    public DataResponse queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size) {
+    public R<PageRpcExceptionRecordStruct> queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size) {
         RpcLogRemoteService service = RPCClient.getRemoteService(RpcLogRemoteService.class);
         PageRpcExceptionRecordStruct pageRpcExceptionRecordStruct = service.pageRpcErrorLog(application, serviceClassName, type, new PageStruct(current, size));
-        return CommonResultCode.dataResponse(pageRpcExceptionRecordStruct);
+        return R.ok(pageRpcExceptionRecordStruct);
     }
 
     @Override
-    public MessageResponse deleteRpcExceptionRecord(Long id) {
+    public R<Boolean> deleteRpcExceptionRecord(Long id) {
         RpcLogRemoteService service = RPCClient.getRemoteService(RpcLogRemoteService.class);
         service.deleteRpcExceptionRecord(id);
-        return CommonResultCode.messageResponse();
+        return R.ok();
     }
 }

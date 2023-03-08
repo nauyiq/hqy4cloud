@@ -25,7 +25,7 @@ public class MenuTkServiceImpl extends BaseTkServiceImpl<Menu, Long> implements 
     private final MenuTkMapper menuDao;
 
     @Override
-    public BaseTkMapper<Menu, Long> getTkDao() {
+    public BaseTkMapper<Menu, Long> getTkMapper() {
         return menuDao;
     }
 

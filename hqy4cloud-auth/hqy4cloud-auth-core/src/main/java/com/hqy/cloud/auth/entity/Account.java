@@ -2,8 +2,7 @@ package com.hqy.cloud.auth.entity;
 
 import com.hqy.cloud.tk.model.BaseEntity;
 import com.hqy.cloud.util.ValidationUtil;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Table;
@@ -15,9 +14,12 @@ import java.util.Date;
  * @date 2022-03-10 21:12
  */
 
-@Slf4j
+
 @Data
+@ToString
 @Table(name = "t_account")
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Account extends BaseEntity<Long> {
     private static final long serialVersionUID = -7814298685660847656L;
@@ -58,9 +60,6 @@ public class Account extends BaseEntity<Long> {
     private Boolean deleted = false;
 
 
-    public Account() {
-    }
-
     public Account(String usernameOrEmail) {
         if (ValidationUtil.validateEmail(usernameOrEmail)) {
             this.email = usernameOrEmail;
@@ -69,35 +68,23 @@ public class Account extends BaseEntity<Long> {
         }
     }
 
+    public Account(Long id, String username, String password) {
+        this(id, username, password, null, null, null);
+    }
 
     public Account(String username, String password, String email, String roles) {
+        this(null, username, password, email, roles, null);
+    }
+
+    public Account(Long id, String username, String password, String email, String roles, String phone) {
+        super(id, new Date());
         this.username = username;
         this.password = password;
         this.email = email;
         this.roles = roles;
-        Date now = new Date();
-        super.setCreated(now);
-        super.setUpdated(now);
+        this.phone = phone;
     }
 
-    public Account(long id, String username, String password) {
-        log.info("@@@ Create account entity, id:{}, username:{}", id, username);
-        Date now = new Date();
-        super.setId(id);
-        super.setCreated(now);
-        super.setUpdated(now);
-        this.username = username;
-        this.password = password;
-    }
 
-    public Account(long id, String username, String password, String email) {
-        Date now = new Date();
-        super.setId(id);
-        super.setCreated(now);
-        super.setUpdated(now);
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
 
 }

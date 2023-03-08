@@ -6,6 +6,7 @@ import com.hqy.cloud.auth.entity.RoleResources;
 import com.hqy.cloud.tk.PrimaryLessTkService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * RoleResourcesService.
@@ -29,7 +30,7 @@ public interface RoleResourcesTkService extends PrimaryLessTkService<RoleResourc
      * @param roles 角色列表
      * @return      AuthenticationDTO.
      */
-    List<AuthenticationDTO> getAuthoritiesResourcesByRoles(List<String> roles);
+    Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(List<String> roles);
 
     /**
      * 根据角色id和资源id列表删除数据

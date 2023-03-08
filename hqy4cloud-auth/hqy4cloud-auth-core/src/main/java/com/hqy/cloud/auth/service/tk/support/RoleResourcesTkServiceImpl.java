@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qiyuan.hong
@@ -44,7 +45,7 @@ public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleRes
     }
 
     @Override
-    public List<AuthenticationDTO> getAuthoritiesResourcesByRoles(List<String> roles) {
+    public Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(List<String> roles) {
         return dao.getAuthoritiesResourcesByRoles(roles);
     }
 

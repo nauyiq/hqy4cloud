@@ -1,7 +1,8 @@
 package com.hqy.cloud.gateway.config;
 
-import com.hqy.cloud.auth.core.support.CustomReactiveOpaqueTokenIntrospector;
-import com.hqy.cloud.auth.server.support.EndpointAuthorizationManager;
+import com.hqy.cloud.auth.core.component.DefaultReactiveOpaqueTokenIntrospector;
+import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
+import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.CommonResultCode;
@@ -49,13 +50,16 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ResourceServerConfiguration {
 
-    private final OAuth2AuthorizationService oAuth2AuthorizationService;
     private final MessageSource messageSource;
 
+    @Bean
+    public OAuth2AuthorizationService oAuth2AuthorizationService() {
+        return new RedisOAuth2AuthorizationService();
+    }
 
     @Bean
-    public ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector() {
-        return new CustomReactiveOpaqueTokenIntrospector(oAuth2AuthorizationService);
+    public ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService oAuth2AuthorizationService) {
+        return new DefaultReactiveOpaqueTokenIntrospector(oAuth2AuthorizationService);
     }
 
     @Bean
@@ -71,10 +75,10 @@ public class ResourceServerConfiguration {
     }
 
     @Bean
-    public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http, AuthorizationManager authorizationManager) {
+    public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http, AuthorizationManager authorizationManager,  ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector) {
         http.oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer  ->
                         httpSecurityOAuth2ResourceServerConfigurer.opaqueToken()
-                                .introspector(opaqueTokenIntrospector()))
+                                .introspector(opaqueTokenIntrospector))
                         .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST);
 
         http.authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();

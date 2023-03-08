@@ -2,6 +2,7 @@ package com.hqy.cloud.auth.entity;
 
 import com.hqy.cloud.tk.PrimaryLessBaseEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @date 2022/12/9 9:52
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "t_role_resources")

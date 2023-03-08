@@ -62,6 +62,7 @@ public enum CommonResultCode {
      */
     LIMITED_AUTHORITY(9400, "Access authority Limit."),
 
+
     /**
      * 耗时的rpc方法
      */
@@ -71,6 +72,11 @@ public enum CommonResultCode {
      * 无效的认证
      */
     INVALID_AUTHORIZATION(9600, "Invalid authorization, please check your authorization again."),
+
+    /**
+     * 没有权限
+     */
+    NOT_PERMISSION(9600, "Not permission."),
 
 
     /**
@@ -150,7 +156,7 @@ public enum CommonResultCode {
     /**
      * 权限不够，无法设置的账户权限
      */
-    LIMITED_SETTING_ROLE_LEVEL(3004, "Access authority limit ro modify role level."),
+    LIMITED_SETTING_ROLE_LEVEL(3004, "Access authority limit to modify role level."),
 
     /**
      * 角色名已经存在

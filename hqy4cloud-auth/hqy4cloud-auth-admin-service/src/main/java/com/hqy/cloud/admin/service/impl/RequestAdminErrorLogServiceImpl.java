@@ -1,9 +1,7 @@
 package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.admin.service.RequestAdminErrorLogService;
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.coll.service.ExceptionCollectionService;
 import com.hqy.coll.struct.PageExceptionLogStruct;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
@@ -23,16 +21,16 @@ import org.springframework.stereotype.Service;
 public class RequestAdminErrorLogServiceImpl implements RequestAdminErrorLogService {
 
     @Override
-    public DataResponse pageErrorLog(String serviceName, String type, String environment, String exceptionClass, String ip, String url, Integer current, Integer size) {
+    public R<PageExceptionLogStruct> pageErrorLog(String serviceName, String type, String environment, String exceptionClass, String ip, String url, Integer current, Integer size) {
         ExceptionCollectionService collectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
         PageExceptionLogStruct pageExceptionLogStruct = collectionService.queryPage(serviceName, type, environment, exceptionClass, ip, url, new PageStruct(current, size));
-        return CommonResultCode.dataResponse(pageExceptionLogStruct);
+        return R.ok(pageExceptionLogStruct);
     }
 
     @Override
-    public MessageResponse deleteErrorLog(Long id) {
+    public R<Boolean> deleteErrorLog(Long id) {
         ExceptionCollectionService collectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
         collectionService.deleteErrorLog(id);
-        return CommonResultCode.messageResponse();
+        return R.ok();
     }
 }

@@ -26,6 +26,14 @@ public interface RemoteAuthService extends RPCService {
     @ThriftMethod
     List<AuthenticationStruct> getAuthoritiesResourcesByRoles(@ThriftField(1)List<String> roles);
 
+    /**
+     * 根据角色获取接口permissions
+     * @param roles 角色列表
+     * @return      permissions
+     */
+    @ThriftMethod
+    List<String> getPermissionsByRoles(@ThriftField(1)List<String> roles);
+
 
     /**
      * 根据角色更新资源信息

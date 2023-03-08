@@ -20,7 +20,7 @@ public class AccountProfileTkServiceImpl extends BaseTkServiceImpl<AccountProfil
     private final AccountProfileTkMapper accountProfileDao;
 
     @Override
-    public BaseTkMapper<AccountProfile, Long> getTkDao() {
+    public BaseTkMapper<AccountProfile, Long> getTkMapper() {
         return accountProfileDao;
     }
 }

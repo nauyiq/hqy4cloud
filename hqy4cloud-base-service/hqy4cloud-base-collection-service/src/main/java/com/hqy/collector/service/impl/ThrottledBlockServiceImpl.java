@@ -28,7 +28,7 @@ public class ThrottledBlockServiceImpl extends BaseTkServiceImpl<ThrottledBlock,
     private final ThrottledBlockTkMapper throttledBlockDao;
 
     @Override
-    public BaseTkMapper<ThrottledBlock, Long> getTkDao() {
+    public BaseTkMapper<ThrottledBlock, Long> getTkMapper() {
         return this.throttledBlockDao;
     }
 

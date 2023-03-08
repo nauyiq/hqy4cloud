@@ -35,4 +35,13 @@ public final class AuthenticationStruct implements Serializable {
     @ThriftField(2)
     public List<ResourceStruct> resources;
 
+
+    /**
+     * 权限列表
+     */
+    @ThriftField(3)
+    public List<String> permissions;
+
+
+
 }

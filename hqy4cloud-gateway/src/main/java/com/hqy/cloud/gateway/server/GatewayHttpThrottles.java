@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.server;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.auth.server.UploadFileSecurityChecker;
+import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
 import com.hqy.cloud.auth.flow.FlowResult;
 import com.hqy.cloud.auth.flow.server.HttpAccessFlowControlCenter;
 import com.hqy.cloud.common.base.lang.StringConstants;

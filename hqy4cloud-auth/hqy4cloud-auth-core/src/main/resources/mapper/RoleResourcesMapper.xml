@@ -3,13 +3,22 @@
 
 <mapper namespace="com.hqy.cloud.auth.mapper.RoleResourcesMapper">
 
+
+    <resultMap id="AuthenticationMap" type="java.util.Map">
+        <result property="role" column="role_name"/>
+        <collection property="resources" ofType="com.hqy.cloud.auth.base.dto.ResourceDTO">
+            <result column="path" property="path"/>
+            <result column="id" property="id"/>
+            <result column="method" property="method"/>
+        </collection>
+    </resultMap>
+
     <resultMap id="AuthenticationStructMap" type="com.hqy.cloud.auth.base.dto.AuthenticationDTO">
         <result property="role" column="role_name"/>
         <collection property="resources" ofType="com.hqy.cloud.auth.base.dto.ResourceDTO">
             <result column="path" property="path"/>
             <result column="id" property="id"/>
             <result column="method" property="method"/>
-            <result column="permission" property="permission"/>
         </collection>
     </resultMap>
 
@@ -40,13 +49,12 @@
         </foreach>
     </delete>
 
-    <select id="getAuthoritiesResourcesByRoles" resultMap="AuthenticationStructMap">
+    <select id="getAuthoritiesResourcesByRoles" resultMap="AuthenticationMap">
         SELECT
         rr.role_name,
         r.id,
         r.path,
-        r.method,
-        r.permission
+        r.method
         FROM t_role_resources rr
         LEFT JOIN `t_resource` r ON rr.resource_id = r.id
         WHERE rr.`role_name` IN

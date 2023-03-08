@@ -30,7 +30,7 @@ public class RPCExceptionRecordServiceImpl extends BaseTkServiceImpl<RPCExceptio
     private final RPCExceptionRecordTkMapper dao;
 
     @Override
-    public BaseTkMapper<RPCExceptionRecord, Long> getTkDao() {
+    public BaseTkMapper<RPCExceptionRecord, Long> getTkMapper() {
         return dao;
     }
 

@@ -30,7 +30,7 @@ public class PfExceptionServiceImpl extends BaseTkServiceImpl<PfException, Long>
     private PfExceptionTkMapper pfExceptionDao;
 
     @Override
-    public BaseTkMapper<PfException, Long> getTkDao() {
+    public BaseTkMapper<PfException, Long> getTkMapper() {
         return pfExceptionDao;
     }
 

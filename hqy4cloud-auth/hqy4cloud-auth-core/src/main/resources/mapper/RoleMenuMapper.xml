@@ -3,6 +3,19 @@
 
 <mapper namespace="com.hqy.cloud.auth.mapper.RoleMenuMapper">
 
+    <resultMap id="AuthenticationMap" type="java.util.Map">
+        <result property="role" column="role_name"/>
+        <collection property="permissions" ofType="java.lang.String">
+            <result column="permission"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="permissionDTOMap" type="com.hqy.cloud.auth.base.dto.PermissionDTO">
+        <result property="role" column="name"/>
+        <collection property="permissions" ofType="java.lang.String">
+            <result column="permission"/>
+        </collection>
+    </resultMap>
 
     <select id="getManuPermissionsByRoleIds" resultType="java.lang.String">
         SELECT m.`permission`
@@ -14,7 +27,16 @@
         </foreach>
     </select>
 
-
+    <select id="getManuPermissionsByRoles" resultMap="AuthenticationMap">
+        SELECT am.`permission`, r.name
+        FROM t_role r
+        LEFT JOIN t_admin_role_menu adm ON r.id = adm.role_id
+        LEFT JOIN t_admin_menu am ON adm.`menu_id` = am.`id`
+        WHERE r.`id` IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
 
 
 </mapper>

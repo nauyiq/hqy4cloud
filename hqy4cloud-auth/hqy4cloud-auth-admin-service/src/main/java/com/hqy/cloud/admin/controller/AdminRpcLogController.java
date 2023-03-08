@@ -1,14 +1,13 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminRpcLogService;
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.auth.core.authentication.PreAuthentication;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.coll.struct.PageRpcExceptionRecordStruct;
+import com.hqy.coll.struct.PageRpcFlowRecordStruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 /**
  * @author qiyuan.hong
@@ -25,32 +24,28 @@ public class AdminRpcLogController {
 
 
     @GetMapping("/flow/page")
-    public DataResponse queryRpcFlowPage(String caller, String provider, Integer current, Integer size) {
+    public R<PageRpcFlowRecordStruct> queryRpcFlowPage(String caller, String provider, Integer current, Integer size) {
         current = current == null ? 1 : current;
         size = size == null ? 20 : size;
         return requestService.queryRpcFlowPage(caller, provider, current, size);
     }
 
     @DeleteMapping("/flow/{id}")
-    public MessageResponse deleteRpcFlowRecord(@PathVariable("id") Long id) {
-        if (Objects.isNull(id)) {
-            return CommonResultCode.messageResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
-        }
+    @PreAuthentication("sys_rpc_flow_log_del")
+    public R<Boolean> deleteRpcFlowRecord(@PathVariable("id") Long id) {
         return requestService.deleteRpcFlowRecord(id);
     }
 
     @GetMapping("/error/page")
-    public DataResponse queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size) {
+    public R<PageRpcExceptionRecordStruct> queryRpcErrorPage(String application, String serviceClassName, Integer type, Integer current, Integer size) {
         current = current == null ? 1 : current;
         size = size == null ? 20 : size;
         return requestService.queryRpcErrorPage(application, serviceClassName, type, current, size);
     }
 
     @DeleteMapping("/error/{id}")
-    public MessageResponse deleteRpcExceptionRecord(@PathVariable("id") Long id) {
-        if (Objects.isNull(id)) {
-            return CommonResultCode.messageResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
-        }
+    @PreAuthentication("sys_rpc_error_log_del")
+    public R<Boolean> deleteRpcExceptionRecord(@PathVariable("id") Long id) {
         return requestService.deleteRpcExceptionRecord(id);
     }
 

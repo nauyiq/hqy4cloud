@@ -26,7 +26,7 @@ public class RoleTkServiceImpl extends BaseTkServiceImpl<Role, Integer> implemen
     private final RoleTkMapper roleDao;
 
     @Override
-    public BaseTkMapper<Role, Integer> getTkDao() {
+    public BaseTkMapper<Role, Integer> getTkMapper() {
         return roleDao;
     }
 

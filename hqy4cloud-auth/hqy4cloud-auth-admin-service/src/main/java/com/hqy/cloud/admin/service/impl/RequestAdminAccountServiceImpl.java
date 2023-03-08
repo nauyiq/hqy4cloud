@@ -1,30 +1,31 @@
 package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.admin.service.RequestAdminAccountService;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
 import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.auth.service.AccountInfoOperationService;
+import com.hqy.cloud.auth.service.AccountOperationService;
+import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
+import com.hqy.cloud.common.bind.DataResponse;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
@@ -41,149 +42,110 @@ import static com.hqy.cloud.common.result.CommonResultCode.*;
 public class RequestAdminAccountServiceImpl implements RequestAdminAccountService {
 
     private final AuthOperationService authOperationService;
+    private final AccountOperationService accountOperationService;
     private final AccountTkService accountTkService;
-    private final AccountInfoOperationService accountInfoOperationService;
     private final RoleTkService roleTkService;
 
     @Override
-    public DataResponse getLoginUserInfo(Long id) {
-        AssertUtil.notNull(id, "Account id should no be null.");
+    public R<AdminUserInfoVO> getLoginUserInfo(Long id) {
         AccountInfoDTO accountInfo = accountTkService.getAccountInfo(id);
-        if (accountInfo == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
+        if (Objects.isNull(accountInfo)) {
+            return R.failed(USER_NOT_FOUND);
         }
-        String[] roleArrays = StringUtils.tokenizeToStringArray(accountInfo.getRoles(), COMMA);
-        List<String> roleList = Arrays.asList(roleArrays);
-        List<String> permissions = authOperationService.getManuPermissionsByRoles(roleList);
-        AdminUserInfoVO vo = new AdminUserInfoVO(permissions, roleList, new AdminUserInfoVO.SysUser(accountInfo));
-        return CommonResultCode.dataResponse(SUCCESS, vo);
+        List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), COMMA));
+        List<String> permissions = authOperationService.getManuPermissionsByRoles(roles);
+        AdminUserInfoVO vo = new AdminUserInfoVO(permissions, roles, new AdminUserInfoVO.SysUser(accountInfo));
+        return R.ok(vo);
     }
 
 
     @Override
-    public DataResponse getPageUsers(String username, String nickname, Long id, Integer current, Integer size) {
+    public R<PageResult<AccountInfoVO>> getPageUsers(String username, String nickname, Long id, Integer current, Integer size) {
         AssertUtil.notNull(id, "Account id should no be null.");
-
-        Integer maxRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
+        Integer maxRoleLevel = authOperationService.getAccountMaxAuthorityRoleLevel(id);
         PageResult<AccountInfoVO> result = accountTkService.getPageAccountInfos(username, nickname, maxRoleLevel, current, size);
-        return CommonResultCode.dataResponse(SUCCESS, result);
+        return R.ok(result);
     }
 
 
     @Override
-    public DataResponse getUserRoles(Long id) {
-        Integer maxRoleLevel = accountInfoOperationService.getAccountMaxAuthorityRoleLevel(id);
+    public R<List<AccountRoleVO>> getUserRoles(Long id) {
+        Integer maxRoleLevel = authOperationService.getAccountMaxAuthorityRoleLevel(id);
         List<Role> roles = roleTkService.getRolesList(maxRoleLevel, null);
         if (CollectionUtils.isEmpty(roles)) {
             log.warn("Account Roles collections is empty.");
-            return CommonResultCode.dataResponse(DATA_EMPTY);
+            return R.failed(DATA_EMPTY);
         }
-        return CommonResultCode.dataResponse(SUCCESS, roles.stream().map(AccountRoleVO::new).collect(Collectors.toList()));
+        return R.ok(roles.stream().map(AccountRoleVO::new).collect(Collectors.toList()));
     }
 
     @Override
-    public DataResponse checkParamExist(String username, String email, String phone) {
-        if (!StringUtils.isEmpty(username)) {
-            if (accountInfoOperationService.checkParamExist(username, null, null)) {
-                return CommonResultCode.dataResponse(false, USERNAME_EXIST, username);
-            }
-        }
-
-        if (!StringUtils.isEmpty(email)) {
-            if (accountInfoOperationService.checkParamExist(null, email, null)) {
-                return CommonResultCode.dataResponse(false, EMAIL_EXIST, email);
-            }
-        }
-
-        if (!StringUtils.isEmpty(phone)) {
-            if (accountInfoOperationService.checkParamExist(null, null, phone)) {
-                return CommonResultCode.dataResponse(false, PHONE_EXIST, phone);
-            }
-        }
-
-        return CommonResultCode.dataResponse();
+    public R<Boolean> checkParamExist(String username, String email, String phone) {
+        boolean result = accountOperationService.checkParamExist(username, email, phone);
+        return result ? R.ok() : R.failed();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public DataResponse addUser(Long accessAccountId, UserDTO userDTO) {
+    public R<Boolean> addUser(Long accessAccountId, UserDTO userDTO) {
         //check params exist.
-        DataResponse dataResponse = checkParamExist(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPhone());
-        if (!dataResponse.isResult()) {
-            return dataResponse;
+        R<Boolean> result = checkParamExist(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPhone());
+        if (!result.isResult()) {
+            return result;
         }
 
         //check roles
-        List<String> roleNames = userDTO.getRole();
-        List<Role> roles = roleTkService.queryRolesByNames(roleNames);
-        if (!accountInfoOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
-            return CommonResultCode.dataResponse(ERROR_PARAM);
+        List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
+        if (!authOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
+            return R.failed(LIMITED_SETTING_ROLE_LEVEL);
         }
 
-        //registry account;
-        if (!accountInfoOperationService.registryAccount(userDTO, roles)) {
-            return CommonResultCode.dataResponse(REGISTRY_ACCOUNT_ERROR);
-        }
-
-        return CommonResultCode.dataResponse();
+        boolean ok = accountOperationService.registryAccount(userDTO, roles);
+        return ok ? R.ok() : R.failed();
     }
 
     @Override
-    public DataResponse editUser(Long accessAccountId, UserDTO userDTO) {
+    public R<Boolean> editUser(Long accessAccountId, UserDTO userDTO) {
         //check user exist.
         Account account = accountTkService.queryById(userDTO.getId());
-        if (account == null || account.getDeleted()) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
+        if (Objects.isNull(account) || account.getDeleted()) {
+            return R.failed(USER_NOT_FOUND);
         }
 
         //check roles
-        List<String> roleNames = userDTO.getRole();
-        List<Role> roles = roleTkService.queryRolesByNames(roleNames);
+        List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
         String accountRoles = account.getRoles();
         List<String> oldRoleNames = Arrays.asList(StringUtils.tokenizeToStringArray(accountRoles, COMMA));
         List<Role> oldRoles = roleTkService.queryRolesByNames(oldRoleNames);
         boolean modifyRoles = true;
         if (oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
-            log.info("Account roles not modify.");
             modifyRoles = false;
         } else {
-            if (!accountInfoOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
-                return CommonResultCode.dataResponse(ERROR_PARAM);
+            if (!authOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
+                return R.failed(LIMITED_SETTING_ROLE_LEVEL);
             }
         }
-
-        // check params
-        String username = userDTO.getUsername();
-        boolean checkUsername = !StringUtils.isEmpty(username) && !username.equals(account.getUsername());
-        String email = userDTO.getEmail();
-        boolean checkEmail = !StringUtils.isEmpty(email) && !email.equals(account.getEmail());
-        String phone = userDTO.getEmail();
-        boolean checkPhone = !StringUtils.isEmpty(phone) && !phone.equals(account.getPhone());
-        DataResponse dataResponse = checkParamExist(checkUsername ? username : null, checkEmail ? email : null, checkPhone ? phone : null);
-        if (!dataResponse.isResult()) {
-            return dataResponse;
+        R<Boolean> booleanR = checkParamExist(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPhone());
+        if (!booleanR.isResult()) {
+            return booleanR;
         }
 
         //edit user
-        accountInfoOperationService.editAccount(userDTO, roles, account, modifyRoles ? oldRoles : null);
-
-        return CommonResultCode.dataResponse();
+        boolean result = accountOperationService.editAccount(userDTO, roles, account, modifyRoles ? oldRoles : null);
+        return result ? R.ok() : R.failed();
     }
 
     @Override
-    public DataResponse deleteUser(Long accessId, Long id) {
+    public R<Boolean> deleteUser(Long accessId, Long id) {
         Account account = accountTkService.queryById(id);
-        if (account == null) {
-            return CommonResultCode.dataResponse(USER_NOT_FOUND);
+        if (Objects.isNull(account)) {
+            R.failed(USER_NOT_FOUND);
         }
-        List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA));
-        List<Role> rolesByNames = roleTkService.queryRolesByNames(roles);
-        if (!accountInfoOperationService.checkEnableModifyRoles(accessId, rolesByNames)) {
-            return CommonResultCode.dataResponse(ERROR_PARAM);
+        List<Role> roles = roleTkService.queryRolesByNames(Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA)));
+        if (!authOperationService.checkEnableModifyRoles(accessId, roles)) {
+            return R.failed(ERROR_PARAM);
         }
 
-        accountInfoOperationService.deleteUser(account);
+        return accountOperationService.deleteUser(account) ? R.ok() : R.failed();
 
-        return CommonResultCode.dataResponse();
     }
 }

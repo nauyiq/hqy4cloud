@@ -1,6 +1,12 @@
 package com.hqy.cloud.auth.config;
 
 import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
+import com.hqy.cloud.auth.server.DefaultRegisteredClientRepository;
+import com.hqy.cloud.auth.service.security.support.CustomerUserDetailServiceImpl;
+import com.hqy.cloud.auth.service.security.support.RedisOAuth2AuthorizationConsentServiceImpl;
+import com.hqy.cloud.auth.service.tk.AccountTkService;
+import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.DefaultOauth2TokenCustomizer;
 import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
@@ -9,7 +15,6 @@ import com.hqy.cloud.auth.support.handler.DefaultAuthenticationSuccessHandler;
 import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
 import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
 import com.hqy.cloud.auth.support.server.DefaultOauth2AccessTokenGenerator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +24,10 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
@@ -42,10 +50,28 @@ import java.util.Locale;
  */
 @Configuration
 @SuppressWarnings({"rawtypes", "unchecked"})
-@RequiredArgsConstructor
 public class AuthorizationServerConfiguration {
 
-    private final OAuth2AuthorizationService authorizationService;
+
+    @Bean
+    public RegisteredClientRepository registeredClientRepository(SysOauthClientTkService sysOauthClientTkService) {
+        return new DefaultRegisteredClientRepository(sysOauthClientTkService);
+    }
+    @Bean
+    public UserDetailsService userDetailsService(AccountTkService accountTkService) {
+        return new CustomerUserDetailServiceImpl(accountTkService);
+    }
+
+    @Bean
+    public OAuth2AuthorizationService oAuth2AuthorizationService() {
+        return new RedisOAuth2AuthorizationService();
+    }
+
+    @Bean
+    public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
+        return new RedisOAuth2AuthorizationConsentServiceImpl();
+    }
+
 
     @Bean
     @Primary
@@ -93,7 +119,7 @@ public class AuthorizationServerConfiguration {
         RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
         DefaultSecurityFilterChain securityFilterChain = http.requestMatcher(endpointsMatcher)
                 .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
-                .apply(authorizationServerConfigurer.authorizationService(authorizationService))
+                .apply(authorizationServerConfigurer.authorizationService(oAuth2AuthorizationService()))
                 .authorizationServerSettings(AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build())
                 // 授权码登录的登录页个性化
                 .and().apply(new FormIdentityLoginConfigurer()).and().build();

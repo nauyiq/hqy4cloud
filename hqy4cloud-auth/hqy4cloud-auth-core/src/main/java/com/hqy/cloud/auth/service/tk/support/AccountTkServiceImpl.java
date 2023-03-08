@@ -28,7 +28,7 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     private final AccountTkMapper accountDao;
 
     @Override
-    public BaseTkMapper<Account, Long> getTkDao() {
+    public BaseTkMapper<Account, Long> getTkMapper() {
         return accountDao;
     }
 

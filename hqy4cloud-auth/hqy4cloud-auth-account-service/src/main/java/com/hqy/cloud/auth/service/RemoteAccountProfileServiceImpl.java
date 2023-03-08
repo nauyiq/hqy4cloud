@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.service;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheService;
+import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheDataServiceService;
 import com.hqy.account.service.RemoteAccountProfileService;
 import com.hqy.account.struct.AccountProfileStruct;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
@@ -27,8 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RemoteAccountProfileServiceImpl extends AbstractRPCService implements RemoteAccountProfileService {
 
-    private final AccountAuthOperationService accountAuthOperationService;
-    private final AccountBaseInfoCacheService baseInfoCacheService;
+    private final AccountOperationService accountOperationService;
+    private final AccountBaseInfoCacheDataServiceService baseInfoCacheService;
 
 
     @Override
@@ -44,7 +44,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
     @Override
     public boolean uploadAccountProfile(AccountProfileStruct profileStruct) {
         Long id = profileStruct.id;
-        AccountProfileTkService accountProfileTkService = accountAuthOperationService.getAccountProfileTkService();
+        AccountProfileTkService accountProfileTkService = accountOperationService.getAccountProfileTkService();
         AccountProfile accountProfile = accountProfileTkService.queryById(id);
         if (accountProfile == null) {
             return false;

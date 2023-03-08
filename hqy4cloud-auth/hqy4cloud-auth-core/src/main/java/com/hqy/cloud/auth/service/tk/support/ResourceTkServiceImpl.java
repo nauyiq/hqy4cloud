@@ -30,7 +30,7 @@ public class ResourceTkServiceImpl extends BaseTkServiceImpl<Resource, Integer> 
     private final ResourceTkMapper resourceDao;
 
     @Override
-    public BaseTkMapper<Resource, Integer> getTkDao() {
+    public BaseTkMapper<Resource, Integer> getTkMapper() {
         return resourceDao;
     }
 

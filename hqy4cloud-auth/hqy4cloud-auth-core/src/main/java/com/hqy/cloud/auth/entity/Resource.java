@@ -39,11 +39,6 @@ public class Resource extends BaseEntity<Integer> {
     private String method;
 
     /**
-     * 权限标识
-     */
-    private String permission;
-
-    /**
      * 是否删除
      */
     private Boolean deleted = false;

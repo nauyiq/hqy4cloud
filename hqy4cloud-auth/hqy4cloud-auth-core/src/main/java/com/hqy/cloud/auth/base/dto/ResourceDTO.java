@@ -24,15 +24,13 @@ public class ResourceDTO {
     @NotEmpty(message = "Resource path should not be empty.")
     private String path;
     private String method;
-    private String permission;
     @NotNull(message = "Resource status should not be null.")
     private Boolean status;
 
-    public ResourceDTO(Integer id, String path, String method, String permission) {
+    public ResourceDTO(Integer id, String path, String method) {
         this.id = id;
         this.path = path;
         this.method = method;
-        this.permission = permission;
     }
 
     public ResourceDTO(Integer id, String path) {
@@ -45,7 +43,6 @@ public class ResourceDTO {
         this.name = resource.getName();
         this.path = resource.getPath();
         this.method = resource.getMethod();
-        this.permission = resource.getPermission();
         this.status = resource.getStatus();
     }
 }

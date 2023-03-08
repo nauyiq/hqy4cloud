@@ -1,8 +1,7 @@
 package com.hqy.cloud.gateway.server.auth;
 
-import com.hqy.cloud.auth.server.AuthenticationRequest;
-import com.hqy.cloud.auth.server.Oauth2Access;
-import com.hqy.cloud.auth.server.RolesAuthoritiesChecker;
+import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
+import com.hqy.cloud.auth.core.authentication.AuthenticationRequest;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
-    private final RolesAuthoritiesChecker rolesAuthoritiesChecker;
-    private final Oauth2Access oauth2Access;
+    private final AuthPermissionService authPermissionService;
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
@@ -44,10 +42,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         }
 
         AuthenticationRequest authenticationRequest = new ReactAccess2Request(request);
-        if (oauth2Access.isPermitRequest(authenticationRequest)) {
-            return Mono.just(new AuthorizationDecision(true));
-        }
-
         return mono
                 .filter(Authentication::isAuthenticated)
                 .map(authorities -> getAuthorizationDecision(authenticationRequest, authorities));
@@ -61,9 +55,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         } else {
             List<String> roles = authoritiesAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
             try {
-                boolean isPermitAuthorities = rolesAuthoritiesChecker.isPermitAuthorities(roles, authenticationRequest);
-//                return new AuthorizationDecision(isPermitAuthorities);
-                return new AuthorizationDecision(true);
+                boolean isPermitAuthorities = authPermissionService.isPermitRequest(roles, authenticationRequest);
+                return new AuthorizationDecision(isPermitAuthorities);
             } catch (Throwable cause) {
                 log.warn("Failed execute to check permit authorities, roles: {}.", roles, cause);
                 return new AuthorizationDecision(false);

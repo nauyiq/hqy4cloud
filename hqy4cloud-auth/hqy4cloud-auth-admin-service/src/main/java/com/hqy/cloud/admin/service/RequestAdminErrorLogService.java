@@ -1,7 +1,7 @@
 package com.hqy.cloud.admin.service;
 
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
+import com.hqy.coll.struct.PageExceptionLogStruct;
 
 /**
  * @author qiyuan.hong
@@ -20,14 +20,14 @@ public interface RequestAdminErrorLogService {
      * @param url            url
      * @param current        当前页
      * @param size           页行数
-     * @return               DataResponse.
+     * @return               R.
      */
-    DataResponse pageErrorLog(String serviceName, String type, String env, String exceptionClass, String ip, String url, Integer current, Integer size);
+    R<PageExceptionLogStruct> pageErrorLog(String serviceName, String type, String env, String exceptionClass, String ip, String url, Integer current, Integer size);
 
     /**
      * 删除错误日志
      * @param id error log id
-     * @return   MessageResponse.
+     * @return   R.
      */
-    MessageResponse deleteErrorLog(Long id);
+    R<Boolean> deleteErrorLog(Long id);
 }

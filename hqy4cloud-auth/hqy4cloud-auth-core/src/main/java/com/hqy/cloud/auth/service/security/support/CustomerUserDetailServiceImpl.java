@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.service.security.support;
 
-import com.hqy.cloud.auth.core.support.SecurityUser;
+import com.hqy.cloud.auth.core.SecurityUser;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.core.CustomerUserDetailService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;

@@ -30,7 +30,7 @@ public class RPCFlowRecordServiceImpl extends BaseTkServiceImpl<RPCFlowRecord, L
     private final RPCMinuteFlowRecordTkMapper dao;
 
     @Override
-    public BaseTkMapper<RPCFlowRecord, Long> getTkDao() {
+    public BaseTkMapper<RPCFlowRecord, Long> getTkMapper() {
         return dao;
     }
 

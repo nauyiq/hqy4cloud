@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import cn.hutool.core.net.URLEncoder;
-import com.hqy.cloud.auth.core.support.SecurityUser;
+import com.hqy.cloud.auth.core.SecurityUser;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.util.JsonUtil;

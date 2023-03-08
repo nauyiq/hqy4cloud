@@ -2,16 +2,22 @@ package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminAccountService;
 import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.auth.base.vo.AccountInfoVO;
+import com.hqy.cloud.auth.base.vo.AccountRoleVO;
+import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
+import com.hqy.cloud.auth.core.authentication.PreAuthentication;
 import com.hqy.cloud.common.base.AuthenticationInfo;
-import com.hqy.cloud.common.bind.DataResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 后台管理-账号相关接口API
@@ -28,13 +34,13 @@ public class AdminAccountController {
     private final RequestAdminAccountService requestService;
 
     @GetMapping("/userInfo")
-    public DataResponse getAdminLoginUserInfo(HttpServletRequest request) {
+    public R<AdminUserInfoVO> getAdminLoginUserInfo(HttpServletRequest request) {
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
         return requestService.getLoginUserInfo(authentication.getId());
     }
 
     @GetMapping("/user/page")
-    public DataResponse getAdminUserPage(String username, String nickname, Integer current, Integer size, HttpServletRequest servletRequest) {
+    public R<PageResult<AccountInfoVO>> getAdminUserPage(String username, String nickname, Integer current, Integer size, HttpServletRequest servletRequest) {
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(servletRequest);
         current = current == null ? 1 : current;
         size = size == null ? 20 : size;
@@ -42,24 +48,22 @@ public class AdminAccountController {
     }
 
     @GetMapping("/user/roles")
-    public DataResponse getUserRoles(HttpServletRequest servletRequest) {
+    public R<List<AccountRoleVO>> getUserRoles(HttpServletRequest servletRequest) {
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(servletRequest);
         return requestService.getUserRoles(authentication.getId());
     }
 
     @GetMapping("/user/check/exist")
-    public DataResponse checkParamExist(String username, String email, String phone) {
-        if (StringUtils.isAllBlank(username, email, phone)) {
-            return CommonResultCode.dataResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
-        }
+    public R<Boolean> checkParamExist(String username, String email, String phone) {
         return requestService.checkParamExist(username, email, phone);
     }
 
 
     @PostMapping("/user")
-    public DataResponse addUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
-        if (userDTO == null || !userDTO.checkAddUser()) {
-            return CommonResultCode.dataResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
+    @PreAuthentication("sys_user_add")
+    public R<Boolean> addUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        if (Objects.isNull(userDTO) || !userDTO.checkAddUser()) {
+            return R.failed(CommonResultCode.ERROR_PARAM_UNDEFINED);
         }
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
         return requestService.addUser(authentication.getId(), userDTO);
@@ -67,16 +71,18 @@ public class AdminAccountController {
 
 
     @PutMapping("/user")
-    public DataResponse editUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
-        if (userDTO == null || !userDTO.checkUpdateUser()) {
-            return CommonResultCode.dataResponse(CommonResultCode.ERROR_PARAM_UNDEFINED);
+    @PreAuthentication("sys_user_edit")
+    public R<Boolean> editUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        if (Objects.isNull(userDTO) || !userDTO.checkUpdateUser()) {
+            return R.failed();
         }
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
         return requestService.editUser(authentication.getId(), userDTO);
     }
 
     @DeleteMapping("/user/{id}")
-    public DataResponse deleteUser(HttpServletRequest request, @PathVariable("id")Long id) {
+    @PreAuthentication("sys_user_del")
+    public R<Boolean> deleteUser(HttpServletRequest request, @PathVariable("id")Long id) {
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
         return requestService.deleteUser(authentication.getId(), id);
     }

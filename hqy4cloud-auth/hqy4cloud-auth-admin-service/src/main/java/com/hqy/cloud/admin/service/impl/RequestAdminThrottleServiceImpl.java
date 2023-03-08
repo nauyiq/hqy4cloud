@@ -1,9 +1,7 @@
 package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.admin.service.RequestAdminThrottleService;
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.coll.service.CollPersistService;
 import com.hqy.coll.struct.PageThrottledBlockResultStruct;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
@@ -23,20 +21,20 @@ import org.springframework.stereotype.Service;
 public class RequestAdminThrottleServiceImpl implements RequestAdminThrottleService {
 
     @Override
-    public DataResponse getPageThrottledHistory(String throttleBy, String ip, String uri, Integer current, Integer size) {
+    public R<PageThrottledBlockResultStruct> getPageThrottledHistory(String throttleBy, String ip, String uri, Integer current, Integer size) {
         //RPC获取分页数据.
         CollPersistService collPersistService = RPCClient.getRemoteService(CollPersistService.class);
         PageThrottledBlockResultStruct pageResultStruct = collPersistService.getPageThrottledBlock(throttleBy, ip, uri, new PageStruct(current, size));
         if (pageResultStruct == null) {
             pageResultStruct = new PageThrottledBlockResultStruct();
         }
-        return CommonResultCode.dataResponse(pageResultStruct);
+        return R.ok(pageResultStruct);
     }
 
     @Override
-    public MessageResponse deleteThrottledHistory(Long id) {
+    public  R<Boolean> deleteThrottledHistory(Long id) {
         CollPersistService collPersistService = RPCClient.getRemoteService(CollPersistService.class);
         collPersistService.deleteThrottledBlockHistory(id);
-        return CommonResultCode.messageResponse();
+        return R.ok();
     }
 }

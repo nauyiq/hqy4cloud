@@ -1,7 +1,11 @@
 package com.hqy.cloud.admin.service;
 
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
+import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
+import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
+import com.hqy.cloud.common.bind.R;
+
+import java.util.List;
 
 /**
  * AdminMenuRequestController.
@@ -14,54 +18,54 @@ public interface RequestAdminMenuService {
     /**
      * 获取后台菜单栏
      * @param id 用户id
-     * @return response.
+     * @return R.
      */
-    DataResponse getAdminMenu(Long id);
+    R<List<AdminMenuInfoVO>> getAdminMenu(Long id);
 
     /**
      * 新增菜单
      * @param menuDTO 菜单数据
-     * @return        response
+     * @return        R
      */
-    DataResponse addMenu(MenuDTO menuDTO);
+    R<Boolean> addMenu(MenuDTO menuDTO);
 
     /**
      * 根据菜单id查找菜单
      * @param menuId  菜单id
-     * @return        response.
+     * @return        R.
      */
-    DataResponse getMenuById(Long menuId);
+    R<AdminTreeMenuVO> getMenuById(Long menuId);
 
     /**
      * 修改菜单
      * @param menuDTO 菜单数据
-     * @return        response
+     * @return        R
      */
-    DataResponse editMenu(MenuDTO menuDTO);
+    R<Boolean> editMenu(MenuDTO menuDTO);
 
     /**
      * 删除菜单
      * @param menuId 菜单id
-     * @return       response.
+     * @return       R.
      */
-    DataResponse deleteMenu(Long menuId);
+    R<Boolean> deleteMenu(Long menuId);
 
 
     /**
      * 获取某个角色拥有的菜单权限
      * @param roleId 角色id
-     * @return       response
+     * @return       R
      */
-    DataResponse getMenuPermissionsIdByRoleId(Integer roleId);
+    R<List<Integer>> getMenuPermissionsIdByRoleId(Integer roleId);
 
 
     /**
      * 获取树形结构的菜单栏
      * @param id      用户id
      * @param status  菜单栏状态
-     * @return   response.
+     * @return   R.
      */
-    DataResponse getAdminTreeMenu(Long id, Boolean status);
+    R<List<AdminTreeMenuVO>> getAdminTreeMenu(Long id, Boolean status);
 
 
 

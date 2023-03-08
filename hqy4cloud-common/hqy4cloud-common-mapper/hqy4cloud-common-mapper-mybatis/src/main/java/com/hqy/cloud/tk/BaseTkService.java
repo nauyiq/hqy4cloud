@@ -1,6 +1,7 @@
 package com.hqy.cloud.tk;
 
 import com.hqy.cloud.tk.model.BaseEntity;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -49,6 +50,14 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      * @return 返回实体的集合
      */
     List<T> queryList(T t);
+
+    /**
+     * 根据条件查询.
+     * @param example Tk Example
+     * @return        返回实体的集合
+     */
+    List<T> queryByExample(Example example);
+
 
     /**
      * 查询所有
@@ -114,7 +123,7 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      * 返回tk-mapper
      * @return {@link BaseTkMapper}
      */
-    BaseTkMapper<T, PK> getTkDao();
+    BaseTkMapper<T, PK> getTkMapper();
 
 
 }

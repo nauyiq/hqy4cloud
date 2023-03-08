@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * RoleResourcesDao.
@@ -32,7 +33,7 @@ public interface RoleResourcesMapper extends PrimaryLessTkMapper<RoleResources> 
      * @param roles 角色列表
      * @return      AuthenticationDTO.
      */
-    List<AuthenticationDTO> getAuthoritiesResourcesByRoles(@Param("roles") List<String> roles);
+    Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(@Param("roles") List<String> roles);
 
     /**
      * 根据角色id和资源id列表删除数据
