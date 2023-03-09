@@ -21,56 +21,34 @@
             <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-collection-service-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
             <version>${project.parent.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
+            <artifactId>hqy4cloud-base-foundation-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!--nacos-config-->
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-client</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-server-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
             <version>${project.parent.version}</version>
-<!--            <version>1.0.0</version>-->
         </dependency>
 
         <!-- 实时监控  spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
@@ -98,18 +76,13 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.CollectorServiceMain</mainClass>
+                            <mainClass>com.hqy.cloud.coll.CollectorServiceMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <classpathLayoutType>simple</classpathLayoutType>
                         </manifest>
-
-
-                        <!-- <manifestEntries>
-                             <Class-Path>. lib/tools-1.8.jar</Class-Path>
-                         </manifestEntries>-->
                     </archive>
                 </configuration>
             </plugin>

@@ -2,8 +2,8 @@ package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.admin.service.RequestAdminErrorLogService;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.coll.service.ExceptionCollectionService;
-import com.hqy.coll.struct.PageExceptionLogStruct;
+import com.hqy.cloud.coll.service.ExceptionCollectionService;
+import com.hqy.cloud.coll.struct.PageExceptionLogStruct;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;

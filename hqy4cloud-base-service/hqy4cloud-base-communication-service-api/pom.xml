@@ -19,6 +19,12 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-thrift-rpc-api</artifactId>
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.bval</groupId>
+                    <artifactId>bval-jsr303</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

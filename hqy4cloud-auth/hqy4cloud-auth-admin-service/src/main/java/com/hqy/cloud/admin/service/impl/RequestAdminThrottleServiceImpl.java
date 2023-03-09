@@ -2,8 +2,8 @@ package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.admin.service.RequestAdminThrottleService;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.coll.service.CollPersistService;
-import com.hqy.coll.struct.PageThrottledBlockResultStruct;
+import com.hqy.cloud.coll.service.CollPersistService;
+import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
 import com.hqy.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;

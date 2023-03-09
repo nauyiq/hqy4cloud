@@ -19,47 +19,29 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-communication-service-api</artifactId>
             <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
+            <artifactId>hqy4cloud-base-foundation-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
-        <!--<dependency>
-            <groupId>com.hqy</groupId>
-            <artifactId>hqy-base-common-dao-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>com.hqy.rpc</groupId>
             <artifactId>thrift-rpc-nacos-springboot-server-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
         <!-- 实时监控  spring-boot-starter-actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- spring boot email starter -->
@@ -73,7 +55,6 @@
     <build>
         <finalName>common-communication-service</finalName>
         <plugins>
-            <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -89,9 +70,6 @@
                             <classpathPrefix>lib/</classpathPrefix>
                             <classpathLayoutType>simple</classpathLayoutType>
                         </manifest>
-                        <!-- <manifestEntries>
-                             <Class-Path>. lib/tools-1.8.jar</Class-Path>
-                         </manifestEntries>-->
                     </archive>
                 </configuration>
             </plugin>

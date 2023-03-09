@@ -1,8 +1,8 @@
 package com.hqy.cloud.admin.service;
 
 import com.hqy.cloud.common.bind.R;
-import com.hqy.coll.struct.PageRpcExceptionRecordStruct;
-import com.hqy.coll.struct.PageRpcFlowRecordStruct;
+import com.hqy.cloud.coll.struct.PageRpcExceptionRecordStruct;
+import com.hqy.cloud.coll.struct.PageRpcFlowRecordStruct;
 
 /**
  * @author qiyuan.hong

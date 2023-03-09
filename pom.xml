@@ -417,17 +417,60 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
-
-
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>dev</profiles.active>
+                <nacos.username>nacos</nacos.username>
+                <nacos.password>hongqy@2021</nacos.password>
+                <nacos.group>DEV_GROUP</nacos.group>
+                <nacos.namespace>9cd8de3b-030a-49f1-9256-f04de35cdb9e</nacos.namespace>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>test</profiles.active>
+                <nacos.username>nacos</nacos.username>
+                <nacos.password>hongqy@2021</nacos.password>
+                <nacos.group>TEST_GROUP</nacos.group>
+                <nacos.namespace>e3f4bf0e-5118-4e06-90de-087cb676b98c</nacos.namespace>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>prod</profiles.active>
+                <nacos.username>nacos</nacos.username>
+                <nacos.password>nacos</nacos.password>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
+                <filtering>true</filtering>
+               <!-- <includes>
                     <include>**/*.xml</include>
                     <include>**/*.lua</include>
                     <include>*.properties</include>
@@ -440,7 +483,7 @@
                     <include>**/*.html</include>
                     <include>**/*.ftl</include>
                     <include>*.jks</include>
-                </includes>
+                </includes>-->
             </resource>
         </resources>
 
@@ -528,6 +571,8 @@
 
         </plugins>
     </build>
+
+
 
 
 

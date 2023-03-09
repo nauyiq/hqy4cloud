@@ -1,21 +1,22 @@
-logging:
-  config: classpath:logback.xml
-
 server:
   port: 9527
 
 spring:
-  profiles:
-     active: dev
   application:
-    name: gateway-service
-  main:
-    allow-bean-definition-overriding: true
-    web-application-type: reactive
-
-#暴露所有
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+    name: @artifactId@
+  cloud:
+    nacos:
+      username: @nacos.username@
+      password: @nacos.password@
+      discovery:
+        server-addr: ${NACOS_HOST:hongqy1024.cn}:${NACOS_PORT:8848}
+        group: @nacos.group@
+        namespace: @nacos.namespace@
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        group: @nacos.group@
+        namespace: @nacos.namespace@
+  config:
+    import:
+      - nacos:application-@profiles.active@.yaml
+      - nacos:${spring.application.name}-@profiles.active@.yaml

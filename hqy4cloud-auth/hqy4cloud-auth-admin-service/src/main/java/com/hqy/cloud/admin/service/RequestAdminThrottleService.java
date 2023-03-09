@@ -1,7 +1,7 @@
 package com.hqy.cloud.admin.service;
 
 import com.hqy.cloud.common.bind.R;
-import com.hqy.coll.struct.PageThrottledBlockResultStruct;
+import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
 
 /**
  * AdminThrottleRequestService.

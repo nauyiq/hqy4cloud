@@ -49,7 +49,7 @@
 
 
     <build>
-        <finalName>admin-manager-service</finalName>
+        <finalName>admin-auth-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

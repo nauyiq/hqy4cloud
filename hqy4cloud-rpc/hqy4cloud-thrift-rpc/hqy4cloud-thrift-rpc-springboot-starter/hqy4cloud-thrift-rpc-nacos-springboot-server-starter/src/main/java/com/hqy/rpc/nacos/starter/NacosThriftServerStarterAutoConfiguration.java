@@ -6,6 +6,7 @@ import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosDiscoveryClientConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
+import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.rpc.common.RPCServerAddress;
 import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.rpc.server.thrift.ThriftServerWrapper;
@@ -19,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -65,7 +67,8 @@ public class NacosThriftServerStarterAutoConfiguration {
             return new NacosWatch(nacosServiceManager, nacosDiscoveryProperties);
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
-            System.exit(1);
+            ConfigurableApplicationContext cyx = (ConfigurableApplicationContext) SpringContextHolder.getApplicationContext();
+            cyx.close();
             return null;
         }
 

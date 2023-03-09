@@ -2,8 +2,8 @@ package com.hqy.cloud.foundation.collector.support;
 
 import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.common.result.CommonResultCode;
-import com.hqy.coll.service.ExceptionCollectionService;
-import com.hqy.coll.struct.PfExceptionStruct;
+import com.hqy.cloud.coll.service.ExceptionCollectionService;
+import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.rpc.common.config.EnvironmentConfig;
 import com.hqy.rpc.nacos.client.starter.RPCClient;
