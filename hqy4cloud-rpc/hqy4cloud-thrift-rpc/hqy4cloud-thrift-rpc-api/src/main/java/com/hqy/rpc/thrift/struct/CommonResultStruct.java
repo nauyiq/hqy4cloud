@@ -2,7 +2,7 @@ package com.hqy.rpc.thrift.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 
 /**
  * @author qiyuan.hong
@@ -23,11 +23,11 @@ public final class CommonResultStruct {
 
     public CommonResultStruct() {
         this.result = true;
-        this.code = CommonResultCode.SUCCESS.code;
-        this.message = CommonResultCode.SUCCESS.message;
+        this.code = ResultCode.SUCCESS.code;
+        this.message = ResultCode.SUCCESS.message;
     }
 
-    public CommonResultStruct(CommonResultCode resultCode) {
+    public CommonResultStruct(ResultCode resultCode) {
         this.result = false;
         this.code = resultCode.code;
         this.message = resultCode.message;

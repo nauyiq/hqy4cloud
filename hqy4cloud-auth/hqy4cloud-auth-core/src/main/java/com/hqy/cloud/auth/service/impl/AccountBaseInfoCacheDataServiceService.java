@@ -5,7 +5,7 @@ import com.hqy.cloud.auth.base.dto.AccountBaseInfoDTO;
 import com.hqy.cloud.auth.entity.AccountProfile;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.cache.support.RedisHashCacheDataService;
 import com.hqy.cloud.util.AssertUtil;
@@ -54,7 +54,7 @@ public class AccountBaseInfoCacheDataServiceService extends RedisHashCacheDataSe
         }
 
         accountProfile.setNickname(cache.getNickname());
-        AssertUtil.isTrue(accountOperationService.getAccountProfileTkService().update(accountProfile), CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
+        AssertUtil.isTrue(accountOperationService.getAccountProfileTkService().update(accountProfile), ResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
         return true;
     }
 

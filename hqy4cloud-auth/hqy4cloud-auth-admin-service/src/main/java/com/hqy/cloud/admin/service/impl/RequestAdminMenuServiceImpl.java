@@ -12,15 +12,13 @@ import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.auth.entity.RoleMenu;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -30,7 +28,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.auth.base.Constants.FIRST_MENU_PARENT_ID;
-import static com.hqy.cloud.common.result.CommonResultCode.*;
+import static com.hqy.cloud.common.result.ResultCode.*;
 
 /**
  * @author qiyuan.hong
@@ -132,7 +130,7 @@ public class RequestAdminMenuServiceImpl implements RequestAdminMenuService {
     public R<List<AdminTreeMenuVO>> getAdminTreeMenu(Long id, Boolean status) {
         AccountInfoDTO accountInfo = accountOperationService.getAccountTkService().getAccountInfo(id);
         if (Objects.isNull(accountInfo)) {
-            return R.failed(CommonResultCode.USER_NOT_FOUND);
+            return R.failed(ResultCode.USER_NOT_FOUND);
         }
         List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), StringConstants.Symbol.COMMA));
         List<AdminTreeMenuVO> adminTreeMenus = operationService.getAdminTreeMenu(roles, status);

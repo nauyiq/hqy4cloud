@@ -12,9 +12,7 @@ import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
-import static com.hqy.cloud.common.result.CommonResultCode.*;
+import static com.hqy.cloud.common.result.ResultCode.*;
 
 /**
  * @author qiyuan.hong

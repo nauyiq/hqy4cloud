@@ -1,7 +1,7 @@
 package com.hqy.netty.http;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -42,7 +42,7 @@ public class FullHttpRequestProcessor {
      * @param request FullHttpRequest
      */
     private void parse(FullHttpRequest request) {
-        AssertUtil.notNull(request, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(request, ResultCode.INVALID_DATA.message);
 
         HttpMethod method = request.method();
         if (method == HttpMethod.GET) {

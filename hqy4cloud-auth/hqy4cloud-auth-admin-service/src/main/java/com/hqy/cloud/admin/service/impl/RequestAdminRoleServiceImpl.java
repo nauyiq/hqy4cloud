@@ -20,8 +20,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 import java.util.Objects;
 
-import static com.hqy.cloud.common.result.CommonResultCode.NOT_FOUND_ROLE;
-import static com.hqy.cloud.common.result.CommonResultCode.ROLE_NAME_EXIST;
+import static com.hqy.cloud.common.result.ResultCode.NOT_FOUND_ROLE;
+import static com.hqy.cloud.common.result.ResultCode.ROLE_NAME_EXIST;
 
 /**
  * @author qiyuan.hong

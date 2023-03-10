@@ -18,8 +18,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 
-import static com.hqy.cloud.common.result.CommonResultCode.INVALID_MENU_TYPE;
-import static com.hqy.cloud.common.result.CommonResultCode.NOT_FOUND_MENU;
+import static com.hqy.cloud.common.result.ResultCode.INVALID_MENU_TYPE;
+import static com.hqy.cloud.common.result.ResultCode.NOT_FOUND_MENU;
 
 /**
  * @author qiyuan.hong

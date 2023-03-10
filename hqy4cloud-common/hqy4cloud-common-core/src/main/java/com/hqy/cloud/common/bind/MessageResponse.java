@@ -1,6 +1,6 @@
 package com.hqy.cloud.common.bind;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 
 /**
  * @author qy
@@ -31,7 +31,7 @@ public class MessageResponse extends BaseResponse {
         super.setResult(result);
         this.message = message;
         if (!result) {
-            code = CommonResultCode.SYSTEM_ERROR.code;
+            code = ResultCode.SYSTEM_ERROR.code;
         }
     }
 

@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.core.authentication.support;
 import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -46,7 +46,7 @@ public class AuthenticationAspect {
             return pjp.proceed();
         }
 
-        return R.failed(CommonResultCode.NOT_PERMISSION);
+        return R.failed(ResultCode.NOT_PERMISSION);
     }
 
 

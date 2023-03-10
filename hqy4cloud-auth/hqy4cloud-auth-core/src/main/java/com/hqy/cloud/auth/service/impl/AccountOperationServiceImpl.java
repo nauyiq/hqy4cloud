@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.tk.*;
 import com.hqy.cloud.auth.utils.AvatarHostUtil;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.identity.ProjectSnowflakeIdWorker;
@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
-import static com.hqy.cloud.common.result.CommonResultCode.INVALID_UPLOAD_FILE;
+import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
 
 /**
  * @author qiyuan.hong
@@ -144,7 +144,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         Boolean result = transactionTemplate.execute(status -> {
             try {
                 role.setDeleted(true);
-                AssertUtil.isTrue(roleTkService.update(role), CommonResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
+                AssertUtil.isTrue(roleTkService.update(role), ResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
                 AssertUtil.isTrue(accountRoleTkService.deleteByAccountRoles(accountRoles), "Failed execute to delete account role.");
                 return true;
             } catch (Throwable cause) {

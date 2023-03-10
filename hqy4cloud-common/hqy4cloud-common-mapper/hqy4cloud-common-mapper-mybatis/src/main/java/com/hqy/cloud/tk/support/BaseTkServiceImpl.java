@@ -1,6 +1,6 @@
 package com.hqy.cloud.tk.support;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.tk.BaseTkMapper;
 import com.hqy.cloud.tk.BaseTkService;
 import com.hqy.cloud.tk.model.BaseEntity;
@@ -74,7 +74,7 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public boolean insert(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         Date now = new Date();
         if (Objects.isNull(t.getCreated())) {
             t.setCreated(now);
@@ -89,7 +89,7 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public PK insertReturnPk(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         BaseTkMapper<T, PK> dao = checkMapper();
         dao.insert(t);
         return t.getId();
@@ -97,7 +97,7 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public boolean insertList(List<T> entities) {
-        AssertUtil.notEmpty(entities, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notEmpty(entities, ResultCode.INVALID_DATA.message);
         BaseTkMapper<T, PK> dao = checkMapper();
         int i = dao.insertList(entities);
         return i > 0;
@@ -105,7 +105,7 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public boolean update(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         BaseTkMapper<T, PK> dao = checkMapper();
         t.setUpdated(new Date());
         return dao.updateByPrimaryKey(t) > 0;
@@ -113,7 +113,7 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public boolean updateSelective(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         BaseTkMapper<T, PK> dao = checkMapper();
         t.setUpdated(new Date());
         return dao.updateByPrimaryKeySelective(t) > 0;

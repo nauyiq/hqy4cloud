@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.common.bind.MessageResponse;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
 import com.hqy.cloud.gateway.Constants;
 import com.hqy.cloud.gateway.util.RequestUtil;
@@ -19,7 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -60,7 +59,7 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         } else {
             LimitResult limitResult = httpThrottles.limitValue(request);
             if (limitResult.isNeedLimit()) {
-                String resultTip = StringUtils.isBlank(limitResult.getTip()) ? CommonResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
+                String resultTip = StringUtils.isBlank(limitResult.getTip()) ? ResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
                 log.warn("HttpThrottled the request: {}, {}, {}.", requestIp, url, resultTip);
                 MessageResponse response = new MessageResponse(false, resultTip, HttpStatus.FORBIDDEN.value());
                 return Mono.defer(() -> {

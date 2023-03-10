@@ -1,7 +1,7 @@
 package com.hqy.cloud.foundation.collector.support;
 
 import cn.hutool.core.date.DateUtil;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.coll.service.ExceptionCollectionService;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
@@ -56,7 +56,7 @@ public class ExceptionCollectorUtils {
     public static void collect(ExceptionCollActionEvent event) {
         Throwable exception = event.getException();
         String param = event.getParam();
-        CommonResultCode code = event.getResultCode();
+        ResultCode code = event.getResultCode();
 
         if (ParentExecutorService.getInstance().isQueueHundredthFull()) {
             //队列长度是否达到百分之一

@@ -1,6 +1,6 @@
 package com.hqy.cloud.tk.support;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.tk.PrimaryLessBaseEntity;
 import com.hqy.cloud.tk.PrimaryLessTkMapper;
 import com.hqy.cloud.tk.PrimaryLessTkService;
@@ -48,28 +48,28 @@ public abstract class PrimaryLessTkServiceImpl<T extends PrimaryLessBaseEntity> 
 
     @Override
     public boolean insert(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         PrimaryLessTkMapper<T> dao= checkDao();
         return dao.insert(t) > 0;
     }
 
     @Override
     public boolean insertList(List<T> entities) {
-        AssertUtil.notEmpty(entities, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notEmpty(entities, ResultCode.INVALID_DATA.message);
         PrimaryLessTkMapper<T> dao= checkDao();
         return dao.insertList(entities) > 0;
     }
 
     @Override
     public boolean update(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         PrimaryLessTkMapper<T> dao = checkDao();
         return dao.updateByPrimaryKey(t) > 0;
     }
 
     @Override
     public boolean updateSelective(T t) {
-        AssertUtil.notNull(t, CommonResultCode.INVALID_DATA.message);
+        AssertUtil.notNull(t, ResultCode.INVALID_DATA.message);
         PrimaryLessTkMapper<T> dao = checkDao();
         return dao.updateByPrimaryKeySelective(t) > 0;
     }

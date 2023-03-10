@@ -7,9 +7,7 @@ import com.hqy.cloud.auth.base.vo.AccountRoleVO;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
 import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.common.base.AuthenticationInfo;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 
-import static com.hqy.cloud.common.result.CommonResultCode.ERROR_PARAM_UNDEFINED;
+import static com.hqy.cloud.common.result.ResultCode.ERROR_PARAM_UNDEFINED;
 
 /**
  * 用户角色接口controller.

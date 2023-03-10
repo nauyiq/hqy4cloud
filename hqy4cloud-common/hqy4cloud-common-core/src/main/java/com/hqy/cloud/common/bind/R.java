@@ -1,6 +1,7 @@
 package com.hqy.cloud.common.bind;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.Result;
+import com.hqy.cloud.common.result.ResultCode;
 
 /**
  * @author qiyuan.hong
@@ -20,31 +21,31 @@ public class R<T> extends Response {
     }
 
     public static <T> R<T> ok() {
-        return setResult(true, CommonResultCode.SUCCESS);
+        return setResult(true, ResultCode.SUCCESS);
     }
 
     public static <T> R<T> ok(T data) {
-        return setResult(true,  CommonResultCode.SUCCESS, data);
+        return setResult(true,  ResultCode.SUCCESS, data);
     }
 
     public static <T> R<T> failed() {
-        return setResult(false, CommonResultCode.FAILED);
+        return setResult(false, ResultCode.FAILED);
     }
 
     public static <T> R<T> failed(String message) {
-        return setResult(false, CommonResultCode.FAILED.code, message, null);
+        return setResult(false, ResultCode.FAILED.code, message, null);
     }
 
-    public static <T> R<T> failed(CommonResultCode result) {
+    public static <T> R<T> failed(Result result) {
         return setResult(false, result);
     }
 
-    public static <T> R<T> setResult(boolean result, CommonResultCode resultCode) {
+    public static <T> R<T> setResult(boolean result, Result resultCode) {
         return setResult(result, resultCode, null);
     }
 
-    public static <T> R<T> setResult(boolean result, CommonResultCode resultCode, T data) {
-        return setResult(result, resultCode.code, resultCode.message, data);
+    public static <T> R<T> setResult(boolean result, Result resultCode, T data) {
+        return setResult(result, resultCode.getCode(), resultCode.getMessage(), data);
     }
 
     public static <T> R<T> setResult(boolean result, int code, String msg, T data) {

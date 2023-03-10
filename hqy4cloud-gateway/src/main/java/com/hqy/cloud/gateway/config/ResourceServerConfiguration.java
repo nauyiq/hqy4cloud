@@ -5,7 +5,7 @@ import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.cloud.gateway.util.ResponseUtil;
@@ -103,7 +103,7 @@ public class ResourceServerConfiguration {
         return (webFilterExchange, exception) -> {
             ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_USER);
+                MessageResponse code = ResultCode.messageResponse(ResultCode.INVALID_ACCESS_USER);
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.OK);
                 return response.writeWith(Flux.just(buffer));
             });
@@ -117,7 +117,7 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            R<String> result = R.setResult(false, CommonResultCode.LIMITED_AUTHORITY, denied.getMessage());
+            R<String> result = R.setResult(false, ResultCode.LIMITED_AUTHORITY, denied.getMessage());
             DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });
@@ -127,7 +127,7 @@ public class ResourceServerConfiguration {
     @Bean
     public ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, e) -> {
-            R<String> result = R.setResult(false, CommonResultCode.INVALID_ACCESS_TOKEN, e.getMessage());
+            R<String> result = R.setResult(false, ResultCode.INVALID_ACCESS_TOKEN, e.getMessage());
             if (e instanceof InvalidBearerTokenException
                     || e instanceof InsufficientAuthenticationException) {
                 result.setMessage(this.messageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired",

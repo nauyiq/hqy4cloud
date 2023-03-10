@@ -2,7 +2,7 @@ package com.hqy.cloud.gateway.config;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -84,13 +83,13 @@ public class GatewayExceptionConfiguration {
         protected Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
             Throwable error = super.getError(request);
             if (error instanceof BlockException) {
-                return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.INTERFACE_LIMITED));
+                return BeanUtil.beanToMap(ResultCode.messageResponse(ResultCode.INTERFACE_LIMITED));
             } else if (error instanceof ResponseStatusException) {
                 return super.getErrorAttributes(request, options);
             }
 
             log.error(error.getMessage(), error);
-            return BeanUtil.beanToMap(CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR));
+            return BeanUtil.beanToMap(ResultCode.messageResponse(ResultCode.SYSTEM_ERROR));
         }
 
 
@@ -108,7 +107,7 @@ public class GatewayExceptionConfiguration {
             }
             Object code = errorAttributes.get("code");
             if (code instanceof Integer) {
-                if (code.equals(CommonResultCode.INTERFACE_LIMITED.code)) {
+                if (code.equals(ResultCode.INTERFACE_LIMITED.code)) {
                     return HttpStatus.FORBIDDEN.value();
                 }
             }

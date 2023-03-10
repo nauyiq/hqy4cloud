@@ -1,6 +1,6 @@
 package com.hqy.foundation.spring.event;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.foundation.common.enums.ExceptionType;
 import org.springframework.context.ApplicationEvent;
 
@@ -77,7 +77,7 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
     /**
      * 异常的状态码
      */
-    private CommonResultCode resultCode = CommonResultCode.SYSTEM_ERROR;
+    private ResultCode resultCode = ResultCode.SYSTEM_ERROR;
 
     @Override
     public boolean equals(Object o) {
@@ -163,11 +163,11 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
         this.step = step;
     }
 
-    public CommonResultCode getResultCode() {
+    public ResultCode getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode(CommonResultCode resultCode) {
+    public void setResultCode(ResultCode resultCode) {
         this.resultCode = resultCode;
     }
 }

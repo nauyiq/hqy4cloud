@@ -6,9 +6,7 @@ import com.hqy.cloud.auth.base.dto.MicroServiceType;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.base.dto.RoleResourcesDTO;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
 import com.hqy.cloud.common.result.PageResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.project.MicroServiceConstants.SERVICES;
-import static com.hqy.cloud.common.result.CommonResultCode.ERROR_PARAM_UNDEFINED;
-import static com.hqy.cloud.common.result.CommonResultCode.NOT_FOUND_RESOURCE;
+import static com.hqy.cloud.common.result.ResultCode.NOT_FOUND_RESOURCE;
 
 /**
  * @author qiyuan.hong

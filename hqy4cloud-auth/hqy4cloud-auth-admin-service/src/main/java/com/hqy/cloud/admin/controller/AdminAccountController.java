@@ -8,7 +8,7 @@ import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class AdminAccountController {
     @PreAuthentication("sys_user_add")
     public R<Boolean> addUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         if (Objects.isNull(userDTO) || !userDTO.checkAddUser()) {
-            return R.failed(CommonResultCode.ERROR_PARAM_UNDEFINED);
+            return R.failed(ResultCode.ERROR_PARAM_UNDEFINED);
         }
         AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
         return requestService.addUser(authentication.getId(), userDTO);

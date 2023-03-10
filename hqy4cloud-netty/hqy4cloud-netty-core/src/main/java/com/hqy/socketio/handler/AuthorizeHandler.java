@@ -15,7 +15,7 @@
  */
 package com.hqy.socketio.handler;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.ex.NettyContextHelper;
 import com.hqy.socketio.*;
@@ -160,7 +160,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                 //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
                 channel.attr(EncoderHandler.ORIGIN).set(origin);
                 channel.writeAndFlush(NettyContextHelper.
-                        createHttpErrorMessage(CommonResultCode.INVALID_ACCESS_TOKEN.code, CommonResultCode.INVALID_ACCESS_TOKEN.message));
+                        createHttpErrorMessage(ResultCode.INVALID_ACCESS_TOKEN.code, ResultCode.INVALID_ACCESS_TOKEN.message));
                 return false;
             } else {
                 HttpResponse res = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);

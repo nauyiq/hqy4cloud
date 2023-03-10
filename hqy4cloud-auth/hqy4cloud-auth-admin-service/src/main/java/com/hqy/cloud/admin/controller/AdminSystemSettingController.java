@@ -2,11 +2,9 @@ package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminSystemSettingService;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +41,7 @@ public class AdminSystemSettingController {
     @PreAuthentication("sys_white_del")
     public R<Boolean> deleteWhiteList(String type, String value) {
         if (StringUtils.isAnyBlank(type, value)) {
-            return R.failed(CommonResultCode.ERROR_PARAM_UNDEFINED);
+            return R.failed(ResultCode.ERROR_PARAM_UNDEFINED);
         }
         return requestService.deleteWhitelist(type, value);
     }
@@ -63,7 +61,7 @@ public class AdminSystemSettingController {
     @PreAuthentication("sys_black_del")
     public R<Boolean> deleteBlacklist(String type, String value) {
         if (StringUtils.isAnyBlank(type, value)) {
-            return R.failed(CommonResultCode.ERROR_PARAM_UNDEFINED);
+            return R.failed(ResultCode.ERROR_PARAM_UNDEFINED);
         }
         return requestService.deleteBlacklist(type, value);
     }

@@ -2,7 +2,7 @@ package com.hqy.web.global;
 
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.common.bind.MessageResponse;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.foundation.common.enums.ExceptionType;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.cloud.util.IpUtil;
@@ -32,7 +32,7 @@ public class WebMvcGlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(NotAuthenticationException.class)
     public MessageResponse handle(NotAuthenticationException exception, HttpServletRequest request) {
-        return CommonResultCode.messageResponse(CommonResultCode.INVALID_ACCESS_TOKEN);
+        return ResultCode.messageResponse(ResultCode.INVALID_ACCESS_TOKEN);
     }
 
     @ResponseBody
@@ -40,7 +40,7 @@ public class WebMvcGlobalExceptionHandler {
     public MessageResponse handler(RuntimeException e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
         collectionException(e, request);
-        return CommonResultCode.messageResponse(CommonResultCode.SYSTEM_ERROR);
+        return ResultCode.messageResponse(ResultCode.SYSTEM_ERROR);
     }
 
     private void collectionException(RuntimeException e, HttpServletRequest request) {
@@ -69,7 +69,7 @@ public class WebMvcGlobalExceptionHandler {
             message = message + "should not be empty.";
         }
 
-        return new MessageResponse(false, message, CommonResultCode.ERROR_PARAM.code);
+        return new MessageResponse(false, message, ResultCode.ERROR_PARAM.code);
     }
 
     /**
@@ -81,7 +81,7 @@ public class WebMvcGlobalExceptionHandler {
     @ResponseBody
     public MessageResponse validationException(ValidationException  e) {
         log.warn(e.getMessage());
-        return CommonResultCode.messageResponse(CommonResultCode.ERROR_PARAM);
+        return ResultCode.messageResponse(ResultCode.ERROR_PARAM);
     }
 
 }

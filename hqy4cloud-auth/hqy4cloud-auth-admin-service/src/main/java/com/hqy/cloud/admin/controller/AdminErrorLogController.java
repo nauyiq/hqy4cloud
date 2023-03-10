@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-import static com.hqy.cloud.common.result.CommonResultCode.ERROR_PARAM_UNDEFINED;
+import static com.hqy.cloud.common.result.ResultCode.ERROR_PARAM_UNDEFINED;
 
 /**
  * @author qiyuan.hong

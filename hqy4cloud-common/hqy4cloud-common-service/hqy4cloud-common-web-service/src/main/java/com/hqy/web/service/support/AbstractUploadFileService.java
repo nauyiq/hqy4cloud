@@ -2,7 +2,7 @@ package com.hqy.web.service.support;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.foundation.common.FileResponse;
 import com.hqy.cloud.util.CommonDateUtil;
 import com.hqy.cloud.util.config.ConfigurationContext;
@@ -162,7 +162,7 @@ public abstract class AbstractUploadFileService implements UploadFileService {
     }
 
     protected FileResponse buildResponse(String relativePath, String path) {
-        return buildResponse(true, CommonResultCode.SUCCESS.message, relativePath, path);
+        return buildResponse(true, ResultCode.SUCCESS.message, relativePath, path);
     }
 
     protected FileResponse buildResponse(boolean result, String message, String relativePath, String path) {

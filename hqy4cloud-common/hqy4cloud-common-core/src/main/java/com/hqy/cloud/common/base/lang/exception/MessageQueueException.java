@@ -1,6 +1,6 @@
 package com.hqy.cloud.common.base.lang.exception;
 
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 
 /**
  * @author qiyuan.hong
@@ -13,7 +13,7 @@ public class MessageQueueException extends RuntimeException {
     public int code;
 
     public MessageQueueException(String message) {
-        this(CommonResultCode.SYSTEM_BUSY.code, message);
+        this(ResultCode.SYSTEM_BUSY.code, message);
     }
 
     public MessageQueueException(int code, String message) {
@@ -22,7 +22,7 @@ public class MessageQueueException extends RuntimeException {
     }
 
     public MessageQueueException(String message, Throwable cause) {
-        this(CommonResultCode.SYSTEM_BUSY.code, message, cause);
+        this(ResultCode.SYSTEM_BUSY.code, message, cause);
     }
 
     public MessageQueueException(int code, String message, Throwable cause) {
@@ -31,7 +31,7 @@ public class MessageQueueException extends RuntimeException {
     }
 
     public MessageQueueException(Throwable cause) {
-        this(CommonResultCode.SYSTEM_BUSY.code, cause);
+        this(ResultCode.SYSTEM_BUSY.code, cause);
     }
 
     public MessageQueueException(int code, Throwable cause) {

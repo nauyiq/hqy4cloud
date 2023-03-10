@@ -4,7 +4,7 @@ import com.hqy.cloud.auth.core.SecurityUser;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.core.CustomerUserDetailService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.common.result.CommonResultCode;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class CustomerUserDetailServiceImpl implements CustomerUserDetailService 
         Account account = service.queryAccountByUsernameOrEmail(username);
 
         if (Objects.isNull(account)) {
-            throw new UsernameNotFoundException(CommonResultCode.USER_NOT_FOUND.message);
+            throw new UsernameNotFoundException(ResultCode.USER_NOT_FOUND.message);
         }
 
         UserDetails userDetails = new SecurityUser(account.getId(), account.getUsername(), account.getPassword(), account.getEmail() ,account.getStatus(), AuthorityUtils
@@ -49,7 +49,7 @@ public class CustomerUserDetailServiceImpl implements CustomerUserDetailService 
     private void checkUserDetails(UserDetails user) {
         if (!user.isEnabled()) {
             log.warn("[{}] -> user status is false.", JsonUtil.toJson(user));
-            throw new DisabledException(CommonResultCode.USER_DISABLED.message);
+            throw new DisabledException(ResultCode.USER_DISABLED.message);
         } else if (!user.isAccountNonLocked()) {
             throw new LockedException("该账号已被锁定!");
         } else if (!user.isAccountNonExpired()) {

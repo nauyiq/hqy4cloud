@@ -8,7 +8,7 @@ import com.hqy.cloud.common.bind.MessageResponse;
  * @author qy
  * @date 2021-08-09 19:33
  */
-public enum CommonResultCode {
+public enum ResultCode implements Result {
 
     /**
      * 成功调用
@@ -208,12 +208,12 @@ public enum CommonResultCode {
 
     public String message;
 
-    CommonResultCode(int code, String message) {
+    ResultCode(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-
+    @Override
     public int getCode() {
         return code;
     }
@@ -222,6 +222,7 @@ public enum CommonResultCode {
         this.code = code;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
@@ -235,11 +236,11 @@ public enum CommonResultCode {
         return messageResponse(true, SUCCESS);
     }
 
-    public static MessageResponse messageResponse(CommonResultCode code) {
+    public static MessageResponse messageResponse(ResultCode code) {
         return messageResponse(false, code);
     }
 
-    public static MessageResponse messageResponse(boolean result, CommonResultCode code) {
+    public static MessageResponse messageResponse(boolean result, ResultCode code) {
         return new MessageResponse(result, code.message, code.code);
     }
 
@@ -253,18 +254,18 @@ public enum CommonResultCode {
     }
 
     public static DataResponse dataResponse(Object data) {
-        return dataResponse(CommonResultCode.SUCCESS, data);
+        return dataResponse(ResultCode.SUCCESS, data);
     }
 
-    public static DataResponse dataResponse(CommonResultCode code) {
+    public static DataResponse dataResponse(ResultCode code) {
         return dataResponse(false, code, null);
     }
 
-    public static DataResponse dataResponse(CommonResultCode code, Object data) {
+    public static DataResponse dataResponse(ResultCode code, Object data) {
         return dataResponse(true, code, data);
     }
 
-    public static DataResponse dataResponse(boolean result, CommonResultCode code, Object data) {
+    public static DataResponse dataResponse(boolean result, ResultCode code, Object data) {
         return new DataResponse(result, code.message, code.code, data);
     }
 

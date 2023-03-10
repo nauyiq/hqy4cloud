@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.common.result.CommonResultCode.NOT_FOUND_RESOURCE;
+import static com.hqy.cloud.common.result.ResultCode.NOT_FOUND_RESOURCE;
 
 /**
  * @author qiyuan.hong
