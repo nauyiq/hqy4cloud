@@ -1,7 +1,7 @@
 package com.hqy.cloud.foundation.common.account;
 
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.foundation.cache.redis.key.support.DefaultKeyGenerator;
+import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.common.support.RedisAccountRandomCodeServer;
 
 /**
@@ -12,6 +12,6 @@ import com.hqy.cloud.foundation.common.support.RedisAccountRandomCodeServer;
 public class AccountRegistryAccountRandomCodeServer extends RedisAccountRandomCodeServer {
 
     public AccountRegistryAccountRandomCodeServer() {
-        super(new DefaultKeyGenerator(MicroServiceConstants.ACCOUNT_SERVICE, "REGISTRY"));
+        super(new RedisNamedKey(MicroServiceConstants.ACCOUNT_SERVICE, "REGISTRY"));
     }
 }

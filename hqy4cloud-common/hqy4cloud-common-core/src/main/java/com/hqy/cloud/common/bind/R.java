@@ -33,7 +33,11 @@ public class R<T> extends Response {
     }
 
     public static <T> R<T> failed(String message) {
-        return setResult(false, ResultCode.FAILED.code, message, null);
+        return failed(message, ResultCode.FAILED.code);
+    }
+
+    public static <T> R<T> failed(String message, int code) {
+        return setResult(false, code, message, null);
     }
 
     public static <T> R<T> failed(Result result) {

@@ -18,6 +18,7 @@
         <module>hqy4cloud-rpc</module>
         <module>hqy4cloud-mq</module>
 
+
     </modules>
 
     <properties>

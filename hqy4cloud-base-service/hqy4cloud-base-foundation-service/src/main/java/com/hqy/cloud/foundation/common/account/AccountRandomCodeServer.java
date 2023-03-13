@@ -21,7 +21,6 @@ public interface AccountRandomCodeServer {
     String randomCode(String username, String email);
 
 
-
     /**
      * 生成随机code
      * @param username 用户名

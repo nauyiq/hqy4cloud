@@ -2,7 +2,8 @@ package com.hqy.cloud.gateway.server;
 
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.foundation.cache.redis.key.support.DefaultKeyGenerator;
+import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
+import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,17 +16,17 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class AbstractCodeServer {
 
     public static final String RANDOM_KEY = "randomStr";
-    protected final static DefaultKeyGenerator KEY_GENERATOR = new DefaultKeyGenerator(MicroServiceConstants.GATEWAY, RANDOM_KEY);
+    protected final static RedisKey KEY = new RedisNamedKey(MicroServiceConstants.GATEWAY, RANDOM_KEY);
 
     protected void saveCode(String key, String code) {
         if (StringUtils.isBlank(code)) {
             return;
         }
-        SmartRedisManager.getInstance().set(KEY_GENERATOR.genKey(key), code, NumberConstants.FIVE_MINUTES_4MILLISECONDS);
+        SmartRedisManager.getInstance().set(KEY.getKey(key), code, NumberConstants.FIVE_MINUTES_4MILLISECONDS);
     }
 
     protected String getCode(String key) {
-        String redisKey = KEY_GENERATOR.genKey(key);
+        String redisKey = KEY.getKey(key);
         return SmartRedisManager.getInstance().get(redisKey);
     }
 

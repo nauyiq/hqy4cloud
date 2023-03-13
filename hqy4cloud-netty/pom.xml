@@ -15,8 +15,7 @@
     <modules>
         <module>hqy4cloud-netty-core</module>
         <module>hqy4cloud-netty-http-websocket</module>
-        <module>hqy-socketio-springboot-starter</module>
-        <module>hqy-socketio-springboot-starter-api</module>
+        <module>hqy4cloud-netty-socketio</module>
     </modules>
 
     <modelVersion>4.0.0</modelVersion>

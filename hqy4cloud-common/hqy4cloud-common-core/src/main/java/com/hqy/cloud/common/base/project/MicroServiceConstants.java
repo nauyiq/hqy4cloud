@@ -47,14 +47,14 @@ public class MicroServiceConstants {
     /**
      * 聊天消息服务
      */
-    public static final String MESSAGE_NETTY_SERVICE = "message-netty-service";
+    public static final String MESSAGE_NETTY_SERVICE = "hqy4cloud-apps-message-service";
     public static final ProjectInfo MESSAGE_NETTY_INFO = new ProjectInfo("聊天消息服务", MESSAGE_NETTY_SERVICE);
 
 
     /**
      * 博客服务.
      */
-    public static final String BLOG_SERVICE = "apps-blog-service";
+    public static final String BLOG_SERVICE = "hqy4cloud-apps-blog-service";
     public static final ProjectInfo BLOG_INFO = new ProjectInfo("博客服务", BLOG_SERVICE);
 
 
