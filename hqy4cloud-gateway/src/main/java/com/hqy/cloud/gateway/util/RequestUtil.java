@@ -6,6 +6,7 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Flux;
@@ -14,10 +15,12 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,10 +94,16 @@ public class RequestUtil {
      * @return
      */
     public static String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
-
         Flux<DataBuffer> body = serverHttpRequest.getBody();
-        StringBuilder sb = new StringBuilder();
+        AtomicReference<String> bodyRef = new AtomicReference<>();
+        body.subscribe(buffer -> {
+            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());
+            DataBufferUtils.release(buffer);
+            bodyRef.set(charBuffer.toString());
+        });
+        return bodyRef.get();
 
+        /*StringBuilder sb = new StringBuilder();
         body.subscribe(buffer -> {
             byte[] bytes = new byte[buffer.readableByteCount()];
             buffer.read(bytes);
@@ -102,7 +111,7 @@ public class RequestUtil {
             sb.append(bodyString);
         });
 
-        return formatStr(sb.toString());
+        return formatStr(sb.toString());*/
     }
 
 

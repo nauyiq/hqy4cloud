@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
  * @date  2021/7/25 22:42
  */
 @Slf4j
-@Component
+//@Component
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override

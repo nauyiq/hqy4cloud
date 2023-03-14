@@ -34,7 +34,7 @@ public class MicroServiceConstants {
     /**
      * 账号-授权服务
      */
-    public static final String ACCOUNT_SERVICE = "hqy4cloud-account-auth-service";
+    public static final String ACCOUNT_SERVICE = "hqy4cloud-auth-account-service";
     public static final ProjectInfo ACCOUNT_AUTH_INFO = new ProjectInfo("账号授权服务", ACCOUNT_SERVICE);
 
     /**

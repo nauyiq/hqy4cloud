@@ -19,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @date  2021-07-27 16:42
  */
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
@@ -37,7 +38,6 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getPath().pathWithinApplication().value();
         String uri = request.getURI().getPath();
@@ -52,7 +52,6 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         if (httpThrottles.isManualWhiteIp(requestIp)) {
             return chain.filter(exchange);
         }
-
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
             //没有启用限流器...继续执行责任链
             return chain.filter(exchange);

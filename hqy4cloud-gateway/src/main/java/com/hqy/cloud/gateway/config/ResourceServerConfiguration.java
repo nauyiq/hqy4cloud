@@ -8,6 +8,7 @@ import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
+import com.hqy.cloud.gateway.server.auth.ClientSecretReactiveAuthenticationManager;
 import com.hqy.cloud.gateway.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -53,8 +55,8 @@ public class ResourceServerConfiguration {
     private final MessageSource messageSource;
 
     @Bean
-    public OAuth2AuthorizationService oAuth2AuthorizationService() {
-        return new RedisOAuth2AuthorizationService();
+    public OAuth2AuthorizationService oAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
+        return new RedisOAuth2AuthorizationService(redisTemplate);
     }
 
     @Bean
@@ -66,7 +68,7 @@ public class ResourceServerConfiguration {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
         config.setAllowCredentials(true);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -93,7 +95,7 @@ public class ResourceServerConfiguration {
                 .accessDeniedHandler(accessDeniedHandler())
                 //处理未认证
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .and().cors().and().csrf().disable();
+                .and().cors().and().httpBasic().authenticationManager(new ClientSecretReactiveAuthenticationManager()).and().csrf().disable();
         return http.build();
     }
 
