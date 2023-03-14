@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -63,8 +64,8 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    public OAuth2AuthorizationService oAuth2AuthorizationService() {
-        return new RedisOAuth2AuthorizationService();
+    public OAuth2AuthorizationService oAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
+        return new RedisOAuth2AuthorizationService(redisTemplate);
     }
 
     @Bean
@@ -97,7 +98,8 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OAuth2TokenGenerator oAuth2TokenGenerator, MessageSource securityMessageSource) throws Exception {
+    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OAuth2TokenGenerator oAuth2TokenGenerator,
+                                                                      MessageSource securityMessageSource, OAuth2AuthorizationService oAuth2AuthorizationService) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
         http
             //个性化认证授权端点
@@ -119,10 +121,12 @@ public class AuthorizationServerConfiguration {
         RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
         DefaultSecurityFilterChain securityFilterChain = http.requestMatcher(endpointsMatcher)
                 .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
-                .apply(authorizationServerConfigurer.authorizationService(oAuth2AuthorizationService()))
+                .apply(authorizationServerConfigurer.authorizationService(oAuth2AuthorizationService))
                 .authorizationServerSettings(AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build())
                 // 授权码登录的登录页个性化
-                .and().apply(new FormIdentityLoginConfigurer()).and().build();
+                .and().apply(new FormIdentityLoginConfigurer()).and()
+                .httpBasic().and().build();
+
 
         // 注入自定义授权模式实现
         addOauth2GrantAuthenticationProvider(http, securityMessageSource);
