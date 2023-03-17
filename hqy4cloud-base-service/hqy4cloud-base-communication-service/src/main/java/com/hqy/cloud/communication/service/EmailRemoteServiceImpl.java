@@ -1,5 +1,6 @@
 package com.hqy.cloud.communication.service;
 
+import cn.hutool.core.lang.Validator;
 import com.hqy.cloud.service.EmailRemoteService;
 import com.hqy.foundation.common.bind.EmailTemplateInfo;
 import com.hqy.foundation.util.AccountEmailTemplateUtil;
@@ -8,11 +9,14 @@ import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Collections;
@@ -29,6 +33,7 @@ import java.util.Set;
 public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailRemoteService {
 
     private final JavaMailSender javaMailSender;
+    private final TemplateEngine templateEngine;
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -118,6 +123,28 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
         } catch (Throwable cause) {
             log.error("Failed execute to send email. receivers -> {}.", JsonUtil.toJson(receivers), cause);
         }
+    }
+
+    @Override
+    public void sendVerifyCodeEmail(String to, String emailCode) {
+        if (StringUtils.isBlank(emailCode)) {
+            log.warn("Email code should not be empty.");
+            return;
+        }
+        if (!Validator.isEmail(to)) {
+            log.warn("Receiver email should not be empty, code: {}.", emailCode);
+            return;
+        }
+        try {
+            //创建邮件正文
+            Context context = new Context();
+            context.setVariable("verifyCode", emailCode);
+            String emailContent = templateEngine.process("LoginEmail", context);
+            senderHtmlEmail(sender, to, "验证邮箱", emailContent);
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+        }
+
     }
 
     @Override

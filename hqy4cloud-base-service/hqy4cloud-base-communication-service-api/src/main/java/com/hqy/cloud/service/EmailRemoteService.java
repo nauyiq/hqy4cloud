@@ -103,4 +103,13 @@ public interface EmailRemoteService extends RPCService {
     @ThriftMethod(oneway = true)
     void sendRegistryEmail(@ThriftField(1) String to, @ThriftField(2)String receiver, @ThriftField(3)String emailCode);
 
+
+    /**
+     * 发送邮箱验证码
+     * @param to        发给谁
+     * @param emailCode 邮箱验证码
+     */
+    @ThriftMethod(oneway = true)
+    void sendVerifyCodeEmail(@ThriftField(1)String to, @ThriftField(2)String emailCode);
+
 }
