@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.support.password;
+package com.hqy.cloud.auth.support.core.password;
 
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationToken;
 import org.springframework.security.core.Authentication;

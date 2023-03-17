@@ -48,9 +48,9 @@ public interface SecurityConstants {
     String REFRESH_TOKEN = "refresh_token";
 
     /**
-     * 手机号登录
+     * 邮箱号登录
      */
-    String APP = "app";
+    String EMAIL = "email";
 
     /**
      * {bcrypt} 加密的特征码
@@ -109,9 +109,9 @@ public interface SecurityConstants {
     String CLIENT_ID = "clientId";
 
     /**
-     * 短信登录 参数名称
+     * 邮箱登录 参数名称
      */
-    String SMS_PARAMETER_NAME = "phone";
+    String EMAIL_PARAMETER_NAME = "email";
 
     /**
      * 授权码模式confirm

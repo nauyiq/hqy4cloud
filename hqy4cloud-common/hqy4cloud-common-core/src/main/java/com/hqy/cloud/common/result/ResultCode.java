@@ -126,14 +126,20 @@ public enum ResultCode implements Result {
     EMAIL_EXIST(2005, "Account email already exist."),
 
     /**
+     * 找不到邮箱
+     */
+    NOT_FOUND_EMAIL(2006, "Email not found."),
+
+    /**
      * 电话已经存在
      */
-    PHONE_EXIST(2006,"This phone already exist."),
+    PHONE_EXIST(2007,"This phone already exist."),
 
     /**
      * 验证码错误
      */
-    VERIFY_CODE_ERROR(2007, "Verify code error, please input right code."),
+    VERIFY_CODE_ERROR(2008, "Verify code error, please input right code."),
+
 
     /**
      * 错误的用户名或者密码

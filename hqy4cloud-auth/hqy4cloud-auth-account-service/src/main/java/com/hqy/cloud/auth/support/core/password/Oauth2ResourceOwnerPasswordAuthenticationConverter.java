@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.support.password;
+package com.hqy.cloud.auth.support.core.password;
 
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
 import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
