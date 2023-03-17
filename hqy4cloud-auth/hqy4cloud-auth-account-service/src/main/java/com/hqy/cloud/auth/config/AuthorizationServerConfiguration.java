@@ -10,10 +10,12 @@ import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.DefaultOauth2TokenCustomizer;
 import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
+import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationConverter;
+import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationProvider;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationSuccessHandler;
-import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
-import com.hqy.cloud.auth.support.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
+import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
+import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
 import com.hqy.cloud.auth.support.server.DefaultOauth2AccessTokenGenerator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +51,6 @@ import java.util.Arrays;
 @Configuration
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class AuthorizationServerConfiguration {
-
 
     @Bean
     public RegisteredClientRepository registeredClientRepository(SysOauthClientTkService sysOauthClientTkService) {
@@ -126,16 +127,21 @@ public class AuthorizationServerConfiguration {
 
         Oauth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new Oauth2ResourceOwnerPasswordAuthenticationProvider(
                 authenticationManager, authorizationService, oAuth2TokenGenerator(), securityMessageSource);
+        Oauth2ResourceOwnerEmailAuthenticationProvider resourceOwnerEmailAuthenticationProvider = new Oauth2ResourceOwnerEmailAuthenticationProvider(authenticationManager, authorizationService,
+                oAuth2TokenGenerator(), securityMessageSource);
 
         // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
+        // 处理 Oauth2ResourceOwnerEmailAuthenticationProvider
+        http.authenticationProvider(resourceOwnerEmailAuthenticationProvider);
     }
 
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(
                 new Oauth2ResourceOwnerPasswordAuthenticationConverter(),
+                new Oauth2ResourceOwnerEmailAuthenticationConverter(),
                 new OAuth2RefreshTokenAuthenticationConverter(),
                 new OAuth2ClientCredentialsAuthenticationConverter(),
                 new OAuth2AuthorizationCodeAuthenticationConverter(),
