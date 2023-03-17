@@ -1,5 +1,6 @@
 package com.hqy.cloud.gateway.config;
 
+import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
 import com.hqy.cloud.auth.core.component.DefaultReactiveOpaqueTokenIntrospector;
 import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
@@ -38,8 +39,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-
 /**
  * 网关承担资源服务器
  * @author qiyuan.hong
@@ -52,7 +51,8 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ResourceServerConfiguration {
 
-    private final MessageSource messageSource;
+    private final MessageSource securityMessageSource;
+    private final AuthPermissionService authPermissionService;
 
     @Bean
     public OAuth2AuthorizationService oAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
@@ -78,18 +78,19 @@ public class ResourceServerConfiguration {
 
     @Bean
     public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http, AuthorizationManager authorizationManager,  ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector) {
+        http.authorizeExchange()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .pathMatchers(EndpointAuthorizationManager.ENDPOINTS.toArray(new String[0])).permitAll()
+                .pathMatchers(authPermissionService.getWhites().toArray(new String[0])).permitAll();
+
+
+        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
         http.oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer  ->
                         httpSecurityOAuth2ResourceServerConfigurer.opaqueToken()
                                 .introspector(opaqueTokenIntrospector))
-                        .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST);
+                .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST);
 
-        http.authorizeExchange().pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-        ArrayList<String> whiteEndpoints = new ArrayList<>(EndpointAuthorizationManager.ENDPOINTS);
-        http.authorizeExchange().pathMatchers(whiteEndpoints.toArray(new String[0])).permitAll();
-
-        http.authorizeExchange()
-                //鉴权管理器配置
-                .anyExchange().access(authorizationManager)
+        http.authorizeExchange().anyExchange().access(authorizationManager)
                 .and().exceptionHandling()
                 //处理未授权
                 .accessDeniedHandler(accessDeniedHandler())
@@ -106,15 +107,12 @@ public class ResourceServerConfiguration {
             ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
             return Mono.defer(() -> {
                 MessageResponse code = ResultCode.messageResponse(ResultCode.INVALID_ACCESS_USER);
-                DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.OK);
+                DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
         };
     }
 
-    /**
-     * 自定义未授权响应
-     */
     @Bean
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
@@ -130,11 +128,11 @@ public class ResourceServerConfiguration {
     public ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, e) -> {
             R<String> result = R.setResult(false, ResultCode.INVALID_ACCESS_TOKEN, e.getMessage());
-            if (e instanceof InvalidBearerTokenException
+            /*if (e instanceof InvalidBearerTokenException
                     || e instanceof InsufficientAuthenticationException) {
-                result.setMessage(this.messageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired",
+                result.setMessage(this.securityMessageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired",
                         null, LocaleContextHolder.getLocale()));
-            }
+            }*/
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
                 DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.UNAUTHORIZED);

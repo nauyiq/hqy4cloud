@@ -11,11 +11,15 @@ import com.hqy.cloud.auth.limit.support.ManualWhiteIpRedisService;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+
+import java.util.Locale;
 
 /**
  * @author qiyuan.hong
@@ -60,6 +64,14 @@ public class SecurityAutoConfiguration {
     @Bean
     public AuthenticationAspect authenticationAspect(AuthPermissionService authPermissionService) {
         return new AuthenticationAspect(authPermissionService);
+    }
+
+    @Bean
+    public MessageSource securityMessageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.addBasenames("classpath:i18n/errors/messages");
+        messageSource.setDefaultLocale(Locale.CHINA);
+        return messageSource;
     }
 
 

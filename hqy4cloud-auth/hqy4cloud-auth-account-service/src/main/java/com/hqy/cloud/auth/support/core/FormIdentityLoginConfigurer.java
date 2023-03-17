@@ -16,7 +16,7 @@ public class FormIdentityLoginConfigurer extends AbstractHttpConfigurer<FormIden
     @Override
     public void init(HttpSecurity http) throws Exception {
         http.formLogin(formLogin -> {
-                    formLogin.loginPage("/token/login");
+                    formLogin.loginPage("/auth/token");
                     formLogin.loginProcessingUrl("/token/form");
                     formLogin.failureHandler(new FormAuthenticationFailureHandler());
 

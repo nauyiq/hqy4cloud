@@ -21,7 +21,7 @@ public class DefaultAuthPermissionService extends AbstractAuthPermissionService 
     private final ManualWhiteIpService manualWhiteIpService;
 
     @Value("${oauth2.white.uri:''}")
-    private List<String> oauth2WhiteAccessUriList;
+    private List<String> whites;
 
     public DefaultAuthPermissionService(RoleAuthenticationService roleAuthenticationService, ManualWhiteIpService manualWhiteIpService) {
         super(roleAuthenticationService);
@@ -30,15 +30,20 @@ public class DefaultAuthPermissionService extends AbstractAuthPermissionService 
 
     @Override
     protected boolean isWhiteAccessUri(String requestUri) {
-        if (CollectionUtils.isEmpty(oauth2WhiteAccessUriList) || EndpointAuthorizationManager.getInstance().isAdminRequest(requestUri)) {
+        if (CollectionUtils.isEmpty(whites) || EndpointAuthorizationManager.getInstance().isAdminRequest(requestUri)) {
             return false;
         }
-        return EndpointAuthorizationManager.getInstance().isMatch(oauth2WhiteAccessUriList, requestUri);
+        return EndpointAuthorizationManager.getInstance().isMatch(whites, requestUri);
     }
 
     @Override
     protected boolean isWhiteAccessIp(String requestIp) {
         return manualWhiteIpService.isWhiteIp(requestIp);
+    }
+
+    @Override
+    public List<String> getWhites() {
+        return whites;
     }
 
 

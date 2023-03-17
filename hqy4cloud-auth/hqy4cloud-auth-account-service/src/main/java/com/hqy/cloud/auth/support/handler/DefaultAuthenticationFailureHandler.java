@@ -27,7 +27,7 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
-        httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
+        httpResponse.setStatusCode(HttpStatus.OK);
         String errorMessage;
         if (exception instanceof OAuth2AuthenticationException) {
             OAuth2AuthenticationException authorizationException = (OAuth2AuthenticationException) exception;

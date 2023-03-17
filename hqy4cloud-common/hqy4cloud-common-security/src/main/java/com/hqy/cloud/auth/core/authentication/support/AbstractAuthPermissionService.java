@@ -35,22 +35,20 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         if (CollectionUtils.isEmpty(authorities) || Objects.isNull(request)) {
             return false;
         }
-        String requestUri = request.requestUri();
-
-        //是否是静态的端点访问uri || 是否是白名单IP || 是业务允许通过的uri
-        if (isWhiteStaticEndpoint(requestUri) || isWhiteAccessIp(request.requestIp()) || isWhiteAccessUri(requestUri)) {
-            return true;
-        }
-
         //如果是admin服务的请求，将请求权限校验下沉到服务的aop去
         if (EndpointAuthorizationManager.getInstance().isAdminRequest(request.requestUri())) {
             return true;
         }
-
         //校验是否权限访问.
         return checkAuthoritiesRequest(authorities, request);
     }
 
+    @Override
+    public boolean isWhiteRequest(AuthenticationRequest request) {
+        String requestUri = request.requestUri();
+        //是否是静态的端点访问uri || 是否是白名单IP || 是业务允许通过的uri
+        return isWhiteStaticEndpoint(requestUri) || isWhiteAccessIp(request.requestIp()) || isWhiteAccessUri(requestUri);
+    }
 
     @Override
     public boolean havePermissions(String... permissions) {

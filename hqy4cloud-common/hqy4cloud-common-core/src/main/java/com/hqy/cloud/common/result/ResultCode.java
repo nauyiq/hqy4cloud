@@ -30,7 +30,6 @@ public enum ResultCode implements Result {
      */
     SYSTEM_BUSY(9000, "System is busy, please try again later."),
 
-
     /**
      * 异常请求 封禁几分钟
      */
@@ -40,7 +39,6 @@ public enum ResultCode implements Result {
      * 接口限流了
      */
     INTERFACE_LIMITED(9002, "Interface limited, please try again later."),
-
 
     /**
      * 新增数据异常
@@ -62,7 +60,6 @@ public enum ResultCode implements Result {
      */
     LIMITED_AUTHORITY(9400, "Access authority Limit."),
 
-
     /**
      * 耗时的rpc方法
      */
@@ -76,8 +73,12 @@ public enum ResultCode implements Result {
     /**
      * 没有权限
      */
-    NOT_PERMISSION(9600, "Not permission."),
+    NOT_PERMISSION(9700, "Not permission."),
 
+    /**
+     * 没有登录
+     */
+    NOT_LOGIN(9800, "Please login first."),
 
     /**
      * 错误参数
@@ -89,12 +90,10 @@ public enum ResultCode implements Result {
      */
     ERROR_PARAM_UNDEFINED(1002, "Invalid parameter, please check undefined."),
 
-
     /**
      * 无效的数据
      */
     INVALID_DATA(1003, "Invalid data, please check input again"),
-
 
     /**
      * 找不到该用户
@@ -131,12 +130,10 @@ public enum ResultCode implements Result {
      */
     PHONE_EXIST(2006,"This phone already exist."),
 
-
     /**
      * 验证码错误
      */
     VERIFY_CODE_ERROR(2007, "Verify code error, please input right code."),
-
 
     /**
      * 错误的用户名或者密码
@@ -163,12 +160,10 @@ public enum ResultCode implements Result {
      */
     ROLE_NAME_EXIST(3005, "This role name already exist."),
 
-
     /**
      * 找不到该角色
      */
     NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
-
 
     /**
      * 空数据
@@ -189,7 +184,6 @@ public enum ResultCode implements Result {
      * 获取不到资源
      */
     NOT_FOUND_RESOURCE(5002, "Not found resource, please check you input again."),
-
 
     /**
      * 上传文件失败.

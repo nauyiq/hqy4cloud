@@ -25,7 +25,7 @@ public class FormAuthenticationFailureHandler implements AuthenticationFailureHa
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
         log.debug("表单登录失败:{}", exception.getLocalizedMessage());
-        String url = HttpUtil.encodeParams(String.format("/token/login?error=%s", exception.getMessage()),
+        String url = HttpUtil.encodeParams(String.format("/auth/token?error=%s", exception.getMessage()),
                 CharsetUtil.CHARSET_UTF_8);
         WebUtils.getResponse().sendRedirect(url);
     }

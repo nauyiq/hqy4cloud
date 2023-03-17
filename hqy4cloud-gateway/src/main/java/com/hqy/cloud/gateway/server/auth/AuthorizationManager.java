@@ -7,6 +7,7 @@ import com.hqy.cloud.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -40,8 +41,10 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         if (request.getMethod() == HttpMethod.OPTIONS) {
             return Mono.just(new AuthorizationDecision(true));
         }
-
         AuthenticationRequest authenticationRequest = new ReactAccess2Request(request);
+        if (authPermissionService.isWhiteRequest(authenticationRequest)) {
+            return Mono.just(new AuthorizationDecision(true));
+        }
         return mono
                 .filter(Authentication::isAuthenticated)
                 .map(authorities -> getAuthorizationDecision(authenticationRequest, authorities));

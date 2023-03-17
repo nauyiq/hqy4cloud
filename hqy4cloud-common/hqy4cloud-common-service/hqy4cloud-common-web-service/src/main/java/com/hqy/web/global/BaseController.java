@@ -30,7 +30,11 @@ public abstract class BaseController {
     }
 
     public Long getAccessAccountId(HttpServletRequest request) {
-        return AuthenticationRequestContext.getAuthentication(request).getId();
+        try {
+            return AuthenticationRequestContext.getAuthentication(request).getId();
+        } catch (Throwable cause) {
+            return null;
+        }
     }
 
 

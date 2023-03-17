@@ -18,8 +18,6 @@ import com.hqy.cloud.auth.support.server.DefaultOauth2AccessTokenGenerator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,7 +39,6 @@ import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 /**
  * 资源服务器配置.
@@ -71,16 +68,6 @@ public class AuthorizationServerConfiguration {
     @Bean
     public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
         return new RedisOAuth2AuthorizationConsentServiceImpl();
-    }
-
-
-    @Bean
-    @Primary
-    public MessageSource securityMessageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.addBasenames("classpath:i18n/errors/messages");
-        messageSource.setDefaultLocale(Locale.CHINA);
-        return messageSource;
     }
 
     /**

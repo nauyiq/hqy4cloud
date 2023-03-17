@@ -42,9 +42,9 @@ import java.util.Set;
  * @date 2023/3/6 13:38
  */
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class TokenEndpoint {
+public class AuthEndpoint {
 
     private final SysOauthClientTkService sysOauthClientTkService;
     private final OAuth2AuthorizationService oAuth2AuthorizationService;
@@ -57,7 +57,7 @@ public class TokenEndpoint {
      * @param error 表单登录失败处理回调的错误信息
      * @return ModelAndView
      */
-    @GetMapping("/login")
+    @GetMapping("/token")
     public ModelAndView require(ModelAndView modelAndView, @RequestParam(required = false) String error) {
         modelAndView.setViewName("ftl/login");
         modelAndView.addObject("error", error);
@@ -65,7 +65,7 @@ public class TokenEndpoint {
     }
 
 
-    @GetMapping("/confirm_access")
+    @GetMapping("/confirm")
     public ModelAndView confirm(Principal principal, ModelAndView modelAndView,
                                 @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
@@ -120,8 +120,8 @@ public class TokenEndpoint {
     }
 
     @SneakyThrows
-    @GetMapping("/check")
-    public void checkToken(String token, HttpServletResponse response, HttpServletRequest request) {
+    @GetMapping("/{token}")
+    public void checkToken(@PathVariable("token")String token, HttpServletResponse response, HttpServletRequest request) {
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
 
         if (StrUtil.isBlank(token)) {

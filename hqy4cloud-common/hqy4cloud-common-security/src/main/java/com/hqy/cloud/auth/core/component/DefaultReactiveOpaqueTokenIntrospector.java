@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.core.component;
 
+import com.hqy.cloud.auth.base.lang.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.auth.core.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class DefaultReactiveOpaqueTokenIntrospector implements ReactiveOpaqueTok
     public Mono<OAuth2AuthenticatedPrincipal> introspect(String token) {
         OAuth2Authorization authorization = authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
         if (Objects.isNull(authorization)) {
-            throw new InvalidBearerTokenException(token);
+            throw new InvalidBearerTokenException(Oauth2ErrorCodesExpand.INVALID_BEARER_TOKEN);
         }
 
         if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(authorization.getAuthorizationGrantType())) {
