@@ -1,6 +1,8 @@
 package com.hqy.cloud.foundation.common.support;
 
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
@@ -22,6 +24,12 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
 
     public RedisAccountRandomCodeServer(RedisKey redisKey) {
         this.redisKey = redisKey;
+    }
+
+    @Override
+    public String randomCode(String usernameOrEmail) {
+        boolean isEmail = Validator.isEmail(usernameOrEmail);
+        return isEmail ? this.randomCode(StrUtil.EMPTY, usernameOrEmail) : this.randomCode(usernameOrEmail, StrUtil.EMPTY);
     }
 
     @Override

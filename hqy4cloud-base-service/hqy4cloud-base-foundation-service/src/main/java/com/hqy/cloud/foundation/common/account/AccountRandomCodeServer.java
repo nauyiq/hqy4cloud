@@ -13,6 +13,13 @@ public interface AccountRandomCodeServer {
     int DEFAULT_SECONDS = 10 * 60;
 
     /**
+     * 生成随机的code
+     * @param usernameOrEmail 用户名或邮箱
+     * @return                random code.
+     */
+    String randomCode(String usernameOrEmail);
+
+    /**
      * 生成随机code
      * @param username 用户名.
      * @param email    邮箱.
