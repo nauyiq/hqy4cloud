@@ -114,6 +114,17 @@ public interface SecurityConstants {
     String EMAIL_PARAMETER_NAME = "email";
 
     /**
+     * 验证码code 参数名称
+     */
+    String CODE_PARAMETER_NAME = "code";
+
+    /**
+     * 无效的验证码
+     */
+    String INVALID_REQUEST_CODE = "invalid_request_code";
+
+
+    /**
      * 授权码模式confirm
      */
     String CUSTOM_CONSENT_PAGE_URI = "/auth/confirm";

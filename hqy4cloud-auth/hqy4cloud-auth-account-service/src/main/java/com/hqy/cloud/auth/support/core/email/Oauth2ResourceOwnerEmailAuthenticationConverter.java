@@ -1,8 +1,11 @@
 package com.hqy.cloud.auth.support.core.email;
 
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.base.lang.SecurityConstants;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
 import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
+import com.hqy.cloud.foundation.common.account.AccountAuthRandomCodeServer;
+import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -20,6 +23,7 @@ import java.util.Set;
  * @date 2023/3/17 17:32
  */
 public class Oauth2ResourceOwnerEmailAuthenticationConverter extends Oauth2ResourceOwnerBaseAuthenticationConverter<Oauth2ResourceOwnerEmailAuthenticationToken> {
+    AccountRandomCodeServer accountRandomCodeServer = new AccountAuthRandomCodeServer();
 
     @Override
     public boolean support(String grantType) {
@@ -36,9 +40,18 @@ public class Oauth2ResourceOwnerEmailAuthenticationConverter extends Oauth2Resou
     public void checkParams(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = Oauth2EndpointUtils.getParameters(request);
         String email = parameters.getFirst(SecurityConstants.EMAIL_PARAMETER_NAME);
-        if (StringUtils.isBlank(email) || parameters.get(SecurityConstants.EMAIL_PARAMETER_NAME).size() != 1) {
+        String code = parameters.getFirst(SecurityConstants.CODE_PARAMETER_NAME);
+        if (StringUtils.isAnyBlank(email, code) || parameters.get(SecurityConstants.EMAIL_PARAMETER_NAME).size() != 1 ||
+                parameters.get(SecurityConstants.CODE_PARAMETER_NAME).size() != 1) {
             Oauth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.EMAIL_PARAMETER_NAME,
                     Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
+
+        if (!accountRandomCodeServer.isExist(StrUtil.EMPTY, email, code)) {
+            Oauth2EndpointUtils.throwError(SecurityConstants.INVALID_REQUEST_CODE, SecurityConstants.INVALID_REQUEST_CODE,
+                    Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
+        }
+
+
     }
 }

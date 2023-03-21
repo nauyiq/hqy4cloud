@@ -3,7 +3,11 @@ package com.hqy.cloud.auth.support.core;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.hqy.cloud.auth.base.lang.SecurityConstants;
 import com.hqy.cloud.auth.core.CustomerUserDetailService;
+import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
+import com.hqy.cloud.foundation.common.account.AccountAuthRandomCodeServer;
+import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
 import com.hqy.cloud.util.WebUtils;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
@@ -40,6 +44,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
     private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
     private final static BasicAuthenticationConverter basicConvert = new BasicAuthenticationConverter();
 
+
     /**
      * The password used to perform {@link PasswordEncoder#matches(CharSequence, String)}
      * on when the user is not found to avoid SEC-2056. This is necessary, because some
@@ -60,8 +65,14 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
-        if (authentication.getCredentials() == null) {
+        String email = WebUtils.getRequest().get().getParameter(SecurityConstants.EMAIL_PARAMETER_NAME);
+        String code = WebUtils.getRequest().get().getParameter(SecurityConstants.CODE_PARAMETER_NAME);
+        if (StrUtil.isAllNotBlank(email, code)) {
+            return;
+        }
 
+        //验证密码
+        if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(this.messages
                     .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));

@@ -140,6 +140,11 @@ public enum ResultCode implements Result {
      */
     VERIFY_CODE_ERROR(2008, "Verify code error, please input right code."),
 
+    /**
+     * 用户已经存在
+     */
+    USER_EXIST(2009, "This user already exist."),
+
 
     /**
      * 错误的用户名或者密码

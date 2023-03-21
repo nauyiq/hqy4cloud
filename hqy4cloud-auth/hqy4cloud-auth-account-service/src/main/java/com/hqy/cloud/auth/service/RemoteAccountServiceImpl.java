@@ -128,7 +128,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
         // check params
         if (accountOperationService.checkParamExist(struct.username, struct.email, null)) {
-            return new CommonResultStruct(ResultCode.ERROR_PARAM);
+            return new CommonResultStruct(ResultCode.USER_EXIST);
         }
 
         //check roles.

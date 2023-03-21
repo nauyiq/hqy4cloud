@@ -26,7 +26,6 @@ public interface EmailRemoteService extends RPCService {
     @ThriftMethod(oneway = true)
     void sendSimpleEmail(@ThriftField(1)String to, @ThriftField(2)String subject, @ThriftField(3)String content);
 
-
     /**
      * 发送简单邮件
      * @param sender   指定谁发送的.
@@ -97,12 +96,10 @@ public interface EmailRemoteService extends RPCService {
     /**
      * 发送-注册邮件.
      * @param to          发给谁.
-     * @param receiver    接收者用户名
      * @param emailCode   邮箱验证码.
      */
     @ThriftMethod(oneway = true)
-    void sendRegistryEmail(@ThriftField(1) String to, @ThriftField(2)String receiver, @ThriftField(3)String emailCode);
-
+    void sendRegistryEmail(@ThriftField(1) String to, @ThriftField(2)String emailCode);
 
     /**
      * 发送邮箱验证码
@@ -111,5 +108,14 @@ public interface EmailRemoteService extends RPCService {
      */
     @ThriftMethod(oneway = true)
     void sendVerifyCodeEmail(@ThriftField(1)String to, @ThriftField(2)String emailCode);
+
+    /**
+     * 发送登录邮箱验证码
+     * @param to        发给谁
+     * @param emailCode 邮箱验证码
+     */
+    @ThriftMethod(oneway = true)
+    void sendLoginVerifyCodeEmail(@ThriftField(1)String to, @ThriftField(2)String emailCode);
+
 
 }

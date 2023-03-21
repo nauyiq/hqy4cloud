@@ -80,22 +80,19 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     @Override
     public boolean checkParamExist(String username, String email, String phone) {
         if (StringUtils.isAllEmpty(username, email, phone)) {
-            return false;
+            return true;
         }
-
-        Example example = new Example(Account.class);
-        Example.Criteria criteria = example.createCriteria();
+        Account account = new Account();
         if (StringUtils.isNotBlank(username)) {
-            criteria.orEqualTo(username);
+            account.setUsername(username);
         }
         if (StringUtils.isNotBlank(email)) {
-            criteria.orEqualTo(email);
+            account.setUsername(email);
         }
         if (StringUtils.isNotBlank(phone)) {
-            criteria.orEqualTo(phone);
+            account.setUsername(phone);
         }
-
-        return CollectionUtils.isNotEmpty(accountTkService.queryByExample(example));
+        return CollectionUtils.isNotEmpty(accountTkService.queryList(account));
     }
 
     @Override

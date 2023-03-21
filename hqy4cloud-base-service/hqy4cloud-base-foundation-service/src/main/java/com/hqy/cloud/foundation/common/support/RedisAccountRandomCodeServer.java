@@ -7,6 +7,7 @@ import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
 import com.hqy.cloud.util.AssertUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +47,7 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
     public String randomCode(String username, String email, int length, int expiredSeconds) {
         String code = RandomUtil.randomString(length);
         int i = 1;
-        while (!SmartRedisManager.getInstance().set(redisKey.getKey(email+ code + username), "1", (long)expiredSeconds, TimeUnit.SECONDS)) {
+        while (!SmartRedisManager.getInstance().set(redisKey.getKey(genPredix(username, email, code)), StrUtil.EMPTY, (long)expiredSeconds, TimeUnit.SECONDS)) {
             AssertUtil.isTrue(i <= maxRetry, "Already generator random code max time.");
             code = RandomUtil.randomString(length);
             i++;
@@ -56,10 +57,28 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
 
     @Override
     public boolean isExist(String username, String email, String code) {
-        return SmartRedisManager.getInstance().exists(redisKey.getKey(email+ code + username));
+        return SmartRedisManager.getInstance().exists(redisKey.getKey(genPredix(username, email, code)));
     }
 
     public void setMaxRetry(int maxRetry) {
         this.maxRetry = maxRetry;
     }
+
+
+
+    private String genPredix(String username, String email, String code) {
+        if (StringUtils.isAllEmpty(username, email) || StringUtils.isBlank(code)) {
+            throw new UnsupportedOperationException();
+        }
+        if (StringUtils.isNotBlank(username) && StringUtils.isBlank(email)) {
+            return username.concat(StrUtil.DOT).concat(code);
+        }
+
+        if (StringUtils.isNotBlank(email) && StringUtils.isBlank(username)) {
+            return email.concat(StrUtil.DOT).concat(code);
+        }
+
+        return username.concat(StrUtil.DOT).concat(email).concat(StrUtil.DOT).concat(code);
+    }
+
 }
