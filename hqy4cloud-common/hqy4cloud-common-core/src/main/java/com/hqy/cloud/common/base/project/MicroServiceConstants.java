@@ -20,16 +20,23 @@ public class MicroServiceConstants {
     public static final ProjectInfo GATEWAY_INFO = new ProjectInfo("网关服务", GATEWAY);
 
     /**
-     * 通用的采集服务
+     * 基础采集服务
      */
     public static final String COMMON_COLLECTOR = "hqy4cloud-base-collection-service";
     public static final ProjectInfo COLLECTOR_INFO = new ProjectInfo("采集服务", COMMON_COLLECTOR);
 
     /**
-     * 通用通讯服务
+     * 基础通讯服务
      */
     public static final String COMMUNICATION_SERVICE = "hqy4cloud-base-communication-service";
     public static final ProjectInfo COMMUNICATION_INFO = new ProjectInfo("通讯服务", COMMUNICATION_SERVICE);
+
+
+    /**
+     * 基础id生成服务
+     */
+    public static final String ID_SERVICE = "hqy4cloud-base-id-service";
+    public static final ProjectInfo ID_INFO = new ProjectInfo("分布式id服务", ID_SERVICE);
 
     /**
      * 账号-授权服务
@@ -50,7 +57,6 @@ public class MicroServiceConstants {
     public static final String MESSAGE_NETTY_SERVICE = "hqy4cloud-apps-message-service";
     public static final ProjectInfo MESSAGE_NETTY_INFO = new ProjectInfo("聊天消息服务", MESSAGE_NETTY_SERVICE);
 
-
     /**
      * 博客服务.
      */
@@ -58,22 +64,14 @@ public class MicroServiceConstants {
     public static final ProjectInfo BLOG_INFO = new ProjectInfo("博客服务", BLOG_SERVICE);
 
 
-
     /**
      * 服务列表
      */
-    public static final List<ProjectInfo> SERVICES = Arrays.asList(GATEWAY_INFO, COLLECTOR_INFO, ACCOUNT_AUTH_INFO, MESSAGE_NETTY_INFO, COMMUNICATION_INFO, BLOG_INFO, ADMIN_INFO);
-
-    public static final String DEMO_ORDER_SERVICE = "demo-order-service";
-
-    public static final String DEMO_STORAGE_SERVICE = "demo-storage-service";
-
-    public static final String DEMO_WALLET_SERVICE = "demo-wallet-service";
+    public static final List<ProjectInfo> SERVICES = Arrays.asList(GATEWAY_INFO, COLLECTOR_INFO,
+            ACCOUNT_AUTH_INFO, MESSAGE_NETTY_INFO, COMMUNICATION_INFO, BLOG_INFO, ADMIN_INFO, ID_INFO);
 
 
-    /**
-     * socket.io contextPath
-     */
+
     public static class SocketContextPath {
 
         /**

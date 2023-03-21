@@ -5,37 +5,41 @@
     <parent>
         <artifactId>hqy4cloud-base-service</artifactId>
         <groupId>com.hqy.cloud</groupId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>1.0.0</version>
     </parent>
-    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>hqy4cloud-微服务的基础模块，提供通用的功能， 比如redis、异常采集等</description>
-    <artifactId>hqy4cloud-base-foundation-service</artifactId>
+    <artifactId>hqy4cloud-base-id-service</artifactId>
+    <description>hqy4cloud-基于leaf的分布式id服务</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-client-starter</artifactId>
+            <artifactId>hqy4cloud-base-id-service-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-collection-service-api</artifactId>
+            <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
+            <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-server-starter</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
         <dependency>
@@ -43,12 +47,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
 
     </dependencies>
-
 
 </project>
