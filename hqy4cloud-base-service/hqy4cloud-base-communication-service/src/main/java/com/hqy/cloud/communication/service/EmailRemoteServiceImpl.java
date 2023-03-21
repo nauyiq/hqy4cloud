@@ -2,11 +2,9 @@ package com.hqy.cloud.communication.service;
 
 import cn.hutool.core.lang.Validator;
 import com.hqy.cloud.service.EmailRemoteService;
-import com.hqy.foundation.common.bind.EmailTemplateInfo;
-import com.hqy.foundation.util.AccountEmailTemplateUtil;
-import com.hqy.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ValidationUtil;
+import com.hqy.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -135,12 +133,34 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
             log.warn("Receiver email should not be empty, code: {}.", emailCode);
             return;
         }
+
+        try {
+            //创建邮件正文
+            Context context = new Context();
+            context.setVariable("verifyCode", emailCode);
+            String emailContent = templateEngine.process("verityEmail", context);
+            senderHtmlEmail(sender, to, "验证你的HQY账号电子邮箱", emailContent);
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+        }
+    }
+
+    @Override
+    public void sendLoginVerifyCodeEmail(String to, String emailCode) {
+        if (StringUtils.isBlank(emailCode)) {
+            log.warn("Email code should not be empty.");
+            return;
+        }
+        if (!Validator.isEmail(to)) {
+            log.warn("Receiver email should not be empty, code: {}.", emailCode);
+            return;
+        }
         try {
             //创建邮件正文
             Context context = new Context();
             context.setVariable("verifyCode", emailCode);
             String emailContent = templateEngine.process("LoginEmail", context);
-            senderHtmlEmail(sender, to, "验证邮箱", emailContent);
+            senderHtmlEmail(sender, to, "验证你的HQY账号电子邮箱", emailContent);
         } catch (Throwable cause) {
             log.error(cause.getMessage(), cause);
         }
@@ -148,8 +168,23 @@ public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailR
     }
 
     @Override
-    public void sendRegistryEmail(String to, String receiver, String emailCode) {
-        EmailTemplateInfo emailTemplate = AccountEmailTemplateUtil.getDefaultAccountRegistryEmailTemplate(receiver, emailCode);
-        this.sendHtmlEmail(to, emailTemplate.getSubject(), emailTemplate.getContent());
+    public void sendRegistryEmail(String to, String emailCode) {
+        if (StringUtils.isAnyEmpty(emailCode)) {
+            log.warn("emailCode should not be empty.");
+            return;
+        }
+        if (!Validator.isEmail(to)) {
+            log.warn("Receiver email should not be empty, emailCode: {}.", emailCode);
+            return;
+        }
+        try {
+            //创建邮件正文
+            Context context = new Context();
+            context.setVariable("verifyCode", emailCode);
+            String emailContent = templateEngine.process("registryEmail", context);
+            senderHtmlEmail(sender, to, "验证你的HQY账号电子邮箱", emailContent);
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+        }
     }
 }
