@@ -1,8 +1,8 @@
 package com.hqy.cloud.communication;
 
 import com.hqy.cloud.service.EmailRemoteService;
-import com.hqy.rpc.api.service.RPCService;
-import com.hqy.rpc.thrift.service.ThriftServerLauncher;
+import com.hqy.cloud.rpc.service.RPCService;
+import com.hqy.cloud.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;

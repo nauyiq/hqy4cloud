@@ -8,9 +8,8 @@ import com.hqy.cloud.socketio.starter.core.ServerLauncher;
 import com.hqy.cloud.socketio.starter.core.SocketIoServerStarter;
 import com.hqy.cloud.socketio.starter.core.support.ServerEventLauncherFactory;
 import com.hqy.cloud.util.IpUtil;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.foundation.util.SocketHashFactorUtils;
-import com.hqy.rpc.common.config.EnvironmentConfig;
+import com.hqy.cloud.rpc.core.Environment;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,7 @@ public class SocketIoAutoConfiguration {
 
         //registry socketIo Info to redis.
         SocketClusterStatusManager.registry(new SocketClusterStatus(socketIoServerStarter.serviceName(),
-                EnvironmentConfig.getInstance().getEnvironment(), socketIoServerStarter.clusterNode(), socketIoServerStarter.enableMultiNodes(), socketIoServerStarter.contextPath()));
+                Environment.getInstance().getEnvironment(), socketIoServerStarter.clusterNode(), socketIoServerStarter.enableMultiNodes(), socketIoServerStarter.contextPath()));
 
         if (socketIoServerStarter.enableMultiNodes()) {
             String hashFactor = SocketHashFactorUtils.genHashFactor(IpUtil.getHostAddress(), socketIoServerStarter.serverPort());

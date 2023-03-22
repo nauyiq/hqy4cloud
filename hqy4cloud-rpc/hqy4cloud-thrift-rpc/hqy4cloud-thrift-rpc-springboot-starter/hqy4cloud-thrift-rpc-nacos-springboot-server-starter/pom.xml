@@ -22,10 +22,9 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-server</artifactId>
+            <artifactId>hqy4cloud-thrift-rpc-handler</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
     </dependencies>
 
 

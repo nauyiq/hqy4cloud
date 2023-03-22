@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
-import com.hqy.rpc.common.CommonConstants;
+import com.hqy.cloud.rpc.CommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

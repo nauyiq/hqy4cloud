@@ -7,7 +7,7 @@ import com.hqy.cloud.tk.support.BaseTkServiceImpl;
 import com.hqy.cloud.coll.mapper.PfExceptionTkMapper;
 import com.hqy.cloud.coll.entity.PfException;
 import com.hqy.cloud.coll.service.PfExceptionService;
-import com.hqy.rpc.thrift.struct.PageStruct;
+import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

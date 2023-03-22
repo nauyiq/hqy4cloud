@@ -6,7 +6,7 @@ import com.hqy.cloud.tk.support.BaseTkServiceImpl;
 import com.hqy.cloud.coll.mapper.RPCExceptionRecordTkMapper;
 import com.hqy.cloud.coll.entity.RPCExceptionRecord;
 import com.hqy.cloud.coll.service.RPCExceptionRecordService;
-import com.hqy.rpc.thrift.struct.PageStruct;
+import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

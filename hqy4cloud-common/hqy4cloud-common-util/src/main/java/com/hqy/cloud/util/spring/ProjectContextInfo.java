@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectContextInfo implements Serializable {
 
     private static final long serialVersionUID = -3512823069773039476L;
+
     /**
      * 系统启动时间
      */
@@ -62,7 +63,6 @@ public class ProjectContextInfo implements Serializable {
      * 端口等信息
      */
     private UsingIpPort uip;
-
 
     /**
      * 节点类型

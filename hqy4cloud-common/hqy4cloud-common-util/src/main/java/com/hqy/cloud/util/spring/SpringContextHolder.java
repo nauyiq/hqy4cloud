@@ -95,7 +95,6 @@ public class SpringContextHolder implements ApplicationContextAware {
 
 
 
-
     /**
      * * 往spring ioc容器动态注入一个bean
      * @param beanId

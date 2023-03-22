@@ -1,7 +1,7 @@
 package com.hqy.cloud.coll.entity;
 
 import com.hqy.cloud.tk.model.BaseEntity;
-import com.hqy.rpc.thrift.struct.ThriftRpcFlowStruct;
+import com.hqy.cloud.rpc.thrift.struct.ThriftRpcFlowStruct;
 import lombok.Data;
 
 import javax.persistence.Column;

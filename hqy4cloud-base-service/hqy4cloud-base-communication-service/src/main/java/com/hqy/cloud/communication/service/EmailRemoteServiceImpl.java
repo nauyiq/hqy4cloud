@@ -4,7 +4,7 @@ import cn.hutool.core.lang.Validator;
 import com.hqy.cloud.service.EmailRemoteService;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ValidationUtil;
-import com.hqy.rpc.thrift.service.AbstractRPCService;
+import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -5,8 +5,8 @@ import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.coll.service.RpcLogRemoteService;
 import com.hqy.cloud.coll.struct.PageRpcExceptionRecordStruct;
 import com.hqy.cloud.coll.struct.PageRpcFlowRecordStruct;
-import com.hqy.rpc.nacos.client.starter.RPCClient;
-import com.hqy.rpc.thrift.struct.PageStruct;
+import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

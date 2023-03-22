@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.auth.service.tk.RoleResourcesTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.rpc.thrift.service.AbstractRPCService;
+import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

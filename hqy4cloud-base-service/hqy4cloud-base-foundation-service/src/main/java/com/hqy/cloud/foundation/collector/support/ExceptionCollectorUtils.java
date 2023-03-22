@@ -5,8 +5,8 @@ import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.coll.service.ExceptionCollectionService;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
-import com.hqy.rpc.common.config.EnvironmentConfig;
-import com.hqy.rpc.nacos.client.starter.RPCClient;
+import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.cloud.util.thread.ExecutorServiceProject;
 import com.hqy.cloud.util.thread.ParentExecutorService;
@@ -67,7 +67,7 @@ public class ExceptionCollectorUtils {
         ParentExecutorService.getInstance().execute(() -> {
             ExceptionCollectionService exceptionCollectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
             String exceptionStackTrace = getExceptionStackTrace(exception);
-            String env = EnvironmentConfig.getInstance().getEnvironment();
+            String env = Environment.getInstance().getEnvironment();
             String nameEn = SpringContextHolder.getProjectContextInfo().getNameWithIpPort();
             PfExceptionStruct struct = buildStruct(env, nameEn, exceptionStackTrace, event);
             exceptionCollectionService.collect(struct);

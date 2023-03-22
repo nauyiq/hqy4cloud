@@ -9,7 +9,7 @@ import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;
 import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.cache.support.RedisCacheDataService;
 import com.hqy.cloud.foundation.cache.support.RedisHashCacheDataService;
-import com.hqy.rpc.nacos.client.starter.RPCClient;
+import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

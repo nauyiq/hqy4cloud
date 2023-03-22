@@ -15,6 +15,7 @@
  */
 package com.facebook.swift.service;
 
+import com.facebook.ThriftRequestPram;
 import com.facebook.nifty.client.RequestChannel;
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.nifty.core.RequestContexts;
@@ -32,7 +33,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.hqy.rpc.core.ThriftRequestPram;
 import com.hqy.cloud.util.ArgsUtil;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;

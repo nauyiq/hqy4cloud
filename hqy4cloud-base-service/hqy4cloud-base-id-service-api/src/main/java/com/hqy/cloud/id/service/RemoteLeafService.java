@@ -5,7 +5,7 @@ import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.id.struct.ResultStruct;
-import com.hqy.rpc.api.service.RPCService;
+import com.hqy.cloud.rpc.service.RPCService;
 
 /**
  * leaf-segment rpc service.

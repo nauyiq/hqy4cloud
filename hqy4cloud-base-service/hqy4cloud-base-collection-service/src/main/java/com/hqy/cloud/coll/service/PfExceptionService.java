@@ -3,7 +3,7 @@ package com.hqy.cloud.coll.service;
 import com.github.pagehelper.PageInfo;
 import com.hqy.cloud.tk.BaseTkService;
 import com.hqy.cloud.coll.entity.PfException;
-import com.hqy.rpc.thrift.struct.PageStruct;
+import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 
 /**
  * @author qiyuan.hong

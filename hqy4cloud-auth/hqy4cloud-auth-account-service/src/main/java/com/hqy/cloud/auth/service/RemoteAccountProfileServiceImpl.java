@@ -7,7 +7,7 @@ import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheDataServiceService;
 import com.hqy.account.service.RemoteAccountProfileService;
 import com.hqy.account.struct.AccountProfileStruct;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
-import com.hqy.rpc.thrift.service.AbstractRPCService;
+import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

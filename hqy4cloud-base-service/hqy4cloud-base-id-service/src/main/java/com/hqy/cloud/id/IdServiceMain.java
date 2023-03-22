@@ -1,9 +1,12 @@
 package com.hqy.cloud.id;
 
+import cn.hutool.core.map.MapUtil;
+import com.alibaba.nacos.api.common.Constants;
+import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.hqy.cloud.id.service.RemoteLeafService;
+import com.hqy.cloud.rpc.service.RPCService;
+import com.hqy.cloud.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.rpc.api.service.RPCService;
-import com.hqy.rpc.thrift.service.ThriftServerLauncher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +16,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 基础分布式id生成服务-rpc生产者视角
@@ -39,7 +43,17 @@ public class IdServiceMain {
         public List<RPCService> getRpcServices() {
             return Collections.singletonList(leafService);
         }
+
+        @Override
+        public Map<String, String> getParams() {
+            Map<String, String> params = MapUtil.newHashMap(1);
+            params.put(PreservedMetadataKeys.INSTANCE_ID_GENERATOR, Constants.SNOWFLAKE_INSTANCE_ID_GENERATOR);
+            return params;
+        }
     }
+
+
+
 
 
 

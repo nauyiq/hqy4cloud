@@ -2,7 +2,7 @@ package com.hqy.cloud.coll.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
-import com.hqy.rpc.thrift.struct.PageResultStruct;
+import com.hqy.cloud.rpc.thrift.struct.PageResultStruct;
 import lombok.NoArgsConstructor;
 
 import java.util.List;

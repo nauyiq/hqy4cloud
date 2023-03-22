@@ -4,7 +4,7 @@ import com.corundumstudio.socketio.ex.NettyContextHelper;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.thread.ExecutorServiceProject;
 import com.hqy.cloud.util.thread.ParentExecutorService;
-import com.hqy.rpc.thrift.service.ThriftSocketIoPushService;
+import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

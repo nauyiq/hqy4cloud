@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.rpc.nacos.starter.NacosThriftServerStarterAutoConfiguration
+com.hqy.cloud.rpc.server.config.NacosThriftServerStarterAutoConfiguration,\
+com.hqy.cloud.rpc.server.config.ThriftServerAutoConfiguration

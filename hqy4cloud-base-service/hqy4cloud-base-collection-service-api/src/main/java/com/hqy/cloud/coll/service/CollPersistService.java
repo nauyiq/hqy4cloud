@@ -7,8 +7,8 @@ import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
-import com.hqy.rpc.api.service.RPCService;
-import com.hqy.rpc.thrift.struct.PageStruct;
+import com.hqy.cloud.rpc.service.RPCService;
+import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 
 /**
  * 采集服务RPC接口
