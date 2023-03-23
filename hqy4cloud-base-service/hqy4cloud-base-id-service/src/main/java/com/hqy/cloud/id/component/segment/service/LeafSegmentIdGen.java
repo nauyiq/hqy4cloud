@@ -93,9 +93,9 @@ public class LeafSegmentIdGen implements IdGen {
         }
         SegmentBuffer buffer = cache.get(key);
         if (Objects.nonNull(buffer)) {
-            if (buffer.isInitOk()) {
+            if (!buffer.isInitOk()) {
                 synchronized (buffer){
-                    if (buffer.isInitOk()) {
+                    if (!buffer.isInitOk()) {
                         try {
                             updateSegmentFromDb(key, buffer.getCurrent());
                             log.info("Init buffer. Update leaf key {} {} from db", key, buffer.getCurrent());
@@ -168,7 +168,7 @@ public class LeafSegmentIdGen implements IdGen {
     private void updateSegmentFromDb(String key, Segment segment) {
         SegmentBuffer buffer = segment.getBuffer();
         LeafAlloc leafAlloc;
-        if (buffer.isInitOk()) {
+        if (!buffer.isInitOk()) {
             leafAlloc = leafAllocTkService.updateMaxIdAndGetLeafAlloc(key);
             buffer.setStep(leafAlloc.getStep());
             // leafAlloc中的step为DB中的step

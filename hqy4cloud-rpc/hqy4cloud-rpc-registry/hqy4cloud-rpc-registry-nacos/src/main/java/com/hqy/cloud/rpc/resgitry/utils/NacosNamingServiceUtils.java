@@ -1,10 +1,12 @@
 package com.hqy.cloud.rpc.resgitry.utils;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
+import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.foundation.common.StringConstantFieldValuePredicate;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.resgitry.naming.NamingServiceWrapper;
@@ -30,11 +32,10 @@ public class NacosNamingServiceUtils {
     private static final Logger log = LoggerFactory.getLogger(NacosNamingServiceUtils.class);
 
     public static NamingServiceWrapper createNamingService(RPCModel rpcModel) {
-
         NamingService namingService = null;
         try {
-            NacosDiscoveryProperties nacosDiscoveryProperties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
-            namingService = nacosDiscoveryProperties.namingServiceInstance();
+            NacosServiceManager nacosServiceManager = SpringContextHolder.getBean(NacosServiceManager.class);
+            namingService = nacosServiceManager.getNamingService();
         } catch (Throwable t) {
             log.warn("Get namingService failed from spring context.");
         }
@@ -42,7 +43,6 @@ public class NacosNamingServiceUtils {
         if (namingService != null) {
             return new NamingServiceWrapper(namingService, rpcModel.getGroup());
         }
-
         Properties nacosProperties = buildNacosProperties(rpcModel);
         try {
             namingService = NacosFactory.createNamingService(nacosProperties);
@@ -76,6 +76,8 @@ public class NacosNamingServiceUtils {
         if (StringUtils.isNotEmpty(rpcModel.getPassword())){
             properties.put(PASSWORD, rpcModel.getPassword());
         }
+        //获取名称空间
+        properties.put(NAMESPACE, rpcModel.getParameter(NAMESPACE, Environment.ENV_DEV));
         putPropertyIfAbsent(rpcModel, properties, NAMING_LOAD_CACHE_AT_START, "true");
     }
 

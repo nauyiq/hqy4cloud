@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.nacos.client.support;
 
+import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.rpc.thrift.ThriftRPCClient;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
@@ -16,6 +17,10 @@ import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+import static com.alibaba.nacos.api.annotation.NacosProperties.NAMESPACE;
 
 /**
  * @author qiyuan.hong
@@ -64,12 +69,17 @@ public class NacosThriftRPCClient extends ThriftRPCClient {
 
     private  RPCModel createDirectRpcModel() {
         RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(NacosConfigurationUtils.getServerAddress());
-        return new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer());
+        return new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer(), createdDirectRpcParams());
     }
 
     private static String getGroup() {
-        String group = ConfigurationContext.getString(ConfigurationContext.YamlEnum.BOOTSTRAP_DEV_YAML, Constants.DEV_REGISTRY_GROUP_KEY);
-        return StringUtils.isBlank(group) ? CommonConstants.DEFAULT_GROUP : group;
+        return NacosConfigurationUtils.getNacosGroup();
+    }
+
+    public static Map<String, String> createdDirectRpcParams() {
+        Map<String, String> map =  MapUtil.newHashMap();
+        map.put(NAMESPACE, "9cd8de3b-030a-49f1-9256-f04de35cdb9e");
+        return map;
     }
 
 }

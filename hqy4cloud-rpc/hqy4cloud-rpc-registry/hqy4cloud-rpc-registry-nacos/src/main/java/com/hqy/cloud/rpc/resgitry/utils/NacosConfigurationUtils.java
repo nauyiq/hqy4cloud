@@ -1,7 +1,9 @@
 package com.hqy.cloud.rpc.resgitry.utils;
 
-import com.hqy.cloud.common.base.lang.StringConstants;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.util.config.ConfigurationContext;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,29 +17,56 @@ public class NacosConfigurationUtils {
 
     private static final Logger log = LoggerFactory.getLogger(NacosConfigurationUtils.class);
 
-    private static final String NACOS_ADDRESS_KEY = "nacos.server-addr";
-    private static final String ACTIVE = "spring.profiles.active";
-
+    public static final String NACOS_ADDRESS_KEY = "spring.cloud.nacos.discovery.server-addr";
+    public static final String NACOS_GROUP_KEY = "spring.cloud.nacos.discovery.group";
 
     public static String getServerAddress() {
-        return getServerAddress(ConfigurationContext.YamlEnum.BOOTSTRAP_YAML, NACOS_ADDRESS_KEY);
+        return getServerAddress(ConfigurationContext.YamlEnum.APPLICATION_YAML, NACOS_ADDRESS_KEY);
     }
 
+    @SneakyThrows
     public static String getServerAddress(ConfigurationContext.YamlEnum yaml, String serverAddressKey) {
+        String serviceAddress = null;
         try {
-            String serviceAddress;
-            String active = ConfigurationContext.getString(yaml, ACTIVE);
-            if (StringUtils.isNotBlank(active)) {
-                serviceAddress = ConfigurationContext.
-                        getString(ConfigurationContext.YamlEnum.getYaml(StringConstants.BOOTSTRAP + StringConstants.Symbol.RAIL + active + StringConstants.File.YML), serverAddressKey);
-            } else {
-                serviceAddress = ConfigurationContext.getString(yaml, serverAddressKey);
+            serviceAddress = ConfigurationContext.getString(yaml, serverAddressKey);
+            if (StringUtils.isNotBlank(serviceAddress)) {
+                return serviceAddress;
             }
-            return serviceAddress;
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
-            throw t;
         }
+
+        if (StringUtils.isBlank(serviceAddress)) {
+            //尝试从System properties中获取
+            serviceAddress = System.getProperty(NACOS_ADDRESS_KEY);
+        }
+
+        if (serviceAddress == null) {
+            throw new NacosException();
+        }
+
+        return serviceAddress;
     }
 
+    public static String getNacosGroup() {
+        String group = null;
+        try {
+            group = ConfigurationContext.getString(ConfigurationContext.YamlEnum.APPLICATION_YAML, NACOS_GROUP_KEY);
+            if (StringUtils.isNotBlank(group)) {
+                return group;
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        }
+
+        if (StringUtils.isBlank(group)) {
+            //尝试从System properties中获取
+            group = System.getProperty(NACOS_GROUP_KEY);
+            if (StringUtils.isBlank(group)) {
+                group = "DEV_GROUP";
+            }
+        }
+
+        return group;
+    }
 }

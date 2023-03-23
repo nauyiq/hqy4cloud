@@ -109,6 +109,12 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_FAIL_BACK_REGISTRY_RETRY_CHECK = new CommonSwitcher(217, "节点-是否启用FailBack Registry重试检查，判断是否要跳过failBack", true);
 
     /**
+     * 节点-是否采用基于本地pid进行计算的值作为雪花算法的workerId 默认true
+     */
+    public static final CommonSwitcher ENABLE_USING_PID_SNOWFLAKE_WORKER_ID = new CommonSwitcher(218, "节点-是否采用基于本地pid进行计算的值作为雪花算法的workerId", true);
+
+
+    /**
      * 与sid有关（重联场景是生成新的sid)
      * 无用http长连接释放（短时间泄漏）
      * 场景：业务： 兼容忽略js前端框架层面的socketIO层面 多发一次无意义请求的返回开关   <br>

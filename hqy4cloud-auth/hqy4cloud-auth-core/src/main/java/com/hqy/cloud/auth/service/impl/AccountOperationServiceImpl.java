@@ -11,9 +11,9 @@ import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.tk.*;
 import com.hqy.cloud.auth.utils.AvatarHostUtil;
 import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.foundation.id.DistributedIdGen;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.identity.ProjectSnowflakeIdWorker;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +119,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     private Account buildAccount(UserDTO userDTO, List<Role> roles) {
         List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
         String role = StrUtil.join(COMMA, roleNames);
-        Account account = new Account(ProjectSnowflakeIdWorker.getInstance().nextId(), userDTO.getUsername(), passwordEncoder.encode(userDTO.getPassword()), userDTO.getEmail(), role, userDTO.getPhone());
+        Account account = new Account(DistributedIdGen.getSnowflakeId(), userDTO.getUsername(), passwordEncoder.encode(userDTO.getPassword()), userDTO.getEmail(), role, userDTO.getPhone());
         if (Objects.nonNull(userDTO.getStatus())) {
             account.setStatus(userDTO.getStatus());
         }

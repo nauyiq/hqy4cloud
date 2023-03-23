@@ -26,4 +26,12 @@ public interface RemoteLeafService extends RPCService {
     ResultStruct getSegmentId(@ThriftField(1) String key);
 
 
+    /**
+     * 获取雪花算法的id.
+     * @return {@link ResultStruct}
+     */
+    @ThriftMethod
+    ResultStruct getSnowflakeNextId();
+
+
 }

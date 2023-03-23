@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @author qiyuan.hong
@@ -33,12 +34,12 @@ public class LeafAlloc implements PrimaryLessBaseEntity {
     /**
      *  每次分配的号段长度
      */
-    private int step;
+    private Integer step;
 
     /**
      *  每次getid时随机增加的长度，这样就不会有连续的id了， 默认1
      */
-    private int randomStep;
+    private Integer randomStep;
 
     /**
      *  描述
@@ -48,7 +49,7 @@ public class LeafAlloc implements PrimaryLessBaseEntity {
     /**
      * 更新时间
      */
-    private Long updated;
+    private Date updated;
 
     public void setKey(String key) {
         this.bizTag = key;

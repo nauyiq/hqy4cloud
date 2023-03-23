@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 /**
+ * SegmentService.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/3/21 16:58

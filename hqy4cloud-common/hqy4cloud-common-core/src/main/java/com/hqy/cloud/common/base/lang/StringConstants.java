@@ -39,6 +39,8 @@ public interface StringConstants {
 
     String BOOTSTRAP = "bootstrap";
 
+    String APPLICATION = "application";
+
     String HTTP = "http";
 
     String SHOULD_NOT_BE_NULL = "should not be null.";

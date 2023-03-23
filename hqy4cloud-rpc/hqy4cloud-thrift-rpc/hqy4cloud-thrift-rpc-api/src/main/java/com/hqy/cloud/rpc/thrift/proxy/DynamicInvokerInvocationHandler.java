@@ -47,7 +47,7 @@ public class DynamicInvokerInvocationHandler<T> implements InvocationHandler {
                 case HASHCODE_METHOD_NAME:
                     return invoker.hashCode();
                 default:
-                    throw new UnsupportedOperationException();
+                    break;
             }
         } else if (parameterTypes.length == 1 && EQUALS_METHOD_NAME.equals(methodName)) {
             return invoker.equals(args[0]);

@@ -105,16 +105,16 @@
                 <type>pom</type>
                 <scope>import</scope>
                 <version>${springcloud.alibaba.version}</version>
-                <exclusions>
+                <!--<exclusions>
                     <exclusion>
                         <groupId>com.alibaba.nacos</groupId>
                         <artifactId>nacos-client</artifactId>
                     </exclusion>
-                </exclusions>
+                </exclusions>-->
             </dependency>
 
             <!-- version2以上基于grpc的 spring cloud alibaba client-->
-            <dependency>
+            <!--<dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
                 <version>${nacos.version}</version>
@@ -124,7 +124,7 @@
                         <artifactId>guava</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>io.seata</groupId>

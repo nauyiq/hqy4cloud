@@ -4,17 +4,17 @@ import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
 import com.hqy.cloud.auth.flow.FlowResult;
 import com.hqy.cloud.auth.flow.server.HttpAccessFlowControlCenter;
-import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
-import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
+import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
+import com.hqy.cloud.gateway.util.RequestUtil;
+import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
-import com.hqy.cloud.rpc.core.Environment;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -184,9 +184,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             //检查uri
             if (StringUtils.isNotBlank(uri) && !INCLINED_ROD.equals(uri)) {
                 if (throttlesProcess.isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE)) {
-                    if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
-                        return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_URI.value, requestBody);
-                    }
+                    return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_URI.value, requestBody);
                 }
             }
         }
