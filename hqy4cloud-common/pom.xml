@@ -22,6 +22,7 @@
         <module>hqy4cloud-common-util</module>
         <module>hqy4cloud-common-security</module>
         <module>hqy4cloud-common-sentinel</module>
+        <module>hqy4cloud-common-elasticsearch</module>
     </modules>
 
 
