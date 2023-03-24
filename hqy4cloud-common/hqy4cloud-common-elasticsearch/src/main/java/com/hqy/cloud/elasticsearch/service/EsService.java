@@ -2,6 +2,7 @@ package com.hqy.cloud.elasticsearch.service;
 
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.elasticsearch.document.EsDocument;
+import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
 import org.elasticsearch.client.RestClient;
 
 import java.util.List;
@@ -18,32 +19,36 @@ public interface EsService<T extends EsDocument> {
      * 创建索引(类似db中库的存在)
      * @param index 索引
      * @return      result.
+     * @throws ElasticsearchException 异常.
      */
-    boolean createIndex(String index);
+    boolean createIndex(String index) throws ElasticsearchException;
 
 
     /**
      * 删除索引
      * @param index 索引
      * @return      result.
+     * @throws ElasticsearchException 异常.
      */
-    boolean deleteIndex(String index);
+    boolean deleteIndex(String index) throws ElasticsearchException;
 
 
     /**
      * 判断索引是否存在
      * @param index 索引
      * @return      result.
+     * @throws ElasticsearchException 异常.
      */
-    boolean checkIndexExist(String index);
+    boolean checkIndexExist(String index) throws ElasticsearchException;
 
     /**
      * 添加文档, 使用随机id
      * @param document 添加文档
      * @param index    索引库
      * @return         返回文档id
+     * @throws ElasticsearchException 异常.
      */
-    String addDocument(T document, String index);
+    String addDocument(T document, String index) throws ElasticsearchException;
 
     /**
      * 添加文档，使用指定id
@@ -51,24 +56,27 @@ public interface EsService<T extends EsDocument> {
      * @param index    索引库
      * @param id       id，为null时使用随机id
      * @return         id
+     * @throws ElasticsearchException 异常.
      */
-    String addDocument(T document, String index, String id);
+    String addDocument(T document, String index, String id) throws ElasticsearchException;
 
     /**
      * 批量添加文档
      * @param index     索引库
      * @param documents 批量添加的文档
      * @return          result
+     * @throws ElasticsearchException 异常.
      */
-    boolean addDocuments(String index, List<T> documents);
+    boolean addDocuments(String index, List<T> documents) throws ElasticsearchException;
 
     /**
      * 通过id删除索引
      * @param index 索引库
      * @param id    id
      * @return      result.
+     * @throws ElasticsearchException 异常.
      */
-    boolean deleteDocument(String index, String id);
+    boolean deleteDocument(String index, String id) throws ElasticsearchException;
 
 
     /**
@@ -77,8 +85,9 @@ public interface EsService<T extends EsDocument> {
      * @param index    索引库
      * @param id       文档id
      * @return         result.
+     * @throws ElasticsearchException 异常.
      */
-    boolean updateDocument(T document, String index, String id);
+    boolean updateDocument(T document, String index, String id) throws ElasticsearchException;
 
     /**
      * 根据id获取文档
