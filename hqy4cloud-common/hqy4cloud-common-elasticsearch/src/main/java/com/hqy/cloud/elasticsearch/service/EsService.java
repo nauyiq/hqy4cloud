@@ -3,7 +3,7 @@ package com.hqy.cloud.elasticsearch.service;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.elasticsearch.document.EsDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
-import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 
 import java.util.List;
 import java.util.Map;
@@ -98,11 +98,6 @@ public interface EsService<T extends EsDocument> {
     T getDocument(String index, String id);
 
 
-    /**
-     * 获取低水平客户端
-     * @return RestClient.
-     */
-    RestClient getLowLevelClient();
 
     /**
      * 判断文档是否存在
@@ -111,25 +106,6 @@ public interface EsService<T extends EsDocument> {
      * @return      result.
      */
     boolean checkExistDocument(String index, String id);
-
-    /*  *//**
-     * 返回高亮结果数据
-     * @param response
-     * @param highlightField
-     * @return
-     *//*
-    List<Map<String, Object>> getHighlightResponse(SearchResponse response, String highlightField);*/
-
-/*    *//**
-     * 返回高亮结果数据
-     * @param response
-     * @param highlightField
-     * @param tClass
-     * @param <T>
-     * @return
-     *//*
-    <T> List<T> getHighlightResponse(SearchResponse response, String highlightField, Class<T> tClass);*/
-
 
 
     /**
@@ -152,5 +128,26 @@ public interface EsService<T extends EsDocument> {
                              Map<String, Object> orLikeMap,
                              int pageNumber,
                              int pageSize);
+
+
+    /**
+     * 获取es rest客户端， 返回高等级客户端
+     * @return {@link RestHighLevelClient}
+     */
+    RestHighLevelClient getClient();
+
+    /**
+     * 获取文档class类型
+     * @return 文档class
+     */
+    Class<T> getDocumentClass();
+
+
+    /**
+     * 设置是否使用eyes
+     * @param isUsing using eyes
+     */
+    void setUsingEs(boolean isUsing);
+
 
 }

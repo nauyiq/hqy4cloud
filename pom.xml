@@ -88,6 +88,16 @@
                 <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.elasticsearch.client</groupId>
+                        <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.elasticsearch</groupId>
+                        <artifactId>elasticsearch</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- spring cloud -->
@@ -313,9 +323,6 @@
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${org.redisson.version}</version>
             </dependency>
-
-
-
 
             <dependency>
                 <groupId>org.javassist</groupId>
