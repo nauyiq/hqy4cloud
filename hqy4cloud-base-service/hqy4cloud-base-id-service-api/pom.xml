@@ -5,7 +5,8 @@
     <parent>
         <artifactId>hqy4cloud-base-service</artifactId>
         <groupId>com.hqy.cloud</groupId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

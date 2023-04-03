@@ -2,8 +2,8 @@ FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
 MAINTAINER hongqy<759428167@qq.com>
 
 # set environment
-ENV BASE_DIR="/home/services/account-auth-service" \
-    JAVA_JAR="account-auth-service.jar" \
+ENV BASE_DIR="/home/services/hqy4cloud-auth-account-service" \
+    JAVA_JAR="hqy4cloud-auth-account-service.jar" \
     JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
     JAVA="${JAVA_HOME}/bin/java" \
     JVM_XMS="512m" \

@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>公共的采集服务</description>
+    <description>hqy4cloud-采集服务</description>
 
     <packaging>jar</packaging>
     <artifactId>hqy4cloud-base-collection-service</artifactId>
@@ -65,7 +65,7 @@
     </dependencies>
 
     <build>
-        <finalName>common-collector-service</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
             <plugin>

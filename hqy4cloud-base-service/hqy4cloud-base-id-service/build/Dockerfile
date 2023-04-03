@@ -2,8 +2,8 @@ FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
 MAINTAINER hongqy<759428167@qq.com>
 
 # set environment
-ENV BASE_DIR="/home/services/hqy4cloud-base-communication-service" \
-    JAVA_JAR="hqy4cloud-base-communication-service.jar" \
+ENV BASE_DIR="/home/services/hqy4cloud-base-service" \
+    JAVA_JAR="hqy4cloud-base-service.jar" \
     JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
     JAVA="${JAVA_HOME}/bin/java" \
     JVM_XMS="512m" \
@@ -16,7 +16,7 @@ ENV BASE_DIR="/home/services/hqy4cloud-base-communication-service" \
 
 WORKDIR ${BASE_DIR}
 
-RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
+RUN  ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
 ADD lib target/lib
 ADD ${SERVICE_JAR} target/${SERVICE_JAR}
@@ -28,6 +28,6 @@ RUN mkdir -p logs \
 RUN chmod +x bin/start.sh
 RUN chmod +x target/*
 
-EXPOSE 8777
+EXPOSE 8088
 
 ENTRYPOINT ["bin/start.sh"]
