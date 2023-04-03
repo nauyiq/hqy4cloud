@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy4cloud</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <description>custom rpc module.</description>
+    <artifactId>hqy4cloud-rpc</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>hqy4cloud-rpc-monitor</module>
+        <module>hqy4cloud-rpc-common</module>
+        <module>hqy4cloud-rpc-registry</module>
+        <module>hqy4cloud-thrift-rpc</module>
+        <module>hqy4cloud-rpc-api</module>
+        <module>hqy4cloud-rpc-cluster</module>
+    </modules>
+
+</project>

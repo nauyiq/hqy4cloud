@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy4cloud</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>hqy4cloud-mq</artifactId>
+    <description>集合各个mq中间件， 外部项目需要使用mq 直接引入对应mq模块即可</description>
+
+    <modules>
+        <module>hqy4cloud-mq-common</module>
+        <module>hqy4cloud-mq-rabbitmq</module>
+        <module>hqy4cloud-mq-kafka</module>
+        <module>hqy4cloud-mq-rocketmq</module>
+    </modules>
+    <packaging>pom</packaging>
+
+
+
+</project>

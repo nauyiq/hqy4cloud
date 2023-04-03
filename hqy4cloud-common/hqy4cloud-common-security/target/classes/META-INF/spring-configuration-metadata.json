@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "resource.limit",
+      "type": "com.hqy.cloud.auth.flow.server.FlowConfigProperties",
+      "sourceType": "com.hqy.cloud.auth.flow.server.FlowConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "resource.limit.get-limit-config",
+      "type": "com.hqy.cloud.auth.flow.FlowLimitConfig",
+      "sourceType": "com.hqy.cloud.auth.flow.server.FlowConfigProperties"
+    },
+    {
+      "name": "resource.limit.post-limit-config",
+      "type": "com.hqy.cloud.auth.flow.FlowLimitConfig",
+      "sourceType": "com.hqy.cloud.auth.flow.server.FlowConfigProperties"
+    },
+    {
+      "name": "resource.limit.uri-limit-config",
+      "type": "com.hqy.cloud.auth.flow.FlowLimitConfig",
+      "sourceType": "com.hqy.cloud.auth.flow.server.FlowConfigProperties"
+    }
+  ],
+  "hints": []
+}
