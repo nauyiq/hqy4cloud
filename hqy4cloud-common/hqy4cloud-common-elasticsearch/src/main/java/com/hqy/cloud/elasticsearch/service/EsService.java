@@ -3,6 +3,7 @@ package com.hqy.cloud.elasticsearch.service;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.elasticsearch.document.EsDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
+import com.hqy.cloud.elasticsearch.mapper.EsMapper;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import java.util.List;
@@ -98,7 +99,6 @@ public interface EsService<T extends EsDocument> {
     T getDocument(String index, String id);
 
 
-
     /**
      * 判断文档是否存在
      * @param index 索引
@@ -141,6 +141,12 @@ public interface EsService<T extends EsDocument> {
      * @return 文档class
      */
     Class<T> getDocumentClass();
+
+    /**
+     * 获取es Mapper
+     * @return {@link EsMapper}
+     */
+    EsMapper<T> getMapper();
 
 
     /**

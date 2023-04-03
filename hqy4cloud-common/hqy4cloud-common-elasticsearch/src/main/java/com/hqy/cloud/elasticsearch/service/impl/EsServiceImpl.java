@@ -10,7 +10,6 @@ import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.elasticsearch.document.EsDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
-import com.hqy.cloud.elasticsearch.mapper.EsMapper;
 import com.hqy.cloud.elasticsearch.service.EsService;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -65,18 +64,14 @@ import java.util.stream.Collectors;
 public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T> {
 
     protected boolean useEyEs;
-    protected final EsMapper<T> mapper;
-    protected final Class<T> tClass;
     protected final RestHighLevelClient client;
 
-    public EsServiceImpl(Class<T> tClass, EsMapper<T> mapper, RestHighLevelClient client) {
-        this(true, tClass, mapper, client);
+    public EsServiceImpl(RestHighLevelClient client) {
+        this(true, client);
     }
 
-    public EsServiceImpl(boolean useEyEs, Class<T> tClass, EsMapper<T> mapper, RestHighLevelClient client) {
+    public EsServiceImpl(boolean useEyEs,  RestHighLevelClient client) {
         this.useEyEs = useEyEs;
-        this.mapper = mapper;
-        this.tClass = tClass;
         this.client = client;
     }
 
@@ -92,7 +87,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Boolean result = mapper.createIndex(index);
+                Boolean result = getMapper().createIndex(index);
                 return Boolean.TRUE.equals(result);
             } else {
                 CreateIndexRequest request = new CreateIndexRequest(index);
@@ -113,7 +108,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Boolean result = mapper.deleteIndex(index);
+                Boolean result = getMapper().deleteIndex(index);
                 return Boolean.TRUE.equals(result);
             } else {
                 DeleteIndexRequest request = new DeleteIndexRequest(index);
@@ -134,7 +129,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Boolean result = mapper.existsIndex(index);
+                Boolean result = getMapper().existsIndex(index);
                 return Boolean.TRUE.equals(result);
             } else {
                 GetIndexRequest request = new GetIndexRequest(index);
@@ -153,7 +148,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Integer insert = mapper.insert(document, index);
+                Integer insert = getMapper().insert(document, index);
                 return document.getId();
             } else {
                 IndexRequest request = new IndexRequest(index);
@@ -176,7 +171,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         try {
             if (useEyEs) {
                 document.setId(id);
-                Integer insert = mapper.insert(document, index);
+                Integer insert = getMapper().insert(document, index);
                 return id;
             } else {
                 IndexRequest request = new IndexRequest(index);
@@ -197,7 +192,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Integer insertBatch = mapper.insertBatch(documents);
+                Integer insertBatch = getMapper().insertBatch(documents);
                 return insertBatch != null && insertBatch > 0;
             } else {
                 BulkRequest request = new BulkRequest();
@@ -221,7 +216,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                Integer deleted = mapper.deleteById(id, index);
+                Integer deleted = getMapper().deleteById(id, index);
                 return  deleted > 0;
             } else {
                 DeleteRequest request = new DeleteRequest(index, id);
@@ -243,7 +238,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         try {
             if (useEyEs) {
                 document.setId(id);
-                Integer update = mapper.updateById(document, index);
+                Integer update = getMapper().updateById(document, index);
                 return update > 0;
             } else {
                 UpdateRequest request = new UpdateRequest(index, id);
@@ -266,12 +261,12 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                 return mapper.selectById(id);
+                 return getMapper().selectById(id);
             } else {
                 GetRequest request = new GetRequest(index, id);
                 GetResponse response = client.get(request, RequestOptions.DEFAULT);
                 Map<String, Object> source = response.getSource();
-                return JsonUtil.toBean(JsonUtil.toJson(source), this.tClass);
+                return JsonUtil.toBean(JsonUtil.toJson(source), getDocumentClass());
             }
         } catch (Throwable cause) {
             log.error("Failed execute to get document, index = {}, id = {}, cause: {}", index, id, cause.getMessage());
@@ -291,7 +286,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         try {
             if (useEyEs) {
-                return mapper.selectById(id, index) != null;
+                return getMapper().selectById(id, index) != null;
             } else {
                 GetRequest request = new GetRequest(index, id);
                 request.fetchSourceContext(new FetchSourceContext(false));
@@ -323,10 +318,6 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
     }
 
-    @Override
-    public Class<T> getDocumentClass() {
-        return this.tClass;
-    }
 
     @Override
     public void setUsingEs(boolean isUsing) {
@@ -334,7 +325,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
     }
 
     private PageResult<T> eyesQueryPage(String index, Map<String, Object> andQueryMap, Map<String, Object> orQueryMap, Map<String, Object> andLikeMap, int pageNumber, int pageSize) {
-        LambdaEsQueryWrapper<T> queryWrapper = EsWrappers.lambdaQuery(this.tClass);
+        LambdaEsQueryWrapper<T> queryWrapper = EsWrappers.lambdaQuery(getDocumentClass());
         if (MapUtils.isNotEmpty(andQueryMap)) {
             queryWrapper.allEq(andQueryMap);
         }
@@ -347,7 +338,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             }
         }
 
-        EsPageInfo<T> pageQuery = mapper.pageQuery(queryWrapper, pageNumber, pageSize);
+        EsPageInfo<T> pageQuery = getMapper().pageQuery(queryWrapper, pageNumber, pageSize);
         if (Objects.isNull(pageQuery)) {
             throw new ElasticsearchException("Eyes page query error.");
         }
@@ -370,7 +361,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         sourceBuilder.size(pageSize);
         request.source(sourceBuilder);
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
-        return analyseResult(response, highlightField, pageNumber, pageSize, this.tClass);
+        return analyseResult(response, highlightField, pageNumber, pageSize, getDocumentClass());
     }
 
     public PageResult<T> analyseResult(SearchResponse searchResponse,
@@ -398,7 +389,7 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
                 }
                 sourceAsMap.put(highlightField, newField.toString());
             }
-            return BeanUtil.mapToBean(sourceAsMap, this.tClass,true, CopyOptions.create());
+            return BeanUtil.mapToBean(sourceAsMap, getDocumentClass(),true, CopyOptions.create());
         }).collect(Collectors.toList());
     }
 
