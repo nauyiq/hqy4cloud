@@ -9,7 +9,7 @@ spring:
       username: @nacos.username@
       password: @nacos.password@
       discovery:
-        server-addr: ${NACOS_HOST:hongqy1024.cn}:${NACOS_PORT:8848}
+        server-addr: ${NACOS_HOST:nacos-cloud.hongqy1024.cn}:${NACOS_PORT:8848}
         group: @nacos.group@
         namespace: @nacos.namespace@
       config:
