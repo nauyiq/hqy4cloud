@@ -440,6 +440,8 @@
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>dev</profiles.active>
+                <nacos.host>hongqy1024.cn</nacos.host>
+                <nacos.port>8848</nacos.port>
                 <nacos.username>nacos</nacos.username>
                 <nacos.password>hongqy@2021</nacos.password>
                 <nacos.group>DEV_GROUP</nacos.group>
@@ -454,16 +456,14 @@
             <id>test</id>
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <nacos.host>nacos-cloud.hongqy1024.cn</nacos.host>
+                <nacos.port>8848</nacos.port>
                 <profiles.active>test</profiles.active>
                 <nacos.username>nacos</nacos.username>
                 <nacos.password>hongqy@2021</nacos.password>
                 <nacos.group>TEST_GROUP</nacos.group>
                 <nacos.namespace>e3f4bf0e-5118-4e06-90de-087cb676b98c</nacos.namespace>
             </properties>
-            <activation>
-                <!-- 默认环境 -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
             <id>prod</id>
