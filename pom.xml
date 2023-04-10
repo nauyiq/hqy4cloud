@@ -97,6 +97,10 @@
                         <groupId>org.elasticsearch</groupId>
                         <artifactId>elasticsearch</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.elasticsearch.client</groupId>
+                        <artifactId>elasticsearch-rest-client</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -116,31 +120,32 @@
                 <type>pom</type>
                 <scope>import</scope>
                 <version>${springcloud.alibaba.version}</version>
-                <!--<exclusions>
-                    <exclusion>
-                        <groupId>com.alibaba.nacos</groupId>
-                        <artifactId>nacos-client</artifactId>
-                    </exclusion>
-                </exclusions>-->
             </dependency>
-
-            <!-- version2以上基于grpc的 spring cloud alibaba client-->
-            <!--<dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>-->
 
             <dependency>
                 <groupId>cn.easy-es</groupId>
                 <artifactId>easy-es-boot-starter</artifactId>
                 <version>${ey.es.version}</version>
+            </dependency>
+
+            <!-- elasticsearch client -->
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <!-- elasticsearch -->
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch.version}</version>
             </dependency>
 
             <dependency>
@@ -290,19 +295,7 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <!-- elasticsearch client -->
-            <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
 
-            <!-- elasticsearch -->
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
 
             <!-- Quartz -->
             <dependency>

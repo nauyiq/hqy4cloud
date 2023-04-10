@@ -31,6 +31,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
             <version>${project.parent.version}</version>
@@ -47,6 +52,10 @@
                 <exclusion>
                     <groupId>org.elasticsearch</groupId>
                     <artifactId>elasticsearch</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.elasticsearch.client</groupId>
+                    <artifactId>elasticsearch-rest-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

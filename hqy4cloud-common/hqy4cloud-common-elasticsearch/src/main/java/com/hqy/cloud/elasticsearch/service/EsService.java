@@ -149,11 +149,5 @@ public interface EsService<T extends EsDocument> {
     EsMapper<T> getMapper();
 
 
-    /**
-     * 设置是否使用eyes
-     * @param isUsing using eyes
-     */
-    void setUsingEs(boolean isUsing);
-
 
 }
