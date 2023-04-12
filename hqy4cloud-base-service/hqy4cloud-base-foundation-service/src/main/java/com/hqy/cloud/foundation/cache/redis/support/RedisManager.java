@@ -1,6 +1,7 @@
 package com.hqy.cloud.foundation.cache.redis.support;
 
 import com.hqy.cloud.foundation.cache.redis.AbstractRedisAdaptor;
+import com.hqy.cloud.foundation.cache.redis.config.RedisAutoConfiguration;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,7 +29,7 @@ public class RedisManager extends AbstractRedisAdaptor {
         if (Objects.isNull(instance)) {
             synchronized (RedisManager.class) {
                 if (Objects.isNull(instance)) {
-                    instance = new RedisManager(SpringContextHolder.getBean(RedisTemplate.class, "redisTemplate"));
+                    instance = new RedisManager(SpringContextHolder.getBean(RedisTemplate.class, RedisAutoConfiguration.NAME));
                 }
             }
         }

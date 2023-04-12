@@ -41,7 +41,7 @@ public class AuthenticationRequestContext {
             }
             return JsonUtil.toBean(payload, AuthenticationInfo.class);
         } catch (Throwable cause) {
-            log.error("Failed execute to decode authentication payload.", cause);
+            log.error("Failed execute to decode authentication payload, cause: {}", cause.getMessage());
             throw new NotAuthenticationException(cause);
         }
     }
