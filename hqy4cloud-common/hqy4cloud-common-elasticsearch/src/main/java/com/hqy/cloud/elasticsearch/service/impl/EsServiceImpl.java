@@ -1,3 +1,4 @@
+/*
 package com.hqy.cloud.elasticsearch.service.impl;
 
 import cn.easyes.core.biz.EsPageInfo;
@@ -8,7 +9,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.elasticsearch.document.EsDocument;
+import com.hqy.cloud.elasticsearch.document.ElasticDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
 import com.hqy.cloud.elasticsearch.service.EsService;
 import com.hqy.cloud.util.JsonUtil;
@@ -55,13 +56,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+*/
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/3/23 18:00
- */
+ *//*
+
 @Slf4j
-public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T> {
+public abstract class EsServiceImpl<T extends ElasticDocument> implements EsService<T> {
 
     protected final RestHighLevelClient client;
 
@@ -373,3 +376,4 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
 
 }
 
+*/
