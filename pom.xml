@@ -39,7 +39,7 @@
 
         <!-- alibaba -->
         <nacos.version>2.0.3</nacos.version>
-        <seata.version>1.4.2</seata.version>
+        <seata.version>1.5.2</seata.version>
         <druid.version>1.1.16</druid.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
         <springboot.druid.version>1.1.10</springboot.druid.version>
@@ -109,7 +109,7 @@
                 <version>${springcloud.alibaba.version}</version>
             </dependency>
 
-            <dependency>
+            <!--<dependency>
                 <groupId>io.seata</groupId>
                 <artifactId>seata-spring-boot-starter</artifactId>
                 <version>${seata.version}</version>
@@ -123,7 +123,7 @@
                         <artifactId>druid</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>io.seata</groupId>

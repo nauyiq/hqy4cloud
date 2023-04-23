@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
@@ -66,7 +67,7 @@ public abstract class ElasticServiceImpl<K, T extends ElasticDocument<K>> implem
     }
 
     @Override
-    public PageResult<T> pageQueryByBuilder(int pageNumber, int pageSize, NativeSearchQueryBuilder queryBuilder) {
+    public PageResult<T> pageQueryByBuilder(int pageNumber, int pageSize, NativeQueryBuilder queryBuilder) {
         if (Objects.isNull(queryBuilder)) {
             throw new ElasticsearchException("Query builder should not be null.");
         }

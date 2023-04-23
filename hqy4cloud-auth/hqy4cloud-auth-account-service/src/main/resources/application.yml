@@ -20,3 +20,5 @@ spring:
     import:
       - nacos:application-@profiles.active@.yaml
       - nacos:@artifactId@-@profiles.active@.yaml
+
+

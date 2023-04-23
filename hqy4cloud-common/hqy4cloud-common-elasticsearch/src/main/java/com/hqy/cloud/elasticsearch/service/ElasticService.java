@@ -3,6 +3,7 @@ package com.hqy.cloud.elasticsearch.service;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.elasticsearch.document.ElasticDocument;
 import com.hqy.cloud.elasticsearch.mapper.ElasticMapper;
+import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
@@ -69,7 +70,7 @@ public interface ElasticService<K, T extends ElasticDocument<K>> extends CrudRep
      * @param queryBuilder 查询条件构造器
      * @return             {@link PageResult}
      */
-    PageResult<T> pageQueryByBuilder(int pageNumber, int pageSize, NativeSearchQueryBuilder queryBuilder);
+    PageResult<T> pageQueryByBuilder(int pageNumber, int pageSize, NativeQueryBuilder queryBuilder);
 
 
 
