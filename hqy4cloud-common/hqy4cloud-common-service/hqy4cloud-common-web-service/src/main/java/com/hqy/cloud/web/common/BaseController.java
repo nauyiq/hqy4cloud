@@ -1,8 +1,7 @@
-package com.hqy.web.global;
+package com.hqy.cloud.web.common;
 
 import com.hqy.account.struct.AccountBaseInfoStruct;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
-import com.hqy.web.service.account.AccountRpcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;

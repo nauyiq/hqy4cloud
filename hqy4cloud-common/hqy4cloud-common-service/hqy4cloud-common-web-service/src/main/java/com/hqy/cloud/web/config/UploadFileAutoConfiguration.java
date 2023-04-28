@@ -1,4 +1,4 @@
-package com.hqy.web.config;
+package com.hqy.cloud.web.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;

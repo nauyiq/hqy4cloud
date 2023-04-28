@@ -1,4 +1,4 @@
-package com.hqy.web.service.account;
+package com.hqy.cloud.web.common;
 
 import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.RemoteAccountService;

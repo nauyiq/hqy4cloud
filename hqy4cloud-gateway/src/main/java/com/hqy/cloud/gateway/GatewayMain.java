@@ -1,5 +1,6 @@
 package com.hqy.cloud.gateway;
 
+import com.hqy.cloud.sentinel.config.SentinelAutoConfiguration;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @date 2021/7/25 19:08
  */
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, SentinelAutoConfiguration.class})
 public class GatewayMain {
 
     public static void main(String[] args) {

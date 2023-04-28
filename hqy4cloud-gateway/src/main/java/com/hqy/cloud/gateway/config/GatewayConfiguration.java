@@ -6,6 +6,7 @@ import com.hqy.cloud.auth.core.authentication.support.DefaultUploadFileSecurityC
 import com.hqy.cloud.auth.limit.support.BiBlockedIpRedisService;
 import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
+import com.hqy.cloud.gateway.server.support.GlobalExceptionHandler;
 import com.hqy.foundation.limit.service.BlockedIpService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2023/3/6 11:16
  */
 @Configuration
-public class GatewayAutoConfiguration {
+public class GatewayConfiguration {
 
     @Bean
     public AuthorizationManager authorizationManager(AuthPermissionService authPermissionService) {
@@ -33,9 +34,13 @@ public class GatewayAutoConfiguration {
         return new ManualBlockedIpService(true);
     }
 
-
     @Bean
     public UploadFileSecurityChecker uploadFileSecurityChecker() {
         return new DefaultUploadFileSecurityChecker();
+    }
+
+    @Bean
+    public GlobalExceptionHandler globalExceptionHandler() {
+        return new GlobalExceptionHandler();
     }
 }

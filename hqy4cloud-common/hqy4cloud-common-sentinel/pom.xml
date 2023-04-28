@@ -13,6 +13,14 @@
     <description>alibaba-sentinel模块</description>
     <artifactId>hqy4cloud-common-sentinel</artifactId>
 
+    <repositories>
+        <repository>
+            <id>org.dcm4chee</id>
+            <name>DCM4CHE</name>
+            <url>https://www.dcm4che.org/maven2/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
 
         <!-- alibaba sentinel 集成 spring cloud-->
@@ -21,13 +29,17 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
-
         <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-datasource-nacos</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-util</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
     </dependencies>
 

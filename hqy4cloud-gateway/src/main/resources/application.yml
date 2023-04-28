@@ -16,6 +16,30 @@ spring:
         server-addr: @nacos.host@:@nacos.port@
         group: @nacos.group@
         namespace: @nacos.namespace@
+    sentinel:
+      enabled: true # 启用sentinel
+      eager: true  # 取消懒加载
+      transport: # sentinel控制台
+        dashboard: @sentinel.connection@ #sentinel控制台访问路径
+        port: @sentinel.port@ # sentinel控制台和服务端的交互端口 默认8719
+      datasource: # sentinel加载nacos远程配置规则
+        gw-flow:
+          nacos:
+            serverAddr: @nacos.host@:@nacos.port@
+            namespace: @nacos.namespace@
+            groupId: @nacos.group@
+            dataId: @artifactId@-gw-flow
+            data-type: json
+            ruleType: gw-flow
+        gw-api-flow:
+          nacos:
+            serverAddr: @nacos.host@:@nacos.port@
+            namespace: @nacos.namespace@
+            groupId: @nacos.group@
+            dataId: @artifactId@-gw-api-flow
+            data-type: json
+            ruleType: gw-api-group
+
   config:
     import:
       - nacos:application-@profiles.active@.yaml

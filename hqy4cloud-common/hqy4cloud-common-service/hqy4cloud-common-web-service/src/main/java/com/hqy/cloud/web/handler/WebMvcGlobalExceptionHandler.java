@@ -1,12 +1,12 @@
-package com.hqy.web.global;
+package com.hqy.cloud.web.handler;
 
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
-import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.foundation.common.enums.ExceptionType;
-import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
+import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +31,16 @@ public class WebMvcGlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(NotAuthenticationException.class)
-    public MessageResponse handle(NotAuthenticationException exception, HttpServletRequest request) {
-        return ResultCode.messageResponse(ResultCode.INVALID_ACCESS_TOKEN);
+    public R<Boolean> handle(NotAuthenticationException exception, HttpServletRequest request) {
+        return R.failed(ResultCode.INVALID_ACCESS_TOKEN);
     }
 
     @ResponseBody
     @ExceptionHandler(RuntimeException.class)
-    public MessageResponse handler(RuntimeException e, HttpServletRequest request) {
+    public R<Boolean> handler(RuntimeException e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
         collectionException(e, request);
-        return ResultCode.messageResponse(ResultCode.SYSTEM_ERROR);
+        return R.failed(ResultCode.SYSTEM_ERROR);
     }
 
     private void collectionException(RuntimeException e, HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class WebMvcGlobalExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public MessageResponse handler(MethodArgumentNotValidException e) {
+    public R<Boolean> handler(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         String message = "["+ Objects.requireNonNull(e.getBindingResult().getFieldError()).getField()+"] ";
         String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
@@ -68,8 +68,7 @@ public class WebMvcGlobalExceptionHandler {
         } else {
             message = message + "should not be empty.";
         }
-
-        return new MessageResponse(false, message, ResultCode.ERROR_PARAM.code);
+        return R.failed(message, ResultCode.ERROR_PARAM.code);
     }
 
     /**
@@ -79,9 +78,9 @@ public class WebMvcGlobalExceptionHandler {
      */
     @ExceptionHandler(ValidationException.class)
     @ResponseBody
-    public MessageResponse validationException(ValidationException  e) {
+    public R<Boolean> validationException(ValidationException  e) {
         log.warn(e.getMessage());
-        return ResultCode.messageResponse(ResultCode.ERROR_PARAM);
+        return R.failed(ResultCode.ERROR_PARAM);
     }
 
 }

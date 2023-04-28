@@ -13,10 +13,10 @@ import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheDataServiceService;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UpdateDbException;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.ValidationUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
+import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +84,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         }
         return buildAccountBaseInfoStruct(accountBaseInfoDTO);
     }
+
 
     private AccountBaseInfoStruct buildAccountBaseInfoStruct(AccountBaseInfoDTO accountBaseInfoDTO) {
         return new AccountBaseInfoStruct(accountBaseInfoDTO.getId(), accountBaseInfoDTO.getNickname(), accountBaseInfoDTO.getUsername(),

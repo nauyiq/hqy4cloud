@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hqy.cloud.web.config.UploadFileAutoConfiguration,\
+com.hqy.cloud.web.handler.WebMvcGlobalExceptionHandler

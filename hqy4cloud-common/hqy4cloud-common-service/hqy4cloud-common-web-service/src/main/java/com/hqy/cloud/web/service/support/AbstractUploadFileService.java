@@ -1,4 +1,4 @@
-package com.hqy.web.service.support;
+package com.hqy.cloud.web.service.support;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
@@ -8,14 +8,14 @@ import com.hqy.cloud.util.CommonDateUtil;
 import com.hqy.cloud.util.config.ConfigurationContext;
 import com.hqy.cloud.util.file.FileUtil;
 import com.hqy.cloud.util.file.FileValidateContext;
-import com.hqy.web.service.UploadFileService;
+import com.hqy.cloud.web.service.UploadFileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  * AbstractUploadFileService.
- * @see com.hqy.web.service.UploadFileService
+ * @see UploadFileService
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/9/29 11:13

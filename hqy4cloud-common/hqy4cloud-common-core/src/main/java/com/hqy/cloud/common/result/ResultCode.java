@@ -38,7 +38,7 @@ public enum ResultCode implements Result {
     /**
      * 接口限流了
      */
-    INTERFACE_LIMITED(9002, "Interface limited, please try again later."),
+    INTERFACE_LIMITED(9002, "Too many request, please try again later."),
 
     /**
      * 新增数据异常

@@ -41,7 +41,6 @@ public class NacosRouteDefinitionRepository implements RouteDefinitionRepository
         nacosConfigManager = new NacosConfigManager(nacosConfigProperties);
         this.gatewayRouteDataId = gatewayRouteDataId;
         this.gatewayRouteGroup = gatewayRouteGroup;
-
         addListener();
     }
 

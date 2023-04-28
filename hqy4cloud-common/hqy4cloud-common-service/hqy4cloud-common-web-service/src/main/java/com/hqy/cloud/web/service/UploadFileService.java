@@ -1,4 +1,4 @@
-package com.hqy.web.service;
+package com.hqy.cloud.web.service;
 
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
 import com.hqy.foundation.common.FileResponse;

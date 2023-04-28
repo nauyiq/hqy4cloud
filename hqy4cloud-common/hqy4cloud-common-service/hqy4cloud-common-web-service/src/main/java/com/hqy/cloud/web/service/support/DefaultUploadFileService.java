@@ -1,4 +1,4 @@
-package com.hqy.web.service.support;
+package com.hqy.cloud.web.service.support;
 
 import com.hqy.foundation.common.FileResponse;
 import com.hqy.cloud.util.file.FileUtil;

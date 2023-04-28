@@ -1,4 +1,4 @@
-package com.hqy.web.service.account.dto;
+package com.hqy.cloud.web.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
