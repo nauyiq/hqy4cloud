@@ -3,24 +3,23 @@ package com.hqy.cloud.rpc.thrift;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerFactory;
-import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
+import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.cluster.client.AbstractClient;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
-import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.monitor.Monitor;
 import com.hqy.cloud.rpc.monitor.thrift.ThriftMonitorFactory;
 import com.hqy.cloud.rpc.registry.api.RegistryFactory;
-import com.hqy.cloud.thrift.client.support.CollectionClientEventHandler;
-import com.hqy.cloud.thrift.client.support.SeataGlobalTransactionClientEventHandler;
 import com.hqy.cloud.rpc.thrift.proxy.JdkProxyFactory;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
+import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerFactory;
+import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
+import com.hqy.cloud.thrift.client.support.CollectionClientEventHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +42,6 @@ public abstract class ThriftRPCClient extends AbstractClient {
         this.registryFactory = registryFactory;
     }
 
-
     @Override
     protected <T> Directory<T> createDirectory(Class<T> serviceClass) {
         return createDirectory(serviceClass, checkAnnotation(serviceClass));
@@ -62,7 +60,6 @@ public abstract class ThriftRPCClient extends AbstractClient {
         return new ThriftDynamicDirectory<>(application, rpcModel, serviceClass, clientManager, registryFactory);
     }
 
-
     private ThriftClientManagerWrapper initClientFactory() {
         RPCModel rpcModel = getConsumerRpcModel();
         //client worker count.
@@ -76,12 +73,9 @@ public abstract class ThriftRPCClient extends AbstractClient {
     }
 
     private List<ThriftContextClientHandleService> createClientHandlerServices(RPCModel rpcModel) {
-        //seata transactional support.
-        SeataGlobalTransactionClientEventHandler seataGlobalTransactionClientEventHandler = new SeataGlobalTransactionClientEventHandler();
         //collection support.
         CollectionClientEventHandler collectionClientEventHandler = createCollectionClientEventHandler(rpcModel);
-
-        return Arrays.asList(seataGlobalTransactionClientEventHandler, collectionClientEventHandler);
+        return Collections.singletonList(collectionClientEventHandler);
     }
 
     private CollectionClientEventHandler createCollectionClientEventHandler(RPCModel rpcModel) {

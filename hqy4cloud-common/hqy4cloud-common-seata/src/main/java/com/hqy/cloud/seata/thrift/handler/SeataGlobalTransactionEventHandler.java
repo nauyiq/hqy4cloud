@@ -1,8 +1,8 @@
-package com.hqy.cloud.thrift.server.support;
+package com.hqy.cloud.seata.thrift.handler;
 
+import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.core.RPCContext;
-import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
 import io.seata.core.context.RootContext;
@@ -12,15 +12,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SeataGlobalTransactionEventHandler.
- * @see io.seata.core.context.RootContext
+ * @see RootContext
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/21 16:33
  */
 public class SeataGlobalTransactionEventHandler implements ThriftServerContextHandleService {
-
     private static final Logger log = LoggerFactory.getLogger(SeataGlobalTransactionEventHandler.class);
-
 
     @Override
     public void doPostRead(ThriftServerContext thriftServerContext, String methodName, Object[] args) {

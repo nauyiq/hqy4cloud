@@ -1,14 +1,15 @@
 package com.hqy.cloud.thrift.client;
 
+import com.facebook.ThriftRequestPram;
 import com.facebook.nifty.client.ClientRequestContext;
 import com.facebook.swift.service.RuntimeTApplicationException;
 import com.facebook.swift.service.ThriftClientEventHandler;
 import com.hqy.cloud.rpc.core.RPCContext;
-import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.thrift.TApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * ThriftContextClientEventHandler for {@link ThriftClientEventHandler}
@@ -28,10 +31,16 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ThriftContextClientEventHandler.class);
 
-    private final List<ThriftContextClientHandleService> services;
+    private final List<ThriftContextClientHandleService> services = new CopyOnWriteArrayList<>();
 
     public ThriftContextClientEventHandler(List<ThriftContextClientHandleService> services) {
-        this.services = services;
+        if (CollectionUtils.isNotEmpty(services)) {
+            this.services.addAll(services);
+        }
+        ServiceLoader<ThriftContextClientHandleService> load = ServiceLoader.load(ThriftContextClientHandleService.class);
+        for (ThriftContextClientHandleService service : load) {
+            this.services.add(service);
+        }
     }
 
     @Override

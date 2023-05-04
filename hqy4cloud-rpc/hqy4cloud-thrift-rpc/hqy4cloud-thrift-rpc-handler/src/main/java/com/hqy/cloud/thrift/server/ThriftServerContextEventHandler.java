@@ -9,12 +9,15 @@ import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
 import com.hqy.cloud.util.ArgsUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.ServiceLoader;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * ThriftContextServerEventHandler for {@link ThriftEventHandler}
@@ -27,10 +30,16 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ThriftServerContextEventHandler.class);
 
-    private final List<ThriftServerContextHandleService> services;
+    private final List<ThriftServerContextHandleService> services = new CopyOnWriteArrayList<>();
 
     public ThriftServerContextEventHandler(List<ThriftServerContextHandleService> services) {
-        this.services = services;
+        if (CollectionUtils.isNotEmpty(services)) {
+            this.services.addAll(services);
+        }
+        ServiceLoader<ThriftServerContextHandleService> loader = ServiceLoader.load(ThriftServerContextHandleService.class);
+        for (ThriftServerContextHandleService thriftServerContextHandleService : loader) {
+            this.services.add(thriftServerContextHandleService);
+        }
     }
 
     @Override

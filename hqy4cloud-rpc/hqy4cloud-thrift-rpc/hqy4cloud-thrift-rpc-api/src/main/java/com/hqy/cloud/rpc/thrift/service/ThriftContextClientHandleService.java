@@ -4,7 +4,6 @@ import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 
 /**
  * client handler processor.
- * @see ThriftContextClientEventHandler
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/20 14:10

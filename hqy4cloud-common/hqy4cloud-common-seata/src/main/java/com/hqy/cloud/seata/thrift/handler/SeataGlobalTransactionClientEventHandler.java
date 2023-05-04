@@ -1,8 +1,8 @@
-package com.hqy.cloud.thrift.client.support;
+package com.hqy.cloud.seata.thrift.handler;
 
+import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.core.RPCContext;
-import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 import io.seata.core.context.RootContext;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * seata transactional client handler.
  * seata transaction id transport.
- * @see io.seata.core.context.RootContext
+ * @see RootContext
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/21 15:04
