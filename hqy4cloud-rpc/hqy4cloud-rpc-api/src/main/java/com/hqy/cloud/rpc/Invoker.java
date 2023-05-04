@@ -24,7 +24,7 @@ public interface Invoker<T> extends RPCModelService {
      * @return result       method
      * @throws RpcException
      */
-    Object invoke(Invocation invocation) throws RpcException;
+    Result invoke(Invocation invocation) throws RpcException;
 
     /**
      * get client consumer rpc model.

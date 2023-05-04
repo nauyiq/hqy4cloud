@@ -3,6 +3,7 @@ package com.hqy.cloud.rpc.cluster.support;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
 import com.hqy.cloud.rpc.CommonConstants;
@@ -31,7 +32,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         List<Invoker<T>> copyInvokers = invokers;
         checkInvokers(copyInvokers, invocation);
         String methodName = invocation.getMethodName();
@@ -55,7 +56,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             invoked.add(invoker);
             boolean success = false;
             try {
-                Object result = invoker.invoke(invocation);
+                Result result = invoker.invoke(invocation);
                 if (le != null && log.isWarnEnabled()) {
                     log.warn("Although retry the method " + methodName
                             + " in the service " + getInterface().getName()

@@ -20,6 +20,7 @@
         <module>hqy4cloud-thrift-rpc-client</module>
         <module>hqy4cloud-thrift-rpc-springboot-starter</module>
         <module>hqy4cloud-thrift-rpc-handler</module>
+        <module>hqy4cloud-thrift-rpc-sentinel-adaptor</module>
     </modules>
 
 

@@ -3,6 +3,7 @@ package com.hqy.cloud.rpc.cluster.support;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class FailSafeClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         try {
             checkInvokers(invokers, invocation);
             Invoker<T> invoker = select(loadBalance, invocation, invokers, null);

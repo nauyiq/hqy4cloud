@@ -3,6 +3,7 @@ package com.hqy.cloud.rpc.cluster.support;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.ClusterInvoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
@@ -103,7 +104,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     @Override
-    public Object invoke(Invocation invocation) throws RpcException {
+    public Result invoke(Invocation invocation) throws RpcException {
         List<Invoker<T>> invokers = list(getModel(), hashFactor);
         LoadBalance loadBalance =  initLoadBalance(invokers, invocation);
         return doInvoke(invocation, invokers, loadBalance);
@@ -313,7 +314,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         this.reselectCount = reselectCount;
     }
 
-    protected abstract Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException;
+    protected abstract Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException;
 
     protected void checkInvokers(List<Invoker<T>> invokers, Invocation invocation) {
         if (CollectionUtils.isEmpty(invokers)) {

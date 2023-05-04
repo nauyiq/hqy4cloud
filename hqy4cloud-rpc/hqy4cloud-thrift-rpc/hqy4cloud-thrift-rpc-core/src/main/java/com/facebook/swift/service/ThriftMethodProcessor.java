@@ -227,7 +227,7 @@ public class ThriftMethodProcessor {
 
     private ListenableFuture<?> invokeMethod(Object[] args) {
         try {
-            //移除动态添加的参数 RemoteParamEx 消费者在执行rpc之前 就把RemoteParamEx放到ThriftHandler中.
+            //移除动态添加的参数 ThriftRequestPram 消费者在执行rpc之前 就把ThriftRequestPram放到ThriftHandler中.
             args = ArgsUtil.reduceTailArg(args);
             Object response = method.invoke(service, args);
             if (response instanceof ListenableFuture) {

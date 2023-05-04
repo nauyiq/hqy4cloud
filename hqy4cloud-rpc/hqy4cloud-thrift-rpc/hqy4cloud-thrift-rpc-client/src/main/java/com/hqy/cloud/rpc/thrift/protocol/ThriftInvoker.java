@@ -6,6 +6,7 @@ import com.hqy.cloud.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.RpcInvocation;
 import com.hqy.cloud.rpc.protocol.AbstractInvoker;
 import com.hqy.cloud.rpc.thrift.commonpool.MultiplexThriftClientTargetPooled;
@@ -47,7 +48,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
     }
 
     @Override
-    protected Object doInvoke(Invocation invocation) throws RpcException {
+    protected Result doInvoke(Invocation invocation) throws RpcException {
         //result obj,
         Object result = null;
         //rpcService proxy.

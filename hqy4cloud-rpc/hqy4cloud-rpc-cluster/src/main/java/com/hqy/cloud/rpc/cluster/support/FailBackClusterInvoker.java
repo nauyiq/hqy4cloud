@@ -1,6 +1,7 @@
 package com.hqy.cloud.rpc.cluster.support;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.rpc.Result;
 import com.hqy.foundation.timer.HashedWheelTimer;
 import com.hqy.foundation.timer.Timeout;
 import com.hqy.foundation.timer.Timer;
@@ -68,7 +69,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         Invoker<T> invoker = null;
         RPCModel rpcModel = getModel();
         try {

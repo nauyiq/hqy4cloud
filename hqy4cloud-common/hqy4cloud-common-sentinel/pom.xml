@@ -13,14 +13,6 @@
     <description>alibaba-sentinel模块</description>
     <artifactId>hqy4cloud-common-sentinel</artifactId>
 
-    <repositories>
-        <repository>
-            <id>org.dcm4chee</id>
-            <name>DCM4CHE</name>
-            <url>https://www.dcm4che.org/maven2/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <!-- alibaba sentinel 集成 spring cloud-->
