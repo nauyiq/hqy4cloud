@@ -1,4 +1,4 @@
-package com.hqy.cloud.thrift.client.support;
+package com.hqy.cloud.thrift.handler.support;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.rpc.core.Environment;

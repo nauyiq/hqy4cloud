@@ -8,7 +8,7 @@ import com.hqy.cloud.rpc.model.RPCModel;
  * @version 1.0
  * @date 2022/7/21 15:57
  */
-public class ThriftServerContext extends Context{
+public class ThriftServerContext extends Context {
 
     private final RPCModel rpcModel;
     private final String communicationParty;
@@ -33,4 +33,6 @@ public class ThriftServerContext extends Context{
     public RPCModel getRpcModel() {
         return rpcModel;
     }
+
+
 }

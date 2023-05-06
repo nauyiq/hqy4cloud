@@ -14,7 +14,7 @@ import com.hqy.cloud.rpc.thrift.proxy.JdkProxyFactory;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerFactory;
 import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
-import com.hqy.cloud.thrift.client.support.CollectionClientEventHandler;
+import com.hqy.cloud.thrift.handler.support.CollectionClientEventHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

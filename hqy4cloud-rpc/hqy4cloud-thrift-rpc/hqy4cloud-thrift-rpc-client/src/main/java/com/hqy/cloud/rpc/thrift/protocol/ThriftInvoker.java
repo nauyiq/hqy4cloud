@@ -6,12 +6,11 @@ import com.hqy.cloud.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.Result;
-import com.hqy.cloud.rpc.RpcInvocation;
+import com.hqy.cloud.rpc.fallback.Fallback;
+import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.protocol.AbstractInvoker;
 import com.hqy.cloud.rpc.thrift.commonpool.MultiplexThriftClientTargetPooled;
-import com.hqy.cloud.rpc.model.RPCServerAddress;
-import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.transaction.TransactionContext;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.transport.TTransportException;
@@ -48,7 +47,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
     }
 
     @Override
-    protected Result doInvoke(Invocation invocation) throws RpcException {
+    protected Object doInvoke(Invocation invocation) throws RpcException {
         //result obj,
         Object result = null;
         //rpcService proxy.
@@ -62,7 +61,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         try {
             target = thriftClientTargetPooled.getTargetClient(serverAddress);
             targetInfo = thriftClientTargetPooled.gerServiceInfo(target);
-            result = invocation.getMethod().invoke(target, invocation.getArguments());
+            result = invocation.getMethod().invoke(target, invocation.getArguments()) ;
             if (Objects.nonNull(invocation.getInvocationCallback())) {
                 invocation.getInvocationCallback().doCallback(result);
             }
@@ -73,7 +72,11 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
             needReturnTarget = false;
             doExecutionException(invocation, targetInfo, e);
         } catch (Exception e) {
-            needReturnTarget = doException(invocation, targetInfo, e);
+            try {
+                result = doPreException(invocation, e);
+            } catch (Exception preException) {
+                needReturnTarget = doException(invocation, targetInfo, preException, e);
+            }
         } finally {
             try {
                 if (needReturnTarget) {
@@ -91,10 +94,30 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         return result;
     }
 
-    private boolean doException(Invocation invocation, String targetInfo, Exception e) {
-        boolean matchDisconnectedByServer = checkIfDisconnectedByServer(e);
+    private Object doPreException(Invocation invocation, Exception e) throws Exception {
+        if (e instanceof InvocationTargetException && ((InvocationTargetException) e).getTargetException() != null) {
+            Throwable targetException = ((InvocationTargetException) e).getTargetException();
+            Throwable cause = targetException.getCause();
+            Fallback fallback = invocation.getFallback(targetException);
+            if (fallback == null && cause != null) {
+                fallback = invocation.getFallback(cause);
+                targetException = cause;
+            }
+
+            if (fallback != null) {
+                return fallback.handle(this, invocation, (Exception) targetException);
+            }
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    private boolean doException(Invocation invocation, String targetInfo, Exception preException, Exception e) {
+        if (!(preException instanceof UnsupportedOperationException)) {
+            throw new RpcException(RpcException.RELIABLE_EXCEPTION, preException);
+        }
+
         boolean needReturnTarget = true;
-        if (matchDisconnectedByServer) {
+        if (checkIfDisconnectedByServer(e)) {
             log.warn("RPC found a serious error and the connection request was rejected by the long connection over the server NIO channel.");
             needReturnTarget = false;
         }
@@ -158,9 +181,9 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
     }
 
     @Override
-    protected void doPrepareInvoke(RpcInvocation rpcInvocation) {
+    protected void doPrepareInvoke(Invocation invocation) {
         //如果是否是分布式事务方法，则在调用之前标记一下. 在thrift rpc调用过程中会进行事务传播.
-        TransactionContext.makeThriftMethodTransactional(rpcInvocation.getMethod());
+        TransactionContext.makeThriftMethodTransactional(invocation.getMethod());
     }
 
 }

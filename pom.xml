@@ -440,7 +440,7 @@
                 <nacos.group>DEV_GROUP</nacos.group>
                 <nacos.namespace>9cd8de3b-030a-49f1-9256-f04de35cdb9e</nacos.namespace>
                 <sentinel.connection>127.0.0.1:8080</sentinel.connection>
-                <sentinel.port>127.0.0.1:8719</sentinel.port>
+                <sentinel.port>8719</sentinel.port>
             </properties>
             <activation>
                 <!-- 默认环境 -->
@@ -459,7 +459,7 @@
                 <nacos.group>TEST_GROUP</nacos.group>
                 <nacos.namespace>e3f4bf0e-5118-4e06-90de-087cb676b98c</nacos.namespace>
                 <sentinel.connection>127.0.0.1:8080</sentinel.connection>
-                <sentinel.port>127.0.0.1:8719</sentinel.port>
+                <sentinel.port>8719</sentinel.port>
             </properties>
         </profile>
         <profile>

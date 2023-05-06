@@ -27,7 +27,7 @@ public class FailSafeClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         try {
             checkInvokers(invokers, invocation);
             Invoker<T> invoker = select(loadBalance, invocation, invokers, null);

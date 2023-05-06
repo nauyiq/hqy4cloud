@@ -4,7 +4,7 @@ import com.facebook.nifty.client.NettyClientConfig;
 import com.facebook.nifty.client.NiftyClient;
 import com.facebook.swift.codec.ThriftCodecManager;
 import com.facebook.swift.service.ThriftClientManager;
-import com.hqy.cloud.thrift.client.ThriftContextClientEventHandler;
+import com.hqy.cloud.thrift.handler.ThriftContextClientEventHandler;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 
 import java.util.Collections;

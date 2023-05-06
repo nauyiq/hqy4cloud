@@ -24,7 +24,6 @@ public class SeataGlobalTransactionClientEventHandler implements ThriftContextCl
 
     @Override
     public void doPreWrite(ThriftContext thriftContext, String methodName, Object[] args) {
-        ThriftContextClientHandleService.super.doPreWrite(thriftContext, methodName, args);
 
         if (thriftContext.getRequestPram() == null) {
             log.warn("ThriftContext request parameter is null, current RPC context does not allow extended parameter passing.");

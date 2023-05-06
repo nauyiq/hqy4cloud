@@ -12,7 +12,7 @@ import com.hqy.cloud.rpc.server.RPCServer;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.core.Environment;
-import com.hqy.cloud.thrift.server.ThriftServerContextEventHandler;
+import com.hqy.cloud.thrift.handler.ThriftServerContextEventHandler;
 import com.hqy.cloud.thrift.core.ThriftServerModel;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerProperties;

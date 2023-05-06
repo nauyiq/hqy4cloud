@@ -5,6 +5,7 @@ import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.threadlocal.InternalThreadLocal;
 import com.hqy.cloud.rpc.transaction.TransactionContext;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 /**
@@ -14,6 +15,7 @@ import lombok.Builder;
  * @date 2022/7/18 17:46
  */
 @Builder
+@AllArgsConstructor
 public class RPCContext {
 
     private static final InternalThreadLocal<RPCContext> RPC_CONTEXT = new InternalThreadLocal<>();
@@ -39,19 +41,6 @@ public class RPCContext {
     private Object request;
 
     public RPCContext() {
-    }
-
-    public RPCContext(RPCModel rpcModel, String method, Class<?> serviceClass, Class<?>[] parameterTypes, Object[] arguments, String caller, String provider, RPCServerAddress consumerAddress, RPCServerAddress providerAddress, Object request) {
-        this.rpcModel = rpcModel;
-        this.method = method;
-        this.serviceClass = serviceClass;
-        this.parameterTypes = parameterTypes;
-        this.arguments = arguments;
-        this.caller = caller;
-        this.provider = provider;
-        this.consumerAddress = consumerAddress;
-        this.providerAddress = providerAddress;
-        this.request = request;
     }
 
     public boolean needCollect(String methodName) {

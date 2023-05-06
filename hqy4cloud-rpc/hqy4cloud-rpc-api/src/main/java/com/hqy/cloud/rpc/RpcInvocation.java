@@ -1,5 +1,8 @@
 package com.hqy.cloud.rpc;
 
+import com.hqy.cloud.rpc.fallback.Fallback;
+import com.hqy.cloud.rpc.fallback.GlobalFallbackContext;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -40,6 +43,8 @@ public class RpcInvocation implements Invocation, Serializable {
     private transient InvokeMode invokeMode;
 
     private final InvocationCallback invocationCallback;
+
+
 
     public RpcInvocation(Invoker<?> invoker, Method method, Object[] args) {
         this(invoker, null, method, args, InvokeMode.SYNC, null);
@@ -124,6 +129,7 @@ public class RpcInvocation implements Invocation, Serializable {
         return invokeMode;
     }
 
+    @Override
     public void addObjectAttachmentsIfAbsent(Map<String, Object> attachments) {
         if (attachments == null) {
             return;
@@ -131,6 +137,16 @@ public class RpcInvocation implements Invocation, Serializable {
         for (Map.Entry<String, Object> entry : attachments.entrySet()) {
             setAttachmentIfAbsent(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public Map<String, Object> getObjectAttachments() {
+        return attachments;
+    }
+
+    @Override
+    public Fallback getFallback(Throwable e) {
+        return GlobalFallbackContext.getFallback(e.getClass());
     }
 
     public void setAttachmentIfAbsent(String key, Object value) {

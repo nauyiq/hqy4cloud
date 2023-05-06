@@ -1,12 +1,12 @@
-package com.hqy.cloud.thrift.client;
+package com.hqy.cloud.thrift.handler;
 
 import com.facebook.ThriftRequestPram;
 import com.facebook.nifty.client.ClientRequestContext;
-import com.facebook.swift.service.RuntimeTApplicationException;
 import com.facebook.swift.service.ThriftClientEventHandler;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftContext;
+import com.hqy.cloud.thrift.core.ThriftEventHandlerUtil;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,7 +14,6 @@ import org.apache.thrift.TApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -67,6 +66,9 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
                 } catch (Throwable t) {
                     log.error("Failed execute to doPreWrite from {}, context:{}.", service.getClass().getSimpleName(), JsonUtil.toJson(thriftContext));
                     log.error(t.getMessage(), t);
+                    if (service.isThrowException()) {
+                        throw t;
+                    }
                 }
             }
         }
@@ -90,6 +92,9 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
                 } catch (Throwable t) {
                     log.error("Failed execute to doPostWrite from {}, context:{}.", service.getClass().getSimpleName(), JsonUtil.toJson(thriftContext));
                     log.error(t.getMessage(), t);
+                    if (service.isThrowException()) {
+                        throw t;
+                    }
                 }
             }
         }
@@ -106,6 +111,9 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
                 } catch (Throwable t) {
                     log.error("Failed execute to doPreRead from {}, context:{}.", service.getClass().getSimpleName(), JsonUtil.toJson(thriftContext));
                     log.error(t.getMessage(), t);
+                    if (service.isThrowException()) {
+                        throw t;
+                    }
                 }
             }
         }
@@ -122,6 +130,9 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
                 } catch (Throwable t) {
                     log.error("Failed execute to doPostRead from {}, context:{}.", service.getClass().getSimpleName(), JsonUtil.toJson(thriftContext));
                     log.error(t.getMessage(), t);
+                    if (service.isThrowException()) {
+                        throw t;
+                    }
                 }
             }
         }
@@ -131,8 +142,8 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
     public void preReadException(Object context, String methodName, Throwable t) {
         log.error("Throw exception from preRead, cause: {}.", t.getMessage());
         preRead(context, methodName);
-        ((ThriftContext) context).setResult(false);
-        compatibilityServerReturnNull(t, (ThriftContext) context);
+//        ((ThriftContext) context).setResult(false);
+        ThriftEventHandlerUtil.compatibilityServerReturnNull(t, (ThriftContext) context);
     }
 
     @Override
@@ -143,7 +154,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
             ((ThriftContext) context).setResult(true);
             log.warn("Rpc method result return null, methodName:{}.", methodName);
         } else {
-            compatibilityServerReturnNull(e, (ThriftContext) context);
+            ThriftEventHandlerUtil.compatibilityServerReturnNull(e, (ThriftContext) context);
         }
     }
 
@@ -162,22 +173,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
         }
     }
 
-    /**
-     * 兼容客户端返回了null
-     * @param exception        异常
-     * @param context   thrift 上下文
-     */
-    protected void compatibilityServerReturnNull(Throwable exception, ThriftContext context) {
-        if (exception instanceof InvocationTargetException && exception.getCause() != null
-                && exception.getCause() instanceof RuntimeTApplicationException && exception.getCause().getCause() != null
-                && exception.getCause().getCause() instanceof TApplicationException
-                && ((TApplicationException) exception.getCause().getCause()).getType() == TApplicationException.MISSING_RESULT) {
-            context.setResult(true);
-        } else {
-            context.setException(exception);
-            context.setResult(false);
-        }
-    }
+
 
     @Override
     public boolean equals(Object o) {

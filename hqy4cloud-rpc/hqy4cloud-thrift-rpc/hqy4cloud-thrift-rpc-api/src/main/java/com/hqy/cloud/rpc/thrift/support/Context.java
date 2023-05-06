@@ -1,6 +1,9 @@
 package com.hqy.cloud.rpc.thrift.support;
 
+import cn.hutool.core.map.MapUtil;
 import com.facebook.ThriftRequestPram;
+
+import java.util.Map;
 
 /**
  * @author qiyuan.hong
@@ -24,6 +27,8 @@ public abstract class Context {
     private boolean result = true;
 
     private ThriftRequestPram requestPram;
+
+    private Map<String, Object> attachments;
 
     public Context() {
         this.startTime = System.currentTimeMillis();
@@ -88,4 +93,26 @@ public abstract class Context {
     public void setRequestPram(ThriftRequestPram requestPram) {
         this.requestPram = requestPram;
     }
+
+    public Map<String, Object> getAttachments() {
+        return attachments;
+    }
+
+    public Object getAttachment(String key) {
+        return this.attachments.get(key);
+    }
+
+    public synchronized void setAttachments(Map<String, Object> attachments) {
+        this.attachments = attachments;
+    }
+
+    public synchronized Map<String, Object> setAttachment(String key, Object value) {
+        if (MapUtil.isEmpty(this.attachments)) {
+            // must be use hashmap, concurrentHashMap not support store 'null' value.
+            attachments = MapUtil.newHashMap(4);
+        }
+        this.attachments.put(key, value);
+        return this.attachments;
+    }
+
 }

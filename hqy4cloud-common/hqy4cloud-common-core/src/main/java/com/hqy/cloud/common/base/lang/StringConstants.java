@@ -226,6 +226,10 @@ public interface StringConstants {
          */
         String AND = "&";
 
+        String LEFT_BRACKET = "(";
+
+        String RIGHT_BRACKET = ")";
+
     }
 
     interface File {

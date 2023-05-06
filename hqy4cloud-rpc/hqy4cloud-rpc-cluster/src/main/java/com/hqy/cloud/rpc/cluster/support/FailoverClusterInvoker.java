@@ -32,7 +32,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         List<Invoker<T>> copyInvokers = invokers;
         checkInvokers(copyInvokers, invocation);
         String methodName = invocation.getMethodName();
@@ -56,7 +56,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             invoked.add(invoker);
             boolean success = false;
             try {
-                Result result = invoker.invoke(invocation);
+                Object result = invoker.invoke(invocation);
                 if (le != null && log.isWarnEnabled()) {
                     log.warn("Although retry the method " + methodName
                             + " in the service " + getInterface().getName()

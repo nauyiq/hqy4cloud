@@ -104,7 +104,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     @Override
-    public Result invoke(Invocation invocation) throws RpcException {
+    public Object invoke(Invocation invocation) throws RpcException {
         List<Invoker<T>> invokers = list(getModel(), hashFactor);
         LoadBalance loadBalance =  initLoadBalance(invokers, invocation);
         return doInvoke(invocation, invokers, loadBalance);
@@ -314,7 +314,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         this.reselectCount = reselectCount;
     }
 
-    protected abstract Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException;
+    protected abstract Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException;
 
     protected void checkInvokers(List<Invoker<T>> invokers, Invocation invocation) {
         if (CollectionUtils.isEmpty(invokers)) {

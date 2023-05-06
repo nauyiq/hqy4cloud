@@ -69,7 +69,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     @Override
-    protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
+    protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         Invoker<T> invoker = null;
         RPCModel rpcModel = getModel();
         try {
