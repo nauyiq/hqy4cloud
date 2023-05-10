@@ -75,9 +75,9 @@ public interface Invocation {
 
     /**
      * get this invocation fallback.
-     * @param e exception
-     * @return  {@link Fallback}
+     * @param exType exception type
+     * @return       {@link Fallback}
      */
-    Fallback getFallback(Throwable e);
+    Fallback getFallback(Class<? extends Throwable> exType);
 
 }

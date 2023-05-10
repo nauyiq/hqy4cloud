@@ -1,6 +1,7 @@
 package com.hqy.cloud.web.handler;
 
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
+import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.IpUtil;
@@ -41,6 +42,16 @@ public class WebMvcGlobalExceptionHandler {
         log.error(e.getMessage(), e);
         collectionException(e, request);
         return R.failed(ResultCode.SYSTEM_ERROR);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(RpcException.class)
+    public R<Boolean> handler(RpcException rpcException, HttpServletRequest request) {
+        if (rpcException.isBiz()) {
+            return R.failed(ResultCode.RPC_INTERFACE_TOO_MANY_REQUEST);
+        } else {
+            return R.failed(ResultCode.SYSTEM_BUSY);
+        }
     }
 
     private void collectionException(RuntimeException e, HttpServletRequest request) {

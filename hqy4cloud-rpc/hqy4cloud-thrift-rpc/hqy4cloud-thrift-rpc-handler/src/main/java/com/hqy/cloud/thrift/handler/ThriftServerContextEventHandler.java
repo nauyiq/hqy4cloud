@@ -2,6 +2,7 @@ package com.hqy.cloud.thrift.handler;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.service.ThriftEventHandler;
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
@@ -43,13 +44,13 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
     }
 
     @Override
-    public Object getContext(String methodName, RequestContext requestContext) {
+    public Object getContext(String simpleMethodName, String methodName, String serviceName, RequestContext requestContext) {
         String communicationParty = requestContext.getConnectionContext().getRemoteAddress().toString();
         RPCModel rpcModel = ProjectContextInfo.getBean(RPCModel.class);
         if (rpcModel == null) {
             log.warn("Not found RPC model from ProjectContextInfo.");
         }
-        return new ThriftServerContext(communicationParty, rpcModel);
+        return new ThriftServerContext( serviceName + StringConstants.Symbol.POINT +  simpleMethodName, serviceName, communicationParty, rpcModel);
     }
 
     @Override
@@ -63,13 +64,12 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
                     service.doPreRead(thriftServerContext, methodName);
                 } catch (Throwable t) {
                     log.error("Failed execute to doPreRead from {}, context:{}", service.getClass().getSimpleName(), JsonUtil.toJson(thriftServerContext));
-                    if (service.isThrowException()) {
-                        throw t;
-                    }
                 }
             }
         }
     }
+
+
 
     @Override
     public void postRead(Object context, String methodName, Object[] args) throws TException {
@@ -84,6 +84,21 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
                     service.doPostRead(thriftServerContext, methodName, args);
                 } catch (Throwable t) {
                     log.error("Failed execute to doPostRead from {}, context:{}", service.getClass().getSimpleName(), JsonUtil.toJson(thriftServerContext));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void preInvokeMethod(Object context, String methodName, Object[] args) {
+        super.preInvokeMethod(context, methodName, args);
+        if (context instanceof ThriftServerContext) {
+            ThriftServerContext thriftServerContext = (ThriftServerContext) context;
+            for (ThriftServerContextHandleService service : services) {
+                try {
+                    service.doPreInvokeMethod(thriftServerContext, methodName, args);
+                } catch (Throwable t) {
+                    log.error("Failed execute to doPreInvokeMethod from {}, context:{}", service.getClass().getSimpleName(), JsonUtil.toJson(thriftServerContext));
                     if (service.isThrowException()) {
                         throw t;
                     }
@@ -113,9 +128,6 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
                     service.doPreWrite(thriftServerContext, methodName, result);
                 } catch (Throwable t) {
                     log.error("Failed execute to doPreWrite from {}, context:{}", service.getClass().getSimpleName(), JsonUtil.toJson(thriftServerContext));
-                    if (service.isThrowException()) {
-                        throw t;
-                    }
                 }
             }
         }
@@ -141,9 +153,6 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
                     service.doPostWrite(thriftServerContext, methodName, result);
                 } catch (Throwable t) {
                     log.error("Failed execute to doPostWrite from {}, context:{}", service.getClass().getSimpleName(), JsonUtil.toJson(thriftServerContext));
-                    if (service.isThrowException()) {
-                        throw t;
-                    }
                 }
             }
         }

@@ -71,7 +71,7 @@ public class ThriftServiceProcessor implements NiftyProcessor {
             ThriftServiceMetadata serviceMetadata = new ThriftServiceMetadata(service.getClass(), codecManager.getCatalog());
             for (ThriftMethodMetadata methodMetadata : serviceMetadata.getMethods().values()) {
                 String methodName = methodMetadata.getName();
-                ThriftMethodProcessor methodProcessor = new ThriftMethodProcessor(service, serviceMetadata.getName(), methodMetadata, codecManager);
+                ThriftMethodProcessor methodProcessor = new ThriftMethodProcessor(service, serviceMetadata.getName(), serviceMetadata.getServiceTypeName(), methodMetadata, codecManager);
                 if (processorMap.containsKey(methodName)) {
                     throw new IllegalArgumentException("Multiple @ThriftMethod-annotated methods named '" + methodName + "' found in the given services");
                 }
@@ -121,7 +121,7 @@ public class ThriftServiceProcessor implements NiftyProcessor {
             }
 
             // invoke method
-            final ContextChain context = new ContextChain(eventHandlers, method.getQualifiedName(), requestContext);
+            final ContextChain context = new ContextChain(eventHandlers, method.getName(), method.getQualifiedName(), method.getServiceTypeName(), requestContext);
             ListenableFuture<Boolean> processResult = method.process(in, out, sequenceId, context);
 
             Futures.addCallback(

@@ -6,12 +6,3 @@ spring:
       transport:
         dashboard: @sentinel.connection@ #sentinel控制台访问路径
         port: @sentinel.port@ # sentinel控制台和服务端的交互端口 默认8719
-      datasource:
-        ds:
-          nacos:
-            serverAddr: @nacos.host@:@nacos.port@
-            namespace: @nacos.namespace@
-            groupId: @nacos.group@
-            dataId: ${spring.application.name}-flow
-            dataType: json
-            ruleType: flow

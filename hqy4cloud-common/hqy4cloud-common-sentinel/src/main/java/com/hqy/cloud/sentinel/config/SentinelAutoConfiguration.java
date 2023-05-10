@@ -1,18 +1,15 @@
 package com.hqy.cloud.sentinel.config;
 
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.BlockExceptionHandler;
-import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.ResponseUtil;
 import com.hqy.cloud.util.config.YamlPropertySourceFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * sentinel流控规则持久化字段详解：
@@ -29,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2023/4/24 17:23
  */
 @Configuration
+@RequiredArgsConstructor
 @PropertySource(value = "classpath:sentinel-config.yml", factory = YamlPropertySourceFactory.class)
 public class SentinelAutoConfiguration {
 

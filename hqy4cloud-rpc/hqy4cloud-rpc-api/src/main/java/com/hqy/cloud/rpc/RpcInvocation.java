@@ -145,8 +145,8 @@ public class RpcInvocation implements Invocation, Serializable {
     }
 
     @Override
-    public Fallback getFallback(Throwable e) {
-        return GlobalFallbackContext.getFallback(e.getClass());
+    public Fallback getFallback(Class<? extends Throwable> exType) {
+        return GlobalFallbackContext.getFallback(exType);
     }
 
     public void setAttachmentIfAbsent(String key, Object value) {

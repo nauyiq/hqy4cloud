@@ -7,6 +7,7 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.rpc.resgitry.node.NacosServerInfo;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
@@ -34,35 +35,31 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private static final Logger log = LoggerFactory.getLogger(NacosThriftStarter.class);
 
     private final String application;
-    private final int serverPort;
-    private final String serverAddress;
     private final int wight;
     private final String hashFactor;
-    private final String group;
     private RPCModel rpcModel;
+    private final NacosServerInfo nacosServerInfo;
     private final Metadata metadata;
     private final ActuatorNodeEnum actuatorType;
     private final PubMode pubMode;
     private final Environment environment;
 
 
-    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType, String hashFactor, String group, Environment environment) {
-       this(application, serverPort, serverAddress, wight, actuatorType, hashFactor, group, environment, MapUtil.empty());
+    public NacosThriftStarter(String application, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType, String hashFactor, Environment environment) {
+       this(application, nacosServerInfo, wight, actuatorType, hashFactor, environment, MapUtil.empty());
     }
 
-    public NacosThriftStarter(String application, int serverPort, String serverAddress, int wight, ActuatorNodeEnum actuatorType,
-                              String hashFactor, String group, Environment environment, Map<String, String> metadataParams) {
+    public NacosThriftStarter(String application, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType,
+                              String hashFactor, Environment environment, Map<String, String> metadataParams) {
         this.environment = environment;
         this.application = application;
-        this.serverPort = serverPort;
-        this.serverAddress = serverAddress;
+        this.nacosServerInfo = nacosServerInfo;
         this.pubMode = initPubMode();
         this.wight = wight;
         this.hashFactor = hashFactor;
         this.actuatorType = actuatorType;
         //must final init
         this.metadata = createMetadata(metadataParams);
-        this.group = group;
     }
 
 
@@ -90,7 +87,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private synchronized void initRpcContext() throws RpcException {
         try {
             RegistryInfo registryInfo = buildRegistryInfo();
-            rpcModel = new RPCModel(application, serverPort, group, registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
+            rpcModel = new RPCModel(application, nacosServerInfo.getPort(), nacosServerInfo.getGroup(), registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
         } catch (Throwable cause) {
             throw new RpcException(RpcException.REGISTRY_EXCEPTION, "Failed execute to init rpc context, metadata " + metadata);
         }
@@ -110,7 +107,9 @@ public abstract class NacosThriftStarter implements RPCStarter {
                 RPCServerAddress serverAddress = rpcModel.getServerAddress();
                 UsingIpPort usingIpPort = new UsingIpPort(serverAddress.getHostAddr(), rpcModel.getServerPort(), serverAddress.getPort(), serverAddress.getPid());
                 projectContextInfo = new ProjectContextInfo(rpcModel.getName(),
-                        environment.getEnvironment(), rpcModel.getPubMode(), usingIpPort , actuatorType);
+                        environment.getEnvironment(), rpcModel.getPubMode(), usingIpPort, actuatorType);
+                //registry nacosServerInfo to projectInfo.
+                ProjectContextInfo.setBean(NacosServerInfo.class, nacosServerInfo);
                 //register project context info.
                 SpringContextHolder.registerContextInfo(projectContextInfo);
                 log.info("Register ProjectContextInfo success, {}.", JsonUtil.toJson(projectContextInfo));
@@ -139,7 +138,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private RegistryInfo buildRegistryInfo() {
         RegistryInfo registryInfo = null;
         try {
-            registryInfo = buildRegistryInfo(serverAddress);
+            registryInfo = buildRegistryInfo(getNacosServerInfo().getServerAddr());
         } catch (Throwable cause) {
             log.error("Failed execute obtain NacosDiscoveryProperties from Spring context, cause {}", cause.getMessage());
         }
@@ -182,4 +181,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
         return ip;
     }
 
+    public NacosServerInfo getNacosServerInfo() {
+        return nacosServerInfo;
+    }
 }

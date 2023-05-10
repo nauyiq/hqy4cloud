@@ -6,12 +6,14 @@ import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosDiscoveryClientConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
+import com.hqy.cloud.rpc.CommonConstants;
+import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.rpc.model.RPCServerAddress;
+import com.hqy.cloud.rpc.model.RegistryInfo;
+import com.hqy.cloud.rpc.nacos.NacosThriftStarter;
+import com.hqy.cloud.rpc.resgitry.node.NacosServerInfo;
 import com.hqy.cloud.util.spring.SpringApplicationConfiguration;
 import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.cloud.rpc.CommonConstants;
-import com.hqy.cloud.rpc.model.RPCServerAddress;
-import com.hqy.cloud.rpc.core.Environment;
-import com.hqy.cloud.rpc.nacos.NacosThriftStarter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +47,10 @@ public class NacosThriftClientStarterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public NacosThriftStarter nacosThriftStarter(NacosDiscoveryProperties properties) {
-        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER,
-                CommonConstants.DEFAULT_HASH_FACTOR, properties.getGroup(), environment) {
+        RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(properties.getServerAddr());
+        NacosServerInfo nacosServerInfo = new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace());
+        return new NacosThriftStarter(properties.getService(), nacosServerInfo, CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER,
+                CommonConstants.DEFAULT_HASH_FACTOR, environment) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {
                 return RPCServerAddress.createConsumerRpcServer();

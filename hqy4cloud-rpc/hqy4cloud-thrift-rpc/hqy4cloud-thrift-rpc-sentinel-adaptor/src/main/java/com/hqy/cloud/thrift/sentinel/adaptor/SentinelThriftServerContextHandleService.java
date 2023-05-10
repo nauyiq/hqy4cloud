@@ -6,13 +6,13 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
+import com.hqy.cloud.thrift.sentinel.adaptor.exception.ThriftSentinelBlockException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
-import static com.hqy.cloud.thrift.sentinel.adaptor.Constants.SENTINEL_THRIFT_METHOD_ENTRY;
-import static com.hqy.cloud.thrift.sentinel.adaptor.Constants.THRIFT_SERVER_HANDLER_REQUEST_ARGS;
+import static com.hqy.cloud.thrift.sentinel.adaptor.Constants.*;
 
 /**
  * @author qiyuan.hong
@@ -24,7 +24,7 @@ public class SentinelThriftServerContextHandleService implements ThriftServerCon
 
     @Override
     @SneakyThrows
-    public void doPostRead(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
+    public void doPreInvokeMethod(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
         RPCModel rpcModel = thriftServerContext.getRpcModel();
         if (Objects.isNull(rpcModel)) {
             log.warn("Rpc context should not be null.");
@@ -32,17 +32,22 @@ public class SentinelThriftServerContextHandleService implements ThriftServerCon
         }
         String origin = rpcModel.getName();
         Entry methodEntry = null;
+        Entry interfaceEntry = null;
         try {
             // Only need to create entrance context at provider side, as context will take effect
             // at entrance of invocation chain only (for inbound traffic).
+            methodName = thriftServerContext.getMethodName();
             ContextUtil.enter(methodName, origin);
+            interfaceEntry = SphU.entry(thriftServerContext.getServiceTypeName(), ResourceTypeConstants.COMMON_RPC, EntryType.IN,
+                    args);
             methodEntry = SphU.entry(methodName, ResourceTypeConstants.COMMON_RPC, EntryType.IN,
                     args);
         } catch (BlockException e) {
             log.info("Thrift rpc by sentinel blocked.");
-            throw e;
+            throw new ThriftSentinelBlockException(ThriftSentinelBlockException.ID, e);
         } finally {
             thriftServerContext.setAttachment(SENTINEL_THRIFT_METHOD_ENTRY, methodEntry);
+            thriftServerContext.setAttachment(SENTINEL_THRIFT_INTERFACE_RESOURCE_ENTRY, interfaceEntry);
             thriftServerContext.setAttachment(THRIFT_SERVER_HANDLER_REQUEST_ARGS, args);
         }
     }
@@ -51,7 +56,8 @@ public class SentinelThriftServerContextHandleService implements ThriftServerCon
     @Override
     public void doDone(ThriftServerContext thriftServerContext, String methodName) {
         Entry methodEntry = (Entry) thriftServerContext.getAttachment(SENTINEL_THRIFT_METHOD_ENTRY);
-        if (Objects.isNull(methodEntry)) {
+        Entry interfaceEntry = (Entry) thriftServerContext.getAttachment(SENTINEL_THRIFT_INTERFACE_RESOURCE_ENTRY);
+        if (Objects.isNull(methodEntry) && Objects.isNull(interfaceEntry)) {
             log.warn("methodEntry should not be null.");
             return;
         }
@@ -66,11 +72,21 @@ public class SentinelThriftServerContextHandleService implements ThriftServerCon
             Throwable exception = thriftServerContext.getException();
             if (Objects.nonNull(exception) && !thriftServerContext.isResult()) {
                 Tracer.traceEntry(exception, methodEntry);
+                Tracer.traceEntry(exception, interfaceEntry);
             }
         } finally {
-            methodEntry.exit(1, args);
+            if (Objects.nonNull(methodEntry)) {
+                methodEntry.exit(1, args);
+            }
+            if (Objects.nonNull(interfaceEntry)) {
+                interfaceEntry.exit();
+            }
+
         }
+    }
 
-
+    @Override
+    public boolean isThrowException() {
+        return true;
     }
 }

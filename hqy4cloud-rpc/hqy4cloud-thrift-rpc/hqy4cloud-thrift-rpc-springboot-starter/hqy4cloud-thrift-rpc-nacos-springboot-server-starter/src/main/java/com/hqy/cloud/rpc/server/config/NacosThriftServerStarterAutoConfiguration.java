@@ -8,7 +8,9 @@ import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
+import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.nacos.NacosThriftStarter;
+import com.hqy.cloud.rpc.resgitry.node.NacosServerInfo;
 import com.hqy.cloud.rpc.server.core.ThriftServerWrapper;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.cloud.util.spring.SpringContextHolder;
@@ -50,9 +52,11 @@ public class NacosThriftServerStarterAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean
     public NacosThriftStarter nacosThriftStarter(ThriftServerLauncher thriftServerLauncher, NacosDiscoveryProperties properties, ThriftServerWrapper thriftServer) {
+        RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(properties.getServerAddr());
+        NacosServerInfo nacosServerInfo = new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace());
         Map<String, String> params = thriftServerLauncher.getParams();
-        return new NacosThriftStarter(properties.getService(), port, properties.getServerAddr(), thriftServerLauncher.getWight(),
-                ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), properties.getGroup(), environment, params) {
+        return new NacosThriftStarter(properties.getService(), nacosServerInfo, thriftServerLauncher.getWight(),
+                ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), environment, params) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {
                 return thriftServer.getServerAddr();

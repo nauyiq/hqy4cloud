@@ -27,12 +27,12 @@ public class ContextChain {
     private final String methodName;
     private final List<Object> contexts;
 
-    ContextChain(List<ThriftEventHandler> handlers, String methodName, RequestContext requestContext) {
+    ContextChain(List<ThriftEventHandler> handlers,String simpleMethodName, String methodName, String serviceTypeName, RequestContext requestContext) {
         this.handlers = handlers;
         this.methodName = methodName;
         this.contexts = new ArrayList<>();
         for (ThriftEventHandler h : this.handlers) {
-            this.contexts.add(h.getContext(methodName, requestContext));
+            this.contexts.add(h.getContext(simpleMethodName, methodName, serviceTypeName, requestContext));
         }
     }
 
@@ -45,6 +45,11 @@ public class ContextChain {
     public void postRead(Object[] args) throws TException {
         for (int i = 0; i < handlers.size(); i++) {
             handlers.get(i).postRead(contexts.get(i), methodName, args);
+        }
+    }
+    public void preInvokeMethod(Object[] args) throws Exception {
+        for (int i = 0; i < handlers.size(); i++) {
+            handlers.get(i).preInvokeMethod(contexts.get(i), methodName, args);
         }
     }
 
@@ -65,6 +70,8 @@ public class ContextChain {
             handlers.get(i).postWrite(contexts.get(i), methodName, result);
         }
     }
+
+
 
     public void postWriteException(Throwable t) throws TException {
         for (int i = 0; i < handlers.size(); i++) {

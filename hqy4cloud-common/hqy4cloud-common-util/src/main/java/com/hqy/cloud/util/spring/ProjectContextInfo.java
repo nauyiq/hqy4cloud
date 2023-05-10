@@ -64,6 +64,7 @@ public class ProjectContextInfo implements Serializable {
      */
     private UsingIpPort uip;
 
+
     /**
      * 节点类型
      */
@@ -102,7 +103,7 @@ public class ProjectContextInfo implements Serializable {
     public ProjectContextInfo() {
     }
 
-    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip, ActuatorNodeEnum nodeType) {
+    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip,  ActuatorNodeEnum nodeType) {
         this.nameEn = nameEn;
         this.env = env;
         this.pubValue = pubValue;
@@ -117,6 +118,8 @@ public class ProjectContextInfo implements Serializable {
     public boolean isJustStarted() {
         return isJustStarted(null);
     }
+
+
 
 
     /**

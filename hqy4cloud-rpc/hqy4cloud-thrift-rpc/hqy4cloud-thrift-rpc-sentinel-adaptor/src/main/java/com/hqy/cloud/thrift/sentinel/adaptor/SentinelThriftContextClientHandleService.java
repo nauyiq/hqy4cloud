@@ -1,10 +1,12 @@
 package com.hqy.cloud.thrift.sentinel.adaptor;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.csp.sentinel.*;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftContext;
+import com.hqy.cloud.thrift.sentinel.adaptor.exception.ThriftSentinelBlockException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,12 +34,13 @@ public class SentinelThriftContextClientHandleService implements ThriftContextCl
             return;
         }
         String interfaceResourceName = rpcContext.getServiceClass().getName();
+        String methodResourceName =  interfaceResourceName + StrUtil.DOT + rpcContext.getMethod();
         try {
             interfaceEntry = SphU.entry(interfaceResourceName, ResourceTypeConstants.COMMON_RPC, EntryType.OUT);
-            methodEntry = SphU.entry(methodName, ResourceTypeConstants.COMMON_RPC, EntryType.OUT, rpcContext.getArguments());
+            methodEntry = SphU.entry(methodResourceName, ResourceTypeConstants.COMMON_RPC, EntryType.OUT, rpcContext.getArguments());
         } catch (BlockException e) {
             log.info("Thrift rpc by sentinel blocked.");
-            throw e;
+            throw new ThriftSentinelBlockException(ThriftSentinelBlockException.ID, e);
         } finally {
             thriftContext.setAttachment(SENTINEL_THRIFT_INTERFACE_RESOURCE_ENTRY, interfaceEntry);
             thriftContext.setAttachment(SENTINEL_THRIFT_METHOD_ENTRY, methodEntry);

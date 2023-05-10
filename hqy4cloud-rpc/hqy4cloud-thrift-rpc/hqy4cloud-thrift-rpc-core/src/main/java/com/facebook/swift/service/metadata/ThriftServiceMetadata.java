@@ -36,6 +36,7 @@ import static com.facebook.swift.codec.metadata.ReflectionHelper.getEffectiveCla
 public class ThriftServiceMetadata
 {
     private final String name;
+    private String serviceTypeName;
     private final Map<String, ThriftMethodMetadata> methods;
     private final Map<String, ThriftMethodMetadata> declaredMethods;
     private final ImmutableList<ThriftServiceMetadata> parentServices;
@@ -88,6 +89,7 @@ public class ThriftServiceMetadata
         for (Class<?> parent : serviceClass.getInterfaces()) {
             if (!getEffectiveClassAnnotations(parent, ThriftService.class).isEmpty()) {
                 parentServiceBuilder.add(new ThriftServiceMetadata(parent, catalog));
+                this.serviceTypeName = parent.getName();
             }
         }
         this.parentServices = parentServiceBuilder.build();
@@ -96,6 +98,7 @@ public class ThriftServiceMetadata
     public ThriftServiceMetadata(String name, ThriftMethodMetadata... methods)
     {
         this.name = name;
+        this.serviceTypeName = "";
 
         ImmutableMap.Builder<String, ThriftMethodMetadata> builder = ImmutableMap.builder();
         for (ThriftMethodMetadata method : methods) {
@@ -115,6 +118,10 @@ public class ThriftServiceMetadata
     public ThriftMethodMetadata getMethod(String name)
     {
         return methods.get(name);
+    }
+
+    public String getServiceTypeName() {
+        return serviceTypeName;
     }
 
     public Map<String, ThriftMethodMetadata> getMethods()

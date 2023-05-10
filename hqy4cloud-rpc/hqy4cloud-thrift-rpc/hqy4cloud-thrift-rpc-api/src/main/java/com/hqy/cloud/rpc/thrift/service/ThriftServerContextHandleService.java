@@ -54,4 +54,8 @@ public interface ThriftServerContextHandleService {
      */
     default boolean isThrowException() { return false; }
 
+
+    default void doPreInvokeMethod(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
+
+    }
 }

@@ -22,7 +22,6 @@ public class SeataGlobalTransactionEventHandler implements ThriftServerContextHa
 
     @Override
     public void doPostRead(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
-        ThriftServerContextHandleService.super.doPostRead(thriftServerContext, methodName, args);
         boolean isGlobalTransactionalMethod = RPCContext.isGlobalTransactionalMethod(methodName);
         if (!isGlobalTransactionalMethod) {
             if (log.isDebugEnabled()) {

@@ -13,9 +13,22 @@ public class ThriftServerContext extends Context {
     private final RPCModel rpcModel;
     private final String communicationParty;
     private boolean bind = false;
-    public ThriftServerContext(String communicationParty, RPCModel rpcModel) {
+    private final String methodName;
+    private final String serviceTypeName;
+
+    public ThriftServerContext(String methodName, String serviceTypeName, String communicationParty, RPCModel rpcModel) {
+        this.methodName = methodName;
+        this.serviceTypeName = serviceTypeName;
         this.communicationParty = communicationParty;
         this.rpcModel = rpcModel;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public String getServiceTypeName() {
+        return serviceTypeName;
     }
 
     public String getCommunicationParty() {

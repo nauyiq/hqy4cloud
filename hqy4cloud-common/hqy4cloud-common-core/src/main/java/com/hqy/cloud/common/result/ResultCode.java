@@ -41,6 +41,11 @@ public enum ResultCode implements Result {
     INTERFACE_LIMITED(9002, "Too many request, please try again later."),
 
     /**
+     * rpc请求太多
+     */
+    RPC_INTERFACE_TOO_MANY_REQUEST(9003, "Too many request for interval, please try again later."),
+
+    /**
      * 新增数据异常
      */
     SYSTEM_ERROR_INSERT_FAIL(9100, "System is busy, insert data failure."),

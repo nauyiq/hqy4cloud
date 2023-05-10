@@ -2,6 +2,9 @@ package com.hqy.cloud.rpc.thrift.protocol;
 
 import com.facebook.swift.service.RuntimeTApplicationException;
 import com.facebook.swift.service.RuntimeTTransportException;
+import com.facebook.swift.service.exception.ThriftExceptionInformation;
+import com.facebook.swift.service.exception.support.ThriftCustomException;
+import com.facebook.swift.service.exception.support.ThriftServerExceptionRegistry;
 import com.hqy.cloud.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
@@ -74,8 +77,11 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         } catch (Exception e) {
             try {
                 result = doPreException(invocation, e);
-            } catch (Exception preException) {
-                needReturnTarget = doException(invocation, targetInfo, preException, e);
+                needReturnTarget = doException(invocation, targetInfo, e);
+            } catch (RpcException rpcException) {
+                throw rpcException;
+            } catch (Exception exception) {
+                throw new RpcException(RpcException.BIZ_EXCEPTION, exception);
             }
         } finally {
             try {
@@ -95,31 +101,41 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
     }
 
     private Object doPreException(Invocation invocation, Exception e) throws Exception {
-        if (e instanceof InvocationTargetException && ((InvocationTargetException) e).getTargetException() != null) {
-            Throwable targetException = ((InvocationTargetException) e).getTargetException();
-            Throwable cause = targetException.getCause();
-            Fallback fallback = invocation.getFallback(targetException);
-            if (fallback == null && cause != null) {
-                fallback = invocation.getFallback(cause);
-                targetException = cause;
-            }
 
-            if (fallback != null) {
-                return fallback.handle(this, invocation, (Exception) targetException);
+        Class<? extends Exception> exceptionClass = e.getClass();
+        if (exceptionClass.isAssignableFrom(ThriftCustomException.class)) {
+            Fallback fallback = invocation.getFallback(exceptionClass);
+            return fallback.handle(this, invocation, e);
+        } else {
+            if (e instanceof InvocationTargetException && ((InvocationTargetException) e).getTargetException() != null) {
+                Throwable targetException = ((InvocationTargetException) e).getTargetException();
+                Exception cause = (Exception) targetException.getCause();
+                Class<? extends Exception> fallbackException = cause.getClass();
+                Fallback fallback = null;
+                if (cause instanceof TApplicationException) {
+                    TApplicationException tApplicationException = (TApplicationException) cause;
+                    ThriftExceptionInformation information = ThriftServerExceptionRegistry.getExceptionInformation(tApplicationException.getType());
+                    if (Objects.nonNull(information)) {
+                        fallback = invocation.getFallback(information.getExceptionType());
+                    }
+                }
+
+                if (Objects.isNull(fallback)) {
+                    fallback = invocation.getFallback(fallbackException);
+                }
+
+                if (Objects.nonNull(fallback)) {
+                    return fallback.handle(this, invocation, cause);
+                }
             }
         }
-        throw new UnsupportedOperationException();
+        return null;
     }
 
-    private boolean doException(Invocation invocation, String targetInfo, Exception preException, Exception e) {
-        if (!(preException instanceof UnsupportedOperationException)) {
-            throw new RpcException(RpcException.RELIABLE_EXCEPTION, preException);
-        }
-
-        boolean needReturnTarget = true;
+    private boolean doException(Invocation invocation, String targetInfo, Exception e) {
         if (checkIfDisconnectedByServer(e)) {
             log.warn("RPC found a serious error and the connection request was rejected by the long connection over the server NIO channel.");
-            needReturnTarget = false;
+            return false;
         }
 
         String err = String.format("ThriftInvoker invoke failed, target:%s, method:%s, args:%s",
@@ -137,7 +153,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         } else {
             throw new RpcException(RpcException.UNKNOWN_EXCEPTION,  err + ", exception " +  e.getClass().getName(), e);
         }
-        return needReturnTarget;
+        return true;
     }
 
     private void doExecutionException(Invocation invocation, String targetInfo, ExecutionException e) {

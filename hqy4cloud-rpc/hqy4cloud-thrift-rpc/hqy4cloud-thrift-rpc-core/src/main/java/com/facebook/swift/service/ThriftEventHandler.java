@@ -17,11 +17,12 @@ package com.facebook.swift.service;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.codec.ThriftCodec;
+import com.hqy.cloud.rpc.core.InvokeResult;
 import org.apache.thrift.TException;
 
 public abstract class ThriftEventHandler {
 
-    public Object getContext(String methodName, RequestContext requestContext) {
+    public Object getContext(String simpleMethodName, String methodName, String serviceName, RequestContext requestContext) {
         return null;
     }
 
@@ -51,5 +52,9 @@ public abstract class ThriftEventHandler {
     }
 
     public void done(Object context, String methodName) {
+    }
+
+    public void preInvokeMethod(Object o, String methodName, Object[] args) {
+
     }
 }

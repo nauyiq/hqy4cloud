@@ -3,7 +3,7 @@ package com.hqy.cloud.thrift.sentinel.adaptor.fallback;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.fallback.Fallback;
-import com.hqy.cloud.thrift.sentinel.adaptor.exception.SentinelBlockException;
+import com.hqy.cloud.thrift.sentinel.adaptor.exception.ThriftSentinelBlockException;
 
 /**
  * @author qiyuan.hong
@@ -14,11 +14,11 @@ public class DefaultThriftSentinelFallback implements Fallback {
 
     @Override
     public Class<? extends Exception> exceptionType() {
-        return SentinelBlockException.class;
+        return ThriftSentinelBlockException.class;
     }
 
     @Override
     public Object handle(Invoker<?> invoker, Invocation invocation, Exception ex) throws Exception {
-        throw new SentinelBlockException(ex);
+        throw ex;
     }
 }
