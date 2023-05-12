@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +43,9 @@ public class ResponseUtil {
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
                 response.setContentType(ContentType.JSON.getValue());
                 response.setStatus(statusCode);
-                response.getWriter().write(JsonUtil.toJson(result));
+                PrintWriter writer = response.getWriter();
+                writer.write(JsonUtil.toJson(result));
+                writer.flush();
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -49,7 +49,7 @@ public class NacosThriftClientStarterAutoConfiguration {
     public NacosThriftStarter nacosThriftStarter(NacosDiscoveryProperties properties) {
         RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(properties.getServerAddr());
         NacosServerInfo nacosServerInfo = new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace());
-        return new NacosThriftStarter(properties.getService(), nacosServerInfo, CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER,
+        return new NacosThriftStarter(properties.getService(), port, nacosServerInfo, CommonConstants.DEFAULT_WEIGHT, ActuatorNodeEnum.CONSUMER,
                 CommonConstants.DEFAULT_HASH_FACTOR, environment) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {

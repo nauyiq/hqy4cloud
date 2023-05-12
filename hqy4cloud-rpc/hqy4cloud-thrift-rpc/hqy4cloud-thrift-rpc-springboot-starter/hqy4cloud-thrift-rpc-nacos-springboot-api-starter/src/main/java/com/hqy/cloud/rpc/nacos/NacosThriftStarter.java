@@ -35,6 +35,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private static final Logger log = LoggerFactory.getLogger(NacosThriftStarter.class);
 
     private final String application;
+    private final int port;
     private final int wight;
     private final String hashFactor;
     private RPCModel rpcModel;
@@ -45,14 +46,15 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private final Environment environment;
 
 
-    public NacosThriftStarter(String application, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType, String hashFactor, Environment environment) {
-       this(application, nacosServerInfo, wight, actuatorType, hashFactor, environment, MapUtil.empty());
+    public NacosThriftStarter(String application, int port, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType, String hashFactor, Environment environment) {
+       this(application, port, nacosServerInfo, wight, actuatorType, hashFactor, environment, MapUtil.empty());
     }
 
-    public NacosThriftStarter(String application, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType,
+    public NacosThriftStarter(String application, int port, NacosServerInfo nacosServerInfo, int wight, ActuatorNodeEnum actuatorType,
                               String hashFactor, Environment environment, Map<String, String> metadataParams) {
         this.environment = environment;
         this.application = application;
+        this.port = port;
         this.nacosServerInfo = nacosServerInfo;
         this.pubMode = initPubMode();
         this.wight = wight;
@@ -87,7 +89,7 @@ public abstract class NacosThriftStarter implements RPCStarter {
     private synchronized void initRpcContext() throws RpcException {
         try {
             RegistryInfo registryInfo = buildRegistryInfo();
-            rpcModel = new RPCModel(application, nacosServerInfo.getPort(), nacosServerInfo.getGroup(), registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
+            rpcModel = new RPCModel(application, port, nacosServerInfo.getGroup(), registryInfo, getRpcServerAddress(), metadata.toMetadataMap());
         } catch (Throwable cause) {
             throw new RpcException(RpcException.REGISTRY_EXCEPTION, "Failed execute to init rpc context, metadata " + metadata);
         }

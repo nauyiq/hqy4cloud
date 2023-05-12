@@ -46,6 +46,22 @@ public enum ResultCode implements Result {
     RPC_INTERFACE_TOO_MANY_REQUEST(9003, "Too many request for interval, please try again later."),
 
     /**
+     * 接口已被降级
+     */
+    INTERFACE_ALREADY_DEGRADE(9004, "The api already degrade, please try again later."),
+
+    /**
+     * 接口热点参数限流
+     */
+    INTERFACE_PRAM_HOT_KET_LIMIT(9005, "The api of hotkey limited, please try again later."),
+
+    /**
+     * 授权规则不足被SENTINEL限流
+     */
+    SENTINEL_LIMITED_AUTHORITY(9006, "The request access authority Limit by monitor."),
+
+
+    /**
      * 新增数据异常
      */
     SYSTEM_ERROR_INSERT_FAIL(9100, "System is busy, insert data failure."),

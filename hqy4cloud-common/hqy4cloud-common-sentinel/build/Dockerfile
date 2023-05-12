@@ -1,43 +1,26 @@
-FROM openjdk:11.0.3-jdk-stretch
-
+FROM openjdk:8-jdk-alpine
 MAINTAINER 759428167@qq.com
 
-ARG version
-ARG port
+ENV  SENTINEL_VERSION="1.8.5" \
+    PORT="8080" \
+    SERVER_PORT="8719" \
+    PROJECT_NAME="sentinel-dashboard" \
+    USERNAME="sentinel" \
+    PASSWORD="sentinel" \
+    SENTINEL_HOME="/home/services/sentinel" \
+    SENTINEL_LOGS="/home/services/sentinel/logs" \
+    TIME_ZONE="Asia/Shanghai"
 
-# sentinel version
-ENV SENTINEL_VERSION ${version:-1.8.5}
-#PORT
-ENV PORT ${port:-8989}
-ENV JAVA_OPT=""
-#
-ENV PROJECT_NAME sentinel-dashboard
-ENV SERVER_HOST localhost
-ENV SERVER_PORT 8989
-ENV USERNAME sentinel
-ENV PASSWORD sentinel
+WORKDIR ${SENTINEL_HOME}
 
-# sentinel home
-ENV SENTINEL_HOME  /opt/
-ENV SENTINEL_LOGS  /opt/logs
+RUN  ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
-#tme zone
-RUN rm -rf /etc/localtime \
-&& ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ADD https://github.com/alibaba/Sentinel/releases/download/${SENTINEL_VERSION}/sentinel-dashboard-${SENTINEL_VERSION}.jar ./sentinel-dashboard.jar
 
 # create logs
 RUN mkdir -p ${SENTINEL_LOGS}
-COPY sentinel-dashboard.jar ${SENTINEL_HOME}
-COPY bin/* /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
-&& ln -s /usr/local/bin/docker-entrypoint.sh /opt/docker-entrypoint.sh
 
-VOLUME ${SENTINEL_LOGS}
+EXPOSE ${PORT} ${SERVER_PORT}
 
-WORKDIR  ${SENTINEL_HOME}
-
-EXPOSE ${PORT} 8719
-
-CMD java ${JAVA_OPT} -jar sentinel-dashboard.jar
-
-ENTRYPOINT ["docker-entrypoint.sh"]
+# java启动jar包
+ENTRYPOINT ["java", "-Dserver.port=${PORT}" , "-Dproject.name=${PROJECT_NAME}" ,"-jar","sentinel-dashboard.jar"]

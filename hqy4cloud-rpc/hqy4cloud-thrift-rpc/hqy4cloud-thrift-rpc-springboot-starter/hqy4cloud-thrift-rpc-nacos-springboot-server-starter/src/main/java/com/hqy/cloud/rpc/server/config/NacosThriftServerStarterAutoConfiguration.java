@@ -55,7 +55,7 @@ public class NacosThriftServerStarterAutoConfiguration {
         RegistryInfo registryInfo = NacosThriftStarter.buildRegistryInfo(properties.getServerAddr());
         NacosServerInfo nacosServerInfo = new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace());
         Map<String, String> params = thriftServerLauncher.getParams();
-        return new NacosThriftStarter(properties.getService(), nacosServerInfo, thriftServerLauncher.getWight(),
+        return new NacosThriftStarter(properties.getService(), port, nacosServerInfo, thriftServerLauncher.getWight(),
                 ActuatorNodeEnum.PROVIDER, thriftServerLauncher.getHashFactor(), environment, params) {
             @Override
             protected RPCServerAddress getRpcServerAddress() {

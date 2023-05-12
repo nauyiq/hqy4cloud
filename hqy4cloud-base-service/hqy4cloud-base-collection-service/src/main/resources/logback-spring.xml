@@ -34,6 +34,14 @@
             <pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>Asia/Shanghai</timeZone>
+                </timestamp>
+                <pattern>{"message": "%message"}</pattern>
+            </providers>
+        </encoder>
     </appender>
 
     <!-- Log file error output -->

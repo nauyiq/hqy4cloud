@@ -458,7 +458,7 @@
                 <nacos.password>hongqy@2021</nacos.password>
                 <nacos.group>TEST_GROUP</nacos.group>
                 <nacos.namespace>e3f4bf0e-5118-4e06-90de-087cb676b98c</nacos.namespace>
-                <sentinel.connection>127.0.0.1:8080</sentinel.connection>
+                <sentinel.connection>sentinel-dashboard-service.services.svc.cluster.local:8080</sentinel.connection>
                 <sentinel.port>8719</sentinel.port>
             </properties>
         </profile>

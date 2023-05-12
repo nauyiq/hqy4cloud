@@ -1,6 +1,9 @@
 package com.hqy.cloud.sentinel.config;
 
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.BlockExceptionHandler;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityException;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.ResponseUtil;
@@ -32,10 +35,17 @@ public class SentinelAutoConfiguration {
 
     @Bean
     public BlockExceptionHandler blockExceptionHandler() {
-        return (httpServletRequest, httpServletResponse, e) ->
+        return (httpServletRequest, httpServletResponse, e) -> {
+            if (e instanceof DegradeException) {
+                ResponseUtil.out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_ALREADY_DEGRADE));
+            } else if (e instanceof ParamFlowException) {
+                ResponseUtil.out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_PRAM_HOT_KET_LIMIT));
+            } else if (e instanceof AuthorityException) {
+                ResponseUtil.out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.SENTINEL_LIMITED_AUTHORITY));
+            } else {
                 ResponseUtil.out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_LIMITED));
+            }
+        };
     }
-
-
 
 }
