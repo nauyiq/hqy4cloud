@@ -53,7 +53,7 @@
         <org.redisson.version>3.13.6</org.redisson.version>
         <elasticsearch.version>7.17.3</elasticsearch.version>
         <jakarta-json.version>2.0.1</jakarta-json.version>
-        <ey.es.version>2.0.0-beta1</ey.es.version>
+        <dynamic.ds.version>3.6.0</dynamic.ds.version>
         <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
         <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
 
@@ -65,8 +65,8 @@
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
+        <auth.jwt.version>2.2.0</auth.jwt.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
-<!--        <hibernate.validator.version>5.2.4.Final</hibernate.validator.version>-->
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
@@ -76,6 +76,7 @@
         <junit.version>4.12</junit.version>
         <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
+        <jsoup.version>1.13.1</jsoup.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <javassist.version>3.28.0-GA</javassist.version>
         <common.collection4.version>4.4</common.collection4.version>
@@ -238,6 +239,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic.ds.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                <version>${servlet.version}</version>
@@ -255,6 +262,18 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${auth.jwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
             </dependency>
 
             <!-- facebook.thrift -->
@@ -329,10 +348,8 @@
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash.logback.encoder.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
-
 
 
     <dependencies>

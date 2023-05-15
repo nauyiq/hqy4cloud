@@ -6,7 +6,7 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.RequestUtil;
+import com.hqy.cloud.util.web.RequestUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

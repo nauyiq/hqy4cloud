@@ -5,7 +5,7 @@ import com.hqy.cloud.auth.core.SecurityUser;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.RequestUtil;
+import com.hqy.cloud.util.web.RequestUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

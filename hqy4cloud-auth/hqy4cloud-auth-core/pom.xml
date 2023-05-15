@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
+            <artifactId>hqy4cloud-common-datasource-tk-mapper</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

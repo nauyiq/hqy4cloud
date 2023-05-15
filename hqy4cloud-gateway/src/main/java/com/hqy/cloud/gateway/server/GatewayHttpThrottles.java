@@ -8,6 +8,7 @@ import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.rpc.core.Environment;
@@ -243,7 +244,13 @@ public class GatewayHttpThrottles implements HttpThrottles {
         struct.url = url;
         struct.env = Environment.getInstance().getEnvironment();
         struct.throttleBy = createdBy;
-        CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
-        remoteService.saveThrottledBlockHistory(struct);
+
+        try {
+            CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
+            remoteService.saveThrottledBlockHistory(struct);
+        } catch (Exception e) {
+            log.warn("Failed execute to persist block log, cause: {}", e.getMessage());
+        }
+
     }
 }

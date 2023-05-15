@@ -17,7 +17,7 @@
 
     <modules>
         <module>hqy4cloud-common-core</module>
-        <module>hqy4cloud-common-mapper</module>
+        <module>hqy4cloud-common-datasource</module>
         <module>hqy4cloud-common-service</module>
         <module>hqy4cloud-common-util</module>
         <module>hqy4cloud-common-security</module>

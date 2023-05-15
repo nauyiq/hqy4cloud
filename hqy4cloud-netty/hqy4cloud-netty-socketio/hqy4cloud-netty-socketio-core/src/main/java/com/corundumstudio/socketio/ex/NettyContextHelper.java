@@ -4,10 +4,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.handler.ClientsBoxEx;
 import com.corundumstudio.socketio.messages.HttpErrorMessage;
-import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.util.JwtUtil;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -140,13 +137,5 @@ public class NettyContextHelper {
         return "";
     }
 
-
-
-
-    public static void main(String[] args) {
-        SocketProjectContext context = new SocketProjectContext(new SocketProjectContext.App(MicroServiceConstants.MESSAGE_NETTY_SERVICE), "TEST");
-        String sign = JwtUtil.sign(context, NumberConstants.ONE_MINUTES_4MILLISECONDS * 60);
-        System.out.println(sign);
-    }
 
 }

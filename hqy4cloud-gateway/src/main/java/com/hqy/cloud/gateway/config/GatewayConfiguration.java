@@ -25,12 +25,12 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public BlockedIpService biBlockedIpService() {
+    public BiBlockedIpRedisService biBlockedIpService() {
         return new BiBlockedIpRedisService(true);
     }
 
     @Bean
-    public BlockedIpService manualBlockedIpService() {
+    public ManualBlockedIpService manualBlockedIpService() {
         return new ManualBlockedIpService(true);
     }
 

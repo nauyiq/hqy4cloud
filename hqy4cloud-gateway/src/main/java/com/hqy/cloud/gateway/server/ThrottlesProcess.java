@@ -3,7 +3,7 @@ package com.hqy.cloud.gateway.server;
 import com.hqy.foundation.limit.service.BlockedIpService;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;
-import com.hqy.cloud.util.HtmlCommonUtil;
+import com.hqy.cloud.util.web.HtmlCommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,14 +27,16 @@ public class ThrottlesProcess implements ThrottlesServer {
      * 校验参数
      */
     public static final int PARAMS_CHECK_MODE = 0;
+
     /**
      * 校验uri
      */
     public static final int URI_CHECK_MODE = 1;
+
     /**
-     * IP 封禁时间 0.5个小时.....[黑客]
+     * IP 封禁时间 0.25个小时.....[黑客]
      */
-    public static final int IP_ACCESS_BLOCK_SECONDS = 30 * 60;
+    public static final int IP_ACCESS_BLOCK_SECONDS = 15 * 60;
 
 
     @Override

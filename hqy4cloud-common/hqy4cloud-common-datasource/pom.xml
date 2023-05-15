@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>hqy4cloud-common</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <description>hqy4cloud-公共的数据库支持</description>
+
+    <artifactId>hqy4cloud-common-datasource</artifactId>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>hqy4cloud-common-datasource-dynamics</module>
+        <module>hqy4cloud-common-datasource-tk-mapper</module>
+        <module>hqy4cloud-common-mapper-hibernate</module>
+    </modules>
+
+</project>

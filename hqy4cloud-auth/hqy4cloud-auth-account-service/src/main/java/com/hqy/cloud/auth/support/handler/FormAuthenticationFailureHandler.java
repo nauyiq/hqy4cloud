@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.http.HttpUtil;
-import com.hqy.cloud.util.WebUtils;
+import com.hqy.cloud.util.web.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

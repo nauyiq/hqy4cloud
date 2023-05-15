@@ -6,7 +6,7 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.util.ResponseUtil;
+import com.hqy.cloud.util.web.ResponseUtil;
 import com.hqy.cloud.util.config.YamlPropertySourceFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
