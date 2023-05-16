@@ -8,6 +8,7 @@ import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.cloud.gateway.server.support.GlobalExceptionHandler;
 import com.hqy.foundation.limit.service.BlockedIpService;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,13 +26,13 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public BiBlockedIpRedisService biBlockedIpService() {
-        return new BiBlockedIpRedisService(true);
+    public BiBlockedIpRedisService biBlockedIpService(RedissonClient redissonClient) {
+        return new BiBlockedIpRedisService(redissonClient);
     }
 
     @Bean
-    public ManualBlockedIpService manualBlockedIpService() {
-        return new ManualBlockedIpService(true);
+    public ManualBlockedIpService manualBlockedIpService(RedissonClient redissonClient) {
+        return new ManualBlockedIpService(redissonClient);
     }
 
     @Bean

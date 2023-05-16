@@ -43,15 +43,15 @@ public class SecurityAutoConfiguration {
     @Bean
     @Lazy
     @ConditionalOnMissingBean
-    public BiBlockedIpRedisService biBlockedIpRedisService() {
-        return new BiBlockedIpRedisService(false);
+    public BiBlockedIpRedisService biBlockedIpRedisService(RedissonClient redissonClient) {
+        return new BiBlockedIpRedisService(redissonClient);
     }
 
     @Bean
     @Lazy
     @ConditionalOnMissingBean
-    public ManualBlockedIpService manualBlockedIpService() {
-        return new ManualBlockedIpService(false);
+    public ManualBlockedIpService manualBlockedIpService(RedissonClient redissonClient) {
+        return new ManualBlockedIpService(redissonClient);
     }
 
     @Bean

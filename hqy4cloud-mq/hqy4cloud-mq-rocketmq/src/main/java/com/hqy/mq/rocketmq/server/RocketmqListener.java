@@ -11,6 +11,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
  * @date 2023/2/13 13:23
  */
 public abstract class RocketmqListener<T extends MessageModel> extends AbstractMqListener<T> implements RocketMQListener<T> {
+
     public RocketmqListener(Consumer<T> consumer) {
         super(consumer);
     }

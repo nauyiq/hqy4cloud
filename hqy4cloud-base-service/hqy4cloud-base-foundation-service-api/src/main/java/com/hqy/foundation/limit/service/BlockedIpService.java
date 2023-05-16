@@ -38,7 +38,7 @@ public interface BlockedIpService {
     Set<String> getAllBlockIpSet();
 
     /**
-     * 查询所有的黑名单集合 包括对应的过期时间
+     * 查询所有的黑名单集合
      * @return 黑名单集合
      */
     Map<String, Long> getAllBlockIp();

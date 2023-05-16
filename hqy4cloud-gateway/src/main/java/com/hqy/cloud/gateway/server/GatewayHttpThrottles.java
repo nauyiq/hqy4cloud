@@ -193,10 +193,8 @@ public class GatewayHttpThrottles implements HttpThrottles {
     }
 
     private LimitResult limitHackAccessAndPersistBlockIp(String requestIp, String url, String createdBy, String requestBody) {
-        if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
-            // 纳入黑名单，访问限制!!!!
-            throttlesProcess.addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
-        }
+        // 纳入黑名单，访问限制!!!!
+        throttlesProcess.addManualBlockIp(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS);
         // 记录ip 被阻塞 持久化服务
         persistBlockIpAction(requestIp, ThrottlesProcess.IP_ACCESS_BLOCK_SECONDS, url, createdBy, requestBody);
         return new LimitResult(true, LimitResult.ReasonEnum.HACK_TOOL_ACCESS_NG);

@@ -18,6 +18,7 @@ public class RocketmqAutoConfiguration {
 
     private final RocketMQTemplate rocketMQTemplate;
 
+
     @Bean
     @ConditionalOnMissingBean
     public RocketmqMessageProducer rocketmqMessageProducer() {

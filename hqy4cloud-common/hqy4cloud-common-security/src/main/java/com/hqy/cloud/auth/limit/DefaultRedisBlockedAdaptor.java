@@ -1,23 +1,23 @@
 package com.hqy.cloud.auth.limit;
 
-import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.core.convert.Convert;
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
-import com.hqy.foundation.limit.service.BlockedIpService;
-import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.cloud.util.thread.NamedThreadFactory;
+import com.hqy.foundation.limit.service.BlockedIpService;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.TimerTask;
-import java.util.concurrent.*;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -30,137 +30,80 @@ import java.util.stream.Collectors;
  * @date 2022/10/27 17:08
  */
 public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
+    private volatile int frequency;
+    private final LRUCache<String, BlockConfig> localCache;
+    private final RMapCache<String, BlockConfig> rCache;
 
-    private final String KEY;
 
-    public DefaultRedisBlockedAdaptor(String KEY, boolean startScheduled) {
-        this.KEY = KEY;
-        timestampMap = new ConcurrentHashMap<>();
-        ipSetCache = new CopyOnWriteArraySet<>();
-        if (startScheduled) {
-            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory(KEY));
-            executorService.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    reloadDataToCache();
-                }
-            }, DELAY, PERIOD, TimeUnit.SECONDS);
-        }
-
+    public DefaultRedisBlockedAdaptor(String key, RedissonClient redissonClient) {
+       this(key, redissonClient, 1);
     }
 
-    /**
-     * 过期时间集合
-     */
-    private final Map<String, Long> timestampMap;
-
-    /**
-     * 内存存放指定限制的ip
-     */
-    private final Set<String> ipSetCache;
-
-    /**
-     * 将要被移除的的元素
-     */
-    private  final Set<String> removingIps = new ConcurrentHashSet<>();
-
-    private void reloadDataToCache() {
-        ipSetCache.clear();
-        ipSetCache.addAll(getAllBlockIpSet());
-        if (CollectionUtils.isNotEmpty(removingIps)) {
-            for (String removingIp : removingIps) {
-                timestampMap.remove(removingIp);
-            }
-            if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOn()) {
-                SmartRedisManager.getInstance().hDel(KEY, removingIps.toArray(new Object[0]));
-            }
-            removingIps.clear();
+    public DefaultRedisBlockedAdaptor(String key, RedissonClient redissonClient, int frequency) {
+        this.frequency = frequency;
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            localCache = CacheUtil.newLRUCache(1024);
+            rCache = null;
+        } else {
+            localCache = null;
+            rCache = redissonClient.getMapCache(key);
         }
     }
-
 
     @Override
     public void addBlockIp(String ip, int blockSeconds) {
-        ip = ip.trim();
-        ipSetCache.add(ip);
-        long data = System.currentTimeMillis() + blockSeconds * 1000L;
-        timestampMap.put(ip, data);
-        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOn()) {
-            SmartRedisManager.getInstance().hSet(KEY, ip, data + "");
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            long timeout = blockSeconds * 1000L;
+            BlockConfig config = localCache.containsKey(ip) ? localCache.get(ip) : new BlockConfig(0, timeout);
+            config.increment();
+            localCache.put(ip, config, timeout);
+        } else {
+            BlockConfig config = rCache.getOrDefault(ip, new BlockConfig(0, blockSeconds * 1000L));
+            config.increment();
+            rCache.put(ip, config, blockSeconds, TimeUnit.SECONDS);
         }
     }
 
     @Override
     public void removeBlockIp(String ip) {
-        ip = ip.trim();
-        ipSetCache.remove(ip);
-        timestampMap.remove(ip);
-        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOn()) {
-            SmartRedisManager.getInstance().hDel(KEY, ip);
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            localCache.remove(ip);
+        } else {
+            rCache.remove(ip);
         }
     }
 
     @Override
     public void clearAllBlockIp() {
-        ipSetCache.clear();
-        timestampMap.clear();
-        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOn()) {
-            SmartRedisManager.getInstance().del(KEY);
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            localCache.clear();
+        } else {
+            rCache.clear();
         }
     }
 
     @Override
     public Set<String> getAllBlockIpSet() {
-        //添加静态黑名单
-        addStaticIpBlackList();
         if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             //未开启redis共享封禁列表 直接return.
-            return ipSetCache;
+            return localCache.keySet();
         }
-        Map<String, String> ipTimeMap = SmartRedisManager.getInstance().hGetAll(KEY);
-        if (MapUtils.isEmpty(ipTimeMap)) {
-            return ipSetCache;
-        }
-
-        //过滤已经封禁到期的集合
-        long now = System.currentTimeMillis();
-        Set<String> ipBlockedSet = ipTimeMap.entrySet().stream().filter(entry -> !checkExpire(entry.getKey(), Long.parseLong(entry.getValue()), now))
-                .map(Map.Entry::getKey).collect(Collectors.toSet());
-        ipSetCache.addAll(ipBlockedSet);
-
-        return ipSetCache;
-    }
-
-    private void addStaticIpBlackList() {
-        // 静态IP黑名单列表.
-        Set<String> attributeSetString =
-                SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY);
-
-        if (CollectionUtils.isNotEmpty(attributeSetString)) {
-            ipSetCache.addAll(attributeSetString);
-        }
+        return rCache.keySet();
     }
 
     @Override
     public Map<String, Long> getAllBlockIp() {
-        //添加静态黑名单
-        addStaticIpBlackList();
-        Map<String, Long> map = MapUtil.newHashMap(ipSetCache.size());
-        ipSetCache.forEach(s -> map.put(s, null));
-        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
-            return map;
-        }
-
-        Map<String, String> ipTimeMap = SmartRedisManager.getInstance().hGetAll(KEY);
-        if (MapUtil.isEmpty(ipTimeMap)) {
-            return map;
-        }
-
-        long now = System.currentTimeMillis();
-        Map<String, Long> stringMap = ipTimeMap.entrySet().stream().filter(entry -> !checkExpire(entry.getKey(), Long.parseLong(entry.getValue()), now))
-                .map(Map.Entry::getKey).collect(Collectors.toMap(key -> key, Convert::toLong));
-        map.putAll(stringMap);
-        return map;
+        Map<String, Long> allBlockIpMap;
+       if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+           //未开启redis共享封禁列表 直接return.
+           allBlockIpMap = MapUtil.newHashMap(localCache.size());
+           for (String ip : localCache.keySet()) {
+               allBlockIpMap.put(ip, localCache.get(ip).getBlockedMillis());
+           }
+       } else {
+           allBlockIpMap = rCache.readAllMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().getBlockedMillis()));
+       }
+       return allBlockIpMap;
     }
 
     @Override
@@ -169,48 +112,28 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
             return false;
         }
         ip = ip.trim();
+        BlockConfig blockConfig;
         if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
-            return ipSetCache.contains(ip);
+            blockConfig = localCache.get(ip);
+        } else {
+            blockConfig = rCache.get(ip);
         }
-        boolean contains = ipSetCache.contains(ip);
-        if (contains) {
-            if (SmartRedisManager.getInstance().hExists(KEY, ip)) {
-                // 如果包含，有可能是已经过期了，受限于redis，被识别为没有过期
-                if (timestampMap.containsKey(ip) && System.currentTimeMillis() > timestampMap.get(ip)) {
-                    removeBlockIp(ip);
-                    return false;
-                }
-                return true;
-            } else {
-                removeBlockIp(ip);
-            }
+
+        if (Objects.isNull(blockConfig)) {
+            return false;
         }
-        return false;
+
+        if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
+            return blockConfig.getFrequency() >= this.frequency;
+        }
+        return true;
     }
 
-    /**
-     * 检查是否失效 不再对此ip进行封禁
-     * @param ip    ip
-     * @param time  redis封禁的时间
-     * @param now   当前时间戳
-     * @return      是否失效
-     */
-    protected boolean checkExpire(String ip, long time, long now) {
-        Long expired = timestampMap.get(ip);
-        if (expired != null) {
-            if (now > expired) {
-                removingIps.add(ip);
-                return true;
-            } else {
-                return false;
-            }
-        }
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
 
-        if (now > time) {
-            removingIps.add(ip);
-            return true;
-        }
-
-        return false;
+    public int getFrequency() {
+        return frequency;
     }
 }
