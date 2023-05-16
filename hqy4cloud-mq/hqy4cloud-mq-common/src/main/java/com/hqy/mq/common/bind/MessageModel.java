@@ -33,9 +33,7 @@ public interface MessageModel {
      * 获取json消息体.
      * @return json消息体.
      */
-    default String jsonPayload() {
-        return JsonUtil.toJson(this);
-    }
+    String jsonPayload();
 
     /**
      * 消息id
