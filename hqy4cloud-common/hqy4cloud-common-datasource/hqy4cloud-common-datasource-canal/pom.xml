@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy4cloud-common-datasource</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>jar</packaging>
+    <artifactId>hqy4cloud-common-datasource-canal</artifactId>
+    <description>hqy4cloud-监听mysql binlog canal客户端支持，采用throwableDoge/canal-glue canal胶水层 @see https://gitee.com/throwableDoge/canal-glue</description>
+    <properties>
+        <alibaba.canal.version>1.1.6</alibaba.canal.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-util</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.client</artifactId>
+            <version>${alibaba.canal.version}</version>
+        </dependency>
+
+        &lt;!&ndash; Message、CanalEntry.Entry等来自此安装包 &ndash;&gt;
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.protocol</artifactId>
+            <version>${alibaba.canal.version}</version>
+        </dependency>-->
+
+    </dependencies>
+
+</project>

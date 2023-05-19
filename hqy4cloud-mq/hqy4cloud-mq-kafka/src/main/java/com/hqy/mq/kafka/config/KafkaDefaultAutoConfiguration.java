@@ -4,10 +4,7 @@ import com.hqy.mq.kafka.server.KafkaMessageProducer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +18,6 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.LoggingProducerListener;
 import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
-import org.springframework.kafka.transaction.KafkaTransactionManager;
 
 /**
  * kafka配置类
@@ -37,8 +33,10 @@ public class KafkaDefaultAutoConfiguration {
     private final KafkaProperties kafkaProperties;
 
 
+    /*producer configuration*/
+
+    @Bean
     @ConditionalOnMissingBean
-    @Bean(name="defaultKafkaProducerFactory")
     public ProducerFactory<String, String> kafkaProducerFactory() {
         DefaultKafkaProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(
                 kafkaProperties.buildProducerProperties());
@@ -52,8 +50,14 @@ public class KafkaDefaultAutoConfiguration {
 
     @Bean
     @Primary
+    public ProducerListener<String, String> kafkaProducerListener() {
+        return new LoggingProducerListener<>();
+    }
+
+    @Bean
+    @Primary
     @ConditionalOnMissingBean
-    public KafkaTemplate<String, String> kafkaTemplate(@Qualifier("defaultKafkaProducerFactory") ProducerFactory<String, String> kafkaProducerFactory,
+    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> kafkaProducerFactory,
                                                        ProducerListener<String, String> kafkaProducerListener,
                                                        ObjectProvider<RecordMessageConverter> messageConverter) {
         KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(kafkaProducerFactory);
@@ -68,27 +72,17 @@ public class KafkaDefaultAutoConfiguration {
     @Bean
     @Primary
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(name = "spring.kafka.producer.transaction-id-prefix")
-    public KafkaTransactionManager<String, String> kafkaTransactionManager(@Qualifier("defaultKafkaProducerFactory") ProducerFactory<String, String> kafkaProducerFactory) {
-        return new KafkaTransactionManager<>(kafkaProducerFactory);
-    }
-
-    @Bean
-    @Primary
-    public ProducerListener<String, String> kafkaProducerListener() {
-        return new LoggingProducerListener<>();
-    }
-
-    @Bean
-    @Primary
-    @ConditionalOnMissingBean
     public KafkaMessageProducer kafkaMessageProducer(KafkaTemplate<String, String> kafkaTemplate) {
         return new KafkaMessageProducer(kafkaTemplate);
     }
 
+
+    /*consumer configuration.*/
+
+
     @Bean
     @ConditionalOnMissingBean(ConsumerFactory.class)
-    public DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory(
+    public DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory (
             ObjectProvider<DefaultKafkaConsumerFactoryCustomizer> customizers) {
         DefaultKafkaConsumerFactory<String, String> factory = new DefaultKafkaConsumerFactory<>(
                 this.kafkaProperties.buildConsumerProperties());
@@ -139,20 +133,6 @@ public class KafkaDefaultAutoConfiguration {
         factory.getContainerProperties().setPollTimeout(3000);
         return factory;
     }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory delayContainerFactory(@Autowired ConsumerFactory consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory container = new ConcurrentKafkaListenerContainerFactory();
-        container.setConsumerFactory(consumerFactory);
-        //禁止KafkaListener自启动
-        container.setAutoStartup(false);
-        container.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
-        return container;
-    }
-
-
-
-
 
 
 

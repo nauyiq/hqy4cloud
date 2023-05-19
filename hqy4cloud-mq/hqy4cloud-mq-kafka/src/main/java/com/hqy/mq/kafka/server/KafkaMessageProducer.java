@@ -10,8 +10,8 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.lang.Nullable;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import static com.hqy.mq.kafka.lang.Constants.PARTITION_KEY;
-import static com.hqy.mq.kafka.lang.Constants.TIMESTAMP_KEY;
+import static com.hqy.mq.kafka.lang.KafkaConstants.PARTITION_KEY;
+import static com.hqy.mq.kafka.lang.KafkaConstants.TIMESTAMP_KEY;
 
 /**
  * kafka消息生产者.

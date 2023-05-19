@@ -32,9 +32,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 
 @RunWith(SpringRunner.class)
-@EmbeddedKafka(topics = {"test", "test2"}, brokerPropertiesLocation = "classpath:bootstrap.yml")
+@EmbeddedKafka(topics = {"test"}, bootstrapServersProperty = "127.0.0.1:9092")
 @ImportAutoConfiguration({KafkaAutoConfiguration.class, KafkaDefaultAutoConfiguration.class})
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:bootstrap.yml")
 public class KafkaTest {
 
     @Autowired
@@ -46,10 +46,8 @@ public class KafkaTest {
     }
 
     @KafkaListener(id = "test-consumer-annotation", topicPartitions = {
-        @TopicPartition(topic = "test", partitions = {"0"}),
-        @TopicPartition(topic = "test2", partitions = {"0", "1"},
-                partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "2"))},
-        concurrency = "4", errorHandler = "defaultErrorHandler"
+        @TopicPartition(topic = "test", partitions = {"0"})},
+        concurrency = "4"
     )
     public void listen(ConsumerRecord<String, String> record) {
         System.out.println(JsonUtil.toJson(record));
