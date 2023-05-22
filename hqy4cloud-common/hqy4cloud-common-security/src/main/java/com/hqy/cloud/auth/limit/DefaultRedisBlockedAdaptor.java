@@ -3,12 +3,11 @@ package com.hqy.cloud.auth.limit;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.map.MapUtil;
+import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
+import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.service.BlockedIpService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
@@ -16,7 +15,6 @@ import org.redisson.api.RedissonClient;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -46,7 +44,7 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
             rCache = null;
         } else {
             localCache = null;
-            rCache = redissonClient.getMapCache(key);
+            rCache = redissonClient.getMapCache(new RedisNamedKey(MicroServiceConstants.GATEWAY, key).getKey());
         }
     }
 

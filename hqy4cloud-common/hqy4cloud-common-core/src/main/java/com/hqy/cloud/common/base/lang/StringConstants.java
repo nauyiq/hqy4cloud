@@ -202,6 +202,11 @@ public interface StringConstants {
         String COLON = ":";
 
         /**
+         * ::
+         */
+        String UNION = "::";
+
+        /**
          * -
          */
         String RAIL = "-";

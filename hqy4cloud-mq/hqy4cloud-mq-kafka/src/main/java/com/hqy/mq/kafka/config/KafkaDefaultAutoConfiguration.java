@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.LoggingProducerListener;
 import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
+import org.springframework.kafka.transaction.KafkaTransactionManager;
 
 /**
  * kafka配置类
@@ -36,8 +38,15 @@ public class KafkaDefaultAutoConfiguration {
     /*producer configuration*/
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "kafkaProducerFactory")
     public ProducerFactory<String, String> kafkaProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(
+                kafkaProperties.buildProducerProperties());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "kafkaTransactionProducerFactory")
+    public ProducerFactory<String, String> kafkaTransactionProducerFactory() {
         DefaultKafkaProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(
                 kafkaProperties.buildProducerProperties());
         String transactionIdPrefix = kafkaProperties.getProducer().getTransactionIdPrefix();
@@ -56,11 +65,23 @@ public class KafkaDefaultAutoConfiguration {
 
     @Bean
     @Primary
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "kafkaTemplate")
     public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> kafkaProducerFactory,
                                                        ProducerListener<String, String> kafkaProducerListener,
                                                        ObjectProvider<RecordMessageConverter> messageConverter) {
-        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(kafkaProducerFactory);
+        return getKafkaTemplate(kafkaProducerFactory, kafkaProducerListener, messageConverter);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "kafkaTransactionTemplate")
+    public KafkaTemplate<String, String> kafkaTransactionTemplate(ProducerFactory<String, String> kafkaTransactionProducerFactory,
+                                                                  ProducerListener<String, String> kafkaProducerListener,
+                                                                  ObjectProvider<RecordMessageConverter> messageConverter) {
+        return getKafkaTemplate(kafkaTransactionProducerFactory, kafkaProducerListener, messageConverter);
+    }
+
+    private KafkaTemplate<String, String> getKafkaTemplate(ProducerFactory<String, String> kafkaTransactionProducerFactory, ProducerListener<String, String> kafkaProducerListener, ObjectProvider<RecordMessageConverter> messageConverter) {
+        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(kafkaTransactionProducerFactory);
         messageConverter.ifUnique(kafkaTemplate::setMessageConverter);
         kafkaTemplate.setProducerListener(kafkaProducerListener);
         if (StringUtils.isNotBlank(kafkaProperties.getTemplate().getDefaultTopic())) {
@@ -70,10 +91,17 @@ public class KafkaDefaultAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.kafka.producer.transaction-id-prefix")
+    @ConditionalOnMissingBean
+    public KafkaTransactionManager<?, ?> kafkaTransactionManager(ProducerFactory<String, String> kafkaTransactionProducerFactory) {
+        return new KafkaTransactionManager<>(kafkaTransactionProducerFactory);
+    }
+
+    @Bean
     @Primary
     @ConditionalOnMissingBean
-    public KafkaMessageProducer kafkaMessageProducer(KafkaTemplate<String, String> kafkaTemplate) {
-        return new KafkaMessageProducer(kafkaTemplate);
+    public KafkaMessageProducer kafkaMessageProducer(KafkaTemplate<String, String> kafkaTransactionTemplate) {
+        return new KafkaMessageProducer(kafkaTransactionTemplate);
     }
 
 

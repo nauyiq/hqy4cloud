@@ -86,7 +86,7 @@ public class KafkaTest {
 
         @Override
         public MessageParams getParameters() {
-            return new MessageParams("test2", "hongqy");
+            return MessageParams.of("test2", "hongqy");
         }
     }
 

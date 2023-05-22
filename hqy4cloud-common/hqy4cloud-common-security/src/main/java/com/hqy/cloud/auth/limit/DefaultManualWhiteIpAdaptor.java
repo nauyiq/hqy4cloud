@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.limit;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
@@ -21,9 +22,9 @@ public abstract class DefaultManualWhiteIpAdaptor implements ManualWhiteIpServic
     private final RSet<String> setCache;
 
     public DefaultManualWhiteIpAdaptor(String key, RedissonClient redisson) {
-        this.setCache = redisson.getSet(key);
+        RedisNamedKey namedKey = new RedisNamedKey(key, ManualWhiteIpService.class.getSimpleName());
+        this.setCache = redisson.getSet(namedKey.getKey());
     }
-
 
     @Override
     public void addWhiteIp(String ip) {
