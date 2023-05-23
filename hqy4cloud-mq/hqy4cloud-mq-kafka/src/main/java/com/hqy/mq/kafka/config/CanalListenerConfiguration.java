@@ -32,6 +32,7 @@ public class CanalListenerConfiguration {
     private final CanalGlue canalGlue;
 
     @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public KafkaMessageListenerContainer<String, String> kafkaMessageListenerContainer() {
         String topic = environment.isDevEnvironment() ? KafkaConstants.DEV_CANAL_KAFKA_TOPIC : KafkaConstants.TEST_CANAL_KAFKA_TOPIC;
         String consumerGroup = application + StrUtil.DASHED + environment.getEnvironment();
@@ -39,7 +40,7 @@ public class CanalListenerConfiguration {
         ContainerProperties properties = new ContainerProperties(topic);
         properties.setGroupId(consumerGroup);
         properties.setMessageListener(canalListener);
-        properties.setAckMode(ContainerProperties.AckMode.MANUAL);
+        properties.setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return new KafkaMessageListenerContainer(kafkaConsumerFactory, properties);
     }
 

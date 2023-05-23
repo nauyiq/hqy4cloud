@@ -143,7 +143,7 @@ public class KafkaDefaultAutoConfiguration {
                 MANUAL,
                  手动调用Acknowledgment.acknowledge()后立即提交
                 MANUAL_IMMEDIATE,*/
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
 
@@ -156,7 +156,7 @@ public class KafkaDefaultAutoConfiguration {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties()));
         //设置为批量消费，每个批次数量在Kafka配置参数中设置ConsumerConfig.MAX_POLL_RECORDS_CONFIG
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         factory.setReplyTemplate(kafkaTemplate);
         factory.getContainerProperties().setPollTimeout(3000);
         return factory;

@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-datasource-canal</artifactId>
+            <artifactId>hqy4cloud-common-canal</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
