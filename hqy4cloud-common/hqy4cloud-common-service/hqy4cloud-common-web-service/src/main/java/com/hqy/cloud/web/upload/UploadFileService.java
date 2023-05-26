@@ -1,7 +1,6 @@
-package com.hqy.cloud.web.service;
+package com.hqy.cloud.web.upload;
 
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
-import com.hqy.foundation.common.FileResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -23,7 +22,7 @@ public interface UploadFileService {
      * @throws UploadFileException  e.
      * @return                      file response.
      */
-    FileResponse uploadAvatar(final MultipartFile file) throws UploadFileException;
+    UploadResponse uploadAvatar(final MultipartFile file) throws UploadFileException;
 
     /**
      * upload image file.
@@ -32,7 +31,7 @@ public interface UploadFileService {
      * @return            fileResponse.
      * @throws UploadFileException
      */
-    FileResponse uploadImgFile(String folderPath, final MultipartFile file) throws UploadFileException;
+    UploadResponse uploadImgFile(String folderPath, final MultipartFile file) throws UploadFileException;
 
     /**
      * upload file to folderPath.
@@ -41,7 +40,7 @@ public interface UploadFileService {
      * @throws UploadFileException  e
      * @return                      fileResponse.
      */
-    FileResponse uploadFile(String folderPath, final MultipartFile file) throws UploadFileException;
+    UploadResponse uploadFile(String folderPath, final MultipartFile file) throws UploadFileException;
 
 
     /**
