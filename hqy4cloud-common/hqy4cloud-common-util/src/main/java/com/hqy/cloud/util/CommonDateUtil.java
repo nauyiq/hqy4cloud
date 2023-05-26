@@ -1,5 +1,6 @@
 package com.hqy.cloud.util;
 
+import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,37 +20,12 @@ import java.util.Date;
 public class CommonDateUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CommonDateUtil.class);
+    private static final String SDF_PATTERN = "yyyyMMdd";
 
-    /**
-     * 到分钟的格式
-     */
-    public static final DateFormat TIME_MINUTE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-    /**
-     * 标准的datetime时间格式
-     */
-    public static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    /**
-     * yyyyMMdd格式
-     */
-    public static final DateFormat SDF_FORMAT = new SimpleDateFormat("yyyyMMdd");
-
-
-    /**
-     * today yyyyMMdd格式
-     * @return today.
-     */
     public static String today() {
-        return SDF_FORMAT.format(new Date());
+        return DateUtil.format(new Date(), SDF_PATTERN);
     }
 
-    /**
-     * 时间 转 HH:mm格式
-     * @param date
-     * @param dateString
-     * @return
-     */
     public static Date getHourAndMinute(Date date, String dateString) {
         final DateFormat df = new SimpleDateFormat("HH:mm");
         try {

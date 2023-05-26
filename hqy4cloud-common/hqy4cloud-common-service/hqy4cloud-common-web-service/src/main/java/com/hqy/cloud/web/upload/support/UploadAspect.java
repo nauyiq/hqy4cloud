@@ -35,7 +35,7 @@ public class UploadAspect {
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         UploadMode uploadMode = getUploadMode(pjp);
         if (Objects.nonNull(uploadMode)) {
-            UploadContext.setMode(uploadMode.value());
+            UploadContext.setMode(new UploadContext.UploadState(uploadMode.value(), uploadMode.copyFileContent()));
         }
         try {
             return pjp.proceed();

@@ -17,17 +17,22 @@ import com.qcloud.cos.event.ProgressEvent;
 import com.qcloud.cos.event.ProgressListener;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.http.HttpProtocol;
-import com.qcloud.cos.model.*;
+import com.qcloud.cos.model.Bucket;
+import com.qcloud.cos.model.CannedAccessControlList;
+import com.qcloud.cos.model.CreateBucketRequest;
+import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.TransferManager;
 import com.qcloud.cos.transfer.TransferManagerConfiguration;
 import com.qcloud.cos.transfer.Upload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -68,6 +73,7 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         String regionName = cloudSecret.getProperties().getOrDefault(REGION, TENCENT_DEFAULT_REGION);
         String appId = cloudSecret.getAppId();
         return StringConstants.Host.HTTPS +
+                this.bucketName +
                 StrUtil.DOT +
                 "cos" +
                 StrUtil.DOT +
@@ -124,7 +130,7 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
     }
 
     @Override
-    protected UploadResponse writeFile(String originalFilename, String folderPath, UploadMode.Mode mode, MultipartFile file) throws UploadFileException {
+    protected UploadResponse writeFile(String originalFilename, String folderPath, UploadContext.UploadState state, final MultipartFile file) throws UploadFileException {
         // 指定文件上传到 COS 上的路径，即对象键。例如对象键为 folder/picture.jpg，则表示将文件 picture.jpg 上传到 folder 路径下
         if (!folderPath.trim().endsWith(StrUtil.SLASH)) {
             folderPath = folderPath.concat(StrUtil.SLASH);
@@ -135,11 +141,18 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         String path = this.hostname + relativeFilePath;
         com.hqy.cloud.web.common.UploadResult result = com.hqy.cloud.web.common.UploadResult.of(relativeFilePath, path);
 
-        //获取当前文件上传上下文的请求方式
-        PutObjectRequest putObjectRequest;
         try {
-            putObjectRequest = new PutObjectRequest(this.bucketName, relativeFilePath, file.getInputStream(), null);
+            // 获取输入流.
+            InputStream inputStream;
+            if (state.isCopyFileContent()) {
+                MultipartFileAdaptor multipartFile = new MultipartFileAdaptor(originalFilename, file.getBytes().clone());
+                inputStream = multipartFile.getInputStream();
+            } else {
+                inputStream = file.getInputStream();
+            }
+            PutObjectRequest putObjectRequest = new PutObjectRequest(this.bucketName, relativeFilePath, inputStream, null);
             //同步上传
+            UploadMode.Mode mode = state.getMode();
             if (mode == null || mode == UploadMode.Mode.SYNC) {
                 Upload upload = transferManager.upload(putObjectRequest);
                 upload.waitForUploadResult();
@@ -147,9 +160,13 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
             } else {
                 //异步上传
                 FlexibleResultUploadResponse.AsyncUploadFileCallFuture future = FlexibleResultUploadResponse.AsyncUploadFileCallFuture.create();
-                Upload upload = transferManager.upload(putObjectRequest);
-                putObjectRequest.withGeneralProgressListener(PutObjectEndProgressListener.of(file.getSize(), future, result));
-                return FlexibleResultUploadResponse.of(mode, future);
+                try {
+                    Upload upload = transferManager.upload(putObjectRequest);
+                } catch (Throwable cause) {
+                    future.setException(cause);
+                }
+                putObjectRequest.withGeneralProgressListener(PutObjectEndProgressListener.of(file.getSize(), inputStream, future, result));
+                return FlexibleResultUploadResponse.of(mode, result, future);
             }
         } catch (Throwable cause) {
            throw new UploadFileException(cause);
@@ -168,6 +185,7 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
     @RequiredArgsConstructor(staticName = "of")
     public static class PutObjectEndProgressListener implements ProgressListener {
         private final long bytes;
+        private final InputStream inputStream;
         private final AtomicLong uploadedBytes = new AtomicLong(0);
         private final FlexibleResultUploadResponse.AsyncUploadFileCallFuture future;
         private final com.hqy.cloud.web.common.UploadResult uploadResult;
@@ -176,7 +194,14 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         public void progressChanged(ProgressEvent progressEvent) {
             //文件上传完毕
             if (uploadedBytes.addAndGet(progressEvent.getBytes()) == bytes) {
-                this.future.set(uploadResult);
+                try {
+                    this.future.set(uploadResult);
+                } finally {
+                    if (inputStream != null) {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+
             }
         }
     }

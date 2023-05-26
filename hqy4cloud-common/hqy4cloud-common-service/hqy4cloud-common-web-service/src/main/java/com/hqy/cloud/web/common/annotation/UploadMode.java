@@ -21,6 +21,8 @@ public @interface UploadMode {
 
     Mode value() default Mode.SYNC;
 
+    boolean copyFileContent() default true;
+
     enum Mode {
 
         /**
@@ -32,6 +34,11 @@ public @interface UploadMode {
          * 异步
          */
         ASYNC,
+
+        /**
+         * oneway
+         */
+        ONEWAY,
 
     }
 

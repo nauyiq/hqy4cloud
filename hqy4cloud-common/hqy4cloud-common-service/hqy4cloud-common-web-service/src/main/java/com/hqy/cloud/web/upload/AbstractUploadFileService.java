@@ -55,7 +55,8 @@ public abstract class AbstractUploadFileService implements UploadFileService {
     }
 
     private UploadResponse doUpload(String folderPath, MultipartFile file, boolean isImageUpload) {
-        UploadMode.Mode uploadMode = getUploadMode();
+        UploadContext.UploadState uploadState = getUploadState();
+        UploadMode.Mode uploadMode = uploadState.getMode();
         UploadResult result;
         if (StringUtils.isBlank(folderPath)) {
             result = UploadResult.failed("Upload image file folderPath should not be null.");
@@ -76,7 +77,7 @@ public abstract class AbstractUploadFileService implements UploadFileService {
         if (!result.isResult()) {
             return buildResponse(result, uploadMode);
         }
-        return writeFile(originalFilename, folderPath, uploadMode, file);
+        return writeFile(originalFilename, folderPath, uploadState, file);
     }
 
 
@@ -112,16 +113,16 @@ public abstract class AbstractUploadFileService implements UploadFileService {
      * 写文件.
      * @param originalFilename     起始文件名
      * @param folderPath           文件目录
-     * @param mode                 文件上传方式，同步或异步
+     * @param state                文件上传方式，同步或异步
      * @param file                 文件
      * @return                     {@link UploadResponse}
      * @throws UploadFileException e.
      */
-    protected abstract UploadResponse writeFile(String originalFilename, String folderPath, UploadMode.Mode mode, MultipartFile file) throws UploadFileException;
+    protected abstract UploadResponse writeFile(String originalFilename, String folderPath, UploadContext.UploadState state, MultipartFile file) throws UploadFileException;
 
 
-    private UploadMode.Mode getUploadMode() {
-        return UploadContext.getMode();
+    private UploadContext.UploadState getUploadState() {
+        return UploadContext.getState();
     }
 
     protected boolean validateFileType(String filename, boolean imageType) {
@@ -168,9 +169,8 @@ public abstract class AbstractUploadFileService implements UploadFileService {
             public UploadMode.Mode uploadMode() {
                 return mode == null ? UploadMode.Mode.SYNC : mode;
             }
-
             @Override
-            public UploadResult getResult() {
+            public UploadResult getResult(boolean syncWait) {
                 return result;
             }
         };

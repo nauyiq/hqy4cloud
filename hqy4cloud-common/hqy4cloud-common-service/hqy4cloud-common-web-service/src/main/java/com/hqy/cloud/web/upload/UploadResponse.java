@@ -21,7 +21,16 @@ public interface UploadResponse {
      * 获取文件上传的结果.
      * @return {@link UploadResult}
      */
-    UploadResult getResult();
+    default UploadResult getResult() {
+        return getResult(true);
+    }
+
+    /**
+     * 获取结果 是否同步等待
+     * @param syncWait 是否等待
+     * @return         {@link UploadResult}
+     */
+    UploadResult getResult(boolean syncWait);
 
 
 

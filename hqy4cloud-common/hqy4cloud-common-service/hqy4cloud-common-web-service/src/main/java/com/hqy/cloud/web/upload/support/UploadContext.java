@@ -1,6 +1,9 @@
 package com.hqy.cloud.web.upload.support;
 
 import com.hqy.cloud.web.common.annotation.UploadMode;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 文件上传上下文
@@ -9,13 +12,22 @@ import com.hqy.cloud.web.common.annotation.UploadMode;
  * @date 2023/5/25 14:57
  */
 public class UploadContext {
-    private static final ThreadLocal<UploadMode.Mode> UPLOAD_MODE_STATE = new ThreadLocal<>();
 
-    public static void setMode(UploadMode.Mode mode) {
-        UPLOAD_MODE_STATE.set(mode);
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UploadState {
+        private UploadMode.Mode mode;
+        private boolean copyFileContent;
     }
 
-    public static UploadMode.Mode getMode() {
+    private static final ThreadLocal<UploadState> UPLOAD_MODE_STATE = new ThreadLocal<>();
+
+    public static void setMode(UploadState state) {
+        UPLOAD_MODE_STATE.set(state);
+    }
+
+    public static UploadState getState() {
         return UPLOAD_MODE_STATE.get();
     }
 

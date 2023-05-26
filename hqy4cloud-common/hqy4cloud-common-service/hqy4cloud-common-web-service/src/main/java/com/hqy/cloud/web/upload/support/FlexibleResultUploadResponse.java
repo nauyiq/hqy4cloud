@@ -1,6 +1,7 @@
 package com.hqy.cloud.web.upload.support;
 
 import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.hqy.cloud.web.common.UploadResult;
 import com.hqy.cloud.web.common.annotation.UploadMode;
 import com.hqy.cloud.web.upload.UploadResponse;
@@ -16,15 +17,21 @@ import javax.annotation.Nullable;
 public class FlexibleResultUploadResponse implements UploadResponse {
 
     private final UploadMode.Mode mode;
-    private final Object result;
+    private final UploadResult result;
+    private final ListenableFuture<UploadResult> future;
 
-    private FlexibleResultUploadResponse(UploadMode.Mode mode, Object result) {
+    private FlexibleResultUploadResponse(UploadMode.Mode mode, UploadResult result, ListenableFuture<UploadResult> future) {
         this.mode = mode;
         this.result = result;
+        this.future = future;
     }
 
-    public static UploadResponse of(UploadMode.Mode mode, Object result) {
-        return new FlexibleResultUploadResponse(mode, result);
+    public static UploadResponse of(UploadMode.Mode mode, UploadResult result) {
+        return new FlexibleResultUploadResponse(mode, result, null);
+    }
+
+    public static UploadResponse of(UploadMode.Mode mode, UploadResult result, ListenableFuture<UploadResult> future) {
+        return new FlexibleResultUploadResponse(mode, result, future);
     }
 
     @Override
@@ -33,18 +40,22 @@ public class FlexibleResultUploadResponse implements UploadResponse {
     }
 
     @Override
-    public UploadResult getResult() {
-        if (uploadMode().equals(UploadMode.Mode.SYNC)) {
-            return (UploadResult) result;
+    public UploadResult getResult(boolean syncWait) {
+        // 同步调用直接返回结果即可
+        if (uploadMode() == UploadMode.Mode.SYNC) {
+            return result;
         }
-        AsyncUploadFileCallFuture future = (AsyncUploadFileCallFuture) result;
-        try {
-            return future.get();
-        } catch (Throwable cause) {
-            // FAILED ASYNC GET. RETURN DEFAULT RESULT
-            return UploadResult.ofTimeout();
+        // oneway 同理返回结果, 不管syncWait是否等待同步结果
+        if (uploadMode() == UploadMode.Mode.ONEWAY || !syncWait) {
+            return result;
+        } else {
+            try {
+                return future.get();
+            } catch (Throwable cause) {
+                // FAILED ASYNC GET. RETURN DEFAULT RESULT
+                return UploadResult.ofTimeout();
+            }
         }
-
     }
 
     public static class AsyncUploadFileCallFuture extends AbstractFuture<UploadResult> {
