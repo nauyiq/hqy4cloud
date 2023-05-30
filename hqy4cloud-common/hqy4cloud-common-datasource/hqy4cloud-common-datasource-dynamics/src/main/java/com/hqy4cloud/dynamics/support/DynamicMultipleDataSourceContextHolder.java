@@ -3,7 +3,7 @@ package com.hqy4cloud.dynamics.support;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 多数据源线程池
+ * 多数据源线程上下文
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/12/30 11:39

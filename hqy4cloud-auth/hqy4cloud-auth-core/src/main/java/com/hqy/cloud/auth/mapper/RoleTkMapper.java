@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.mapper;
 
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
 import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

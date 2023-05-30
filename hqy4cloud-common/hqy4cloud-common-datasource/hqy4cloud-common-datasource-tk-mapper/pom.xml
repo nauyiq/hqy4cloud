@@ -44,6 +44,8 @@
             <artifactId>hqy4cloud-common-util</artifactId>
             <version>${revision}</version>
         </dependency>
+
+
     </dependencies>
 
 

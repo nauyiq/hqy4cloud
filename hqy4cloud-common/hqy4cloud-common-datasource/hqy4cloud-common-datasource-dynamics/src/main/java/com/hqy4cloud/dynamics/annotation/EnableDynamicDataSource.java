@@ -1,5 +1,8 @@
 package com.hqy4cloud.dynamics.annotation;
 
+import com.hqy4cloud.dynamics.config.DynamicDataSourceAutoConfiguration;
+import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.*;
 
 /**
@@ -12,5 +15,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+@Import(DynamicDataSourceAutoConfiguration.class)
 public @interface EnableDynamicDataSource {
 }

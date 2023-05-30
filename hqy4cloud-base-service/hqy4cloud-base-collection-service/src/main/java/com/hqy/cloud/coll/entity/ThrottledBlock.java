@@ -1,6 +1,6 @@
 package com.hqy.cloud.coll.entity;
 
-import com.hqy.cloud.tk.model.BaseEntity;
+import com.hqy.cloud.db.tk.model.BaseEntity;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;

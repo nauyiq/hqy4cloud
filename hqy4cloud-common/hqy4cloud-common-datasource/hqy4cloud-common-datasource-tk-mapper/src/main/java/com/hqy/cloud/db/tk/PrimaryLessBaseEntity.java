@@ -1,4 +1,4 @@
-package com.hqy.cloud.tk;
+package com.hqy.cloud.db.tk;
 
 /**
  * 无主键策略的基础entity

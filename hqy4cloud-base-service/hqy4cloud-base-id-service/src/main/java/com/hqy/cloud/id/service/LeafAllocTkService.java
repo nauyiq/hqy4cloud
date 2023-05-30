@@ -1,7 +1,7 @@
 package com.hqy.cloud.id.service;
 
 import com.hqy.cloud.id.entities.LeafAlloc;
-import com.hqy.cloud.tk.PrimaryLessTkService;
+import com.hqy.cloud.db.tk.PrimaryLessTkService;
 
 import java.util.List;
 

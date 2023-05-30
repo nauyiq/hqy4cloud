@@ -1,9 +1,9 @@
-package com.hqy.cloud.tk.support;
+package com.hqy.cloud.db.tk.support;
 
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.tk.PrimaryLessBaseEntity;
-import com.hqy.cloud.tk.PrimaryLessTkMapper;
-import com.hqy.cloud.tk.PrimaryLessTkService;
+import com.hqy.cloud.db.tk.PrimaryLessBaseEntity;
+import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
+import com.hqy.cloud.db.tk.PrimaryLessTkService;
 import com.hqy.cloud.util.AssertUtil;
 
 import java.util.List;

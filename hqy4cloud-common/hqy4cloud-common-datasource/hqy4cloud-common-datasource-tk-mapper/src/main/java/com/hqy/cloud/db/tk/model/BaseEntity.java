@@ -1,6 +1,6 @@
-package com.hqy.cloud.tk.model;
+package com.hqy.cloud.db.tk.model;
 
-import com.hqy.cloud.common.BaseModel;
+import com.hqy.cloud.db.common.BaseModel;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

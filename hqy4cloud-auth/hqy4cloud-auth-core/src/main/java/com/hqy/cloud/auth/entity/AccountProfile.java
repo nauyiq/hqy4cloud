@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.entity;
 
-import com.hqy.cloud.tk.model.BaseEntity;
+import com.hqy.cloud.db.tk.model.BaseEntity;
 
 import javax.persistence.Table;
 import java.util.Date;

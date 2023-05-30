@@ -1,7 +1,7 @@
 package com.hqy.cloud.id.mapper;
 
 import com.hqy.cloud.id.entities.LeafAlloc;
-import com.hqy.cloud.tk.PrimaryLessTkMapper;
+import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

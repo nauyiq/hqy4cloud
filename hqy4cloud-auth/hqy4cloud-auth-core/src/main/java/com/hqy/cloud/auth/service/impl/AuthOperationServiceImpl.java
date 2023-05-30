@@ -3,6 +3,7 @@ package com.hqy.cloud.auth.service.impl;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
+import com.hqy.cloud.auth.base.dto.PermissionDTO;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
@@ -116,7 +117,11 @@ public class AuthOperationServiceImpl implements AuthOperationService {
     @Override
     public Map<String, List<String>> getPermissionsByRoles(List<String> roles) {
         List<Integer> ids = roleTkService.selectIdByNames(roles);
-        return ((RoleMenuMapper) (roleMenuTkService.getTkDao())).getManuPermissionsByRoles(ids);
+        List<PermissionDTO> manuPermissionsByRoles = ((RoleMenuMapper) (roleMenuTkService.getTkDao())).getManuPermissionsByRoles(ids);
+        if (CollectionUtils.isEmpty(manuPermissionsByRoles)) {
+            return MapUtil.empty();
+        }
+        return manuPermissionsByRoles.stream().collect(Collectors.toMap(PermissionDTO::getRole, PermissionDTO::getPermissions));
     }
 
     private List<AdminTreeMenuVO> menusConvertTreeMenu(List<String> permissions, List<Menu> menus) {

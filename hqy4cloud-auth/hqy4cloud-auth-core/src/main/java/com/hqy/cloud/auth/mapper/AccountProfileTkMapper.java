@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.mapper;
 
 import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkMapper;
 import org.springframework.stereotype.Repository;
 
 /**

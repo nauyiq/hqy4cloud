@@ -1,4 +1,4 @@
-package com.hqy.cloud.common;
+package com.hqy.cloud.db.common;
 
 import java.io.Serializable;
 import java.util.Date;

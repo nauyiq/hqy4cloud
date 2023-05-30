@@ -1,9 +1,9 @@
-package com.hqy.cloud.tk.support;
+package com.hqy.cloud.db.tk.support;
 
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.tk.BaseTkMapper;
-import com.hqy.cloud.tk.BaseTkService;
-import com.hqy.cloud.tk.model.BaseEntity;
+import com.hqy.cloud.db.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkService;
+import com.hqy.cloud.db.tk.model.BaseEntity;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.ReflectUtils;
 import tk.mybatis.mapper.entity.Example;

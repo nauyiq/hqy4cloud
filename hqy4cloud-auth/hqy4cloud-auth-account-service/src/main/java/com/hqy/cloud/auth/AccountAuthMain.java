@@ -6,7 +6,6 @@ import com.hqy.account.service.RemoteAuthService;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy4cloud.dynamics.annotation.EnableDynamicDataSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +23,6 @@ import java.util.List;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableDynamicDataSource
 @MapperScan(basePackages = {"com.hqy.cloud.**.mapper"})
 public class AccountAuthMain {
 

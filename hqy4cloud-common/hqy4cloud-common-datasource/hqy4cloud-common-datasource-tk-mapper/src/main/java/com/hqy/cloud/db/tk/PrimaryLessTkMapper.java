@@ -1,4 +1,4 @@
-package com.hqy.cloud.tk;
+package com.hqy.cloud.db.tk;
 
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.common.MySqlMapper;

@@ -115,7 +115,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         List<String> oldRoleNames = Arrays.asList(StringUtils.tokenizeToStringArray(accountRoles, COMMA));
         List<Role> oldRoles = roleTkService.queryRolesByNames(oldRoleNames);
         boolean modifyRoles = true;
-        if (oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
+        if (CollectionUtils.isNotEmpty(roles) && oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
             modifyRoles = false;
         } else {
             if (!authOperationService.checkEnableModifyRoles(accessAccountId, roles)) {

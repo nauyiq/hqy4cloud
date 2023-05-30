@@ -2,10 +2,11 @@ package com.hqy4cloud.dynamics.config;
 
 import com.hqy4cloud.dynamics.support.DynamicMultipleDataSource;
 import com.hqy4cloud.dynamics.support.MultipleDataSourceAop;
-import com.hqy4cloud.dynamics.support.YmlMultipleDataSourceProvider;
+import com.hqy4cloud.dynamics.support.DruidMultipleDataSourceProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,8 @@ public class DynamicDataSourceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MultipleDataSourceProvider multipleDataSourceProvider(DynamicDataSourceProperties dynamicDataSourceProperties) {
-        return new YmlMultipleDataSourceProvider(dynamicDataSourceProperties);
+    public MultipleDataSourceProvider multipleDataSourceProvider(DynamicDataSourceProperties dynamicDataSourceProperties, DataSourceProperties dataSourceProperties) {
+        return new DruidMultipleDataSourceProvider(dataSourceProperties, dynamicDataSourceProperties);
     }
 
     @Bean

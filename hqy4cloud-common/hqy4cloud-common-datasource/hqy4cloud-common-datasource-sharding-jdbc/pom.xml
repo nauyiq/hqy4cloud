@@ -10,11 +10,26 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hqy4cloud-common-mapper-hibernate</artifactId>
+    <packaging>jar</packaging>
+    <artifactId>hqy4cloud-common-datasource-sharding-jdbc</artifactId>
+    <description>hqy4cloud-sharding jdbc</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-datasource-dynamics</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

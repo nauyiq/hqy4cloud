@@ -26,7 +26,7 @@ public class MultipleDataSourceAop {
     /**
      * 切点，service中的所有方法.
      */
-    @Pointcut("execution(* com.hqy.*.service.*.*(..))")
+    @Pointcut("execution(* com.hqy.cloud.*.service.*.*(..))")
     public void dataSourcePointCut() {
     }
 

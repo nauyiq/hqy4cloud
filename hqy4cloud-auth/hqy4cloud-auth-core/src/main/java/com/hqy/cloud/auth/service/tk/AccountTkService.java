@@ -4,7 +4,7 @@ import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
-import com.hqy.cloud.tk.BaseTkService;
+import com.hqy.cloud.db.tk.BaseTkService;
 
 import java.util.List;
 

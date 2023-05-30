@@ -1,6 +1,6 @@
 package com.hqy.cloud.coll.mapper;
 
-import com.hqy.cloud.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkMapper;
 import com.hqy.cloud.coll.entity.RPCFlowRecord;
 import org.springframework.stereotype.Repository;
 

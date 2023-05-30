@@ -3,8 +3,8 @@ package com.hqy.cloud.auth.service.tk.support;
 import com.hqy.cloud.auth.mapper.AccountProfileTkMapper;
 import com.hqy.cloud.auth.entity.AccountProfile;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
-import com.hqy.cloud.tk.BaseTkMapper;
-import com.hqy.cloud.tk.support.BaseTkServiceImpl;
+import com.hqy.cloud.db.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.support.BaseTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

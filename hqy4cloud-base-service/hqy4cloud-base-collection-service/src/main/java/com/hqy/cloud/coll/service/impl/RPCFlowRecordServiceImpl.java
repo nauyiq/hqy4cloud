@@ -2,8 +2,8 @@ package com.hqy.cloud.coll.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hqy.cloud.tk.BaseTkMapper;
-import com.hqy.cloud.tk.support.BaseTkServiceImpl;
+import com.hqy.cloud.db.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.support.BaseTkServiceImpl;
 import com.hqy.cloud.coll.mapper.RPCMinuteFlowRecordTkMapper;
 import com.hqy.cloud.coll.entity.RPCFlowRecord;
 import com.hqy.cloud.coll.service.RPCFlowRecordService;
