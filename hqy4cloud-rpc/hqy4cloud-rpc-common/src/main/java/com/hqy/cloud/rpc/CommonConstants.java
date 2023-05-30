@@ -52,7 +52,7 @@ public interface CommonConstants {
     int DEFAULT_WEIGHT = 100;
     int DEFAULT_WARMUP = 5 * 60 * 1000;
     int DEFAULT_FAIL_BACK_TIMES = 3;
-    int DEFAULT_RETRIES = 2;
+    int DEFAULT_RETRIES = 0;
     int DEFAULT_FAIL_BACK_TASKS = 100;
 
     String NORMAL_RPC = "normal";
