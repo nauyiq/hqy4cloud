@@ -1,4 +1,4 @@
-package com.hqy.structures.sort;
+package com.hqy.cloud.structures.sort;
 
 /**
  * 快速排序也是基于分治算法

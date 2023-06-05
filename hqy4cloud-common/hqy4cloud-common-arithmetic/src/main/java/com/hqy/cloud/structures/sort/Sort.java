@@ -1,4 +1,4 @@
-package com.hqy.structures.sort;
+package com.hqy.cloud.structures.sort;
 
 /**
  * @author qy.hong

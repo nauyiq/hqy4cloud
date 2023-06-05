@@ -1,4 +1,4 @@
-package com.hqy.structures.sort;
+package com.hqy.cloud.structures.sort;
 
 /**
  * 希尔排序是基于插入排序的，又叫缩小增量排序

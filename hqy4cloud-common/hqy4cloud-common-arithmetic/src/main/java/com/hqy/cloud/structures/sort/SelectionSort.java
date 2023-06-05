@@ -1,4 +1,4 @@
-package com.hqy.structures.sort;
+package com.hqy.cloud.structures.sort;
 
 /**
  * 冒泡排序中有一个缺点，比如，我们比较第一个数a1与第二个数a2的时候，只要a1比a2大就会交换位置，但是我们并不能确定a2是最小的元素，

@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>hqy4cloud-common-arithmetic</module>
         <module>hqy4cloud-common-core</module>
         <module>hqy4cloud-common-datasource</module>
         <module>hqy4cloud-common-service</module>

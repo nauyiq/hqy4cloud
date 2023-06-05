@@ -1,4 +1,4 @@
-package com.hqy.structures.sort;
+package com.hqy.cloud.structures.sort;
 
 /**
  * 冒泡排序: 每当俩相邻的数比较后发现他们的排序与排序的要求相反时，就将他们交换。每次遍历都可确定一个最大值放到待排数组的末尾，下次遍历，对该最大值以及它之后的元素不再排序（已经排好）。
