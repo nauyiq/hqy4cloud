@@ -8,7 +8,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.hqy.cloud.rpc.resgitry.node.NacosServerInfo;
+import com.hqy.cloud.rpc.nacos.node.NacosServerInfo;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;

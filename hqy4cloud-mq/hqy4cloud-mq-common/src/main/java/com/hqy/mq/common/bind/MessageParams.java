@@ -1,7 +1,7 @@
 package com.hqy.mq.common.bind;
 
 import cn.hutool.core.convert.Convert;
-import com.hqy.cloud.tk.support.Parameters;
+import com.hqy.cloud.common.base.Parameters;
 import org.apache.commons.lang3.StringUtils;
 
 /**

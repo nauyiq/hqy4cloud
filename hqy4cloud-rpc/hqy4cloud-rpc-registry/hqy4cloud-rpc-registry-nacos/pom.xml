@@ -14,23 +14,16 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-rpc-registry-api</artifactId>
+            <artifactId>hqy4cloud-rpc-config</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

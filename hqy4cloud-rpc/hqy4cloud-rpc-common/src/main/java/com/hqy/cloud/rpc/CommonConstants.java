@@ -29,12 +29,16 @@ public interface CommonConstants {
 
     String EVENT_LOOP_BOSS_POOL_NAME  = "NettyServerBoss";
     String EVENT_LOOP_WORKER_POOL_NAME  = "NettyServerWorker";
+    String EVENT_LOOP_LOGIC_POOL_NAME  = "NettyServerLogic";
 
     String POOL_MIN_IDLE_PER_KEY = "poolMinIdlePerKey";
     String POOL_MAX_IDLE_PER_KEY = "poolMaxIdlePerKey";
     String POOL_MIN_IDLE = "poolMinIdle";
     String POOL_MAX_IDLE = "poolMaxIdle";
     String POOL_MAX_TOTAL = "poolMaxTotal";
+
+    String RPC_COMMON_SCHEDULED_SERVICE_THREAD = "commonScheduledThreadNum";
+    String RPC_CLIENT_DELAY_DISCONNECT_TIME = "clientDisconnectTime";
 
     String RPC_CLUSTER_AVAILABLE_CHECK = "availableCheck";
     String RPC_CLUSTER_STICKY_KEY = "sticky";
@@ -54,6 +58,7 @@ public interface CommonConstants {
     int DEFAULT_FAIL_BACK_TIMES = 3;
     int DEFAULT_RETRIES = 0;
     int DEFAULT_FAIL_BACK_TASKS = 100;
+    int DEFAULT_COMMON_SCHEDULED_SERVICE_THREAD = 4;
 
     String NORMAL_RPC = "normal";
     String SLOW_RPC = "slow";

@@ -1,6 +1,7 @@
 package com.hqy.cloud.rpc.thrift;
 
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
 import com.hqy.cloud.rpc.thrift.commonpool.MultiplexThriftClientTargetPooled;
 import com.hqy.cloud.rpc.thrift.protocol.ThriftInvoker;
 import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
@@ -25,15 +26,14 @@ import java.util.stream.Collectors;
  * @date 2022/7/4 17:53
  */
 public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
-
     private final MultiplexThriftClientTargetPooled<T> pooled;
-
     private static final Logger log = LoggerFactory.getLogger(ThriftDynamicDirectory.class);
 
-    public ThriftDynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper, RegistryFactory factory) {
+    public ThriftDynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType,
+                                  ThriftClientManagerWrapper clientManager, RegistryFactory factory, ExecutorRepository executorRepository) {
         super(providerServiceName, rpcModel, serviceType, factory);
         //invokers pooled.
-        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, serviceType, clientManagerWrapper);
+        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, serviceType, clientManager, executorRepository);
         //must final init invokers
         synchronized (getFactory()) {
             log.info("Start new ThriftDynamicDirectory, notify and subscribe.");
@@ -50,7 +50,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
         Registry registry = factory.getRegistry(consumerRpcModel);
         //create provider rpc model.
         //does not represent a specific remote service
-        RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerRpcModel.getGroup(),consumerRpcModel.getRegistryInfo(), null);
+        RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerRpcModel.getGroup(), consumerRpcModel.getRegistryInfo(), null);
         //query rpc provider instance from registry.
         List<RPCModel> rpcModels = registry.lookup(rpcModel);
         //notify.
@@ -75,7 +75,6 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
 
     private void refreshInvoker(List<RPCModel> rpcModels) {
         AssertUtil.notNull(rpcModels, "rpcContexts should not be null.");
-
         if (CollectionUtils.isEmpty(rpcModels)) {
             this.forbidden = true;
             routerChain.setInvokers(Collections.emptyList());
@@ -85,6 +84,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
             this.forbidden = false;
             List<Invoker<T>> invokers = toInvokers(rpcModels);
             this.setInvokers(invokers);
+            //
             routerChain.setInvokers(invokers);
             pooled.refreshObjectPooled(invokers);
         }
@@ -102,10 +102,10 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
     }
 
 
-
     @Override
     protected void destroyAllInvokers() {
         destroyInvokers();
+        pooled.close();
     }
 
 }

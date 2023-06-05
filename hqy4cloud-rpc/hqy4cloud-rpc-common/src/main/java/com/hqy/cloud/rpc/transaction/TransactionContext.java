@@ -84,7 +84,7 @@ public class TransactionContext {
             if (TransactionContext.isTransactional(methodName)) {
                 return;
             }
-            GlobalTransactionalThriftMethod annotation = method.getAnnotation(GlobalTransactionalThriftMethod.class);
+            GlobalRemoteTransactional annotation = method.getAnnotation(GlobalRemoteTransactional.class);
             if (annotation != null) {
                 TransactionContext.addTransaction(methodName);
             }

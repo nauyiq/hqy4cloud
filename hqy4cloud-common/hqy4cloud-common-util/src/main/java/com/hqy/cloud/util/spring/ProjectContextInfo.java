@@ -1,7 +1,7 @@
 package com.hqy.cloud.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
+import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
@@ -68,7 +68,7 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 节点类型
      */
-    private ActuatorNodeEnum nodeType;
+    private ActuatorNode nodeType;
 
     /**
      * 全局上下文属性定义
@@ -103,7 +103,7 @@ public class ProjectContextInfo implements Serializable {
     public ProjectContextInfo() {
     }
 
-    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip,  ActuatorNodeEnum nodeType) {
+    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip,  ActuatorNode nodeType) {
         this.nameEn = nameEn;
         this.env = env;
         this.pubValue = pubValue;
@@ -158,20 +158,6 @@ public class ProjectContextInfo implements Serializable {
         return attributes;
     }
 
-    @SuppressWarnings("unchecked")
-    public Set<String> getAttributeSetString(String key) {
-        if (StringUtils.isBlank(key)) {
-            log.warn("@@@ 上下文对象获取getAttributeSet, key is blank.");
-            return new HashSet<>();
-        } else {
-            try {
-                return (Set<String>) attributes.getOrDefault(key, new HashSet<>());
-            } catch (Exception e) {
-                log.error("@@@ 上下文对象获取getAttributeSet异常, key = {},  {}", key, e.getMessage());
-                return new HashSet<>();
-            }
-        }
-    }
 
     public String getNameWithIpPort() {
         return nameEn.concat(StringConstants.Symbol.AT)

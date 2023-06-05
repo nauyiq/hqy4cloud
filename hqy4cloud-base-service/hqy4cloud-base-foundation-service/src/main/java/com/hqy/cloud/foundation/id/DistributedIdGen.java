@@ -6,7 +6,7 @@ import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.id.service.RemoteLeafService;
 import com.hqy.cloud.id.struct.ResultStruct;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.cloud.rpc.resgitry.utils.NacosConfigurationUtils;
+import com.hqy.cloud.rpc.nacos.utils.NacosConfigurationUtils;
 import com.hqy.cloud.util.identity.ProjectSnowflakeIdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

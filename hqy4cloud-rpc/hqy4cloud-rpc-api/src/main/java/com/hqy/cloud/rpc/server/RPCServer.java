@@ -1,7 +1,9 @@
 package com.hqy.cloud.rpc.server;
 
+import com.hqy.cloud.rpc.CloseableService;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
+import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/7/7 17:05
  */
-public interface RPCServer {
+public interface RPCServer extends CloseableService {
 
     /**
      * return rpc server address.
@@ -25,14 +27,16 @@ public interface RPCServer {
     List<RPCService> getRegistryRpcServices();
 
     /**
+     * init rpc client.
+     * @param repository ExecutorRepository.
+     */
+    void initialize(ExecutorRepository repository);
+
+    /**
      * this rpc server already destroy?
      * @return destroy?
      */
     boolean isDestroy();
 
-    /**
-     * destroy rpc server.
-     */
-    void destroy();
 
 }

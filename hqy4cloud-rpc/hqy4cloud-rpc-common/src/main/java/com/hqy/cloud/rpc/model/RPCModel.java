@@ -1,8 +1,9 @@
 package com.hqy.cloud.rpc.model;
 
 import cn.hutool.core.map.MapUtil;
+import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.tk.support.Parameters;
+import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.rpc.CommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
+import static com.hqy.cloud.rpc.CommonConstants.ACTUATOR_TYPE;
 
 /**
  * RPCModel- Uniform Resource Locator
@@ -59,6 +64,11 @@ public class RPCModel extends Parameters implements Serializable {
      */
     private volatile transient Map<String, Number> numbers;
 
+    /**
+     * invoke service name cache
+     */
+    private final Set<String> invokedServiceClassCache = new CopyOnWriteArraySet<>();
+
     public RPCModel(String name) {
         this(name, 0);
     }
@@ -88,7 +98,6 @@ public class RPCModel extends Parameters implements Serializable {
     public static RPCModel setApplication(String application) {
         return new RPCModel(application);
     }
-
 
     public int getServerPort() {
         return serverPort;
@@ -138,6 +147,12 @@ public class RPCModel extends Parameters implements Serializable {
 
         return buf.toString();
     }
+
+    public String getDesc() {
+        return getName() + " register to " + getRegistryInfo().getName()
+                 + StringConstants.Symbol.COLON + buildString(false, false, false);
+    }
+
 
     public RPCServerAddress getServerAddress() {
         return serverAddress;
@@ -211,6 +226,11 @@ public class RPCModel extends Parameters implements Serializable {
         return getParameter(CommonConstants.PUB_MODE, PubMode.GRAY.value);
     }
 
+    public ActuatorNode getActuatorNode() {
+        String parameter = getParameter(ACTUATOR_TYPE);
+        return ActuatorNode.valueOf(parameter);
+    }
+
     public long serverStartTimestamp() {
         return getParameter(CommonConstants.START_SERVER_TIMESTAMP, getCreateTimestamp());
     }
@@ -257,6 +277,14 @@ public class RPCModel extends Parameters implements Serializable {
         }
     }
 
+    public Set<String> getInvokedServiceClassCache() {
+        return invokedServiceClassCache;
+    }
+
+    public void addServiceClass(Class<?> clazz) {
+        this.invokedServiceClassCache.add(clazz.getSimpleName());
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -280,6 +308,7 @@ public class RPCModel extends Parameters implements Serializable {
     public int hashCode() {
         return Objects.hash(name, serverPort, registryInfo, serverAddress);
     }
+
 
 
 

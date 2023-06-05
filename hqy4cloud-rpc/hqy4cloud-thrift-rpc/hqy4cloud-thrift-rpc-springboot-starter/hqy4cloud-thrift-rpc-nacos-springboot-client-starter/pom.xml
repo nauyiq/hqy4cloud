@@ -17,14 +17,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-api-starter</artifactId>
+            <artifactId>hqy4cloud-rpc-registry-nacos</artifactId>
             <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

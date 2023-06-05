@@ -44,7 +44,8 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         this(serviceType, rpcModel, consumerModel, thriftClientTargetPooled, null);
     }
 
-    public ThriftInvoker(Class<T> serviceType, RPCModel rpcModel, RPCModel consumerModel, MultiplexThriftClientTargetPooled<T> thriftClientTargetPooled, Map<String, Object> attachment) throws Exception {
+    public ThriftInvoker(Class<T> serviceType, RPCModel rpcModel, RPCModel consumerModel,
+                         MultiplexThriftClientTargetPooled<T> thriftClientTargetPooled, Map<String, Object> attachment) throws Exception {
         super(serviceType, rpcModel, consumerModel, attachment);
         this.thriftClientTargetPooled = thriftClientTargetPooled;
     }
@@ -101,7 +102,6 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
     }
 
     private Object doPreException(Invocation invocation, Exception e) throws Exception {
-
         Class<? extends Exception> exceptionClass = e.getClass();
         if (exceptionClass.isAssignableFrom(ThriftCustomException.class)) {
             Fallback fallback = invocation.getFallback(exceptionClass);

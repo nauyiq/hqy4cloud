@@ -285,7 +285,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
 
             if (response != null) {
                 int sequenceId = extractSequenceId(response);
-                //优化by rosun 获取sequenceId之外 更多处理请求相关的上下文信息
+                //获取sequenceId之外 更多处理请求相关的上下文信息
 //                final TMessage tmsg  =  extractTMessage(response);
 //                final int sequenceId = tmsg.seqid;
                 onResponseReceived(sequenceId, response);
@@ -384,7 +384,6 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 log.warn(e.getMessage() + " | " + e.getClass().getName());
             }
         }
-        //释放内存 防止内存泄露
         disposeMemoryLeak();
     }
 

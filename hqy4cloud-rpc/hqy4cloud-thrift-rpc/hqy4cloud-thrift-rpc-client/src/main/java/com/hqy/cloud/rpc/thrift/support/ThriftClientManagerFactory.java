@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ThriftClientManagerFactory {
 
-    public ThriftClientManagerWrapper createThriftClientManager(int workerThreadCount, List<ThriftContextClientHandleService> services) {
+    public static ThriftClientManagerWrapper createThriftClientManager(int workerThreadCount, List<ThriftContextClientHandleService> services) {
         ThriftCodecManager codecManager = new ThriftCodecManager();
         NettyClientConfig config = NettyClientConfig.newBuilder().setWorkerThreadCount(workerThreadCount).build();
         NiftyClient client = new NiftyClient(config);

@@ -1,11 +1,7 @@
 package com.hqy.cloud.auth.limit;
 
-import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
-import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 
@@ -51,12 +47,5 @@ public abstract class DefaultManualWhiteIpAdaptor implements ManualWhiteIpServic
         if (reset) {
             setCache.clear();
         }
-        if (CommonSwitcher.ENABLE_PROJECT_CONTEXT_WHITE.isOn()) {
-            Set<String> contextInfoWhiteSet = SpringContextHolder.getProjectContextInfo().getAttributeSetString(ProjectContextInfo.WHITE_IP_PROPERTIES_KEY);
-            if (CollectionUtils.isNotEmpty(contextInfoWhiteSet)) {
-                setCache.addAll(contextInfoWhiteSet);
-            }
-        }
-
     }
 }

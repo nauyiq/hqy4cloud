@@ -30,8 +30,11 @@ public class ThriftClientManagerWrapper {
         return (NiftyClientChannel) clientManager.getRequestChannel(t);
     }
 
-
     public ThriftClientManager getClientManager() {
         return clientManager;
+    }
+
+    public void close() {
+        clientManager.close();
     }
 }
