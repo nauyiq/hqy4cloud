@@ -1,14 +1,18 @@
 package com.hqy.cloud.foundation.common.route;
 
+import cn.hutool.core.util.StrUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
+import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static com.hqy.cloud.common.base.project.MicroServiceConstants.FOUNDATION_SERVICE;
 
 /**
  * 借助guava和redis来标记某个socket项目是否启用集群模式
@@ -17,17 +21,15 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/3/24 11:44
  */
 public class SocketClusterStatusManager {
-
     private static final Logger log = LoggerFactory.getLogger(SocketClusterStatusManager.class);
 
     private SocketClusterStatusManager() {}
-
     private static final Cache<String, SocketClusterStatus> CLUSTER_STATUS_CACHE =
-            CacheBuilder.newBuilder().initialCapacity(1024).expireAfterAccess(10L, TimeUnit.MINUTES).build();
+            CacheBuilder.newBuilder().initialCapacity(1024).expireAfterAccess(5L, TimeUnit.MINUTES).build();
+    private static final RedisKey REDIS_KEY = new RedisNamedKey(FOUNDATION_SERVICE, SocketClusterStatusManager.class.getSimpleName());
 
     private static String genKey(String env, String module) {
-        return SocketClusterStatus.class.getSimpleName().concat(StringConstants.Symbol.COLON)
-                .concat(env).concat(StringConstants.Symbol.COLON).concat(module);
+        return REDIS_KEY.getKey(env + StrUtil.UNDERLINE + module);
     }
 
     /**

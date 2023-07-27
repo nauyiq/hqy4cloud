@@ -1,15 +1,18 @@
 package com.hqy.foundation.common.bind;
 
+import lombok.AllArgsConstructor;
+
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/4/2 10:08
  */
+@AllArgsConstructor
 public class SocketIoConnection {
 
     private String connectUrl;
 
-    private String wtoken;
+    private String authorization;
 
     private String context;
 
@@ -19,14 +22,10 @@ public class SocketIoConnection {
     public SocketIoConnection() {
     }
 
-    public SocketIoConnection(String host, String context) {
-        this.context = context;
-        this.host = host;
-    }
 
-    public SocketIoConnection(String connectUrl, String wtoken, String context) {
+    public SocketIoConnection(String connectUrl, String authorization, String context) {
         this.connectUrl = connectUrl;
-        this.wtoken = wtoken;
+        this.authorization = authorization;
         this.context = context;
     }
 
@@ -38,12 +37,12 @@ public class SocketIoConnection {
         this.connectUrl = connectUrl;
     }
 
-    public String getWtoken() {
-        return wtoken;
+    public String getAuthorization() {
+        return authorization;
     }
 
-    public void setWtoken(String wtoken) {
-        this.wtoken = wtoken;
+    public void setAuthorization(String authorization) {
+        this.authorization = authorization;
     }
 
     public String getContext() {

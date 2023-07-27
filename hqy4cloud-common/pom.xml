@@ -26,6 +26,7 @@
         <module>hqy4cloud-common-elasticsearch</module>
         <module>hqy4cloud-common-seata</module>
         <module>hqy4cloud-common-canal</module>
+        <module>hqy4cloud-common-chatgpt</module>
 
     </modules>
 

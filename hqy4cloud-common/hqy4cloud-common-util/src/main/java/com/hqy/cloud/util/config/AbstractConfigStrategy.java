@@ -1,5 +1,6 @@
 package com.hqy.cloud.util.config;
 
+import cn.hutool.system.SystemUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +38,10 @@ public abstract class AbstractConfigStrategy implements AbstractStrategyProcesso
     }
 
     private void setConfigPath() {
-        //windows系统
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            configPath = "D:/hqy/project/conf";
+        if (SystemUtil.getOsInfo().isWindows()) {
+            configPath = "D:/hongqy/project/conf";
         } else {
-            configPath = "/hqy/project/conf";
+            configPath = "/hongqy/project/conf";
         }
     }
 

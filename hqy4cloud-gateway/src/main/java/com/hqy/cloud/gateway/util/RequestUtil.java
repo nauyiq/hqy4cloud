@@ -42,6 +42,10 @@ public class RequestUtil {
      */
     private static final String PATTERN_TAP_SPACE = "\\s*|\t|\r|\n";
 
+    private static final String X_FORWARDED_FOR = "x-forwarded-for";
+    private static final String PROXY_CLIENT_IP = "Proxy-Client-IP";
+    private static final String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
+
 
     /**
      * 获取用户真实IP地址，不直接使用request.getRemoteAddr()的原因是有可能用户使用了代理软件方式避免真实IP地址,
@@ -51,15 +55,15 @@ public class RequestUtil {
      */
     public static String getIpAddress(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
-        String ipAddress = headers.getFirst(StringConstants.Headers.X_FORWARDED_FOR);
+        String ipAddress = headers.getFirst(X_FORWARDED_FOR);
 
         //如果请求头x-forwarded-for 没有值则取Proxy-Client-IP
         if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
-            ipAddress = headers.getFirst(StringConstants.Headers.PROXY_CLIENT_IP);
+            ipAddress = headers.getFirst(PROXY_CLIENT_IP);
         }
         //如果请求头x-forwarded-for 没有值则取WL-Proxy-Client-IP
         if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {
-            ipAddress = headers.getFirst(StringConstants.Headers.WL_PROXY_CLIENT_IP);
+            ipAddress = headers.getFirst(WL_PROXY_CLIENT_IP);
         }
 
         if (ipAddress == null || ipAddress.length() == 0 || StringConstants.UNKNOWN.equalsIgnoreCase(ipAddress)) {

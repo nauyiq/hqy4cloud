@@ -1,20 +1,14 @@
 package com.hqy.cloud.util.web;
 
-import cn.hutool.http.ContentType;
-import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.bind.DataResponse;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,7 +36,7 @@ public class ResponseUtil {
             if (Objects.nonNull(response) && !response.isCommitted()) {
                 //是否乱码
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                response.setContentType(ContentType.JSON.getValue());
+                response.setContentType("application/json");
                 response.setStatus(statusCode);
                 PrintWriter writer = response.getWriter();
                 writer.write(JsonUtil.toJson(result));

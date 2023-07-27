@@ -7,20 +7,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.hqy.cloud.util.config.ConfigurationContext.YamlEnum.APPLICATION_YAML;
+
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/7 15:34
  */
 public class NacosConfigurationUtils {
-
     private static final Logger log = LoggerFactory.getLogger(NacosConfigurationUtils.class);
 
     public static final String NACOS_ADDRESS_KEY = "spring.cloud.nacos.discovery.server-addr";
     public static final String NACOS_GROUP_KEY = "spring.cloud.nacos.discovery.group";
+    public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
 
     public static String getServerAddress() {
-        return getServerAddress(ConfigurationContext.YamlEnum.APPLICATION_YAML, NACOS_ADDRESS_KEY);
+        return getServerAddress(APPLICATION_YAML, NACOS_ADDRESS_KEY);
     }
 
     @SneakyThrows
@@ -35,13 +37,13 @@ public class NacosConfigurationUtils {
             log.error(t.getMessage(), t);
         }
 
+        //尝试从System properties中获取
         if (StringUtils.isBlank(serviceAddress)) {
-            //尝试从System properties中获取
             serviceAddress = System.getProperty(NACOS_ADDRESS_KEY);
         }
 
         if (serviceAddress == null) {
-            throw new NacosException();
+            throw new NacosException(-1, "Failed execute to obtain nacos service address configuration.");
         }
 
         return serviceAddress;
@@ -50,7 +52,7 @@ public class NacosConfigurationUtils {
     public static String getNacosGroup() {
         String group = null;
         try {
-            group = ConfigurationContext.getString(ConfigurationContext.YamlEnum.APPLICATION_YAML, NACOS_GROUP_KEY);
+            group = ConfigurationContext.getString(APPLICATION_YAML, NACOS_GROUP_KEY);
             if (StringUtils.isNotBlank(group)) {
                 return group;
             }
@@ -58,12 +60,9 @@ public class NacosConfigurationUtils {
             log.warn(e.getMessage());
         }
 
+        //尝试从System properties中获取
         if (StringUtils.isBlank(group)) {
-            //尝试从System properties中获取
-            group = System.getProperty(NACOS_GROUP_KEY);
-            if (StringUtils.isBlank(group)) {
-                group = "DEV_GROUP";
-            }
+            group = System.getProperty(NACOS_GROUP_KEY, DEFAULT_GROUP);
         }
 
         return group;

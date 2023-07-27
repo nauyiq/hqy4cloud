@@ -1,5 +1,7 @@
 package com.hqy.cloud.util.config;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.system.SystemUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,17 +23,8 @@ public class ConfigurationContext {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContext.class);
 
     private ConfigurationContext() {}
-
-    /**
-     * .properties 文件map
-     */
     public static Map<PropertiesEnum, PropertyStrategy> propertiesMap = new ConcurrentHashMap<>();
-
-    /**
-     * .yal 文件map
-     */
     public static Map<YamlEnum, YamlStrategy> yamlMap = new ConcurrentHashMap<>();
-
     private static String baseUploadFilesDirectory = null;
 
 
@@ -64,6 +57,22 @@ public class ConfigurationContext {
         return strategy.getData();
     }
 
+    public static String getString(String filename, String key) {
+        YamlEnum yamlEnum = YamlEnum.valueOf(filename);
+        YamlStrategy strategy = yamlMap.get(yamlEnum);
+        if (strategy != null) {
+            return strategy.getData().get(key);
+        }
+
+        PropertiesEnum propertiesEnum = PropertiesEnum.valueOf(filename);
+        PropertyStrategy propertyStrategy = propertiesMap.get(propertiesEnum);
+        if (propertyStrategy != null) {
+            return propertyStrategy.getProperties().getProperty(key);
+        }
+
+        return StrUtil.EMPTY;
+    }
+
 
     public static String getString(YamlEnum yamlEnum, String key) {
         Map<String, String> yamlValues = getYaml(yamlEnum);
@@ -79,11 +88,7 @@ public class ConfigurationContext {
 
     public static String getConfigPath() {
         if (StringUtils.isBlank(baseUploadFilesDirectory)) {
-            if (System.getProperty(StringConstants.OS_NAME_KEY).startsWith(StringConstants.OS_WINDOWS_PREFIX)) {
-                baseUploadFilesDirectory = "C:/hongqy/data";
-            } else {
-                baseUploadFilesDirectory = "/hongqy/share/data";
-            }
+            baseUploadFilesDirectory = SystemUtil.getOsInfo().isWindows() ? "C:/hongqy/data" : "/hongqy/share/data";
         }
         return baseUploadFilesDirectory;
     }
@@ -128,6 +133,8 @@ public class ConfigurationContext {
         PropertiesEnum(String fineName) {
             this.fineName = fineName;
         }
+
+
     }
 
 

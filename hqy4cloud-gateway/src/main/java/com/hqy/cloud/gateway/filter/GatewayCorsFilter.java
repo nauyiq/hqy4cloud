@@ -24,6 +24,7 @@ import reactor.core.publisher.Mono;
  * @date  2021/7/25 22:42
  */
 @Slf4j
+@Deprecated
 //@Component
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
@@ -41,7 +42,7 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         }
 
         //如果是socket.io项目 则放开piling请求的cors 原因是在socket.io netty内部已经处理了cors
-        if (path.contains(StringConstants.WEBSOCKET_PATH) && request.getQueryParams().containsKey(StringConstants.Auth.SOCKET_AUTH_TOKEN)) {
+        if (path.contains(StringConstants.WEBSOCKET_PATH) && request.getQueryParams().containsKey(HttpHeaders.AUTHORIZATION)) {
             return chain.filter(exchange);
         }
 

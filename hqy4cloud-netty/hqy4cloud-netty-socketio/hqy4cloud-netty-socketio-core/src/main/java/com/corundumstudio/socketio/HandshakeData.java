@@ -15,33 +15,38 @@
  */
 package com.corundumstudio.socketio;
 
-import com.hqy.cloud.common.base.lang.StringConstants;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.hqy.cloud.common.base.lang.AuthConstants.BIZ_ID;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 /**
  * socket.io 握手数据.<br/>
  * 修改源码 修改握手参数
+ * @author qiyuan.hong
  */
 public class HandshakeData implements Serializable {
-
+    @Serial
+    private static final long serialVersionUID = 1196350300161819978L;
     private static final Logger log = LoggerFactory.getLogger(HandshakeData.class);
 
-    private static final long serialVersionUID = 1196350300161819978L;
-
     //注释掉源码字段.
-//    private HttpHeaders headers;
-//    private InetSocketAddress local;
-//    private InetSocketAddress address;
+    /*private HttpHeaders headers;
+    private InetSocketAddress local;
+    private InetSocketAddress address;*/
+
 
     private final Date time = new Date();
     private String url;
@@ -64,16 +69,15 @@ public class HandshakeData implements Serializable {
     private String realIp;
 
     /**
-     * 新增token 用于握手数据身份安全校验.
+     * 授权 用于握手数据身份安全校验.
      */
-    private String token;
+    private String authorization;
 
     /**
      * 可认为是当前会话id, 通道id
      */
     private String bizId;
 
-    // needed for correct deserialization
     public HandshakeData() {
     }
 
@@ -91,15 +95,19 @@ public class HandshakeData implements Serializable {
         this.url = url;
         this.xdomain = xdomain;
 
-        //解析参数里的token
-        if (urlParams.containsKey(StringConstants.Auth.SOCKET_AUTH_TOKEN)) {
-            this.token = urlParams.get(StringConstants.Auth.SOCKET_AUTH_TOKEN).get(0);
-        } else {
-            log.warn("@@@ Socket.io handshakeData token is empty.");
+        this.authorization = headers.get(AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            //尝试去解析参数里的认证信息
+            if (urlParams.containsKey(AUTHORIZATION)) {
+                this.authorization = urlParams.get(AUTHORIZATION).get(0);
+            } else {
+                log.warn("SocketIo handshakeData authorization is empty.");
+            }
         }
+
         //解析参数里的bizId
-        if (urlParams.containsKey(StringConstants.Auth.BIZ_ID)) {
-            List<String> bizIds = urlParams.get(StringConstants.Auth.BIZ_ID);
+        if (urlParams.containsKey(BIZ_ID)) {
+            List<String> bizIds = urlParams.get(BIZ_ID);
             if (CollectionUtils.isNotEmpty(bizIds)) {
                 this.bizId = bizIds.get(0);
             }
@@ -127,7 +135,7 @@ public class HandshakeData implements Serializable {
     }
 
     public String getAccessToken() {
-        return token;
+        return authorization;
     }
 
     public String getBizId() {

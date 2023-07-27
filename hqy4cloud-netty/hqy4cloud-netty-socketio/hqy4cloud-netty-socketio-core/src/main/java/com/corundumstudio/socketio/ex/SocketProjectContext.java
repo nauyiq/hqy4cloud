@@ -2,6 +2,8 @@ package com.corundumstudio.socketio.ex;
 
 import java.io.Serializable;
 
+import static com.hqy.cloud.common.base.lang.StringConstants.DEFAULT_VERSION;
+
 /**
  * socket项目上下文定义
  * @author qiyuan.hong
@@ -29,7 +31,14 @@ public class SocketProjectContext implements Serializable {
 
 
     public SocketProjectContext() {
+
     }
+
+    public static SocketProjectContext of(String serviceName, String bizId) {
+        App app = new App(serviceName);
+        return new SocketProjectContext(app, bizId);
+    }
+
 
     public SocketProjectContext(App app, String bizId) {
         this.app = app;
@@ -62,6 +71,7 @@ public class SocketProjectContext implements Serializable {
     }
 
     public static class App {
+
         /**
          * app名字
          */
@@ -77,7 +87,7 @@ public class SocketProjectContext implements Serializable {
 
         public App(String app) {
             this.app = app;
-            this.version = "1.0";
+            this.version = DEFAULT_VERSION;
         }
 
         public App(String app, String version) {

@@ -34,11 +34,11 @@ public class SocketIoAutoConfiguration {
 
         //registry socketIo Info to redis.
         SocketClusterStatusManager.registry(new SocketClusterStatus(socketIoServerStarter.serviceName(),
-                Environment.getInstance().getEnvironment(), socketIoServerStarter.clusterNode(), socketIoServerStarter.enableMultiNodes(), socketIoServerStarter.contextPath()));
+                Environment.getInstance().getEnvironment(), socketIoServerStarter.clusterNode(), socketIoServerStarter.isCluster(), socketIoServerStarter.contextPath()));
 
-        if (socketIoServerStarter.enableMultiNodes()) {
+        if (socketIoServerStarter.isCluster()) {
             String hashFactor = SocketHashFactorUtils.genHashFactor(IpUtil.getHostAddress(), socketIoServerStarter.serverPort());
-            LoadBalanceHashFactorManager.registry(socketIoServerStarter.serviceName(), socketIoServerStarter.thisHash(), hashFactor);
+            LoadBalanceHashFactorManager.registry(socketIoServerStarter.serviceName(), socketIoServerStarter.clusterHash(), hashFactor);
         }
 
         return socketIOServer;

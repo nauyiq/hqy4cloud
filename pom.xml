@@ -22,10 +22,10 @@
     <properties>
         <!-- project -->
         <revision>1.0.0</revision>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>17</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <source.plugin.version>3.0.1</source.plugin.version>
         <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
@@ -66,6 +66,7 @@
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
+        <chatgtp.service.version>0.12.0</chatgtp.service.version>
         <auth.jwt.version>2.2.0</auth.jwt.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
@@ -74,7 +75,6 @@
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
         <guava.version>22.0</guava.version>
-        <junit.version>4.12</junit.version>
         <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
         <jsoup.version>1.13.1</jsoup.version>
@@ -86,7 +86,14 @@
 
 
     <dependencyManagement>
+        <!-- jdk8及以下jdk包里已经包含javax.annotation 8以上不包含.-->
         <dependencies>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+
             <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -175,11 +182,11 @@
                 <artifactId>elasticsearch</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>transport</artifactId>
                 <version>${elasticsearch.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client</artifactId>
@@ -191,7 +198,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client-sniffer</artifactId>
                 <version>${elasticsearch.version}</version>
@@ -201,22 +208,28 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.elasticsearch.distribution.integ-test-zip</groupId>
                 <artifactId>elasticsearch</artifactId>
                 <version>${elasticsearch.version}</version>
                 <type>zip</type>
-            </dependency>
-            <dependency>
+            </dependency>-->
+            <!--<dependency>
                 <groupId>org.elasticsearch.plugin</groupId>
                 <artifactId>transport-netty4-client</artifactId>
                 <version>${elasticsearch.version}</version>
+            </dependency>-->
+
+            <dependency>
+                <groupId>com.theokanning.openai-gpt3-java</groupId>
+                <artifactId>service</artifactId>
+                <version>${chatgtp.service.version}</version>
             </dependency>
 
             <!-- rocket mq -->
@@ -275,7 +288,43 @@
             <!--糊涂工具包-->
             <dependency>
                 <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-cache</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-captcha</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-http</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-system</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
 
@@ -451,12 +500,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <profiles>
@@ -514,20 +557,6 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-               <!-- <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.lua</include>
-                    <include>*.properties</include>
-                    <include>**/*.properties</include>
-                    <include>*.yml</include>
-                    <include>*.yaml</include>
-                    <include>*.key</include>
-                    <include>**/*.factories</include>
-                    <include>**/*.css</include>
-                    <include>**/*.html</include>
-                    <include>**/*.ftl</include>
-                    <include>*.jks</include>
-                </includes>-->
             </resource>
         </resources>
 

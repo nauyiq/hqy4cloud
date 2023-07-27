@@ -79,7 +79,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             this.requestIp = RequestUtil.getIpAddress(request);
             this.requestUri = request.getURI().getPath();
             this.requestUserAgent = request.getHeaders().getFirst(HttpHeaders.USER_AGENT);
-            this.requestAccessToken = request.getHeaders().getFirst(StringConstants.Auth.AUTHORIZATION_KEY);
+            this.requestAccessToken = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             this.method = Objects.requireNonNull(request.getMethod()).name();
         }
 

@@ -10,19 +10,8 @@ import com.google.common.base.Objects;
  * @date 2022/9/23 13:34
  */
 @SuppressWarnings("rawtypes")
-public class EventListener {
-
-     private final String eventName;
-
-     private final Class eventClass;
-
-     private final DataListener dataListener;
-
-    public EventListener(String eventName, Class eventClass, DataListener dataListener) {
-        this.eventName = eventName;
-        this.eventClass = eventClass;
-        this.dataListener = dataListener;
-    }
+public record EventListener(String eventName, Class eventClass,
+                            DataListener dataListener) {
 
     @Override
     public boolean equals(Object o) {

@@ -4,9 +4,8 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.internal.com.fasterxml.jackson.databind.DeserializationFeature;
-import com.auth0.jwt.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import com.hqy.cloud.common.base.lang.StringConstants;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hqy.cloud.util.crypto.AbstractSymmetricSymmetric;
 import com.hqy.cloud.util.crypto.CryptoType;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.hqy.cloud.common.base.lang.AuthConstants.JWT_EXP;
+import static com.hqy.cloud.common.base.lang.AuthConstants.JWT_PAYLOAD_KEY;
+
 
 /**
  * JWT.
@@ -72,8 +75,8 @@ public class JWT extends AbstractSymmetricSymmetric {
             } else {
                 dataStr = objectMapper.writeValueAsString(data);
             }
-            claims.put(StringConstants.Auth.JWT_PAYLOAD_KEY, dataStr);
-            claims.put(StringConstants.Auth.JWT_EXP, System.currentTimeMillis() + expiredSeconds * 1000);
+            claims.put(JWT_PAYLOAD_KEY, dataStr);
+            claims.put(JWT_EXP, System.currentTimeMillis() + expiredSeconds * 1000);
             return signer.sign(claims);
         } catch (Throwable cause) {
             log.warn("Failed execute to jwt sign, cause: {}", cause.getMessage());
@@ -86,10 +89,10 @@ public class JWT extends AbstractSymmetricSymmetric {
     public <T> T decrypt(String encryptContent, Class<T> clazz) {
         try {
             final Map<String, Object> claims = verifier.verify(encryptContent);
-            if (claims.containsKey(StringConstants.Auth.JWT_EXP) && claims.containsKey(StringConstants.Auth.JWT_PAYLOAD_KEY)) {
-                long exp = (long) claims.get(StringConstants.Auth.JWT_EXP);
+            if (claims.containsKey(JWT_EXP) && claims.containsKey(JWT_PAYLOAD_KEY)) {
+                long exp = (long) claims.get(JWT_EXP);
                 if (exp > System.currentTimeMillis()) {
-                    String json = (String) claims.get(StringConstants.Auth.JWT_PAYLOAD_KEY);
+                    String json = (String) claims.get(JWT_PAYLOAD_KEY);
                     if (Objects.nonNull(clazz)) {
                         return objectMapper.readValue(json, clazz);
                     }
@@ -109,9 +112,8 @@ public class JWT extends AbstractSymmetricSymmetric {
             if (MapUtil.isEmpty(claims)) {
                 return false;
             }
-            if (claims.containsKey(StringConstants.Auth.JWT_EXP) &&
-                    claims.containsKey(StringConstants.Auth.JWT_PAYLOAD_KEY)) {
-                long exp = (Long) claims.get(StringConstants.Auth.JWT_EXP);
+            if (claims.containsKey(JWT_EXP) && claims.containsKey(JWT_PAYLOAD_KEY)) {
+                long exp = (Long) claims.get(JWT_EXP);
                 return exp < System.currentTimeMillis();
             }
         } catch (Throwable cause) {

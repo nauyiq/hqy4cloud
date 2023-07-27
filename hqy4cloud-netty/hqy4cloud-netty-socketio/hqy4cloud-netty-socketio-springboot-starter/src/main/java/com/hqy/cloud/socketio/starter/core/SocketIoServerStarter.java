@@ -23,25 +23,19 @@ public interface SocketIoServerStarter {
      * socket.io node counter.
      * @return socket.io node counter
      */
-    default int clusterNode() {
-        return 1;
-    }
+    int clusterNode();
 
     /**
      * enable cluster socket.io
      * @return default false
      */
-    default boolean enableMultiNodes() {
-        return false;
-    }
+    boolean isCluster();
 
     /**
      * this socket.io server hash
      * @return hash
       */
-    default int thisHash() {
-        return 0;
-    }
+    int clusterHash();
 
     /**
      * get eventListeners.
@@ -60,6 +54,12 @@ public interface SocketIoServerStarter {
      * @return contextPath
      */
     String contextPath();
+
+    /**
+     * socketIo authorizationSecret.
+     * @return authorizationSecret
+     */
+    String authorizationSecret();
 
     /**
      * AuthorizationListener.

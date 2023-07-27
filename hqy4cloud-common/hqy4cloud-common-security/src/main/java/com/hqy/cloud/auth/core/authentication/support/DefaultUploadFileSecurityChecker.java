@@ -1,9 +1,9 @@
 package com.hqy.cloud.auth.core.authentication.support;
 
-import cn.hutool.http.ContentType;
 import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
 import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -19,7 +19,7 @@ public class DefaultUploadFileSecurityChecker implements UploadFileSecurityCheck
         if (StringUtils.isAnyBlank(accessContentType, accessUri)) {
             return false;
         }
-        return accessContentType.equals(ContentType.MULTIPART.getValue()) && EndpointAuthorizationManager.getInstance().isUploadFileRequest(accessUri);
+        return accessContentType.equals(MediaType.MULTIPART_FORM_DATA_VALUE) && EndpointAuthorizationManager.getInstance().isUploadFileRequest(accessUri);
     }
 
     @Override

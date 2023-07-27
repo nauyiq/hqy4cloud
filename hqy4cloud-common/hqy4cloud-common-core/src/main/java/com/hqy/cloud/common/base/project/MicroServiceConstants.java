@@ -71,14 +71,10 @@ public class MicroServiceConstants {
             ACCOUNT_AUTH_INFO, MESSAGE_NETTY_INFO, COMMUNICATION_INFO, BLOG_INFO, ADMIN_INFO, ID_INFO);
 
 
+    public static final String FOUNDATION_SERVICE = "hqy4cloud-foundation-service";
 
     public static class SocketContextPath {
-
-        /**
-         * 消息服务的contextPath
-         */
         public static final String MESSAGE_SERVICE = "/message/websocket";
-
     }
 
 
