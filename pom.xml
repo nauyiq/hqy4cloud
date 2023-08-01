@@ -67,6 +67,7 @@
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
         <chatgtp.service.version>0.12.0</chatgtp.service.version>
+        <retrofit2.converter.jackson.version>2.9.0</retrofit2.converter.jackson.version>
         <auth.jwt.version>2.2.0</auth.jwt.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
@@ -230,6 +231,12 @@
                 <groupId>com.theokanning.openai-gpt3-java</groupId>
                 <artifactId>service</artifactId>
                 <version>${chatgtp.service.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-jackson</artifactId>
+                <version>${retrofit2.converter.jackson.version}</version>
             </dependency>
 
             <!-- rocket mq -->
