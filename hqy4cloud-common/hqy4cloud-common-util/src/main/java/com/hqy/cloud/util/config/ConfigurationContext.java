@@ -31,7 +31,11 @@ public class ConfigurationContext {
     public static Properties getProperties(PropertiesEnum propertiesEnum) {
         PropertyStrategy propertyStrategy = propertiesMap.get(propertiesEnum);
         if (Objects.isNull(propertyStrategy)) {
-            propertyStrategy =  new PropertyStrategy(propertiesEnum.fineName);
+            propertyStrategy = new PropertyStrategy(propertiesEnum.fineName);
+            Properties properties = propertyStrategy.getProperties();
+            if (properties == null) {
+                propertyStrategy.setProperties(new Properties());
+            }
             propertiesMap.put(propertiesEnum, propertyStrategy);
         }
         return propertyStrategy.getProperties();
