@@ -2,7 +2,6 @@ package com.hqy.account.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
 
@@ -62,6 +61,11 @@ public class AccountInfoDTO {
     private Date birthday;
 
     /**
+     * gpt config
+     */
+    private String chatgptConfig;
+
+    /**
      * 状态
      */
     private Boolean status;
@@ -72,19 +76,4 @@ public class AccountInfoDTO {
     private Date created;
 
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("username", username)
-                .append("nickname", nickname)
-                .append("phone", phone)
-                .append("email", email)
-                .append("authorities", roles)
-                .append("avatar", avatar)
-                .append("intro", intro)
-                .append("status", status)
-                .append("created", created)
-                .toString();
-    }
 }

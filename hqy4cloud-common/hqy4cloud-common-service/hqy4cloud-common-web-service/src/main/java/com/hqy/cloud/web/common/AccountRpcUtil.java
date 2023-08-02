@@ -31,7 +31,6 @@ public class AccountRpcUtil {
         return StringUtils.isBlank(accountInfoJson) ? null : JsonUtil.toBean(accountInfoJson, AccountInfoDTO.class);
     }
 
-
     public static AccountBaseInfoStruct getAccountBaseInfo(Long id) {
         if (id == null) {
             return null;
@@ -40,11 +39,6 @@ public class AccountRpcUtil {
         return remoteAccountService.getAccountBaseInfo(id);
     }
 
-    /**
-     * 根据id集合获取账号基本信息
-     * @param ids id集合
-     * @return
-     */
     public static List<AccountBaseInfoStruct> getAccountBaseInfos(List<Long> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
@@ -58,9 +52,6 @@ public class AccountRpcUtil {
         List<AccountBaseInfoStruct> accountBaseInfos = getAccountBaseInfos(ids);
         return  accountBaseInfos.stream().collect(Collectors.toMap(AccountBaseInfoStruct::getId, e -> e, (k1, k2) -> k1));
     }
-
-
-
 
 
 

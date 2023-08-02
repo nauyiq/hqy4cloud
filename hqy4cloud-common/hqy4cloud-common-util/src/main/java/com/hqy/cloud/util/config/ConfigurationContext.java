@@ -58,7 +58,7 @@ public class ConfigurationContext {
     }
 
     public static String getString(String filename, String key) {
-        YamlEnum yamlEnum = YamlEnum.valueOf(filename);
+        YamlEnum yamlEnum = YamlEnum.getYaml(filename);
         YamlStrategy strategy = yamlMap.get(yamlEnum);
         if (strategy != null) {
             return strategy.getData().get(key);

@@ -42,7 +42,7 @@ public class AccountBaseInfoCacheDataServiceService extends RedisHashCacheDataSe
             return null;
         }
         return accountInfos.stream().map(info ->
-                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail(), info.getAvatar(), info.getRoles())).collect(Collectors.toList());
+                new AccountBaseInfoDTO(info.getId(), info.getNickname(), info.getUsername(), info.getEmail(), info.getAvatar(), info.getRoles(), info.getChatgptConfig())).collect(Collectors.toList());
     }
 
     @Override
@@ -64,7 +64,9 @@ public class AccountBaseInfoCacheDataServiceService extends RedisHashCacheDataSe
         if (accountInfo == null) {
             return null;
         }
-        return new AccountBaseInfoDTO(accountInfo.getId(), accountInfo.getNickname(), accountInfo.getUsername(), accountInfo.getEmail(), accountInfo.getAvatar(), accountInfo.getRoles());
+        return new AccountBaseInfoDTO(accountInfo.getId(),
+                accountInfo.getNickname(), accountInfo.getUsername(),
+                accountInfo.getEmail(), accountInfo.getAvatar(), accountInfo.getRoles(), accountInfo.getChatgptConfig());
     }
 
 

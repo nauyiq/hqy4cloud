@@ -19,10 +19,10 @@
     <select id="getAccountInfo" resultType="com.hqy.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
-        p.avatar,p.nickname,p.intro,p.birthday
-        FROM t_account a
-        LEFT JOIN t_account_profile p
-        ON a.id = p.id
+        p.avatar,p.nickname,p.intro,p.birthday,p.`chatgpt_config`
+        FROM
+        (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
+        t_account a
         WHERE a.id = #{id}
     </select>
 
@@ -30,7 +30,7 @@
     <select id="getAccountInfos" resultType="com.hqy.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
-        p.avatar,p.nickname,p.intro,p.birthday
+        p.avatar,p.nickname,p.intro,p.birthday,p.`chatgpt_config`
         FROM t_account a
         LEFT JOIN t_account_profile p
         ON a.id = p.id

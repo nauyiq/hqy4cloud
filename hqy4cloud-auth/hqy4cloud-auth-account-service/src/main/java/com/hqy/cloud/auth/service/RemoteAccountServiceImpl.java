@@ -4,6 +4,7 @@ import com.hqy.account.dto.AccountInfoDTO;
 import com.hqy.account.service.RemoteAccountService;
 import com.hqy.account.struct.AccountBaseInfoStruct;
 import com.hqy.account.struct.AccountStruct;
+import com.hqy.account.struct.ChatgptConfigStruct;
 import com.hqy.account.struct.RegistryAccountStruct;
 import com.hqy.cloud.auth.base.dto.AccountBaseInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
@@ -88,7 +89,8 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
     private AccountBaseInfoStruct buildAccountBaseInfoStruct(AccountBaseInfoDTO accountBaseInfoDTO) {
         return new AccountBaseInfoStruct(accountBaseInfoDTO.getId(), accountBaseInfoDTO.getNickname(), accountBaseInfoDTO.getUsername(),
-                accountBaseInfoDTO.getEmail(), accountBaseInfoDTO.getAvatar(), accountBaseInfoDTO.getRoles());
+                accountBaseInfoDTO.getEmail(), accountBaseInfoDTO.getAvatar(), accountBaseInfoDTO.getRoles(),
+                StringUtils.isBlank(accountBaseInfoDTO.getChatgptConfig()) ? new ChatgptConfigStruct() : JsonUtil.toBean(accountBaseInfoDTO.getChatgptConfig(), ChatgptConfigStruct.class));
     }
 
 

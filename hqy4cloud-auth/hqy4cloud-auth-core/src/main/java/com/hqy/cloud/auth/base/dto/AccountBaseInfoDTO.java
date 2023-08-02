@@ -25,5 +25,6 @@ public class AccountBaseInfoDTO implements Serializable {
     private String email;
     private String avatar;
     private String roles;
+    private String chatgptConfig;
 
 }
