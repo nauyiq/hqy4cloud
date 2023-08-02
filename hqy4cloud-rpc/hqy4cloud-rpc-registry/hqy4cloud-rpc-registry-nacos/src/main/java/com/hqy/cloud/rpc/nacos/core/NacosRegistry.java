@@ -52,7 +52,7 @@ public class NacosRegistry extends FailBackRegistry {
         AssertUtil.notNull(rpcModel, "Failed execute to lookup, rpcContext is null.");
         AssertUtil.notEmpty(rpcModel.getName(), "Failed execute to lookup, serviceName is empty.");
         try {
-            List<Instance> instances = namingService.selectInstances(rpcModel.getName(), true);
+            List<Instance> instances = namingService.selectInstances(rpcModel.getName(), rpcModel.getGroup(),true);
             return NacosInstanceUtils.instancesConvert(getRegistryRpcContext().getRegistryInfo(), rpcModel.getGroup(), instances);
         } catch (Throwable t) {
             throw new RpcException("Failed to lookup " + rpcModel + " from nacos " + getRegistryRpcContext() + ", cause: " + t.getMessage(), t);

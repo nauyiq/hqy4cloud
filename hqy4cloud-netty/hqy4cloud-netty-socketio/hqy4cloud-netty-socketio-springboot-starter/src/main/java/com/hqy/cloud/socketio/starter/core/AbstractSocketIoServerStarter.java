@@ -1,11 +1,18 @@
 package com.hqy.cloud.socketio.starter.core;
 
 import com.alibaba.cloud.nacos.NacosServiceManager;
+import com.alibaba.nacos.api.common.Constants;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.corundumstudio.socketio.AuthorizationListener;
+import com.hqy.cloud.common.base.config.ConfigConstants;
 import com.hqy.cloud.socketio.starter.core.support.DefaultAuthorizationListenerAdaptor;
 import com.hqy.cloud.util.config.ConfigurationContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
 
 import static com.hqy.cloud.common.base.config.ConfigConstants.*;
 
@@ -15,6 +22,7 @@ import static com.hqy.cloud.common.base.config.ConfigConstants.*;
  * @version 1.0
  * @date 2023/7/26 10:14
  */
+@Slf4j
 public abstract class AbstractSocketIoServerStarter implements SocketIoServerStarter {
     private final NacosServiceManager nacosServiceManager;
     private final Environment environment;
@@ -38,9 +46,14 @@ public abstract class AbstractSocketIoServerStarter implements SocketIoServerSta
 
     @Override
     public int clusterNode() {
-
-
-
+        String serviceName = serviceName();
+        try {
+            String group = environment.getProperty(NACOS_GROUP, Constants.DEFAULT_GROUP);
+            List<Instance> instances = nacosServiceManager.getNamingService().selectInstances(serviceName, group,true);
+            return instances.size();
+        } catch (NacosException e) {
+            log.warn("Failed execute to abstain nacos instances, service name = {}.", serviceName);
+        }
         String property = environment.getProperty(SOCKET_CLUSTER_NODES);
         property = StringUtils.isBlank(property) ? ConfigurationContext.getString(application, SOCKET_CLUSTER_NODES) : property;
         if (StringUtils.isBlank(property)) {

@@ -32,5 +32,7 @@ public final class AccountBaseInfoStruct {
     public String avatar;
     @ThriftField(6)
     public String roles;
+    @ThriftField(7)
+    public ChatgptConfigStruct chatgptConfig;
 
 }

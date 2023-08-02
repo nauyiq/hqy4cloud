@@ -24,6 +24,8 @@ public final class AccountProfileStruct {
     public String intro;
     @ThriftField(5)
     public String birthday;
+    @ThriftField(6)
+    public ChatgptConfigStruct chatgptConfig;
 
     public AccountProfileStruct() {
     }

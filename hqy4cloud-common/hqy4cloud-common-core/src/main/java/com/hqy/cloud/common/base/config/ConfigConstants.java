@@ -18,6 +18,7 @@ public interface ConfigConstants {
     String SOCKET_CLUSTER_HASH = "socket.cluster.hash";
 
     String APPLICATION_NAME = "spring.application.name";
+    String NACOS_GROUP = "spring.cloud.nacos.discovery.group";
 
     int DEFAULT_SOCKET_CLUSTER_NODES = 1;
     int DEFAULT_SOCKET_CLUSTER_HASH = 0;
