@@ -27,6 +27,8 @@ public final class ChatgptConfigStruct {
     public Integer time = 10;
     @ThriftField(5)
     public String defaultModel;
+    @ThriftField(6)
+    public Boolean usingContext = true;
 
 
 }

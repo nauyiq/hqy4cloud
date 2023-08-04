@@ -2,6 +2,7 @@ package com.hqy.cloud.socketio.starter.core.support;
 
 import com.corundumstudio.socketio.listener.DataListener;
 import com.google.common.base.Objects;
+import lombok.RequiredArgsConstructor;
 
 /**
  * EventListener.
@@ -10,8 +11,11 @@ import com.google.common.base.Objects;
  * @date 2022/9/23 13:34
  */
 @SuppressWarnings("rawtypes")
-public record EventListener(String eventName, Class eventClass,
-                            DataListener dataListener) {
+@RequiredArgsConstructor
+public class EventListener {
+    private final String eventName;
+    private final Class<?> eventClass;
+    private final DataListener<?> dataListener;
 
     @Override
     public boolean equals(Object o) {

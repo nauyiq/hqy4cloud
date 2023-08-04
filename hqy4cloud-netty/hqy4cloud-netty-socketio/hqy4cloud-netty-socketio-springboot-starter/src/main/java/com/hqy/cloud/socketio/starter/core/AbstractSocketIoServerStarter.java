@@ -50,7 +50,7 @@ public abstract class AbstractSocketIoServerStarter implements SocketIoServerSta
         try {
             String group = environment.getProperty(NACOS_GROUP, Constants.DEFAULT_GROUP);
             List<Instance> instances = nacosServiceManager.getNamingService().selectInstances(serviceName, group,true);
-            return instances.size();
+            return instances.size() + 1;
         } catch (NacosException e) {
             log.warn("Failed execute to abstain nacos instances, service name = {}.", serviceName);
         }

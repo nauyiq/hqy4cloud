@@ -2,12 +2,10 @@
 package com.hqy.cloud.gateway.loadbalance.support;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.foundation.common.route.support.SocketPortRouterManager;
 import com.hqy.cloud.gateway.loadbalance.ServiceInstanceLoadBalancer;
 import com.hqy.cloud.gateway.loadbalance.WebsocketRouter;
-import com.hqy.cloud.rpc.model.RPCServerAddress;
-import com.hqy.cloud.rpc.nacos.node.Metadata;
-import com.hqy.cloud.rpc.nacos.utils.NacosInstanceUtils;
-import com.hqy.cloud.util.JsonUtil;
+import com.hqy.foundation.util.SocketHashFactorUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -80,22 +77,11 @@ public class WebSocketHashLoadBalanceStrategy extends ServiceInstanceLoadBalance
     }
 
     private int getSocketPort(ServiceInstance serviceInstance) {
-        Map<String, String> metadata = serviceInstance.getMetadata();
-        if (metadata == null || metadata.isEmpty()) {
-            //Gets socket.io server port failure, should not find it from nacos metadata.
-            return 0;
-        }
-        try {
-            Metadata nacosMetadata = NacosInstanceUtils.toMetadataFromMap(metadata);
-            if (nacosMetadata == null) {
-                return 0;
-            }
-            RPCServerAddress rpcServerAddress = nacosMetadata.getRpcServerAddress();
-            return rpcServerAddress.getPort();
-        } catch (Throwable t) {
-            log.warn("Failed execute to map convert to Metadata. map:{}.", JsonUtil.toJson(metadata));
-            return 0;
-        }
+        //从Socket端口路由器中获取服务端口
+        String host = serviceInstance.getHost();
+        int port = serviceInstance.getPort();
+        String serviceName = serviceInstance.getServiceId();
+        return SocketPortRouterManager.getPort(serviceName, SocketHashFactorUtils.genHashFactor(host, port));
     }
 }
 

@@ -1,5 +1,6 @@
 package com.corundumstudio.socketio.ex;
 
+import cn.hutool.core.util.StrUtil;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.handler.ClientsBoxEx;
@@ -75,10 +76,10 @@ public class NettyContextHelper {
      * @param httpResponse httpResponse
      */
     public static void allowCors(HttpResponse httpResponse, String origin) {
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(origin)) {
-            httpResponse.headers().set("access-control-allow-origin", origin);
-        } else {
+        if (StrUtil.isBlank(origin) || origin.equals(StringConstants.NULL)) {
             httpResponse.headers().set("access-control-allow-origin", "*");
+        } else {
+            httpResponse.headers().set("access-control-allow-origin", origin);
         }
         httpResponse.headers().set("Access-Control-Allow-Credentials",true);
         httpResponse.headers().add("Access-Control-Allow-Headers", "*");

@@ -10,7 +10,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -18,33 +17,22 @@ import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * cors网关全局过滤器
  * @author qiyuan.hong
  * @date  2021/7/25 22:42
  */
 @Slf4j
-@Deprecated
 //@Component
 public class GatewayCorsFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
         ServerHttpResponse response = exchange.getResponse();
-
-        //如果是/favicon.io的路径允许访问
-        if (StringConstants.FAVICON_ICO.equals(path)) {
-            response.setStatusCode(HttpStatus.OK);
-            return Mono.empty();
-        }
-
-        //如果是socket.io项目 则放开piling请求的cors 原因是在socket.io netty内部已经处理了cors
-        if (path.contains(StringConstants.WEBSOCKET_PATH) && request.getQueryParams().containsKey(HttpHeaders.AUTHORIZATION)) {
-            return chain.filter(exchange);
-        }
 
         //如果请求是有效的 CORS，则返回 true
         if (!CorsUtils.isCorsRequest(request)) {
@@ -54,22 +42,46 @@ public class GatewayCorsFilter implements GlobalFilter, Ordered {
         HttpHeaders requestHeaders = request.getHeaders();
         HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
         HttpHeaders headers = response.getHeaders();
-        //SETTING CORS RESPONSE HEADER.
-        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN))) {
-            String origin = requestHeaders.getOrigin();
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, StringUtils.isBlank(origin) ? "*" : origin);
-        }
-        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS))) {
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-        }
-        if (CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))) {
-            headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
-        }
-        if (requestMethod != null && CollectionUtils.isEmpty(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS))) {
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestMethod.name());
-        }
+        HttpHeaders responseHeaders = response.getHeaders();
 
+        requestHeaders.remove(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN);
+        requestHeaders.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://172.16.42.73:9527");
+
+        //Access-Control-Allow-Origin
+//        checkResponseHeader(responseHeaders, HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        //ACCESS_CONTROL_ALLOW_CREDENTIALS
+        checkResponseHeader(responseHeaders, HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "false");
+        //ACCESS_CONTROL_ALLOW_HEADERS
+//        checkResponseHeader(responseHeaders, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
+        //ACCESS_CONTROL_ALLOW_METHODS
+        /*if (requestMethod != null) {
+            checkResponseHeader(responseHeaders, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestMethod.name());
+        }*/
         return chain.filter(exchange);
+    }
+
+
+
+    private void checkResponseHeader(HttpHeaders responseHeaders, String header, String value) {
+        List<String> headerValue = responseHeaders.get(header);
+        if (CollectionUtils.isEmpty(headerValue)) {
+            responseHeaders.add(header, value);
+        } else if (headerValue.size() != 1) {
+            responseHeaders.remove(header);
+            responseHeaders.add(header, value);
+        } else if (headerValue.stream().anyMatch(StringConstants.NULL::equals)) {
+            responseHeaders.remove(header);
+        }
+    }
+
+    private void checkResponseHeader(HttpHeaders responseHeaders, String header, List<String> value) {
+        List<String> headerValue = responseHeaders.get(header);
+        if (CollectionUtils.isEmpty(headerValue)) {
+            responseHeaders.addAll(header, value);
+        } else if (headerValue.size() != 1) {
+            responseHeaders.remove(header);
+            responseHeaders.addAll(header, value);
+        }
     }
 
 

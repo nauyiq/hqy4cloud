@@ -28,6 +28,7 @@ import com.corundumstudio.socketio.scheduler.SchedulerKey;
 import com.corundumstudio.socketio.store.StoreFactory;
 import com.corundumstudio.socketio.store.pubsub.ConnectMessage;
 import com.corundumstudio.socketio.store.pubsub.PubSubType;
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import io.netty.channel.Channel;
@@ -99,13 +100,15 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             QueryStringDecoder queryDecoder = new QueryStringDecoder(req.uri());
             //origin
             String origin = req.headers().get(HttpHeaderNames.ORIGIN);
-
+            if (StringUtils.isBlank(origin) || origin.equals(StringConstants.NULL)) {
+                req.headers().remove(HttpHeaderNames.ORIGIN);
+                origin = "*";
+            }
             if (!configuration.isAllowCustomRequests()
                     && !queryDecoder.path().startsWith(connectPath)) {
                 if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
                     //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
                     //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
-                    origin = StringUtils.isBlank(origin) ? "null" : origin;
                     channel.attr(EncoderHandler.ORIGIN).set(origin);
                     channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "error connectPath."));
                 } else {
@@ -157,12 +160,12 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                 //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
                 //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
                 channel.attr(EncoderHandler.ORIGIN).set(origin);
+                HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
                 channel.writeAndFlush(NettyContextHelper.
                         createHttpErrorMessage(ResultCode.INVALID_ACCESS_TOKEN.code, ResultCode.INVALID_ACCESS_TOKEN.message));
                 return false;
             } else {
                 HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-                NettyContextHelper.allowCors(res, data.getOrigin());
                 channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
             }
             log.debug("Handshake unauthorized, query params: {} headers: {} realIp:{}", params, headers, requestIp);

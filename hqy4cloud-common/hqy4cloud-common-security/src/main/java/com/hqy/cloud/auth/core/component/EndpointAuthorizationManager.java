@@ -44,7 +44,8 @@ public class EndpointAuthorizationManager {
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**",
                 //端点监控
-                "/actuator/**" , "/doc.html"
+                "/actuator/**" , "/doc.html",
+                "/*/websocket"
                 //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
 //                "/**/v2/api-docs/**", "/**/swagger-ui.html", "/**/swagger-resources/**", "/**/webjars/**",
