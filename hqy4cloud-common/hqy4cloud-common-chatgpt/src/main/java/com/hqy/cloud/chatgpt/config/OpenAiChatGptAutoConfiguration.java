@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.chatgpt.config.interceptor.AuthenticationInterceptor;
 import com.hqy.cloud.chatgpt.config.interceptor.ProxyAuthenticator;
 import com.hqy.cloud.chatgpt.core.UnofficialApi;
+import com.hqy.cloud.chatgpt.service.OpenAiChatgptService;
+import com.hqy.cloud.chatgpt.service.impl.OpenAiChatgptServiceImpl;
 import com.theokanning.openai.OpenAiApi;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,8 @@ public class OpenAiChatGptAutoConfiguration {
         return builder.build();
     }
 
+
+
     @ConditionalOnMissingBean
     @Bean(name = "unofficialProxyOkHttpClient")
     public OkHttpClient unofficialProxyOkHttpClient() {
@@ -64,6 +68,11 @@ public class OpenAiChatGptAutoConfiguration {
         Retrofit retrofit = OpenAiService.defaultRetrofit(apiOkHttpClient, OpenAiService.defaultObjectMapper()).newBuilder()
                 .baseUrl(properties.getApiBaseUrl()).build();
         return new OpenAiService(retrofit.create(OpenAiApi.class), apiOkHttpClient.dispatcher().executorService());
+    }
+
+    @Bean
+    public OpenAiChatgptService openAiChatgptService(OpenAiService openAiService) {
+        return new OpenAiChatgptServiceImpl(openAiService, properties);
     }
 
     @Bean

@@ -1,7 +1,5 @@
 package com.hqy.cloud.rpc.threadpool;
 
-import com.hqy.cloud.rpc.model.RPCModel;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 

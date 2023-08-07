@@ -20,6 +20,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.hqy.cloud.web.upload.support.UploadContext.DEFAULT_STATE;
+
 /**
  * AbstractUploadFileService.
  * @see UploadFileService
@@ -122,7 +124,8 @@ public abstract class AbstractUploadFileService implements UploadFileService {
 
 
     private UploadContext.UploadState getUploadState() {
-        return UploadContext.getState();
+        UploadContext.UploadState state = UploadContext.getState();
+        return DEFAULT_STATE;
     }
 
     protected boolean validateFileType(String filename, boolean imageType) {

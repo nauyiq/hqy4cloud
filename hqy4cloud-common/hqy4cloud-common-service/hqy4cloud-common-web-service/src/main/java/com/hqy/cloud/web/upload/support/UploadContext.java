@@ -21,6 +21,8 @@ public class UploadContext {
         private boolean copyFileContent;
     }
 
+    public static final UploadState DEFAULT_STATE = new UploadState(UploadMode.Mode.SYNC, false);
+
     private static final ThreadLocal<UploadState> UPLOAD_MODE_STATE = new ThreadLocal<>();
 
     public static void setMode(UploadState state) {

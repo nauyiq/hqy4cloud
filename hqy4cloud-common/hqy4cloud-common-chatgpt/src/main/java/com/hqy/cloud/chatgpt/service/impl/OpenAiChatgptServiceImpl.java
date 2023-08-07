@@ -31,7 +31,6 @@ import static com.hqy.cloud.chatgpt.common.exception.OpenAiChatGptException.REQU
  * @date 2023/8/4 13:40
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class OpenAiChatgptServiceImpl implements OpenAiChatgptService {
     private final OpenAiService openAiService;

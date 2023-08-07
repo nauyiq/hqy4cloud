@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
@@ -141,15 +142,8 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         String path = this.hostname + relativeFilePath;
         com.hqy.cloud.web.common.UploadResult result = com.hqy.cloud.web.common.UploadResult.of(relativeFilePath, path);
 
-        try {
-            // 获取输入流.
-            InputStream inputStream;
-            if (state.isCopyFileContent()) {
-                MultipartFileAdaptor multipartFile = new MultipartFileAdaptor(originalFilename, file.getBytes().clone());
-                inputStream = multipartFile.getInputStream();
-            } else {
-                inputStream = file.getInputStream();
-            }
+        // 获取输入流.
+        try (InputStream inputStream = getInputStream(state, originalFilename, file)) {
             PutObjectRequest putObjectRequest = new PutObjectRequest(this.bucketName, relativeFilePath, inputStream, null);
             //同步上传
             UploadMode.Mode mode = state.getMode();
@@ -171,6 +165,17 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         } catch (Throwable cause) {
            throw new UploadFileException(cause);
         }
+    }
+
+    private InputStream getInputStream(UploadContext.UploadState state, String originalFilename, MultipartFile file) throws IOException {
+        InputStream inputStream;
+        if (state.isCopyFileContent()) {
+            MultipartFileAdaptor multipartFile = new MultipartFileAdaptor(originalFilename, file.getBytes().clone());
+            inputStream = multipartFile.getInputStream();
+        } else {
+            inputStream = file.getInputStream();
+        }
+        return inputStream;
     }
 
     public TransferManager getTransferManager() {
