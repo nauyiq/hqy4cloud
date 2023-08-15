@@ -67,7 +67,7 @@ public abstract class AbstractClient implements Client {
         }
         //cluster.
         Cluster cluster = ClusterContext.getCluster(directory.getProviderServiceName(), clusterMode);
-        Invoker<T> invoker = cluster.join(directory);
+        Invoker<T> invoker = cluster.join(directory, hashFactor);
         return proxyFactory.getProxy(invoker, invocationCallback);
     }
 
