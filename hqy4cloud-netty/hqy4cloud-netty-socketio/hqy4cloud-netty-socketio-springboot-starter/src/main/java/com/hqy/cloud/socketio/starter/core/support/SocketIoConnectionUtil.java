@@ -3,9 +3,15 @@ package com.hqy.cloud.socketio.starter.core.support;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.foundation.common.route.LoadBalanceHashFactorManager;
+import com.hqy.cloud.foundation.common.route.SocketClusterStatus;
+import com.hqy.cloud.foundation.common.route.SocketClusterStatusManager;
 import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.config.ConfigurationContext;
+import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,8 +39,22 @@ public class SocketIoConnectionUtil {
             }
         }
         return host + StrUtil.COLON + port;
-
     }
+
+    public static <T> T getSocketIoPushService(String bizId, Class<T> serviceClass, String serviceName) {
+        SocketClusterStatus query = SocketClusterStatusManager.query(Environment.getInstance().getEnvironment(), serviceName);
+        if (query.isEnableMultiWsNode()) {
+            //开启了集群. 获取当前bizId所在的路由表位置
+            int hash = query.getSocketIoPathHashMod(bizId);
+            //获取对应服务的路由因子
+            String factor = LoadBalanceHashFactorManager.queryHashFactor(serviceName, hash);
+            if (!SpringContextHolder.getProjectContextInfo().isLocalFactor(factor, serviceName)) {
+                return RPCClient.getRemoteService(serviceClass, serviceName);
+            }
+        }
+        return SpringContextHolder.getBean(serviceName);
+    }
+
 
 
 

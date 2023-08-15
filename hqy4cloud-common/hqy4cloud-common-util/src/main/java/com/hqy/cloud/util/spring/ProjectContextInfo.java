@@ -217,4 +217,26 @@ public class ProjectContextInfo implements Serializable {
             getUip().setSocketPort(port);
         }
     }
+
+    /**
+     * 是否是本地负载因子
+     * @param factor      本地负载因子
+     * @param serviceName 服务名
+     * @return            result
+     */
+    public boolean isLocalFactor(String factor, String serviceName) {
+        if (!this.nameEn.equals(serviceName)) {
+            return false;
+        }
+        if (StringConstants.DEFAULT.equals(factor)) {
+            return true;
+        }
+
+        try {
+            String[] split = factor.split(StringConstants.Symbol.COLON);
+            return split[0].equals(this.uip.getHostAddr());
+        } catch (Throwable cause) {
+            return false;
+        }
+    }
 }
