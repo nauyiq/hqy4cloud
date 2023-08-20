@@ -122,13 +122,9 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
     }
 
     @Override
-    public void hmSet(String key, Map<String, Object> data) {
+    public void hmSet(String key, Map<String, String> data) {
         try {
-            Map<String, String> stringStringMap = data.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                Object value = e.getValue();
-                return value instanceof String ? (String) value : JsonUtil.toJson(value);
-            }));
-            redisTemplate.opsForHash().putAll(key, stringStringMap);
+            redisTemplate.opsForHash().putAll(key, data);
         } catch (Exception e) {
             log.error("Failed execute to redis [hmSet]. RedisKey: {}.", key, e);
         }
