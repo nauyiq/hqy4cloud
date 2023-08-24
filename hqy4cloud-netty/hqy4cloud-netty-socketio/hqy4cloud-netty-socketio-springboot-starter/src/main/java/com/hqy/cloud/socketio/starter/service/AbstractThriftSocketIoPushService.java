@@ -52,12 +52,12 @@ public abstract class AbstractThriftSocketIoPushService implements ThriftSocketI
 
     @Override
     public void asyncPush(String bizId, String eventName, String wsMessageJson) {
-        ParentExecutorService.getInstance().execute(() -> this.asyncPush(bizId, eventName, wsMessageJson), ExecutorServiceProject.PRIORITY_IMMEDIATE);
+        ParentExecutorService.getInstance().execute(() -> this.syncPush(bizId, eventName, wsMessageJson), ExecutorServiceProject.PRIORITY_IMMEDIATE);
     }
 
     @Override
     public void asyncPushMultiple(Set<String> bizIdSet, String eventName, String wsMessageJson) {
-        ParentExecutorService.getInstance().execute(() -> this.asyncPushMultiple(bizIdSet, eventName, wsMessageJson));
+        ParentExecutorService.getInstance().execute(() -> this.syncPushMultiple(bizIdSet, eventName, wsMessageJson));
 
     }
 }

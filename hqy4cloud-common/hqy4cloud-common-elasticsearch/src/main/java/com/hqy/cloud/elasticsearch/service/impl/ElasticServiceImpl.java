@@ -71,7 +71,7 @@ public abstract class ElasticServiceImpl<K, T extends ElasticDocument<K>> implem
             throw new ElasticsearchException("Query builder should not be null.");
         }
         //设置分页参数
-        queryBuilder.withPageable(PageRequest.of(--pageNumber, pageSize));
+        queryBuilder.withPageable(PageRequest.of(pageNumber - 1, pageSize));
         SearchHits<T> searchHits = elasticsearchTemplate.search(queryBuilder.build(), getDocumentClass());
         return buildPageResult(pageNumber, pageSize, searchHits);
     }
