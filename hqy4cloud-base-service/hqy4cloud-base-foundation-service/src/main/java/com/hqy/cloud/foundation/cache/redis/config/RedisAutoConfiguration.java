@@ -48,7 +48,7 @@ public class RedisAutoConfiguration {
     public static final String NAME = "ManagerRedisTemplate";
 
 
-    @Bean
+    @Bean(name = NAME)
     @ConditionalOnMissingBean(name = NAME)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

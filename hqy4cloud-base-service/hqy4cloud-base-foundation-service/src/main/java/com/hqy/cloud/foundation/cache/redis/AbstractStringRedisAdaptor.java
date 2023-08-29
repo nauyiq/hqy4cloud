@@ -32,6 +32,10 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
         this.redisTemplate = redisTemplate;
     }
 
+    public StringRedisTemplate getStringTemplate() {
+        return redisTemplate;
+    }
+
     @Override
     public String get(String key) {
         try {
@@ -149,7 +153,7 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
             if (CollectionUtils.isEmpty(objects)) {
                 return Collections.emptyList();
             }
-            return objects.parallelStream().map(Objects::toString).collect(Collectors.toList());
+            return objects.stream().map(Objects::toString).collect(Collectors.toList());
         } catch (Throwable cause) {
             log.error("Failed execute to redis [hmGet]. RedisKey: {}.", key, cause);
             return Collections.emptyList();
@@ -163,7 +167,7 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
             if (CollectionUtils.isEmpty(objects)) {
                 return Collections.emptyList();
             }
-            return objects.parallelStream().map(e -> {
+            return objects.stream().map(e -> {
                 String json = e.toString();
                 return JsonUtil.toBean(json, clazz);
             }).collect(Collectors.toList());

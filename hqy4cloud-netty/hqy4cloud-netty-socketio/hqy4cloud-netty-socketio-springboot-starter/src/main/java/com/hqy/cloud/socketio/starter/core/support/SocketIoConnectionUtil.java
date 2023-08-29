@@ -1,5 +1,6 @@
 package com.hqy.cloud.socketio.starter.core.support;
 
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
@@ -8,12 +9,16 @@ import com.hqy.cloud.foundation.common.route.SocketClusterStatus;
 import com.hqy.cloud.foundation.common.route.SocketClusterStatusManager;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.config.ConfigurationContext;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_CONNECTION_HOST;
 import static com.hqy.cloud.util.config.ConfigurationContext.PropertiesEnum.SERVER_PROPERTIES;
@@ -52,8 +57,38 @@ public class SocketIoConnectionUtil {
                 return RPCClient.getRemoteService(serviceClass, serviceName);
             }
         }
-        return SpringContextHolder.getBean(serviceName);
+        return SpringContextHolder.getBean(serviceClass);
     }
+
+    public static <T> Map<String, T> getMultipleSocketIoPushService(Set<String> bizIds, Class<T> serviceClass, String serviceName) {
+        SocketClusterStatus query = SocketClusterStatusManager.query(Environment.getInstance().getEnvironment(), serviceName);
+        if (query.isEnableMultiWsNode()) {
+            Map<String, T> resultMap = MapUtil.newHashMap();
+            // query bizId of hash value
+            Map<String, Integer> map = bizIds.parallelStream().collect(Collectors.toMap(bizId -> bizId, query::getSocketIoPathHashMod));
+            List<Integer> hashList = map.values().stream().distinct().toList();
+            Map<Integer, String> hashValueMap = LoadBalanceHashFactorManager.queryHashFactorMap(serviceName, hashList);
+            Map<Integer, T> tMap = hashValueMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                String hashFactor = entry.getValue();
+                if (!SpringContextHolder.getProjectContextInfo().isLocalFactor(hashFactor, serviceName)) {
+                    return RPCClient.getRemoteService(serviceClass, serviceName);
+                } else {
+                    return SpringContextHolder.getBean(serviceClass);
+                }
+            }));
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                String bizId = entry.getKey();
+                Integer hash = entry.getValue();
+                T service = tMap.getOrDefault(hash, SpringContextHolder.getBean(serviceClass));
+                resultMap.put(bizId, service);
+            }
+            return resultMap;
+        }
+        return null;
+
+    }
+
+
 
 
 

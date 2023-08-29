@@ -30,6 +30,8 @@ public interface StringConstants {
     String SHOULD_NOT_BE_EMPTY = "should not be empty.";
     String DEFAULT_VERSION = "1.0.0";
     String NULL = "null";
+    String TRUE = "1";
+    String FALSE = "0";
 
     interface Symbol {
 

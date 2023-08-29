@@ -1,15 +1,27 @@
 package com.hqy.cloud.foundation.common.route;
 
+import cn.hutool.core.map.MapUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableMap;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
 import com.hqy.cloud.rpc.CommonConstants;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 借助redis和guava来标记某个socket服务的hash节点
@@ -54,10 +66,47 @@ public class LoadBalanceHashFactorManager {
         return hashFactor;
     }
 
+    public static Map<Integer, String> queryHashFactorMap(String serviceName, List<Integer> hashList) {
+        Map<Integer, String> resultMap = MapUtil.newHashMap(hashList.size());
+        Map<String, Integer> keysMap = hashList.parallelStream().collect(Collectors.toMap(h -> genKey(serviceName, h), h -> h));
+        Map<Integer, String> searchMap = MapUtil.newHashMap();
+        Set<String> keys = keysMap.keySet();
+        for (String key : keys) {
+            String hashFactor = HASH_CACHE.getIfPresent(key);
+            Integer hash = keysMap.get(key);
+            if (StringUtils.isNotBlank(hashFactor)) {
+                resultMap.put(hash, hashFactor);
+            } else {
+                searchMap.put(hash, key);
+            }
+        }
+        if (!searchMap.isEmpty()) {
+            // search from redis.
+            List<String> values = searchMap.values().stream().toList();
+            List<Object> result = SmartRedisManager.getInstance().getRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
+                StringRedisConnection redisConnection = (StringRedisConnection) connection;
+                values.forEach(redisConnection::get);
+                return null;
+            });
+            for (int i = 0; i < result.size(); i++) {
+                Object o = result.get(i);
+                String key = values.get(i);
+                if (o instanceof String resultHashFactor) {
+                    HASH_CACHE.put(key, resultHashFactor);
+                    resultMap.put(keysMap.get(key), resultHashFactor);
+                } else {
+                    resultMap.put(keysMap.get(key), StringConstants.DEFAULT);
+                }
+            }
+        }
+        return resultMap;
+    }
+
     public static void registry(String module, int hash, String hashFactor) {
         String key = genKey(module, hash);
         SmartRedisManager.getInstance().set(key, hashFactor);
         HASH_CACHE.put(key, hashFactor);
     }
+
 
 }
