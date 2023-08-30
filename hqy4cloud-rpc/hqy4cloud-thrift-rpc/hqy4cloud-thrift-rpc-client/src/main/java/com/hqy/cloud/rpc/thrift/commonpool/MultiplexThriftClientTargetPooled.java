@@ -35,7 +35,6 @@ import static com.hqy.cloud.rpc.CommonConstants.*;
  * @date 2022/7/12 15:57
  */
 public class MultiplexThriftClientTargetPooled<T> {
-
     private static final Logger log = LoggerFactory.getLogger(MultiplexThriftClientTargetPooled.class);
 
     private final String serviceName;
@@ -81,11 +80,14 @@ public class MultiplexThriftClientTargetPooled<T> {
             for (Invoker<T> invoker : invokers) {
                 String key = invoker.getModel().getServerAddress().toString();
                 if (!keySet.contains(key)) {
+                    // add need initialize invokers
                     shouldInitializeInvokers.add(invoker);
                     keySet.add(key);
                 }
             }
-            initializeObjectPooled(shouldInitializeInvokers);
+            if (CollectionUtils.isNotEmpty(shouldInitializeInvokers)) {
+                initializeObjectPooled(shouldInitializeInvokers);
+            }
             // disconnect client.
             keySet.removeAll(invokers.stream().map(invoker -> invoker.getModel().getServerAddress().toString()).collect(Collectors.toSet()));
             disconnectObjectPoolThriftClient(allObjects, keySet);
@@ -98,7 +100,7 @@ public class MultiplexThriftClientTargetPooled<T> {
                 log.info("Do disconnect thrift client, disconnect connections: {}.", JsonUtil.toJson(shouldDisconnectKeys));
             }
             scheduledExecutorService.schedule(() -> {
-                List<RPCServerAddress> rpcServerAddresses = shouldDisconnectKeys.stream().map(key -> JsonUtil.toBean(key, RPCServerAddress.class)).collect(Collectors.toList());
+                List<RPCServerAddress> rpcServerAddresses = shouldDisconnectKeys.stream().map(key -> JsonUtil.toBean(key, RPCServerAddress.class)).toList();
                 rpcServerAddresses.forEach(address -> {
                     try {
                         invalidTargetClient(address, this.pool.borrowObject(address));

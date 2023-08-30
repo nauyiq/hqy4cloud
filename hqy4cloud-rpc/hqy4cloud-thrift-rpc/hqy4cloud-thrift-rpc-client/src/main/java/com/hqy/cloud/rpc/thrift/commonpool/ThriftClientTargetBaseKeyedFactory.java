@@ -47,7 +47,7 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
     public T create(RPCServerAddress serverAddress) throws Exception {
         AssertUtil.notNull(serverAddress, "RPCServerAddress should not be null.");
 
-        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.get(serviceName);
+        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.computeIfAbsent(serviceName, v -> MapUtil.newConcurrentHashMap());
         FramedClientConnector connector = rpcServerAddressFramedClientConnectorMap.get(serverAddress);
         if (connector == null) {
             throw new NoAvailableProviderException("No available connectors for this rpc service "
@@ -82,6 +82,7 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
     private void iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
         if (CollectionUtils.isEmpty(invokers)) {
             RPC_SERVICE_CONNECTOR_MAP.put(serviceName, MapUtil.newConcurrentHashMap(0));
+            return;
         }
         Map<RPCServerAddress, FramedClientConnector> map = MapUtil.newConcurrentHashMap(invokers.size());
         for (Invoker<T> invoker : invokers) {

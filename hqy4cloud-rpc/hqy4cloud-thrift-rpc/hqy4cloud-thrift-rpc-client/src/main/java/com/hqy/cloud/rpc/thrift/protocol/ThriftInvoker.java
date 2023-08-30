@@ -89,7 +89,9 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
                 if (needReturnTarget) {
                     thriftClientTargetPooled.returnTargetClient(serverAddress, target);
                 } else {
-                    thriftClientTargetPooled.invalidTargetClient(serverAddress, target);
+                    if (target != null) {
+                        thriftClientTargetPooled.invalidTargetClient(serverAddress, target);
+                    }
                 }
             } catch (Throwable t) {
                 String err = String.format("ThriftInvoker return target failed, target:%s, method:%s, args:%s",
