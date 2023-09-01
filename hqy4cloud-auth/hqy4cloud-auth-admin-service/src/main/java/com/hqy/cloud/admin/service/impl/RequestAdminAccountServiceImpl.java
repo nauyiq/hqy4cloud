@@ -1,6 +1,6 @@
 package com.hqy.cloud.admin.service.impl;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.admin.service.RequestAdminAccountService;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;

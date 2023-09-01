@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.mapper;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.db.tk.BaseTkMapper;
 import org.apache.ibatis.annotations.Param;

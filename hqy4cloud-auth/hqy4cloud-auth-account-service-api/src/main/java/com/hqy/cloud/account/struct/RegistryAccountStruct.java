@@ -1,4 +1,4 @@
-package com.hqy.account.struct;
+package com.hqy.cloud.account.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
@@ -34,6 +34,8 @@ public final class RegistryAccountStruct {
     public List<String> roles;
     @ThriftField(7)
     public Long createBy;
+    @ThriftField(8)
+    public String phone;
 
     public RegistryAccountStruct(String username, String email, String password) {
         this.username = username;

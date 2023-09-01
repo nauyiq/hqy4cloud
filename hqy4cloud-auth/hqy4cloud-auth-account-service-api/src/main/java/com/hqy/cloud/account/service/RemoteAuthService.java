@@ -1,10 +1,10 @@
-package com.hqy.account.service;
+package com.hqy.cloud.account.service;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
-import com.hqy.account.struct.AuthenticationStruct;
-import com.hqy.account.struct.ResourceStruct;
+import com.hqy.cloud.account.struct.AuthenticationStruct;
+import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 

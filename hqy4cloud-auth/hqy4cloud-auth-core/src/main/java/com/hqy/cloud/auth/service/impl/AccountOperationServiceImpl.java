@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.AccountProfile;
@@ -171,7 +171,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
                 return false;
             }
         });
-        SpringContextHolder.getBean(AccountBaseInfoCacheDataServiceService.class).invalid(account.getId());
+        SpringContextHolder.getBean(AccountCacheService.class).invalid(account.getId());
         return Boolean.TRUE.equals(result);
     }
 

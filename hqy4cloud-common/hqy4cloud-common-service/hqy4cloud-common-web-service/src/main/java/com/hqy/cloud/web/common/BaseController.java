@@ -1,6 +1,6 @@
 package com.hqy.cloud.web.common;
 
-import com.hqy.account.struct.AccountBaseInfoStruct;
+import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

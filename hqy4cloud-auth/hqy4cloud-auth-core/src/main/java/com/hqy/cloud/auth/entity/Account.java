@@ -51,7 +51,7 @@ public class Account extends BaseEntity<Long> {
     /**
      * 状态
      */
-    private Boolean status = true;
+    private Boolean status;
 
     /**
      * 是否删除

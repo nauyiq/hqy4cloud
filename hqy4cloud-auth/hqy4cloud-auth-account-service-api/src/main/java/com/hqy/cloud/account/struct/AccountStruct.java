@@ -1,4 +1,4 @@
-package com.hqy.account.struct;
+package com.hqy.cloud.account.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
@@ -27,8 +27,10 @@ public final class AccountStruct {
     @ThriftField(4)
     public String phone;
     @ThriftField(5)
-    public String authorities;
+    public String roles;
     @ThriftField(6)
     public Boolean status;
+    @ThriftField(7)
+    public Long created;
 
 }

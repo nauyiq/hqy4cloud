@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.service.tk;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;

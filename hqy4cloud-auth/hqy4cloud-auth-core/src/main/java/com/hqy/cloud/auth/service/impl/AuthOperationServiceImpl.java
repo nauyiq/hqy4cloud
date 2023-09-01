@@ -52,7 +52,7 @@ public class AuthOperationServiceImpl implements AuthOperationService {
         if (CollectionUtils.isEmpty(roles)) {
             return false;
         }
-        List<Integer> collect = roles.stream().map(Role::getLevel).collect(Collectors.toList());
+        List<Integer> collect = roles.stream().map(Role::getLevel).toList();
         return getAccountMaxAuthorityRoleLevel(id) <= Collections.min(collect);
     }
 
@@ -62,7 +62,7 @@ public class AuthOperationServiceImpl implements AuthOperationService {
         AssertUtil.notNull(account, "Account should no be null.");
         List<Role> roles = roleTkService.queryRolesByNames(Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA)));
         AssertUtil.notEmpty(roles, "Account Roles should no be empty.");
-        List<Integer> levelList = roles.stream().map(Role::getLevel).collect(Collectors.toList());
+        List<Integer> levelList = roles.stream().map(Role::getLevel).toList();
         return Collections.min(levelList);
     }
 

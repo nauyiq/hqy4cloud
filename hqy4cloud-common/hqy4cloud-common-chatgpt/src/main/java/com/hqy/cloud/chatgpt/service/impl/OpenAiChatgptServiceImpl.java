@@ -1,7 +1,8 @@
+/*
 package com.hqy.cloud.chatgpt.service.impl;
 
-import com.hqy.account.service.RemoteAccountService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
+import com.hqy.cloud.account.service.RemoteAccountService;
+import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
 import com.hqy.account.struct.ChatgptConfigStruct;
 import com.hqy.cloud.chatgpt.common.dto.ChatGptMessageReq;
 import com.hqy.cloud.chatgpt.common.exception.OpenAiChatGptException;
@@ -18,18 +19,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.hqy.cloud.chatgpt.common.exception.OpenAiChatGptException.REQUEST_PARAMS_ERROR;
 
+*/
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/8/4 13:40
- */
+ *//*
+
 @Slf4j
 @RequiredArgsConstructor
 public class OpenAiChatgptServiceImpl implements OpenAiChatgptService {
@@ -114,3 +116,4 @@ public class OpenAiChatgptServiceImpl implements OpenAiChatgptService {
         return messages;
     }
 }
+*/

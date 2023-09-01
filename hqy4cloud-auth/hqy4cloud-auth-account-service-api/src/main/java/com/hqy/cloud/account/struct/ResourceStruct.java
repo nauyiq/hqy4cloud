@@ -1,4 +1,4 @@
-package com.hqy.account.struct;
+package com.hqy.cloud.account.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;

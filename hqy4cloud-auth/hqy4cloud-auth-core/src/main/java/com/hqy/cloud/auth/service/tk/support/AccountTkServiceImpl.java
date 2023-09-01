@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.service.tk.support;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.mapper.AccountTkMapper;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;

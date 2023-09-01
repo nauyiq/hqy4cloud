@@ -1,4 +1,4 @@
-package com.hqy.account.dto;
+package com.hqy.cloud.account.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 
 /**
- * Account info DTO.
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/9/27 15:50
@@ -59,11 +58,6 @@ public class AccountInfoDTO {
      * 生日
      */
     private Date birthday;
-
-    /**
-     * gpt config
-     */
-    private String chatgptConfig;
 
     /**
      * 状态

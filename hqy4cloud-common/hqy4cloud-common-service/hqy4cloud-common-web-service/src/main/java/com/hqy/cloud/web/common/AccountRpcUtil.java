@@ -1,8 +1,8 @@
 package com.hqy.cloud.web.common;
 
-import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.service.RemoteAccountService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.service.RemoteAccountService;
+import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import org.apache.commons.collections4.CollectionUtils;

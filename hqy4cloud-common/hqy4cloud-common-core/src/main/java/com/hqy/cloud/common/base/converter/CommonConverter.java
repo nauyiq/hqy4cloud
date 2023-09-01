@@ -35,6 +35,9 @@ public class CommonConverter {
     @Named("dateConvertString")
     public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
 
+    @Named("dateConvertLong")
+    public static Long dateConvertLong(Date date) {return date.getTime();}
+
     @Named("StringConvertDate")
     public static Date StringConvertDate(String date) {
         try {

@@ -2,6 +2,7 @@ package com.hqy.cloud.auth.entity;
 
 import com.hqy.cloud.db.tk.model.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Table;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @date 2022/5/19 17:03
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "t_account_profile")
 public class AccountProfile extends BaseEntity<Long> {
 
@@ -27,6 +29,11 @@ public class AccountProfile extends BaseEntity<Long> {
     private String avatar;
 
     /**
+     * 性别
+     */
+    private Integer sex;
+
+    /**
      * 简介
      */
     private String intro;
@@ -35,13 +42,6 @@ public class AccountProfile extends BaseEntity<Long> {
      * 生日
      */
     private Date birthday;
-
-    /**
-     * chaptgpt配置
-     */
-    private String chatgptConfig;
-
-
 
     public AccountProfile() {
 

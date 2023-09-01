@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Date;
 
 /**
@@ -21,16 +22,13 @@ import java.util.Date;
 @NoArgsConstructor
 public class Role extends BaseEntity<Integer> {
 
+    @Serial
     private static final long serialVersionUID = 4205584555574408604L;
 
     private String name;
-
     private Integer level;
-
     private String note;
-
     private Boolean status;
-
     private Boolean deleted = false;
 
     public Role(String name) {
@@ -44,6 +42,11 @@ public class Role extends BaseEntity<Integer> {
         this.note = note;
         this.status = true;
     }
+
+    public static Role ofCommon() {
+        return new Role()
+    }
+
 
     @Override
     public boolean equals(Object o) {

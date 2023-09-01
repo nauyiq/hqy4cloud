@@ -2,13 +2,12 @@ package com.hqy.cloud.auth.service;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.hqy.account.service.RemoteAccountProfileService;
-import com.hqy.account.struct.AccountProfileStruct;
+import com.hqy.cloud.account.service.RemoteAccountProfileService;
+import com.hqy.cloud.account.struct.AccountProfileStruct;
 import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheDataServiceService;
+import com.hqy.cloud.auth.service.impl.AccountCacheService;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
-import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class RemoteAccountProfileServiceImpl extends AbstractRPCService implements RemoteAccountProfileService {
 
     private final AccountOperationService accountOperationService;
-    private final AccountBaseInfoCacheDataServiceService baseInfoCacheService;
+    private final AccountCacheService baseInfoCacheService;
 
     @Override
     public boolean uploadAccountProfile(AccountProfileStruct profileStruct) {
@@ -48,10 +47,6 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         if (StringUtils.isNotBlank(profileStruct.avatar)) {
             accountProfile.setAvatar(profileStruct.avatar);
         }
-        if (profileStruct.chatgptConfig != null) {
-            accountProfile.setChatgptConfig(JsonUtil.toJson(profileStruct.chatgptConfig));
-        }
-
         boolean update = accountProfileTkService.update(accountProfile);
         if (update) {
             baseInfoCacheService.invalid(id);

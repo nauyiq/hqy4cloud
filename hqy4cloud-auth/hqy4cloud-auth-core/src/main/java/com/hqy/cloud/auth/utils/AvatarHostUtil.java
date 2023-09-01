@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.utils;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 

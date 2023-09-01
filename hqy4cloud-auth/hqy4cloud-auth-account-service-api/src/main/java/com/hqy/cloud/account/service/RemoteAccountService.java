@@ -1,11 +1,11 @@
-package com.hqy.account.service;
+package com.hqy.cloud.account.service;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.account.struct.AccountStruct;
-import com.hqy.account.struct.RegistryAccountStruct;
+import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
+import com.hqy.cloud.account.struct.AccountStruct;
+import com.hqy.cloud.account.struct.RegistryAccountStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
@@ -31,10 +31,18 @@ public interface RemoteAccountService extends RPCService {
     /**
      * 根据用户名或者邮箱获取账号id
      * @param usernameOrEmail 用户名或者邮箱
-     * @return
+     * @return user id.
      */
     @ThriftMethod
     Long getAccountIdByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
+
+    /**
+     * return account by id.
+     * @param id user id.
+     * @return   {@link AccountStruct}
+     */
+    @ThriftField
+    AccountStruct getAccountById(@ThriftField(1) Long id);
 
     /**
      * 根据用户名或者邮箱获取账号信息
@@ -42,27 +50,7 @@ public interface RemoteAccountService extends RPCService {
      * @return                AccountStruct.
      */
     @ThriftMethod
-    AccountStruct getAccountStructByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
-
-
-    /**
-     * 获取用户基本信息
-     * @param id 查找哪个用户的基本信息
-     * @return   AccountBaseInfoStruct.
-     */
-    @ThriftMethod
-    AccountBaseInfoStruct getAccountBaseInfo(@ThriftField(1)Long id);
-
-
-
-    /**
-     * 获取用户基本信息
-     * @param ids 查找哪些用户的基本信息
-     * @return    AccountBaseInfoStruct.
-     */
-    @ThriftMethod
-    List<AccountBaseInfoStruct> getAccountBaseInfos(@ThriftField(1)List<Long> ids);
-
+    AccountStruct getAccountByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
 
     /**
      * 校验用户名和邮箱是否可用
@@ -75,8 +63,6 @@ public interface RemoteAccountService extends RPCService {
 
     /**
      * 注册账号.
-     * 调用此rpc默认为已经校验过邮箱和用户名是否合法.
-     * 既已经调用了checkRegistryInfo方法. 校验邮箱和用户名.
      * @param struct {@link  RegistryAccountStruct}.
      * @return       CommonResultStruct.
      */

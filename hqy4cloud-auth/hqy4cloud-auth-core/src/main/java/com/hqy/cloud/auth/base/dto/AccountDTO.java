@@ -1,10 +1,8 @@
 package com.hqy.cloud.auth.base.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,18 +11,21 @@ import java.io.Serializable;
  * @date 2022/10/8 11:09
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AccountBaseInfoDTO implements Serializable {
+public class AccountDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = -492977226753159315L;
 
     private Long id;
-    private String nickname;
     private String username;
     private String email;
-    private String avatar;
+    private String phone;
+    private String password;
     private String roles;
-    private String chatgptConfig;
+    private Boolean status;
+    private Long created;
 
 }

@@ -16,7 +16,6 @@ import java.util.*;
  */
 @Slf4j
 public abstract class RedisHashCacheDataService<T, PK> extends RedisCacheDataService<T, PK> {
-
     private final RedissonMapCache<PK, T> redissonMapCache;
 
     public RedisHashCacheDataService(RedisKey redisKey, RedissonClient redissonClient) {
