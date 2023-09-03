@@ -67,7 +67,7 @@ public class AuthOperationServiceImpl implements AuthOperationService {
     }
 
     @Override
-    public List<String> getManuPermissionsByRoles(List<String> roles) {
+    public List<String> getMenuPermissionsByRoles(List<String> roles) {
         if (CollectionUtils.isEmpty(roles)) {
             return Collections.emptyList();
         }

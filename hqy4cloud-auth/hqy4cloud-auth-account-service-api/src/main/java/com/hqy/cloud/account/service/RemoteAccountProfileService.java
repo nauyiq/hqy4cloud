@@ -7,6 +7,8 @@ import com.hqy.cloud.account.struct.AccountProfileStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 
+import java.util.List;
+
 /**
  * RemoteAccountProfileService.
  * @author qiyuan.hong
@@ -15,14 +17,6 @@ import com.hqy.cloud.rpc.service.RPCService;
  */
 @ThriftService(value = MicroServiceConstants.ACCOUNT_SERVICE)
 public interface RemoteAccountProfileService extends RPCService {
-
-    /**
-     * uploadAccountProfile.
-     * @param profileStruct profile.
-     * @return              update result.
-     */
-    @ThriftMethod
-    boolean uploadAccountProfile(@ThriftField(1)AccountProfileStruct profileStruct);
 
     /**
      * return user account info and profile info.
@@ -40,5 +34,29 @@ public interface RemoteAccountProfileService extends RPCService {
      */
     @ThriftMethod
     AccountProfileStruct getAccountProfile(@ThriftField(1) String usernameOrEmail);
+
+    /**
+     * return account profile by ids.
+     * @param ids user ids.
+     * @return   {@link AccountProfileStruct}
+     */
+    @ThriftMethod
+    List<AccountProfileStruct> getAccountProfiles(@ThriftField(1) List<Long> ids);
+
+    /**
+     * uploadAccountProfile.
+     * @param profileStruct profile.
+     * @return              update result.
+     */
+    @ThriftMethod
+    boolean uploadAccountProfile(@ThriftField(1)AccountProfileStruct profileStruct);
+
+    /**
+     * async update account avatar by id.
+     * @param id     user id.
+     * @param avatar avatar
+     */
+    @ThriftMethod(oneway = true)
+    void updateAccountAvatar(@ThriftField(1)Long id, @ThriftField(2) String avatar);
 
 }

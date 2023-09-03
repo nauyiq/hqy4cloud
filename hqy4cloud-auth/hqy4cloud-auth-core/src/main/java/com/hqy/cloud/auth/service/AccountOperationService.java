@@ -4,7 +4,6 @@ import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
 import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
@@ -25,6 +24,13 @@ public interface AccountOperationService {
      * @return    {@link AccountInfoDTO}
      */
     AccountInfoDTO getAccountInfo(Long id);
+
+    /**
+     * get account info by username or email.
+     * @param usernameOrEmail username or email.
+     * @return                {@link AccountInfoDTO}
+     */
+    AccountInfoDTO getAccountInfo(String usernameOrEmail);
 
     /**
      * get account information,
@@ -75,18 +81,11 @@ public interface AccountOperationService {
      */
     boolean deleteUser(Account account);
 
-
     /**
      * simple table crud for t_account.
      * @return AccountTkService.
      */
     AccountTkService getAccountTkService();
-
-    /**
-     * simple table crud for t_account_profile.
-     * @return AccountProfileTkService.
-     */
-    AccountProfileTkService getAccountProfileTkService();
 
     /**
      * simple table crud for t_role

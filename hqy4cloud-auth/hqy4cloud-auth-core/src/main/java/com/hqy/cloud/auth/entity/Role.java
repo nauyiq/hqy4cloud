@@ -43,11 +43,6 @@ public class Role extends BaseEntity<Integer> {
         this.status = true;
     }
 
-    public static Role ofCommon() {
-        return new Role()
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -5,7 +5,6 @@ import com.hqy.cloud.chatgpt.config.interceptor.AuthenticationInterceptor;
 import com.hqy.cloud.chatgpt.config.interceptor.ProxyAuthenticator;
 import com.hqy.cloud.chatgpt.core.UnofficialApi;
 import com.hqy.cloud.chatgpt.service.OpenAiChatgptService;
-import com.hqy.cloud.chatgpt.service.impl.OpenAiChatgptServiceImpl;
 import com.theokanning.openai.OpenAiApi;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -70,10 +68,10 @@ public class OpenAiChatGptAutoConfiguration {
         return new OpenAiService(retrofit.create(OpenAiApi.class), apiOkHttpClient.dispatcher().executorService());
     }
 
-    @Bean
+    /*@Bean
     public OpenAiChatgptService openAiChatgptService(OpenAiService openAiService) {
         return new OpenAiChatgptServiceImpl(openAiService, properties);
-    }
+    }*/
 
     @Bean
     @ConditionalOnMissingBean

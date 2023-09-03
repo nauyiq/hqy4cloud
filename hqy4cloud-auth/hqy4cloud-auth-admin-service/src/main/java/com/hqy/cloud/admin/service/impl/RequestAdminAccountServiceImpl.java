@@ -51,7 +51,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
             return R.failed(USER_NOT_FOUND);
         }
         List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), COMMA));
-        List<String> permissions = authOperationService.getManuPermissionsByRoles(roles);
+        List<String> permissions = authOperationService.getMenuPermissionsByRoles(roles);
         AdminUserInfoVO vo = new AdminUserInfoVO(permissions, roles, new AdminUserInfoVO.SysUser(accountInfo));
         return R.ok(vo);
     }
@@ -108,7 +108,6 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         if (Objects.isNull(account) || account.getDeleted()) {
             return R.failed(USER_NOT_FOUND);
         }
-
         //check roles
         List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
         String accountRoles = account.getRoles();
@@ -126,7 +125,6 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         if (!booleanR.isResult()) {
             return booleanR;
         }
-
         //edit user
         boolean result = accountOperationService.editAccount(userDTO, roles, account, modifyRoles ? oldRoles : null);
         return result ? R.ok() : R.failed();

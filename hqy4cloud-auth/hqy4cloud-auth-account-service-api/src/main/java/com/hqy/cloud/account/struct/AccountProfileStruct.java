@@ -31,7 +31,7 @@ public final class AccountProfileStruct {
     public String intro;
     @ThriftField(6)
     public String birthday;
-    @ThriftField()
+    @ThriftField(7)
     public Integer sex;
 
 }

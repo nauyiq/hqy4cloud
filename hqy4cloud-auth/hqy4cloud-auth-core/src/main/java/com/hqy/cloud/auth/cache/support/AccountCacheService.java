@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.service.impl;
+package com.hqy.cloud.auth.cache.support;
 
 import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.entity.Account;

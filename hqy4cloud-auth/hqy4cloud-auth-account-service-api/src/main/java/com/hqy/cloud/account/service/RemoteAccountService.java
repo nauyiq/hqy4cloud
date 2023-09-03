@@ -3,7 +3,6 @@ package com.hqy.cloud.account.service;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
-import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
 import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.account.struct.RegistryAccountStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
@@ -43,6 +42,15 @@ public interface RemoteAccountService extends RPCService {
      */
     @ThriftField
     AccountStruct getAccountById(@ThriftField(1) Long id);
+
+    /**
+     * return account by ids.
+     * @param ids user ids
+     * @return    {@link AccountStruct}
+     */
+    @ThriftField
+    List<AccountStruct> getAccountByIds(@ThriftField(1) List<Long> ids);
+
 
     /**
      * 根据用户名或者邮箱获取账号信息

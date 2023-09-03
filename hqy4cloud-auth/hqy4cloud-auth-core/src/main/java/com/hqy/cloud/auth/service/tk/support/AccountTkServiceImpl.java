@@ -45,6 +45,11 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     }
 
     @Override
+    public AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail) {
+        return accountDao.getAccountInfoByUsernameOrEmail(usernameOrEmail);
+    }
+
+    @Override
     public List<AccountInfoDTO> getAccountInfos(List<Long> ids) {
         return accountDao.getAccountInfos(ids);
     }

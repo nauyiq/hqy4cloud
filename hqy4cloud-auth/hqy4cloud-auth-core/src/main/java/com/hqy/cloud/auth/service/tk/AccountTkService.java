@@ -30,6 +30,13 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
     AccountInfoDTO getAccountInfo(Long id);
 
     /**
+     * return account info by username or email.
+     * @param usernameOrEmail username or email.
+     * @return               {@link AccountInfoDTO}
+     */
+    AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail);
+
+    /**
      * 查找用户信息
      * @param ids 用户id 列表
      * @return    AccountInfoDTO Set.
@@ -46,5 +53,6 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
      * @return             PageResult for AccountInfoDTO.
      */
     PageResult<AccountInfoVO> getPageAccountInfos(String username, String nickname, Integer maxRoleLevel, Integer current, Integer size);
+
 
 }

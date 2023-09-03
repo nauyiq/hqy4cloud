@@ -58,7 +58,7 @@ public class RemoteAuthServiceImpl extends AbstractRPCService implements RemoteA
 
     @Override
     public List<String> getPermissionsByRoles(List<String> roles) {
-        return authOperationService.getManuPermissionsByRoles(roles);
+        return authOperationService.getMenuPermissionsByRoles(roles);
     }
 
 

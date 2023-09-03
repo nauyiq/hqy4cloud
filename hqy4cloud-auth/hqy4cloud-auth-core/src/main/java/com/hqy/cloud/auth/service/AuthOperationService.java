@@ -44,7 +44,7 @@ public interface AuthOperationService {
      * @param roles 角色列表
      * @return      权限列表
      */
-    List<String> getManuPermissionsByRoles(List<String> roles);
+    List<String> getMenuPermissionsByRoles(List<String> roles);
 
 
     /**

@@ -19,7 +19,7 @@
     <select id="getAccountInfo" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
-        p.avatar,p.nickname,p.intro,p.birthday
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM
         (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
         t_account a
@@ -30,7 +30,7 @@
     <select id="getAccountInfos" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
-        p.avatar,p.nickname,p.intro,p.birthday
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM t_account a
         LEFT JOIN t_account_profile p
         ON a.id = p.id
@@ -38,6 +38,16 @@
         <foreach collection="ids" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+    </select>
+
+    <select id="getAccountInfoByUsernameOrEmail" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+        SELECT
+        a.id,a.username,a.email,a.phone,a.roles,a.status,
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM t_account a
+        LEFT JOIN t_account_profile p
+        ON a.id = p.id
+        WHERE a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail}
     </select>
 
 
@@ -57,5 +67,6 @@
         </if>
         ORDER BY id DESC
     </select>
+
 
 </mapper>

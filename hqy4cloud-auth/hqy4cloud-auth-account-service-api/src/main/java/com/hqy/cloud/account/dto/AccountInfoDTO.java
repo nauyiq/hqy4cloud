@@ -60,6 +60,11 @@ public class AccountInfoDTO {
     private Date birthday;
 
     /**
+     * 性别
+     */
+    private Integer sex;
+
+    /**
      * 状态
      */
     private Boolean status;

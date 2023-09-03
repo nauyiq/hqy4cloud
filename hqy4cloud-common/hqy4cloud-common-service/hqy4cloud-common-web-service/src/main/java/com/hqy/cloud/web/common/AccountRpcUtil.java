@@ -1,10 +1,12 @@
 package com.hqy.cloud.web.common;
 
 import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.service.RemoteAccountProfileService;
 import com.hqy.cloud.account.service.RemoteAccountService;
-import com.hqy.cloud.account.struct.AccountBaseInfoStruct;
-import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.account.struct.AccountProfileStruct;
+import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class AccountRpcUtil {
 
-    public static AccountInfoDTO getAccountInfo(Long id) {
+    public static AccountInfoDTO getAccount(Long id) {
         if (id == null) {
             return null;
         }
@@ -31,26 +33,47 @@ public class AccountRpcUtil {
         return StringUtils.isBlank(accountInfoJson) ? null : JsonUtil.toBean(accountInfoJson, AccountInfoDTO.class);
     }
 
-    public static AccountBaseInfoStruct getAccountBaseInfo(Long id) {
+    public static AccountStruct getAccountInfo(Long id) {
         if (id == null) {
             return null;
         }
         RemoteAccountService remoteAccountService = RPCClient.getRemoteService(RemoteAccountService.class);
-        return remoteAccountService.getAccountBaseInfo(id);
+        return remoteAccountService.getAccountById(id);
     }
 
-    public static List<AccountBaseInfoStruct> getAccountBaseInfos(List<Long> ids) {
+    public static AccountProfileStruct getAccountProfile(Long id) {
+        if (id == null) {
+            return null;
+        }
+        RemoteAccountProfileService profileService = RPCClient.getRemoteService(RemoteAccountProfileService.class);
+        return profileService.getAccountProfile(id);
+    }
+
+    public static List<AccountProfileStruct> getAccountProfiles(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        RemoteAccountProfileService profileService = RPCClient.getRemoteService(RemoteAccountProfileService.class);
+        return profileService.getAccountProfiles(ids);
+    }
+
+    public static List<AccountStruct> getAccountInfos(List<Long> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
         RemoteAccountService remoteAccountService = RPCClient.getRemoteService(RemoteAccountService.class);
-        return remoteAccountService.getAccountBaseInfos(ids);
+        return remoteAccountService.getAccountByIds(ids);
     }
 
 
-    public static Map<Long, AccountBaseInfoStruct> getAccountBaseInfoMap(List<Long> ids) {
-        List<AccountBaseInfoStruct> accountBaseInfos = getAccountBaseInfos(ids);
-        return  accountBaseInfos.stream().collect(Collectors.toMap(AccountBaseInfoStruct::getId, e -> e, (k1, k2) -> k1));
+    public static Map<Long, AccountStruct> getAccountInfoMap(List<Long> ids) {
+        List<AccountStruct> accountBaseInfos = getAccountInfos(ids);
+        return  accountBaseInfos.stream().collect(Collectors.toMap(AccountStruct::getId, e -> e, (k1, k2) -> k1));
+    }
+
+    public static Map<Long, AccountProfileStruct> getAccountProfileMap(List<Long> ids) {
+        List<AccountProfileStruct> profiles = getAccountProfiles(ids);
+        return profiles.stream().collect(Collectors.toMap(AccountProfileStruct::getId, e -> e, (k1, k2) -> k1));
     }
 
 

@@ -1,17 +1,24 @@
 package com.hqy.cloud.auth.service;
 
-import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.account.service.RemoteAccountProfileService;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
+import com.hqy.cloud.auth.base.converter.AccountConverter;
+import com.hqy.cloud.auth.base.dto.AccountDTO;
+import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.auth.service.impl.AccountCacheService;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
+import com.hqy.cloud.auth.utils.AvatarHostUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -22,35 +29,70 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RemoteAccountProfileServiceImpl extends AbstractRPCService implements RemoteAccountProfileService {
-
+    private final AccountProfileTkService accountProfileTkService;
     private final AccountOperationService accountOperationService;
-    private final AccountCacheService baseInfoCacheService;
+    private final AccountCacheService accountCacheService;
 
     @Override
-    public boolean uploadAccountProfile(AccountProfileStruct profileStruct) {
-        Long id = profileStruct.id;
-        AccountProfileTkService accountProfileTkService = accountOperationService.getAccountProfileTkService();
-        AccountProfile accountProfile = accountProfileTkService.queryById(id);
-        if (accountProfile == null) {
-            return false;
+    public AccountProfileStruct getAccountProfile(Long userId) {
+        AccountDTO account = accountCacheService.getData(userId);
+        AccountProfile profile = accountProfileTkService.queryById(userId);
+        if (account == null || profile == null) {
+            return new AccountProfileStruct();
         }
+        // return host avatar.
+        profile.setAvatar(AvatarHostUtil.settingAvatar(profile.getAvatar()));
+        AccountProfileStruct struct = AccountConverter.CONVERTER.convert(profile);
+        struct.username = account.getUsername();
+        return struct;
+    }
 
-        //setting information.
-        accountProfile.setIntro(profileStruct.intro);
-        if (StringUtils.isNotBlank(profileStruct.birthday)) {
-            DateTime dateTime = DateUtil.parseDateTime(profileStruct.birthday);
-            accountProfile.setBirthday(dateTime);
+    @Override
+    public AccountProfileStruct getAccountProfile(String usernameOrEmail) {
+        AccountInfoDTO accountInfo = accountOperationService.getAccountInfo(usernameOrEmail);
+        if (accountInfo == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Not found account info by usernameOrEmail:{}.", usernameOrEmail);
+            }
+            return new AccountProfileStruct();
         }
-        if (StringUtils.isNotBlank(profileStruct.nickname)) {
-            accountProfile.setNickname(profileStruct.nickname);
+        return buildAccountProfileStruct(accountInfo);
+    }
+
+    @Override
+    public List<AccountProfileStruct> getAccountProfiles(List<Long> ids) {
+        List<AccountInfoDTO> infos = accountOperationService.getAccountInfo(ids);
+        if (CollectionUtils.isEmpty(infos)) {
+            return Collections.emptyList();
         }
-        if (StringUtils.isNotBlank(profileStruct.avatar)) {
-            accountProfile.setAvatar(profileStruct.avatar);
+        return infos.stream().map(this::buildAccountProfileStruct).toList();
+    }
+
+    @Override
+    public boolean uploadAccountProfile(AccountProfileStruct struct) {
+        AccountProfile profile = new AccountProfile();
+        AccountConverter.CONVERTER.update(profile, struct);
+        return accountProfileTkService.updateSelective(profile);
+
+    }
+
+    @Override
+    public void updateAccountAvatar(Long id, String avatar) {
+        AccountProfile profile = new AccountProfile(id, null, avatar);
+        boolean result = accountProfileTkService.updateSelective(profile);
+        if (!result) {
+            log.warn("Failed execute to updateAccountAvatar, id: {}, avatar:{}.", id, avatar);
         }
-        boolean update = accountProfileTkService.update(accountProfile);
-        if (update) {
-            baseInfoCacheService.invalid(id);
-        }
-        return update;
+    }
+
+    private AccountProfileStruct buildAccountProfileStruct(AccountInfoDTO accountInfo) {
+        return AccountProfileStruct.builder()
+                .id(accountInfo.getId())
+                .username(accountInfo.getUsername())
+                .nickname(accountInfo.getNickname())
+                .avatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()))
+                .intro(accountInfo.getIntro())
+                .birthday(DateUtil.format(accountInfo.getBirthday(), DatePattern.NORM_DATETIME_MINUTE_PATTERN))
+                .sex(accountInfo.getSex()).build();
     }
 }
