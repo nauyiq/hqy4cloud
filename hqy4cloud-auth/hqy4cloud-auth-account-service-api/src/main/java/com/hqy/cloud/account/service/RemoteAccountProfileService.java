@@ -33,7 +33,7 @@ public interface RemoteAccountProfileService extends RPCService {
      * @return                 {@link AccountProfileStruct}
      */
     @ThriftMethod
-    AccountProfileStruct getAccountProfile(@ThriftField(1) String usernameOrEmail);
+    AccountProfileStruct getAccountProfileByUsernameOrEmail(@ThriftField(1) String usernameOrEmail);
 
     /**
      * return account profile by ids.

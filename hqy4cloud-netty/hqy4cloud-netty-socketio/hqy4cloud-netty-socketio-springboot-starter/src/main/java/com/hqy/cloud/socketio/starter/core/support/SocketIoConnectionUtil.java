@@ -9,15 +9,14 @@ import com.hqy.cloud.foundation.common.route.SocketClusterStatus;
 import com.hqy.cloud.foundation.common.route.SocketClusterStatusManager;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.config.ConfigurationContext;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_CONNECTION_HOST;
@@ -86,6 +85,71 @@ public class SocketIoConnectionUtil {
         }
         return null;
 
+    }
+
+    public static boolean doPrivateMessage(boolean async, String serviceName, String to, String eventName, String messagePayload) {
+        ThriftSocketIoPushService socketIoPushService = getSocketIoPushService(to, ThriftSocketIoPushService.class, serviceName);
+        try {
+            if (async) {
+                socketIoPushService.asyncPush(to, eventName, messagePayload);
+                return true;
+            } else {
+                return socketIoPushService.syncPush(to, eventName, messagePayload);
+            }
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+            return false;
+        }
+    }
+
+    public static boolean doBroadcastMessages(boolean async, String serviceName, Set<String> broadcastUsers, String eventName, String messagePayload) {
+        try {
+            SocketClusterStatus query = SocketClusterStatusManager.query(Environment.getInstance().getEnvironment(), serviceName);
+            if (query.isEnableMultiWsNode()) {
+                // query bizId of hash value of map. key: bizId | value: hash
+                Map<String, Integer> hashMap = broadcastUsers.parallelStream().collect(Collectors.toMap(bizId -> bizId, query::getSocketIoPathHashMod));
+                // query hashFactor and ThriftSocketIoPushService  map.
+                Map<Integer, String> hashFactorMap = LoadBalanceHashFactorManager.queryHashFactorMap(serviceName, hashMap.values().stream().distinct().toList());
+                // group by hash
+                Map<Integer, List<String>> groupByHash = MapUtil.newHashMap();
+                for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
+                    String bizId = entry.getKey();
+                    Integer hash = entry.getValue();
+                    List<String> absent = groupByHash.computeIfAbsent(hash, v -> new ArrayList<>());
+                    absent.add(bizId);
+                }
+                // do broadcast.
+                for (Map.Entry<Integer, List<String>> entry : groupByHash.entrySet()) {
+                    Integer hash = entry.getKey();
+                    List<String> bizIds = entry.getValue();
+                    String hashFactor = hashFactorMap.getOrDefault(hash, StringConstants.DEFAULT);
+                    ThriftSocketIoPushService pushService;
+                    if (SpringContextHolder.getProjectContextInfo().isLocalFactor(hashFactor, serviceName)) {
+                        pushService = SpringContextHolder.getBean(ThriftSocketIoPushService.class);
+                    } else {
+                        // using rpc service.
+                        pushService = RPCClient.getRemoteService(ThriftSocketIoPushService.class);
+                    }
+                    if (async) {
+                        pushService.asyncPushMultiple(new HashSet<>(bizIds), eventName, messagePayload);
+                    } else {
+                        pushService.syncPushMultiple(new HashSet<>(bizIds), eventName, messagePayload);
+                    }
+                    return true;
+                }
+            } else {
+                ThriftSocketIoPushService pushService = SpringContextHolder.getBean(ThriftSocketIoPushService.class);
+                if (async) {
+                    pushService.asyncPushMultiple(broadcastUsers, eventName, messagePayload);
+                } else {
+                    return pushService.syncPushMultiple(broadcastUsers, eventName, messagePayload);
+                }
+            }
+            return true;
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+            return false;
+        }
     }
 
 

@@ -48,7 +48,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
     }
 
     @Override
-    public AccountProfileStruct getAccountProfile(String usernameOrEmail) {
+    public AccountProfileStruct getAccountProfileByUsernameOrEmail(String usernameOrEmail) {
         AccountInfoDTO accountInfo = accountOperationService.getAccountInfo(usernameOrEmail);
         if (accountInfo == null) {
             if (log.isDebugEnabled()) {

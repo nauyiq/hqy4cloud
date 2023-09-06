@@ -32,6 +32,11 @@ public class CommonConverter {
         return status.toString();
     }
 
+    @Named("longToString")
+    public static String longToString(Long value) {
+        return value.toString();
+    }
+
     @Named("dateConvertString")
     public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
 
