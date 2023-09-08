@@ -45,6 +45,13 @@ public interface AccountTkMapper extends BaseTkMapper<Account, Long> {
     List<AccountInfoDTO> getAccountInfos(@Param("ids") List<Long> ids);
 
     /**
+     * 模糊查询昵称和精确查询用户名
+     * @param name 用户名或昵称
+     * @return     {@link AccountInfoDTO}
+     */
+    List<AccountInfoDTO> getAccountInfosByName(@Param("name") String name);
+
+    /**
      * 分页查询查询用户列表
      * @param username     用户名
      * @param nickname     昵称
@@ -52,6 +59,7 @@ public interface AccountTkMapper extends BaseTkMapper<Account, Long> {
      * @return             AccountInfoDTO.
      */
     List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname, @Param("maxLevel") Integer maxRoleLevel);
+
 
 
 }

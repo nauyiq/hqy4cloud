@@ -15,6 +15,7 @@ import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -62,6 +63,18 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
     @Override
     public List<AccountProfileStruct> getAccountProfiles(List<Long> ids) {
         List<AccountInfoDTO> infos = accountOperationService.getAccountInfo(ids);
+        if (CollectionUtils.isEmpty(infos)) {
+            return Collections.emptyList();
+        }
+        return infos.stream().map(this::buildAccountProfileStruct).toList();
+    }
+
+    @Override
+    public List<AccountProfileStruct> getAccountProfilesByName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return Collections.emptyList();
+        }
+        List<AccountInfoDTO> infos = accountOperationService.getAccountProfilesByName(name);
         if (CollectionUtils.isEmpty(infos)) {
             return Collections.emptyList();
         }

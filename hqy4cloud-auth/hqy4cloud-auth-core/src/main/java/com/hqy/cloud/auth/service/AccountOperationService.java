@@ -40,6 +40,13 @@ public interface AccountOperationService {
     List<AccountInfoDTO> getAccountInfo(List<Long> ids);
 
     /**
+     * get account information by name
+     * @param name username or nickname
+     * @return     {@link AccountInfoDTO}
+     */
+    List<AccountInfoDTO> getAccountProfilesByName(String name);
+
+    /**
      * 校验参数是否存在
      * @param username 用户名
      * @param email    邮箱

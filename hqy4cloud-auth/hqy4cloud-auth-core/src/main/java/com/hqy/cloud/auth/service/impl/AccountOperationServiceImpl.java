@@ -90,6 +90,18 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     }
 
     @Override
+    public List<AccountInfoDTO> getAccountProfilesByName(String name) {
+        if (StringUtils.isBlank(name)) {
+            return Collections.emptyList();
+        }
+        List<AccountInfoDTO> accountInfos = accountTkService.getAccountInfosByName(name);
+        if (CollectionUtils.isNotEmpty(accountInfos)) {
+            accountInfos = accountInfos.stream().peek(AvatarHostUtil::settingAvatar).collect(Collectors.toList());
+        }
+        return accountInfos;
+    }
+
+    @Override
     public boolean checkParamExist(String username, String email, String phone) {
         if (StringUtils.isAllEmpty(username, email, phone)) {
             return true;

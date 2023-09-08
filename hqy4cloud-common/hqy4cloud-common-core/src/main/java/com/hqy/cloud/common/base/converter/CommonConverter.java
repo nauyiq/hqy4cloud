@@ -2,6 +2,7 @@ package com.hqy.cloud.common.base.converter;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.mapstruct.Named;
@@ -38,10 +39,20 @@ public class CommonConverter {
     }
 
     @Named("dateConvertString")
-    public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
+    public static String dateConvertString(Date date) {
+        if (date == null) {
+            return StringConstants.EMPTY;
+        }
+        return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");
+    }
 
     @Named("dateConvertBirthday")
-    public static String dateConvertBirthday(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm");}
+    public static String dateConvertBirthday(Date date) {
+        if (date == null) {
+            return StringConstants.EMPTY;
+        }
+        return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm");
+    }
 
     @Named("dateConvertLong")
     public static Long dateConvertLong(Date date) {return date.getTime();}

@@ -40,6 +40,14 @@
         </foreach>
     </select>
 
+    <select id="getAccountInfosByName" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+        SELECT  a.id,a.username,
+                p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM `t_account` a
+        LEFT JOIN `t_account_profile` p ON a.`id` = p.`id`
+        WHERE a.`username` = #{name} OR p.nickname LIKE concat('%', #{name}, '%')
+    </select>
+
     <select id="getAccountInfoByUsernameOrEmail" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
         SELECT
         a.id,a.username,a.email,a.phone,a.roles,a.status,
@@ -67,6 +75,7 @@
         </if>
         ORDER BY id DESC
     </select>
+
 
 
 </mapper>

@@ -44,6 +44,15 @@ public interface RemoteAccountProfileService extends RPCService {
     List<AccountProfileStruct> getAccountProfiles(@ThriftField(1) List<Long> ids);
 
     /**
+     * return account profile by name.
+     * @param name username or nickname
+     * @return     {@link AccountProfileStruct}
+     */
+    @ThriftMethod
+    List<AccountProfileStruct> getAccountProfilesByName(@ThriftField(1) String name);
+
+
+    /**
      * uploadAccountProfile.
      * @param profileStruct profile.
      * @return              update result.

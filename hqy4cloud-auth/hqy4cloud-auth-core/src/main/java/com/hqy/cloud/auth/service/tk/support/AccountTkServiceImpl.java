@@ -55,6 +55,11 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     }
 
     @Override
+    public List<AccountInfoDTO> getAccountInfosByName(String name) {
+        return accountDao.getAccountInfosByName(name);
+    }
+
+    @Override
     public PageResult<AccountInfoVO> getPageAccountInfos(String username, String nickname, Integer maxRoleLevel, Integer current, Integer size) {
         PageHelper.startPage(current, size);
         List<AccountInfoDTO> pageAccountInfos = accountDao.getPageAccountInfos(username, nickname, maxRoleLevel);
