@@ -46,11 +46,11 @@ public class MultiplexThriftClientTargetPooled<T> {
     private final AtomicBoolean refreshed = new AtomicBoolean(false);
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public MultiplexThriftClientTargetPooled(RPCModel rpcModel, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper, ExecutorRepository executorRepository) {
+    public MultiplexThriftClientTargetPooled(RPCModel rpcModel, String serviceName, Class<T> serviceType, ThriftClientManagerWrapper clientManagerWrapper, ExecutorRepository executorRepository) {
         AssertUtil.notNull(rpcModel, "RPCContext should not be null.");
         AssertUtil.notNull(serviceType, "Rpc interface class type should not be null.");
         AssertUtil.notNull(clientManagerWrapper, "ThriftClientManagerWrapper should not be null.");
-        this.serviceName = rpcModel.getName();
+        this.serviceName = serviceName;
         this.factory = new ThriftClientTargetBaseKeyedFactory<>(serviceName, serviceType, clientManagerWrapper);
         this.scheduledExecutorService = executorRepository.getCommonScheduledExecutorService();
         this.delayDisconnectScheduled = rpcModel.getParameter(RPC_CLIENT_DELAY_DISCONNECT_TIME, 5);

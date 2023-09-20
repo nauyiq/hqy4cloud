@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2022/12/10 21:41
  */
 public final class AvatarHostUtil {
+    public static final String DEFAULT_AVATAR = "/files/avatar/default_avatar.png";
 
     public static void settingAvatar(AccountInfoDTO accountInfoDTO) {
         String avatar = accountInfoDTO.getAvatar();

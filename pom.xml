@@ -66,6 +66,7 @@
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
         <chatgtp.service.version>0.12.0</chatgtp.service.version>
         <retrofit2.converter.jackson.version>2.9.0</retrofit2.converter.jackson.version>
         <auth.jwt.version>2.2.0</auth.jwt.version>
@@ -264,6 +265,12 @@
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos_api</artifactId>
                 <version>${qcloud.api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pinyin4j.version}</version>
             </dependency>
 
             <!--糊涂工具包-->

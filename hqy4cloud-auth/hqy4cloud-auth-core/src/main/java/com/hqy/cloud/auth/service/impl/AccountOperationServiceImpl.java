@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.hqy.cloud.auth.utils.AvatarHostUtil.DEFAULT_AVATAR;
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
 
@@ -154,7 +155,9 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     }
 
     private AccountProfile buildAccountProfile(Account account, UserDTO userDTO) {
-        return new AccountProfile(account.getId(), userDTO.getNickname(), userDTO.getAvatar());
+        return new AccountProfile(account.getId(),
+                StringUtils.isBlank(userDTO.getNickname()) ? userDTO.getUsername() : userDTO.getNickname(),
+                StringUtils.isBlank(userDTO.getAvatar()) ? DEFAULT_AVATAR : userDTO.getAvatar());
     }
 
     @Override

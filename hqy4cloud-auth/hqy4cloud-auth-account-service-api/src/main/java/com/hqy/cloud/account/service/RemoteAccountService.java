@@ -40,7 +40,7 @@ public interface RemoteAccountService extends RPCService {
      * @param id user id.
      * @return   {@link AccountStruct}
      */
-    @ThriftField
+    @ThriftMethod
     AccountStruct getAccountById(@ThriftField(1) Long id);
 
     /**
@@ -48,7 +48,7 @@ public interface RemoteAccountService extends RPCService {
      * @param ids user ids
      * @return    {@link AccountStruct}
      */
-    @ThriftField
+    @ThriftMethod
     List<AccountStruct> getAccountByIds(@ThriftField(1) List<Long> ids);
 
 

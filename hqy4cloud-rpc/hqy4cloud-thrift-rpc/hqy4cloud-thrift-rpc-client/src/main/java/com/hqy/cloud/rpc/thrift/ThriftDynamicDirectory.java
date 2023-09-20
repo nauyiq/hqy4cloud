@@ -33,7 +33,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
                                   ThriftClientManagerWrapper clientManager, RegistryFactory factory, ExecutorRepository executorRepository) {
         super(providerServiceName, rpcModel, serviceType, factory);
         //invokers pooled.
-        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, serviceType, clientManager, executorRepository);
+        this.pooled = new MultiplexThriftClientTargetPooled<>(rpcModel, providerServiceName, serviceType, clientManager, executorRepository);
         //must final init invokers
         synchronized (getFactory()) {
             log.info("Start new ThriftDynamicDirectory, notify and subscribe.");
