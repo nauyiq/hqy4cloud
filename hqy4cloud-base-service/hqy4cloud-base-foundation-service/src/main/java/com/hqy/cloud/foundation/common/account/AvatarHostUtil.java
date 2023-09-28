@@ -1,6 +1,5 @@
-package com.hqy.cloud.auth.utils;
+package com.hqy.cloud.foundation.common.account;
 
-import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,12 +10,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class AvatarHostUtil {
     public static final String DEFAULT_AVATAR = "/files/avatar/default_avatar.png";
-
-    public static void settingAvatar(AccountInfoDTO accountInfoDTO) {
-        String avatar = accountInfoDTO.getAvatar();
-        avatar = settingAvatar(avatar);
-        accountInfoDTO.setAvatar(avatar);
-    }
 
     public static String settingAvatar(String avatar) {
         if (StringUtils.isNotBlank(avatar) && !avatar.startsWith(StringConstants.HTTP)) {

@@ -3,6 +3,8 @@ package com.hqy.cloud.web.upload;
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * UploadFileService.
  * @author qiyuan.hong
@@ -41,6 +43,15 @@ public interface UploadFileService {
      * @return                      fileResponse.
      */
     UploadResponse uploadFile(String folderPath, final MultipartFile file) throws UploadFileException;
+
+    /**
+     * 几张图片生成一张图片, 类似wechat群聊头像
+     * @param files   文件路径
+     * @param folder  输出到的文件夹
+     * @return        result
+     * @throws UploadFileException e
+     */
+    UploadResponse generateFile(List<String> files, String folder) throws UploadFileException;
 
 
     /**

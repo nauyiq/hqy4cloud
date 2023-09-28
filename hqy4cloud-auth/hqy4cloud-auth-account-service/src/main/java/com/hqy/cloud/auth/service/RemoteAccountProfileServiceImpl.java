@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.AccountProfile;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
-import com.hqy.cloud.auth.utils.AvatarHostUtil;
+import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

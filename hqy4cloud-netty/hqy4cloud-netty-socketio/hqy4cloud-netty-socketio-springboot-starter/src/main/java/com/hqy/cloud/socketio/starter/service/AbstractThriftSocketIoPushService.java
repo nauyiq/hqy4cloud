@@ -1,5 +1,6 @@
 package com.hqy.cloud.socketio.starter.service;
 
+import cn.hutool.core.map.MapUtil;
 import com.corundumstudio.socketio.ex.NettyContextHelper;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.thread.ExecutorServiceProject;
@@ -8,6 +9,7 @@ import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,6 +53,22 @@ public abstract class AbstractThriftSocketIoPushService implements ThriftSocketI
     }
 
     @Override
+    public void syncPushMultiples(String eventName, Map<String, String> messageMap) {
+        if (MapUtil.isEmpty(messageMap)) {
+            return;
+        }
+        for (Map.Entry<String, String> entry : messageMap.entrySet()) {
+            String bizId = entry.getKey();
+            String message = entry.getValue();
+            try {
+                NettyContextHelper.doPush(bizId, eventName, message);
+            } catch (Throwable cause) {
+                log.warn("Failed execute to dp push by syncPushMultiples, bizId: {}.", bizId);
+            }
+        }
+    }
+
+    @Override
     public void asyncPush(String bizId, String eventName, String wsMessageJson) {
         ParentExecutorService.getInstance().execute(() -> this.syncPush(bizId, eventName, wsMessageJson), ExecutorServiceProject.PRIORITY_IMMEDIATE);
     }
@@ -58,6 +76,10 @@ public abstract class AbstractThriftSocketIoPushService implements ThriftSocketI
     @Override
     public void asyncPushMultiple(Set<String> bizIdSet, String eventName, String wsMessageJson) {
         ParentExecutorService.getInstance().execute(() -> this.syncPushMultiple(bizIdSet, eventName, wsMessageJson));
+    }
 
+    @Override
+    public void asyncPushMultiples(String eventName, Map<String, String> messageMap) {
+        ParentExecutorService.getInstance().execute(() -> this.syncPushMultiples(eventName, messageMap));
     }
 }

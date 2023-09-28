@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @date  2021-07-27 16:42
  */
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 

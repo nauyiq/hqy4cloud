@@ -13,7 +13,7 @@ import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
 import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
-import com.hqy.cloud.auth.utils.AvatarHostUtil;
+import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.foundation.id.DistributedIdGen;
 import com.hqy.cloud.util.AssertUtil;
@@ -23,8 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -34,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.auth.utils.AvatarHostUtil.DEFAULT_AVATAR;
+import static com.hqy.cloud.foundation.common.account.AvatarHostUtil.DEFAULT_AVATAR;
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
 
@@ -62,7 +60,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (Objects.isNull(accountInfo)) {
             return null;
         }
-        AvatarHostUtil.settingAvatar(accountInfo);
+        accountInfo.setAvatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()));
         return accountInfo;
     }
 
@@ -73,7 +71,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         }
         AccountInfoDTO accountInfo = accountTkService.getAccountInfoByUsernameOrEmail(usernameOrEmail);
         if (accountInfo != null) {
-            AvatarHostUtil.settingAvatar(accountInfo);
+            accountInfo.setAvatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()));
         }
         return accountInfo;
     }
@@ -85,7 +83,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         }
         List<AccountInfoDTO> accountInfos = accountTkService.getAccountInfos(ids);
         if (CollectionUtils.isNotEmpty(accountInfos)) {
-            accountInfos = accountInfos.stream().peek(AvatarHostUtil::settingAvatar).collect(Collectors.toList());
+            accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AvatarHostUtil.settingAvatar(e.getAvatar()))).collect(Collectors.toList());
         }
         return accountInfos;
     }
@@ -97,7 +95,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         }
         List<AccountInfoDTO> accountInfos = accountTkService.getAccountInfosByName(name);
         if (CollectionUtils.isNotEmpty(accountInfos)) {
-            accountInfos = accountInfos.stream().peek(AvatarHostUtil::settingAvatar).collect(Collectors.toList());
+            accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AvatarHostUtil.settingAvatar(e.getAvatar()))).collect(Collectors.toList());
         }
         return accountInfos;
     }

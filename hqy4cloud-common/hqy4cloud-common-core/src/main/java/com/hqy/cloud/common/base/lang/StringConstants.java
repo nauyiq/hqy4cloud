@@ -32,6 +32,7 @@ public interface StringConstants {
     String NULL = "null";
     String TRUE = "1";
     String FALSE = "0";
+    String DO_PNG = ".png";
 
     interface Symbol {
 

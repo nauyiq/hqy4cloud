@@ -152,6 +152,58 @@ public class SocketIoConnectionUtil {
         }
     }
 
+    public static boolean doMultiplePushMessages(boolean async, String serviceName, String eventName, Map<String, String> userMap) {
+        try {
+            SocketClusterStatus query = SocketClusterStatusManager.query(Environment.getInstance().getEnvironment(), serviceName);
+            if (!query.isEnableMultiWsNode()) {
+                ThriftSocketIoPushService pushService = SpringContextHolder.getBean(ThriftSocketIoPushService.class);
+                if (async) {
+                    pushService.asyncPushMultiples(eventName, userMap);
+                } else {
+                    pushService.syncPushMultiples(eventName, userMap);
+                }
+            } else {
+                // query bizId of hash value of map. key: bizId | value: hash
+                Map<String, Integer> hashMap = userMap.keySet().parallelStream().collect(Collectors.toMap(bizId -> bizId, query::getSocketIoPathHashMod));
+                // query hashFactor and ThriftSocketIoPushService  map.
+                Map<Integer, String> hashFactorMap = LoadBalanceHashFactorManager.queryHashFactorMap(serviceName, hashMap.values().stream().distinct().toList());
+                // group by hash
+                Map<Integer, Map<String, String>> groupByHash = MapUtil.newHashMap();
+                for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
+                    String bizId = entry.getKey();
+                    Integer hash = entry.getValue();
+                    Map<String, String> absent = groupByHash.computeIfAbsent(hash, v -> MapUtil.newHashMap());
+                    absent.put(bizId, userMap.get(bizId));
+                }
+                // do broadcast.
+                for (Map.Entry<Integer, Map<String, String>> entry : groupByHash.entrySet()) {
+                    Integer hash = entry.getKey();
+                    Map<String, String> bizIds = entry.getValue();
+                    String hashFactor = hashFactorMap.getOrDefault(hash, StringConstants.DEFAULT);
+                    ThriftSocketIoPushService pushService;
+                    if (SpringContextHolder.getProjectContextInfo().isLocalFactor(hashFactor, serviceName)) {
+                        pushService = SpringContextHolder.getBean(ThriftSocketIoPushService.class);
+                    } else {
+                        // using rpc service.
+                        pushService = RPCClient.getRemoteService(ThriftSocketIoPushService.class);
+                    }
+                    if (async) {
+                        pushService.asyncPushMultiples(eventName, bizIds);
+                    } else {
+                        pushService.asyncPushMultiples(eventName, bizIds);
+                    }
+                }
+            }
+            return true;
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+            return false;
+        }
+
+
+    }
+
+
 
 
 
