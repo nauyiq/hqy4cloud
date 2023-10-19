@@ -44,6 +44,7 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     List<T> queryByIds(String pkName, List<PK> pks);
 
+
     /**
      * 根据实体属性查找 t不能为null
      * @param t 实体Entity
@@ -81,7 +82,6 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      */
     PK insertReturnPk(T t);
 
-
     /**
      * 批量插入数据到数据库
      * @param entities 数据列表
@@ -118,6 +118,14 @@ public interface BaseTkService <T extends BaseEntity<PK>, PK> {
      * @return      是否删除数据成功
      */
     boolean delete(T t);
+
+    /**
+     * 根据id批量删除
+     * @param ids id集合
+     * @return    是否成功
+     */
+    boolean deleteByIds(List<PK> ids);
+
 
     /**
      * 返回tk-mapper

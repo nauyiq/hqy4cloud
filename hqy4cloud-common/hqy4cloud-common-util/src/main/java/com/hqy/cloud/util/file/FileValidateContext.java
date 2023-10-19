@@ -20,7 +20,7 @@ public class FileValidateContext {
             Arrays.asList(".jsp", ".html", ".htm", ".xhtml", ".js", ".php", ".sh", ".svg", ".jspx"));
 
     public static final List<String> SUPPORT_IMAGE_FILE_TYPES = new CopyOnWriteArrayList<>(
-            Arrays.asList(".jpg", ".jpeg", ".git", ".bmp", ".png", ".emoji"));
+            Arrays.asList(".jpg", ".jpeg", ".git", ".bmp", ".png", ".emoji", ".webp"));
 
     public static final List<String> SUPPORT_MEDIA_FILE_TYPES = new CopyOnWriteArrayList<>(
             Arrays.asList(".mp3", ".mp4"));

@@ -1,11 +1,13 @@
 package com.hqy.cloud.db.tk.support;
 
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.db.tk.BaseTkMapper;
 import com.hqy.cloud.db.tk.BaseTkService;
 import com.hqy.cloud.db.tk.model.BaseEntity;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.ReflectUtils;
+import org.apache.commons.lang3.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
@@ -41,7 +43,9 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
 
     @Override
     public List<T> queryByIds(List<PK> pks) {
-        return queryByIds("id", pks);
+        List<String> ids = pks.stream().map(Objects::toString).toList();
+        String join = StringUtils.join(ids, StrUtil.COMMA);
+        return getTkMapper().selectByIds(join);
     }
 
     @Override
@@ -131,4 +135,12 @@ public abstract class BaseTkServiceImpl<T extends BaseEntity<PK>, PK> implements
         BaseTkMapper<T, PK> dao = checkMapper();
         return dao.delete(t) > 0;
     }
+
+    @Override
+    public boolean deleteByIds(List<PK> ids) {
+        List<String> pks = ids.stream().map(Objects::toString).toList();
+        String join = StringUtils.join(pks, StrUtil.COMMA);
+        return getTkMapper().deleteByIds(join) > 0;
+    }
+
 }

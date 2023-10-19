@@ -1,14 +1,13 @@
-package com.hqy.timer.service.impl;
+package com.hqy.cloud.timer.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.net.NetUtil;
-import com.hqy.timer.service.TimerFoundationService;
+import com.hqy.cloud.timer.service.TimerFoundationService;
 import com.hqy.cloud.util.CommonDateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.quartz.*;
 import org.quartz.impl.DirectSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +21,16 @@ import java.util.Date;
  * @author qy
  * @date 2021-09-15 15:28
  */
+@Slf4j
 @Service
 public class QuartzTimerServiceImpl implements TimerFoundationService {
 
-    private static final Logger log = LoggerFactory.getLogger(QuartzTimerServiceImpl.class);
+    private Scheduler scheduler = null;
 
     /**
      * 最小6个或者cpu核数  两者之间的大值
      */
     public static int coreSize = 6;
-
-    @Autowired(required = false)
-    private Scheduler scheduler = null;
 
     /**
      * 是否已启动？ 防止多次...
@@ -72,12 +69,6 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 检查定时任务是否存在
-     * @param id
-     * @param group
-     * @return
-     */
     @Override
     public boolean checkExistJob(String id, String group) {
         JobKey jobKey = new JobKey(id, group);
@@ -90,12 +81,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 打断某个定时任务
-     * @param id
-     * @param group
-     * @return
-     */
+
     @Override
     public boolean interruptJob(String id, String group) {
         JobKey jobKey = new JobKey(id, group);
@@ -108,12 +94,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 移除某个job； 强烈建议 移除前，先 checkExistJob 检查要移除的job是否存在...
-     * @param id
-     * @param group
-     * @return
-     */
+
     @Override
     public boolean removeJob(String id, String group) {
         JobKey jobKey = new JobKey(id, group);
@@ -126,27 +107,13 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加一个每隔一天运行一次的job;
-     * @param time  HH:mm
-     * @param id
-     * @param group
-     * @param job
-     * @return
-     */
+
     @Override
     public void addDailyJob(String time, String id, String group, Job job) {
         addDaysJob(time, id, group, 1, job);
     }
 
-    /**
-     * 添加一个每隔days天运行一次的job;
-     * @param time 格式 HH:mm
-     * @param id
-     * @param group
-     * @param days
-     * @param job
-     */
+
     @Override
     public void addDaysJob(String time, String id, String group, Integer days, Job job) {
         JobDetail jobDetail = JobBuilder.newJob(job.getClass()).withIdentity(id, group).build();
@@ -171,13 +138,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加一个每隔1月运行一次的job
-     * 每月1号，1点45分运行
-     * @param id
-     * @param group
-     * @param job
-     */
+
     @Override
     public void addMonthJob(String id, String group, Job job) {
         JobDetail jobDetail = JobBuilder.newJob(job.getClass()).withIdentity(id, group).build();
@@ -192,13 +153,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加一个循环的按cron 表达式运行的job
-     * @param id
-     * @param group
-     * @param cron
-     * @param job
-     */
+
     @Override
     public void addCronJob(String id, String group, String cron, Job job) {
         try {
@@ -213,26 +168,13 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加每隔 hours 小时运行一次的job
-     * @param id
-     * @param group
-     * @param hours
-     * @param job
-     */
+
     @Override
     public void addHoursJob(String id, String group, int hours, Job job) {
         addHoursJob(id, group, hours, null, job);
     }
 
-    /**
-     * 添加每隔 hours 小时运行一次的job
-     * @param id
-     * @param group
-     * @param hours
-     * @param minutes
-     * @param job
-     */
+
     @Override
     public void addHoursJob(String id, String group, int hours, Integer minutes, Job job) {
         try {
@@ -257,12 +199,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加一个每隔minutes分钟定期运行一次的job
-     * @param id
-     * @param group
-     * @param job
-     */
+
     @Override
     public void addMinutesJob(String id, String group, int minutes, Job job) {
         try {
@@ -282,13 +219,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
 
     }
 
-    /**
-     * 添加 一个seconds若干秒仅仅运行一次的job
-     * @param id
-     * @param group
-     * @param seconds
-     * @param job
-     */
+
     @Override
     public void addSecondsJobOnce(String id, String group, int seconds, Job job) {
         try {
@@ -309,13 +240,6 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
     }
 
 
-    /**
-     * 添加一个每隔seconds秒定期运行一次的job
-     * @param id
-     * @param group
-     * @param seconds
-     * @param job
-     */
     @Override
     public void addSecondsJob(String id, String group, int seconds, Job job) {
         try {
@@ -333,13 +257,7 @@ public class QuartzTimerServiceImpl implements TimerFoundationService {
         }
     }
 
-    /**
-     * 添加一个minutes分钟后仅仅运行一次的job
-     * @param id
-     * @param group
-     * @param minutes
-     * @param job
-     */
+
     @Override
     public void addMinutesJobOnce(String id, String group, int minutes, Job job) {
         try {

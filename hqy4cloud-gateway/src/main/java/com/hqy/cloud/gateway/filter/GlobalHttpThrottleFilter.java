@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @date  2021-07-27 16:42
  */
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
 
@@ -44,14 +44,12 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
         String requestIp = RequestUtil.getIpAddress(request);
         ServerHttpResponse httpResponse = exchange.getResponse();
 
-        // 静态资源 | option请求 | uri白名单
-        if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS || httpThrottles.isWhiteURI(uri)) {
+        // 静态资源 | option请求 | 白名单
+        if (RequestUtil.isStaticResource(url) || request.getMethod() == HttpMethod.OPTIONS ||
+                httpThrottles.isWhiteURI(uri) || httpThrottles.isManualWhiteIp(requestIp)) {
             return chain.filter(exchange);
         }
-        // 白名单
-        if (httpThrottles.isManualWhiteIp(requestIp)) {
-            return chain.filter(exchange);
-        }
+
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
             //没有启用限流器...继续执行责任链
             return chain.filter(exchange);

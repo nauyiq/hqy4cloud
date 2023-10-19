@@ -4,8 +4,8 @@ import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.elasticsearch.document.ElasticDocument;
 import com.hqy.cloud.elasticsearch.mapper.ElasticMapper;
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.Criteria;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -53,6 +53,13 @@ public interface ElasticService<K, T extends ElasticDocument<K>> extends CrudRep
      * @return       result.
      */
     List<T> searchByQuery(Query query);
+
+    /**
+     * 根据query查询， 返回原生searchHits
+     * @param query {@link Query}
+     * @return      {@link SearchHit}
+     */
+    List<SearchHit<T>> searchQueryHits(Query query);
 
     /**
      * 根据Query对象分页查询

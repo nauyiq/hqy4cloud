@@ -1,4 +1,4 @@
-package com.hqy.timer.service;
+package com.hqy.cloud.timer.service;
 
 import org.quartz.Job;
 

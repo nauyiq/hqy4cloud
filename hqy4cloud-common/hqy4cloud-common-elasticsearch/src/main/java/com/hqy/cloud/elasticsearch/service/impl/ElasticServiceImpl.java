@@ -1,6 +1,7 @@
 package com.hqy.cloud.elasticsearch.service.impl;
 
 import com.hqy.cloud.common.result.PageResult;
+import com.hqy.cloud.elasticsearch.common.PageSearchAfterResult;
 import com.hqy.cloud.elasticsearch.document.ElasticDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
 import com.hqy.cloud.elasticsearch.mapper.ElasticMapper;
@@ -57,6 +58,15 @@ public abstract class ElasticServiceImpl<K, T extends ElasticDocument<K>> implem
     }
 
     @Override
+    public List<SearchHit<T>> searchQueryHits(Query query) {
+        if (Objects.isNull(query)) {
+            throw new ElasticsearchException("Query should not be null.");
+        }
+        SearchHits<T> searchHits = elasticsearchTemplate.search(query, getDocumentClass());
+        return searchHits.getSearchHits();
+    }
+
+    @Override
     public PageResult<T> pageQueryByQuery(int pageNumber, int pageSize, Query query) {
         if (Objects.isNull(query)) {
             throw new ElasticsearchException("Query should not be null.");
@@ -76,8 +86,7 @@ public abstract class ElasticServiceImpl<K, T extends ElasticDocument<K>> implem
         return buildPageResult(pageNumber, pageSize, searchHits);
     }
 
-
-    private PageResult<T> buildPageResult(int pageNumber, int pageSize, SearchHits<T> searchHits) {
+    protected PageResult<T> buildPageResult(int pageNumber, int pageSize, SearchHits<T> searchHits) {
         List<T> resultList = searchHits.toList().stream().map(SearchHit::getContent).collect(Collectors.toList());
         return new PageResult<>(pageNumber, pageSize, searchHits.getTotalHits(), resultList);
     }

@@ -1,5 +1,6 @@
 package com.hqy.cloud.db.tk;
 
+import tk.mybatis.mapper.common.IdsMapper;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.common.MySqlMapper;
 import tk.mybatis.mapper.common.base.BaseDeleteMapper;
@@ -19,6 +20,7 @@ public interface BaseTkMapper<T, Pk> extends
         BaseUpdateMapper<T>,
         BaseDeleteMapper<T>,
         BaseSelectMapper<T>,
+        IdsMapper<T>,
         MySqlMapper<T>,
         Mapper<T> {
 }

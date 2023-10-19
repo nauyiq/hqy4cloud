@@ -59,6 +59,7 @@ public class FileUtil {
         }
     }
 
+
     /**
      * 生成uuid类型的文件名
      * @param fileName  file name.
