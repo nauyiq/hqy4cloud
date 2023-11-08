@@ -12,7 +12,8 @@ ENV BASE_DIR="/hqy4cloud/hqy4cloud-base-id-service" \
     JVM_MS="50m" \
     JVM_MMS="100m" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai" \
+    JAVA_OPT_EXT=""
 
 WORKDIR ${BASE_DIR}
 
