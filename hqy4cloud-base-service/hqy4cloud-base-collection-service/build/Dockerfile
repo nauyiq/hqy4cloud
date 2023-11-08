@@ -1,10 +1,10 @@
-FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
+FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:17
 MAINTAINER hongqy<759428167@qq.com>
 
 # set environment
-ENV BASE_DIR="/home/services/common-collector-service" \
-    JAVA_JAR="common-collector-service.jar" \
-    JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
+ENV BASE_DIR="/hqy4cloud/hqy4cloud-base-collection-service" \
+    JAVA_JAR="hqy4cloud-base-collection-service.jar" \
+    JAVA_HOME="/usr/local/java/jdk-17.0.9" \
     JAVA="${JAVA_HOME}/bin/java" \
     JVM_XMS="512m" \
     JVM_XMX="512m" \
@@ -12,7 +12,8 @@ ENV BASE_DIR="/home/services/common-collector-service" \
     JVM_MS="50m" \
     JVM_MMS="100m" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai" \
+    JAVA_OPT_EXT=""
 
 WORKDIR ${BASE_DIR}
 RUN  ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
@@ -23,11 +24,10 @@ ADD bin/start.sh bin/start.sh
 
 
 RUN mkdir -p logs \
-    && cd logs \
-    && touch sys.out
-RUN chmod +x bin/start.sh
-RUN chmod +x target/*
+    && chmod +x bin/* \
+    && chmod +x target/*
 
-EXPOSE 8888
+
+EXPOSE 8888 18888
 
 ENTRYPOINT ["bin/start.sh"]

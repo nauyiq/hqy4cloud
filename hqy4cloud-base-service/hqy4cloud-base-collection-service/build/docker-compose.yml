@@ -1,20 +1,21 @@
 version: "3.0"
 services:
-  gateway:
+  collection:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gateway
+    container_name: collection-service
     restart: always
     privileged: true
     ports:
-      - 9527:9527
+      - 8888:8888
+      - 18888:18888
     environment:
       JVM_XMS: 512m
       JVM_XMX: 512m
       JVM_XMN: 256m
       JAVA_OPT_EXT: "-DNACOS_PASSWORD=nacos. -DNACOS_SERVER=172.0.0.1:8848"
     volumes:
-      - /hongqy/docker/hqy4cloud/hqy4cloud-gateway/logs:/hqy4cloud/hqy4cloud-gateway/logs
+      - /hongqy/docker/hqy4cloud/hqy4cloud-base-collection-service/logs:/hqy4cloud/hqy4cloud-base-collection-service/logs
 
 
