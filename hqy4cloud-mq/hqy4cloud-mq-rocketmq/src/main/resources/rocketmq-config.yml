@@ -1,0 +1,11 @@
+rocketmq:
+  # 指定 nameServer
+  name-server: 127.0.0.1:9876
+  producer:
+    group: my-group  # 指定发送者组名
+      send-message-timeout: 3000 # 发送消息超时时间，单位：毫秒。默认为 3000 。
+      compress-message-body-threshold: 4096 # 消息压缩阀值，当消息体的大小超过该阀值后，进行消息压缩。默认为 4 * 1024B
+      max-message-size: 4194304 # 消息体的最大允许大小。。默认为 4 * 1024 * 1024B
+      retry-times-when-send-failed: 2 # 同步发送消息时，失败重试次数。默认为 2 次。
+      retry-times-when-send-async-failed: 2 # 异步发送消息时，失败重试次数。默认为 2 次。
+      retry-next-server: false # 发送消息给 Broker 时，如果发送失败，是否重试另外一台 Broker 。默认为 false

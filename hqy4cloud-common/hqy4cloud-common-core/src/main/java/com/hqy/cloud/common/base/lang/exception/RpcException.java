@@ -24,6 +24,7 @@ public class RpcException extends RuntimeException {
     public static final int VALIDATION_EXCEPTION = 12;
     public static final int NO_PROVIDER_EXCEPTION = 13;
     public static final int LEGITIMATE_EXCEPTION = 14;
+    public static final int RELIABLE_EXCEPTION = 15;
     private static final long serialVersionUID = -2907275534434683708L;
 
     /**

@@ -1,12 +1,18 @@
 package com.hqy.cloud.rpc.registry.api.support;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
+import cn.hutool.core.net.NetUtil;
+import cn.hutool.core.util.StrUtil;
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
 import com.hqy.cloud.rpc.registry.api.Registry;
 import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +30,12 @@ public abstract class AbstractRegistry implements Registry {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractRegistry.class);
 
+    private volatile RegistryInfo registryInfo;
+
     /**
      * registry metadata
      */
-    private RPCModel registryRpcModel;
+    private volatile RPCModel registryRpcModel;
 
     /**
      * registry node set.
@@ -45,14 +53,14 @@ public abstract class AbstractRegistry implements Registry {
 
 
     public AbstractRegistry(RPCModel rpcModel) {
-        setMetadata(rpcModel);
+        setRegistryRpcModel(rpcModel);
     }
 
     public RPCModel getRegistryRpcContext() {
         return registryRpcModel;
     }
 
-    protected void setMetadata(RPCModel rpcModel) {
+    protected void setRegistryRpcModel(RPCModel rpcModel) {
         AssertUtil.notNull(rpcModel, "registry rpcContext is null.");
         this.registryRpcModel = rpcModel;
     }
@@ -68,6 +76,15 @@ public abstract class AbstractRegistry implements Registry {
     public ConcurrentMap<RPCModel, List<RPCModel>> getNotified() {
         return notified;
     }
+
+    @Override
+    public RegistryInfo getRegistryInfo() {
+        if (registryInfo == null) {
+            registryInfo = RegistryUtil.buildRegistryInfo(getModel(), getName());
+        }
+        return registryInfo;
+    }
+
 
     @Override
     public RPCModel getModel() {
@@ -109,6 +126,7 @@ public abstract class AbstractRegistry implements Registry {
         // do not forget remove notified
         notified.remove(rpcModel);
     }
+
 
     protected void recover() throws Exception {
         // register

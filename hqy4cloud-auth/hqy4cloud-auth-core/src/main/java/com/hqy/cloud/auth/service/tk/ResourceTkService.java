@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.service.tk;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.entity.Resource;
-import com.hqy.cloud.tk.BaseTkService;
+import com.hqy.cloud.db.tk.BaseTkService;
 
 /**
  * ResourceTkService.

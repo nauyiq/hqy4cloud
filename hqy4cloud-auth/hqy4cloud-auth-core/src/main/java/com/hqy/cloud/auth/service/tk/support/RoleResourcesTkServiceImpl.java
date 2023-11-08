@@ -1,12 +1,11 @@
 package com.hqy.cloud.auth.service.tk.support;
 
 import com.hqy.cloud.auth.mapper.RoleResourcesMapper;
-import com.hqy.cloud.auth.base.dto.AuthenticationDTO;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.entity.RoleResources;
 import com.hqy.cloud.auth.service.tk.RoleResourcesTkService;
-import com.hqy.cloud.tk.PrimaryLessTkMapper;
-import com.hqy.cloud.tk.support.PrimaryLessTkServiceImpl;
+import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
+import com.hqy.cloud.db.tk.support.PrimaryLessTkServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

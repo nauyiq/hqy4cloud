@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    sentinel:
+      enabled: true
+      eager: true  # 取消懒加载
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8080} #sentinel控制台访问路径
+        port: ${SENTINEL_PORT:8719} #sentinel控制台和服务端的交互端口 默认8719

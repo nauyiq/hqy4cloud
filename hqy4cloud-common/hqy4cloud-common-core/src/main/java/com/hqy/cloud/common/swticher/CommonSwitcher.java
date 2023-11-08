@@ -113,6 +113,8 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_USING_PID_SNOWFLAKE_WORKER_ID = new CommonSwitcher(218, "节点-是否采用基于本地pid进行计算的值作为雪花算法的workerId", true);
 
+    public static final CommonSwitcher ENABLE_THRIFT_RPC_COMMON_EXCEPTION = new CommonSwitcher(219, "节点-是否兼容Thrift server自定义通用异常", true);
+
 
     /**
      * 与sid有关（重联场景是生成新的sid)

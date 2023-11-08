@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.model;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.tk.support.Parameters;
+import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,6 +21,8 @@ public class RegistryInfo extends Parameters implements Serializable {
 
     private static final long serialVersionUID = -508803540161945493L;
 
+    protected String name;
+
     /**
      * registry host address.
      */
@@ -37,19 +39,20 @@ public class RegistryInfo extends Parameters implements Serializable {
     protected transient String rawAddr;
 
 
-    public RegistryInfo(String rawAddr) {
-        this(null, 0, rawAddr);
+    public RegistryInfo(String name, String rawAddr) {
+        this(name,null, 0, rawAddr);
     }
 
-    public RegistryInfo(String host, int port) {
-        this(host, port, null);
+    public RegistryInfo(String name, String host, int port) {
+        this(name, host, port, null);
     }
 
-    public RegistryInfo(String host, int port, String rawAddr) {
-        this(host, port, rawAddr, MapUtil.newConcurrentHashMap());
+    public RegistryInfo(String name, String host, int port, String rawAddr) {
+        this(name, host, port, rawAddr, MapUtil.newConcurrentHashMap());
     }
 
-    public RegistryInfo(String host, int port, String rawAddr, Map<String, String> connectionParams) {
+    public RegistryInfo(String name, String host, int port, String rawAddr, Map<String, String> connectionParams) {
+        this.name = name;
         this.host = host;
         port = Math.max(port, 0);
         this.port = port;
@@ -71,7 +74,9 @@ public class RegistryInfo extends Parameters implements Serializable {
         this.port = port;
     }
 
-    public RegistryInfo setAddress(String host, int port) { return new RegistryInfo(host, port, rawAddr); }
+    public RegistryInfo setAddress(String host, int port) {
+        return new RegistryInfo(this.getName(), host, port, rawAddr);
+    }
 
     public String getAddress() {
         if (rawAddr == null) {
@@ -100,6 +105,13 @@ public class RegistryInfo extends Parameters implements Serializable {
         return getParameter(CommonConstants.PASSWORD);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public String toString() {

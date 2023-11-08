@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.mapper;
 
 import com.hqy.cloud.auth.base.dto.PermissionDTO;
 import com.hqy.cloud.auth.entity.RoleMenu;
-import com.hqy.cloud.tk.PrimaryLessTkMapper;
+import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +30,7 @@ public interface RoleMenuMapper extends PrimaryLessTkMapper<RoleMenu> {
      * @param ids 角色id列表
      * @return    权限列表
      */
-    Map<String, List<String>> getManuPermissionsByRoles(@Param("ids") List<Integer> ids);
+    List<PermissionDTO> getManuPermissionsByRoles(@Param("ids") List<Integer> ids);
 
 
 }

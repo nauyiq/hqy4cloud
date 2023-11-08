@@ -21,6 +21,7 @@
         <module>hqy4cloud-thrift-rpc</module>
         <module>hqy4cloud-rpc-api</module>
         <module>hqy4cloud-rpc-cluster</module>
+        <module>hqy4cloud-rpc-config</module>
     </modules>
 
 </project>

@@ -1,7 +1,7 @@
 package com.hqy.cloud.util.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hqy.cloud.common.base.lang.ActuatorNodeEnum;
+import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
@@ -64,10 +64,11 @@ public class ProjectContextInfo implements Serializable {
      */
     private UsingIpPort uip;
 
+
     /**
      * 节点类型
      */
-    private ActuatorNodeEnum nodeType;
+    private ActuatorNode nodeType;
 
     /**
      * 全局上下文属性定义
@@ -102,7 +103,7 @@ public class ProjectContextInfo implements Serializable {
     public ProjectContextInfo() {
     }
 
-    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip, ActuatorNodeEnum nodeType) {
+    public ProjectContextInfo(String nameEn, String env, Integer pubValue, UsingIpPort uip,  ActuatorNode nodeType) {
         this.nameEn = nameEn;
         this.env = env;
         this.pubValue = pubValue;
@@ -117,6 +118,8 @@ public class ProjectContextInfo implements Serializable {
     public boolean isJustStarted() {
         return isJustStarted(null);
     }
+
+
 
 
     /**
@@ -155,20 +158,6 @@ public class ProjectContextInfo implements Serializable {
         return attributes;
     }
 
-    @SuppressWarnings("unchecked")
-    public Set<String> getAttributeSetString(String key) {
-        if (StringUtils.isBlank(key)) {
-            log.warn("@@@ 上下文对象获取getAttributeSet, key is blank.");
-            return new HashSet<>();
-        } else {
-            try {
-                return (Set<String>) attributes.getOrDefault(key, new HashSet<>());
-            } catch (Exception e) {
-                log.error("@@@ 上下文对象获取getAttributeSet异常, key = {},  {}", key, e.getMessage());
-                return new HashSet<>();
-            }
-        }
-    }
 
     public String getNameWithIpPort() {
         return nameEn.concat(StringConstants.Symbol.AT)
@@ -226,6 +215,28 @@ public class ProjectContextInfo implements Serializable {
     public void registrySocketIoPort(int port) {
         if (this.getUip() != null) {
             getUip().setSocketPort(port);
+        }
+    }
+
+    /**
+     * 是否是本地负载因子
+     * @param factor      本地负载因子
+     * @param serviceName 服务名
+     * @return            result
+     */
+    public boolean isLocalFactor(String factor, String serviceName) {
+        if (!this.nameEn.equals(serviceName)) {
+            return false;
+        }
+        if (StringConstants.DEFAULT.equals(factor)) {
+            return true;
+        }
+
+        try {
+            String[] split = factor.split(StringConstants.Symbol.COLON);
+            return split[0].equals(this.uip.getHostAddr());
+        } catch (Throwable cause) {
+            return false;
         }
     }
 }

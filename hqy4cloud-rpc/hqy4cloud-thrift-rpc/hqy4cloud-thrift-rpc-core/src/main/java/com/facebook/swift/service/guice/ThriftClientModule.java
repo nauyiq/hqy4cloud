@@ -21,6 +21,7 @@ import com.facebook.swift.service.ThriftClientManager;
 import com.facebook.swift.service.ThriftClientManagerConfig;
 import com.facebook.nifty.client.NettyClientConfig;
 import com.google.inject.*;
+import com.google.inject.Module;
 
 import static io.airlift.configuration.ConfigurationModule.bindConfig;
 

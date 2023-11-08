@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.base.dto;
 
-import com.hqy.account.struct.ResourceStruct;
+import com.hqy.cloud.account.struct.ResourceStruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

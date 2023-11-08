@@ -4,7 +4,6 @@ import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.RpcInvocation;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.util.AssertUtil;
@@ -94,16 +93,14 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         if (isDestroyed()) {
            log.warn("Invoker for service " + this + " on consumer " + IpUtil.getHostAddress() + " is destroyed, this invoker should not be used any longer");
         }
-        RpcInvocation rpcInvocation = (RpcInvocation) invocation;
         // prepare rpc invocation
-        prepareInvocation(rpcInvocation);
-
+        prepareInvocation(invocation);
         // do invoke rpc invocation and return
-        return doInvokeAndReturn(rpcInvocation);
+        return doInvokeAndReturn(invocation);
     }
 
 
-    private void prepareInvocation(RpcInvocation rpcInvocation) {
+    private void prepareInvocation(Invocation rpcInvocation) {
         try {
             doPrepareInvoke(rpcInvocation);
             //create this rpc request context.
@@ -114,7 +111,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         addInvocationAttachments(rpcInvocation);
     }
 
-    private void createRpcContext(RpcInvocation rpcInvocation) {
+    private void createRpcContext(Invocation rpcInvocation) {
         RPCContext rpcContext = RPCContext.builder()
                 .rpcModel(getConsumerModel())
                 .serviceClass(getInterface())
@@ -130,16 +127,18 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     }
 
 
-    private void addInvocationAttachments(RpcInvocation rpcInvocation) {
+
+
+    private void addInvocationAttachments(Invocation rpcInvocation) {
         // invoker attachment
         if (MapUtil.isNotEmpty(attachment)) {
             rpcInvocation.addObjectAttachmentsIfAbsent(attachment);
         }
     }
 
-    private Object doInvokeAndReturn(RpcInvocation rpcInvocation) throws RpcException {
+    private Object doInvokeAndReturn(Invocation invocation) throws RpcException {
         try {
-            return doInvoke(rpcInvocation);
+            return doInvoke(invocation);
         } catch (RpcException cause) {
             log.warn(cause.getMessage());
             throw cause;
@@ -195,7 +194,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
 
     /**
      * Specific implementation of the {@link #invoke(Invocation)} method
-     * @param invocation    {@link RpcInvocation}
+     * @param invocation    {@link Invocation}
      * @return               rpc result.
      * @throws RpcException  exception.
      */
@@ -204,8 +203,8 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
 
     /**
      * prepare invoke.
-     * @param rpcInvocation {@link RpcInvocation}
+     * @param  invocation {@link Invocation}
      * @throws RpcException exception.
      */
-    protected abstract void doPrepareInvoke(RpcInvocation rpcInvocation) throws RpcException;
+    protected abstract void doPrepareInvoke(Invocation invocation) throws RpcException;
 }

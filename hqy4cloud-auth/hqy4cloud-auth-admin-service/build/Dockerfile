@@ -1,10 +1,10 @@
-FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:1.8
+FROM registry.cn-shenzhen.aliyuncs.com/hqy-parent-all/jdk:17
 MAINTAINER hongqy<759428167@qq.com>
 
 # set environment
-ENV BASE_DIR="/home/services/hqy4cloud-auth-admin-service" \
+ENV BASE_DIR="/hqy4cloud/hqy4cloud-auth-admin-service" \
     JAVA_JAR="hqy4cloud-auth-admin-service.jar" \
-    JAVA_HOME="/usr/local/java/jdk1.8.0_291" \
+    JAVA_HOME="/usr/local/java/jdk-17.0.9" \
     JAVA="${JAVA_HOME}/bin/java" \
     JVM_XMS="512m" \
     JVM_XMX="512m" \
@@ -12,7 +12,8 @@ ENV BASE_DIR="/home/services/hqy4cloud-auth-admin-service" \
     JVM_MS="50m" \
     JVM_MMS="100m" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai" \
+    JAVA_OPT_EXT=""
 
 WORKDIR ${BASE_DIR}
 
@@ -23,11 +24,9 @@ ADD ${SERVICE_JAR} target/${SERVICE_JAR}
 ADD bin/start.sh bin/start.sh
 
 RUN mkdir -p logs \
-    && cd logs \
-    && touch sys.out
-RUN chmod +x bin/start.sh
-RUN chmod +x target/*
+    && chmod +x bin/* \
+    && chmod +x target/*
 
-EXPOSE 8088
+EXPOSE 8090
 
 ENTRYPOINT ["bin/start.sh"]

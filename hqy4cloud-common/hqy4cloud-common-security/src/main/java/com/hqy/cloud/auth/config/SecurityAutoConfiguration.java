@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,15 +41,17 @@ public class SecurityAutoConfiguration {
     }
 
     @Bean
+    @Lazy
     @ConditionalOnMissingBean
-    public BiBlockedIpRedisService biBlockedIpRedisService() {
-        return new BiBlockedIpRedisService(false);
+    public BiBlockedIpRedisService biBlockedIpRedisService(RedissonClient redissonClient) {
+        return new BiBlockedIpRedisService(redissonClient);
     }
 
     @Bean
+    @Lazy
     @ConditionalOnMissingBean
-    public ManualBlockedIpService manualBlockedIpService() {
-        return new ManualBlockedIpService(false);
+    public ManualBlockedIpService manualBlockedIpService(RedissonClient redissonClient) {
+        return new ManualBlockedIpService(redissonClient);
     }
 
     @Bean

@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.service.tk;
 
 import com.hqy.cloud.auth.entity.AccountRole;
-import com.hqy.cloud.tk.PrimaryLessTkService;
+import com.hqy.cloud.db.tk.PrimaryLessTkService;
 
 import java.util.List;
 

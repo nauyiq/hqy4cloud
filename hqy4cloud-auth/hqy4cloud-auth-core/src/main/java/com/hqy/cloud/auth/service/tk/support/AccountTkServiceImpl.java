@@ -2,14 +2,14 @@ package com.hqy.cloud.auth.service.tk.support;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.mapper.AccountTkMapper;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.tk.BaseTkMapper;
-import com.hqy.cloud.tk.support.BaseTkServiceImpl;
+import com.hqy.cloud.db.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.support.BaseTkServiceImpl;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,8 +45,18 @@ public class AccountTkServiceImpl extends BaseTkServiceImpl<Account, Long> imple
     }
 
     @Override
+    public AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail) {
+        return accountDao.getAccountInfoByUsernameOrEmail(usernameOrEmail);
+    }
+
+    @Override
     public List<AccountInfoDTO> getAccountInfos(List<Long> ids) {
         return accountDao.getAccountInfos(ids);
+    }
+
+    @Override
+    public List<AccountInfoDTO> getAccountInfosByName(String name) {
+        return accountDao.getAccountInfosByName(name);
     }
 
     @Override

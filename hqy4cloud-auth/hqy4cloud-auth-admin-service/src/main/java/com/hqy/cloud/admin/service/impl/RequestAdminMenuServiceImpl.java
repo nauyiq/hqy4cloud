@@ -3,7 +3,7 @@ package com.hqy.cloud.admin.service.impl;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
 import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.admin.service.RequestAdminMenuService;
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;

@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.hqy.cloud.auth.flow.server.FlowConfigProperties,\
- com.hqy.cloud.auth.flow.server.HttpAccessFlowControlCenter,\
- com.hqy.cloud.auth.config.SecurityAutoConfiguration

@@ -10,8 +10,8 @@ import java.util.Set;
  */
 public interface BlockedIpService {
 
-    long DELAY = 30;
-    long PERIOD = 3 * 60;
+    long DELAY = 15;
+    long PERIOD = 60;
 
     /**
      * ip 添加到黑名单
@@ -38,7 +38,7 @@ public interface BlockedIpService {
     Set<String> getAllBlockIpSet();
 
     /**
-     * 查询所有的黑名单集合 包括对应的过期时间
+     * 查询所有的黑名单集合
      * @return 黑名单集合
      */
     Map<String, Long> getAllBlockIp();

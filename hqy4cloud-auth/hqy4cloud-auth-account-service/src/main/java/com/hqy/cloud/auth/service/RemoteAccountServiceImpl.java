@@ -1,50 +1,52 @@
 package com.hqy.cloud.auth.service;
 
-import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.account.service.RemoteAccountService;
-import com.hqy.account.struct.AccountBaseInfoStruct;
-import com.hqy.account.struct.AccountStruct;
-import com.hqy.account.struct.RegistryAccountStruct;
-import com.hqy.cloud.auth.base.dto.AccountBaseInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.service.RemoteAccountService;
+import com.hqy.cloud.account.struct.AccountStruct;
+import com.hqy.cloud.account.struct.RegistryAccountStruct;
+import com.hqy.cloud.auth.base.converter.AccountConverter;
+import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.auth.service.impl.AccountBaseInfoCacheDataServiceService;
+import com.hqy.cloud.auth.service.tk.AccountTkService;
+import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UpdateDbException;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.ValidationUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
+import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.hqy.cloud.auth.base.Constants.DEFAULT_COMMON_ROLE;
 import static com.hqy.cloud.common.result.ResultCode.USER_NOT_FOUND;
 
 /**
+ * remote account rpc service.
  * @author qiyuan.hong
  * @date 2022-03-16 11:18
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RemoteAccountServiceImpl extends AbstractRPCService implements RemoteAccountService {
-    private static final Logger log = LoggerFactory.getLogger(RemoteAccountServiceImpl.class);
-
     private final PasswordEncoder passwordEncoder;
     private final AccountOperationService accountOperationService;
     private final AuthOperationService authOperationService;
-    private final AccountBaseInfoCacheDataServiceService baseInfoCacheService;
+    private final AccountTkService accountTkService;
+    private final RoleTkService roleTkService;
+    private final AccountCacheService accountCacheService;
 
     @Override
     public String getAccountInfoJson(Long id) {
@@ -54,10 +56,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
     @Override
     public Long getAccountIdByUsernameOrEmail(String usernameOrEmail) {
-        if (StringUtils.isBlank(usernameOrEmail)) {
-            return null;
-        }
-        Account account = accountOperationService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
             return null;
         }
@@ -65,41 +64,35 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     }
 
     @Override
-    public AccountStruct getAccountStructByUsernameOrEmail(String usernameOrEmail) {
+    public AccountStruct getAccountById(Long id) {
+        AccountDTO data = accountCacheService.getData(id);
+        if (data == null) {
+            return new AccountStruct();
+        }
+        return AccountConverter.CONVERTER.convert(data);
+    }
+
+    @Override
+    public List<AccountStruct> getAccountByIds(List<Long> ids) {
+        List<AccountDTO> accounts = accountCacheService.getData(ids);
+        if (CollectionUtils.isEmpty(accounts)) {
+            return Collections.emptyList();
+        }
+        return accounts.stream().map(AccountConverter.CONVERTER::convert).toList();
+    }
+
+    @Override
+    public AccountStruct getAccountByUsernameOrEmail(String usernameOrEmail) {
         if (StringUtils.isBlank(usernameOrEmail)) {
             return new AccountStruct();
         }
-        Account account = accountOperationService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
             return new AccountStruct();
         }
-        return new AccountStruct(account.getId(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRoles(), account.getStatus());
+        return AccountConverter.CONVERTER.convert(account);
     }
 
-    @Override
-    public AccountBaseInfoStruct getAccountBaseInfo(Long id) {
-        AccountBaseInfoDTO accountBaseInfoDTO = baseInfoCacheService.getData(id);
-        if (accountBaseInfoDTO == null) {
-            return new AccountBaseInfoStruct();
-        }
-        return buildAccountBaseInfoStruct(accountBaseInfoDTO);
-    }
-
-    private AccountBaseInfoStruct buildAccountBaseInfoStruct(AccountBaseInfoDTO accountBaseInfoDTO) {
-        return new AccountBaseInfoStruct(accountBaseInfoDTO.getId(), accountBaseInfoDTO.getNickname(), accountBaseInfoDTO.getUsername(),
-                accountBaseInfoDTO.getEmail(), accountBaseInfoDTO.getAvatar(), accountBaseInfoDTO.getRoles());
-    }
-
-
-    @Override
-    public List<AccountBaseInfoStruct> getAccountBaseInfos(List<Long> ids) {
-        List<AccountBaseInfoDTO> caches = baseInfoCacheService.getData(ids);
-        if (CollectionUtils.isEmpty(caches)) {
-            return Collections.emptyList();
-        }
-
-        return caches.stream().map(this::buildAccountBaseInfoStruct).collect(Collectors.toList());
-    }
 
     @Override
     public CommonResultStruct checkRegistryInfo(String username, String email) {
@@ -120,25 +113,20 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isAnyBlank(struct.username, struct.email, struct.password)) {
             return new CommonResultStruct(ResultCode.ERROR_PARAM);
         }
-
-        //注册角色为空时 使用默认角色名
+        // check username and email params
+        if (accountOperationService.checkParamExist(struct.username, struct.email, struct.phone)) {
+            return new CommonResultStruct(ResultCode.USER_EXIST);
+        }
         if (CollectionUtils.isEmpty(struct.roles)) {
             struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
         }
-
-        // check params
-        if (accountOperationService.checkParamExist(struct.username, struct.email, null)) {
-            return new CommonResultStruct(ResultCode.USER_EXIST);
-        }
-
         //check roles.
-        List<Role> roles = accountOperationService.getRoleTkService().queryRolesByNames(struct.roles);
+        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
         if (struct.createBy != null && !authOperationService.checkEnableModifyRoles(struct.createBy, roles)) {
             return new CommonResultStruct(ResultCode.LIMITED_SETTING_ROLE_LEVEL);
         }
-
         try {
-            UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, null,
+            UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
                     struct.password, struct.avatar, true, struct.roles);
             if (!accountOperationService.registryAccount(userDTO, roles)) {
                 return new CommonResultStruct(ResultCode.SYSTEM_ERROR_INSERT_FAIL);
@@ -153,14 +141,17 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     @Override
     public CommonResultStruct updateAccountPassword(String usernameOrEmail, String newPassword) {
         if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
-            return new CommonResultStruct(false, ResultCode.ERROR_PARAM.code, "Request param should not be empty.");
+            return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        Account account = accountOperationService.getAccountTkService().queryOne(new Account(usernameOrEmail));
+        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
-            return new CommonResultStruct(USER_NOT_FOUND);
+            return CommonResultStruct.of(USER_NOT_FOUND);
         }
-        account.setPassword(passwordEncoder.encode(newPassword));
-        return accountOperationService.getAccountTkService().update(account) ? new CommonResultStruct() : new CommonResultStruct(ResultCode.FAILED);
+        AccountDTO data = accountCacheService.getData(account.getId());
+        data.setPassword(passwordEncoder.encode(newPassword));
+        //update cache and db.
+        accountCacheService.update(account.getId(), data);
+        return new CommonResultStruct();
     }
 
     @Override
@@ -168,18 +159,18 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (accountId == null || StringUtils.isAnyBlank(oldPassword, newPassword)) {
             return new CommonResultStruct(ResultCode.ERROR_PARAM_UNDEFINED);
         }
-        Account account = accountOperationService.getAccountTkService().queryById(accountId);
+        AccountDTO account = accountCacheService.getData(accountId);
         if (account == null) {
-            return new CommonResultStruct(USER_NOT_FOUND);
+            return CommonResultStruct.of(USER_NOT_FOUND);
         }
-
-        //校验密码是否正确
+        //check password.
         if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
-            return new CommonResultStruct(ResultCode.PASSWORD_ERROR);
+            return CommonResultStruct.of(ResultCode.PASSWORD_ERROR);
         }
         account.setPassword(passwordEncoder.encode(newPassword));
-        accountOperationService.getAccountTkService().update(account);
-        return accountOperationService.getAccountTkService().update(account) ? new CommonResultStruct() : new CommonResultStruct(ResultCode.FAILED);
+        //update cache and db.
+        accountCacheService.update(account.getId(), account);
+        return new CommonResultStruct();
     }
 
 

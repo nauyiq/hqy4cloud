@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth.mapper;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -31,11 +31,25 @@ public interface AccountTkMapper extends BaseTkMapper<Account, Long> {
     AccountInfoDTO getAccountInfo(@Param("id") Long id);
 
     /**
+     * return account info by username or email.
+     * @param usernameOrEmail username or email.
+     * @return               {@link AccountInfoDTO}
+     */
+    AccountInfoDTO getAccountInfoByUsernameOrEmail(@Param("usernameOrEmail")String usernameOrEmail);
+
+    /**
      * 根据id集合查找用户信息
      * @param ids idjihe
      * @return    AccountInfoDTO Set.
      */
     List<AccountInfoDTO> getAccountInfos(@Param("ids") List<Long> ids);
+
+    /**
+     * 模糊查询昵称和精确查询用户名
+     * @param name 用户名或昵称
+     * @return     {@link AccountInfoDTO}
+     */
+    List<AccountInfoDTO> getAccountInfosByName(@Param("name") String name);
 
     /**
      * 分页查询查询用户列表
@@ -45,4 +59,7 @@ public interface AccountTkMapper extends BaseTkMapper<Account, Long> {
      * @return             AccountInfoDTO.
      */
     List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname, @Param("maxLevel") Integer maxRoleLevel);
+
+
+
 }

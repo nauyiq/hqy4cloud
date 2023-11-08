@@ -1,10 +1,10 @@
 package com.hqy.cloud.auth.service.tk;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
-import com.hqy.cloud.tk.BaseTkService;
+import com.hqy.cloud.db.tk.BaseTkService;
 
 import java.util.List;
 
@@ -30,11 +30,25 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
     AccountInfoDTO getAccountInfo(Long id);
 
     /**
+     * return account info by username or email.
+     * @param usernameOrEmail username or email.
+     * @return               {@link AccountInfoDTO}
+     */
+    AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail);
+
+    /**
      * 查找用户信息
      * @param ids 用户id 列表
      * @return    AccountInfoDTO Set.
      */
     List<AccountInfoDTO> getAccountInfos(List<Long> ids);
+
+    /**
+     * get account information by name
+     * @param name username or nickname
+     * @return    {@link AccountInfoDTO}
+     */
+    List<AccountInfoDTO> getAccountInfosByName(String name);
 
     /**
      * 分页查询查询用户列表
@@ -46,5 +60,7 @@ public interface AccountTkService extends BaseTkService<Account, Long> {
      * @return             PageResult for AccountInfoDTO.
      */
     PageResult<AccountInfoVO> getPageAccountInfos(String username, String nickname, Integer maxRoleLevel, Integer current, Integer size);
+
+
 
 }

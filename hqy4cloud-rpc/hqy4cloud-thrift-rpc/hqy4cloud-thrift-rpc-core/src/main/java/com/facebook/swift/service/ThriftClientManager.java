@@ -45,7 +45,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.jboss.netty.channel.Channel;
 
 import javax.annotation.Nullable;
-import javax.annotation.PreDestroy;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.validation.constraints.NotNull;
@@ -251,7 +250,7 @@ public class ThriftClientManager implements Closeable {
         return clientMetadataCache.getUnchecked(new TypeAndName(type, name));
     }
 
-    @PreDestroy
+    @Override
     public void close() {
         niftyClient.close();
     }

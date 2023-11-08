@@ -285,7 +285,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
 
             if (response != null) {
                 int sequenceId = extractSequenceId(response);
-                //优化by rosun 获取sequenceId之外 更多处理请求相关的上下文信息
+                //获取sequenceId之外 更多处理请求相关的上下文信息
 //                final TMessage tmsg  =  extractTMessage(response);
 //                final int sequenceId = tmsg.seqid;
                 onResponseReceived(sequenceId, response);
@@ -384,7 +384,6 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
                 log.warn(e.getMessage() + " | " + e.getClass().getName());
             }
         }
-        //释放内存 防止内存泄露
         disposeMemoryLeak();
     }
 
@@ -444,9 +443,7 @@ public abstract class AbstractClientChannel extends SimpleChannelHandler impleme
     }
 
     private void onSendTimeoutFired(Request request) {
-        //modify by luoshan start 添加钉钉告警
         log.warn("警告，IGNORED RPC TIME OUT（onSendTimeoutFired） ,兼容 超时模式.RPC调用已超时！本次超时被忽略，可以继续调用。");
-//        DingdingWarnService.warn("onSendTimeoutFired" ,getRemoteAddr(),new String[] {request.getTmessageName()} );
         cancelAllRequestTimeouts();
         WriteTimeoutException timeoutException = new WriteTimeoutException("Timed out waiting " + getSendTimeout() + " to send data to server");
         fireChannelErrorCallback(request.getListener(), new TTransportException(TTransportException.TIMED_OUT, timeoutException));

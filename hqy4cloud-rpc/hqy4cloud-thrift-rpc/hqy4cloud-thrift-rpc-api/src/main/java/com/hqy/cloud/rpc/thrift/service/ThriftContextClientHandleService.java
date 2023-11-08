@@ -4,7 +4,6 @@ import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 
 /**
  * client handler processor.
- * @see ThriftContextClientEventHandler
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/7/20 14:10
@@ -17,7 +16,9 @@ public interface ThriftContextClientHandleService {
      * @param methodName    method name
      * @param args          rpc request parameters.
      */
-    default void doPreWrite(ThriftContext thriftContext, String methodName, Object[] args) {}
+    default void doPreWrite(ThriftContext thriftContext, String methodName, Object[] args)  {
+
+    }
 
     /**
      * do postWrite
@@ -49,6 +50,10 @@ public interface ThriftContextClientHandleService {
      */
     default void doDone(ThriftContext thriftContext, String methodName) {}
 
-
+    /**
+     * 是否抛出异常
+     * @return result
+     */
+    default boolean isThrowException() { return false; }
 
 }

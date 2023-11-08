@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.mapper;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.entity.Menu;
 import com.hqy.cloud.auth.entity.Resource;
-import com.hqy.cloud.tk.BaseTkMapper;
+import com.hqy.cloud.db.tk.BaseTkMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

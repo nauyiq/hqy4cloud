@@ -1,6 +1,6 @@
 package com.hqy.cloud.admin.service.impl;
 
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.admin.service.RequestAdminAccountService;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
@@ -51,7 +51,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
             return R.failed(USER_NOT_FOUND);
         }
         List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), COMMA));
-        List<String> permissions = authOperationService.getManuPermissionsByRoles(roles);
+        List<String> permissions = authOperationService.getMenuPermissionsByRoles(roles);
         AdminUserInfoVO vo = new AdminUserInfoVO(permissions, roles, new AdminUserInfoVO.SysUser(accountInfo));
         return R.ok(vo);
     }
@@ -108,14 +108,13 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         if (Objects.isNull(account) || account.getDeleted()) {
             return R.failed(USER_NOT_FOUND);
         }
-
         //check roles
         List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
         String accountRoles = account.getRoles();
         List<String> oldRoleNames = Arrays.asList(StringUtils.tokenizeToStringArray(accountRoles, COMMA));
         List<Role> oldRoles = roleTkService.queryRolesByNames(oldRoleNames);
         boolean modifyRoles = true;
-        if (oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
+        if (CollectionUtils.isNotEmpty(roles) && oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
             modifyRoles = false;
         } else {
             if (!authOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
@@ -126,7 +125,6 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         if (!booleanR.isResult()) {
             return booleanR;
         }
-
         //edit user
         boolean result = accountOperationService.editAccount(userDTO, roles, account, modifyRoles ? oldRoles : null);
         return result ? R.ok() : R.failed();

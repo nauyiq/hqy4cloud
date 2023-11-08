@@ -39,4 +39,15 @@ public enum PubMode {
     public int getValue() {
         return value;
     }
+
+    public static PubMode of(int value) {
+        PubMode[] values = PubMode.values();
+        for (PubMode pubMode : values) {
+            if (pubMode.value == value) {
+                return pubMode;
+            }
+        }
+        throw new UnsupportedOperationException("Not support value for PubMode.");
+    }
+
 }

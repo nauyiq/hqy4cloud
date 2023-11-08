@@ -1,25 +1,28 @@
 package com.hqy.cloud.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.account.dto.AccountInfoDTO;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.AccountProfile;
 import com.hqy.cloud.auth.entity.AccountRole;
 import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.auth.service.AccountOperationService;
-import com.hqy.cloud.auth.service.tk.*;
-import com.hqy.cloud.auth.utils.AvatarHostUtil;
+import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
+import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
+import com.hqy.cloud.auth.service.tk.AccountTkService;
+import com.hqy.cloud.auth.service.tk.RoleTkService;
+import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.foundation.id.DistributedIdGen;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.hqy.cloud.foundation.common.account.AvatarHostUtil.DEFAULT_AVATAR;
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
 
@@ -37,20 +41,17 @@ import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
  * @version 1.0
  * @date 2022/9/27 15:43
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountOperationServiceImpl implements AccountOperationService {
-
-    private static final Logger log = LoggerFactory.getLogger(AccountOperationServiceImpl.class);
-
     private final PasswordEncoder passwordEncoder;
     private final AccountTkService accountTkService;
     private final AccountProfileTkService accountProfileTkService;
     private final RoleTkService roleTkService;
     private final AccountRoleTkService accountRoleTkService;
-    private final SysOauthClientTkService sysOauthClientTkService;
+    private final AccountCacheService accountCacheService;
     private final TransactionTemplate transactionTemplate;
-
 
     @Override
     public AccountInfoDTO getAccountInfo(Long id) {
@@ -59,10 +60,21 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (Objects.isNull(accountInfo)) {
             return null;
         }
-        AvatarHostUtil.settingAvatar(accountInfo);
+        accountInfo.setAvatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()));
         return accountInfo;
     }
 
+    @Override
+    public AccountInfoDTO getAccountInfo(String usernameOrEmail) {
+        if (StringUtils.isBlank(usernameOrEmail)) {
+            return null;
+        }
+        AccountInfoDTO accountInfo = accountTkService.getAccountInfoByUsernameOrEmail(usernameOrEmail);
+        if (accountInfo != null) {
+            accountInfo.setAvatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()));
+        }
+        return accountInfo;
+    }
 
     @Override
     public List<AccountInfoDTO> getAccountInfo(List<Long> ids) {
@@ -71,7 +83,19 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         }
         List<AccountInfoDTO> accountInfos = accountTkService.getAccountInfos(ids);
         if (CollectionUtils.isNotEmpty(accountInfos)) {
-            accountInfos = accountInfos.stream().peek(AvatarHostUtil::settingAvatar).collect(Collectors.toList());
+            accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AvatarHostUtil.settingAvatar(e.getAvatar()))).collect(Collectors.toList());
+        }
+        return accountInfos;
+    }
+
+    @Override
+    public List<AccountInfoDTO> getAccountProfilesByName(String name) {
+        if (StringUtils.isBlank(name)) {
+            return Collections.emptyList();
+        }
+        List<AccountInfoDTO> accountInfos = accountTkService.getAccountInfosByName(name);
+        if (CollectionUtils.isNotEmpty(accountInfos)) {
+            accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AvatarHostUtil.settingAvatar(e.getAvatar()))).collect(Collectors.toList());
         }
         return accountInfos;
     }
@@ -99,7 +123,6 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         Account account = buildAccount(userDTO, roles);
         List<AccountRole> accountRoles = buildAccountRole(account, roles);
         AccountProfile accountProfile = buildAccountProfile(account, userDTO);
-
         Boolean result = transactionTemplate.execute(status -> {
             try {
                 AssertUtil.isTrue(accountTkService.insert(account), "Failed execute to insert Account: " + account);
@@ -112,7 +135,6 @@ public class AccountOperationServiceImpl implements AccountOperationService {
                 return false;
             }
         });
-
         return Boolean.TRUE.equals(result);
     }
 
@@ -131,7 +153,9 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     }
 
     private AccountProfile buildAccountProfile(Account account, UserDTO userDTO) {
-        return new AccountProfile(account.getId(), userDTO.getNickname(), userDTO.getAvatar());
+        return new AccountProfile(account.getId(),
+                StringUtils.isBlank(userDTO.getNickname()) ? userDTO.getUsername() : userDTO.getNickname(),
+                StringUtils.isBlank(userDTO.getAvatar()) ? DEFAULT_AVATAR : userDTO.getAvatar());
     }
 
     @Override
@@ -163,6 +187,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
                 if (CollectionUtils.isNotEmpty(oldRoles)) {
                     AssertUtil.isTrue(accountRoleTkService.delete(new AccountRole(account.getId())), "Failed execute to delete old account roles.");
                     AssertUtil.isTrue(accountRoleTkService.insertList(buildAccountRole(account, roles)), "Failed execute to insert new account roles.");
+                    accountCacheService.invalid(account.getId());
                 }
                 return true;
             } catch (Throwable cause) {
@@ -171,7 +196,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
                 return false;
             }
         });
-        SpringContextHolder.getBean(AccountBaseInfoCacheDataServiceService.class).invalid(account.getId());
+        SpringContextHolder.getBean(AccountCacheService.class).invalid(account.getId());
         return Boolean.TRUE.equals(result);
     }
 
@@ -185,6 +210,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
                 if (CollectionUtils.isNotEmpty(accountRoles)) {
                     AssertUtil.isTrue(accountRoleTkService.deleteByAccountRoles(accountRoles), "Failed execute to deleted account roles.");
                 }
+                accountCacheService.invalid(account.getId());
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();
@@ -216,11 +242,6 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     @Override
     public AccountTkService getAccountTkService() {
         return accountTkService;
-    }
-
-    @Override
-    public AccountProfileTkService getAccountProfileTkService() {
-        return accountProfileTkService;
     }
 
     @Override

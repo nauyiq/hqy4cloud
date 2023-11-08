@@ -1,3 +1,4 @@
+/*
 package com.hqy.cloud.elasticsearch.service.impl;
 
 import cn.easyes.core.biz.EsPageInfo;
@@ -8,7 +9,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.elasticsearch.document.EsDocument;
+import com.hqy.cloud.elasticsearch.document.ElasticDocument;
 import com.hqy.cloud.elasticsearch.exception.ElasticsearchException;
 import com.hqy.cloud.elasticsearch.service.EsService;
 import com.hqy.cloud.util.JsonUtil;
@@ -55,26 +56,21 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+*/
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/3/23 18:00
- */
-@Slf4j
-public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T> {
+ *//*
 
-    protected boolean useEyEs;
+@Slf4j
+public abstract class EsServiceImpl<T extends ElasticDocument> implements EsService<T> {
+
     protected final RestHighLevelClient client;
 
     public EsServiceImpl(RestHighLevelClient client) {
-        this(true, client);
-    }
-
-    public EsServiceImpl(boolean useEyEs,  RestHighLevelClient client) {
-        this.useEyEs = useEyEs;
         this.client = client;
     }
-
 
     @Override
     public boolean createIndex(String index) throws ElasticsearchException {
@@ -86,14 +82,9 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return true;
         }
         try {
-            if (useEyEs) {
-                Boolean result = getMapper().createIndex(index);
-                return Boolean.TRUE.equals(result);
-            } else {
-                CreateIndexRequest request = new CreateIndexRequest(index);
-                CreateIndexResponse response = client.indices().create(request, RequestOptions.DEFAULT);
-                return response.isAcknowledged();
-            }
+            CreateIndexRequest request = new CreateIndexRequest(index);
+            CreateIndexResponse response = client.indices().create(request, RequestOptions.DEFAULT);
+            return response.isAcknowledged();
         } catch (Throwable cause) {
             log.error("Failed execute to created es index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -107,14 +98,9 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return false;
         }
         try {
-            if (useEyEs) {
-                Boolean result = getMapper().deleteIndex(index);
-                return Boolean.TRUE.equals(result);
-            } else {
-                DeleteIndexRequest request = new DeleteIndexRequest(index);
-                AcknowledgedResponse response = client.indices().delete(request, RequestOptions.DEFAULT);
-                return response.isAcknowledged();
-            }
+            DeleteIndexRequest request = new DeleteIndexRequest(index);
+            AcknowledgedResponse response = client.indices().delete(request, RequestOptions.DEFAULT);
+            return response.isAcknowledged();
         } catch (Throwable cause) {
             log.error("Failed execute to delete es index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -128,13 +114,8 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return false;
         }
         try {
-            if (useEyEs) {
-                Boolean result = getMapper().existsIndex(index);
-                return Boolean.TRUE.equals(result);
-            } else {
-                GetIndexRequest request = new GetIndexRequest(index);
-                return client.indices().exists(request, RequestOptions.DEFAULT);
-            }
+            GetIndexRequest request = new GetIndexRequest(index);
+            return client.indices().exists(request, RequestOptions.DEFAULT);
         } catch (Throwable cause) {
             log.error("Failed execute to check es index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -147,15 +128,10 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             throw new UnsupportedOperationException();
         }
         try {
-            if (useEyEs) {
-                Integer insert = getMapper().insert(document, index);
-                return document.getId();
-            } else {
-                IndexRequest request = new IndexRequest(index);
-                request.source(JsonUtil.toJson(document), XContentType.JSON);
-                IndexResponse response = client.index(request, RequestOptions.DEFAULT);
-                return response.getId();
-            }
+            IndexRequest request = new IndexRequest(index);
+            request.source(JsonUtil.toJson(document), XContentType.JSON);
+            IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+            return response.getId();
         } catch (Throwable cause) {
             log.error("Failed execute to addDocument, index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -169,16 +145,10 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
 
         try {
-            if (useEyEs) {
-                document.setId(id);
-                Integer insert = getMapper().insert(document, index);
-                return id;
-            } else {
-                IndexRequest request = new IndexRequest(index);
-                request.id(id).source(JsonUtil.toJson(document), XContentType.JSON);
-                IndexResponse response = client.index(request, RequestOptions.DEFAULT);
-                return response.getId();
-            }
+            IndexRequest request = new IndexRequest(index);
+            request.id(id).source(JsonUtil.toJson(document), XContentType.JSON);
+            IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+            return response.getId();
         } catch (Throwable cause) {
             log.error("Failed execute to addDocument, index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -191,17 +161,12 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return false;
         }
         try {
-            if (useEyEs) {
-                Integer insertBatch = getMapper().insertBatch(documents);
-                return insertBatch != null && insertBatch > 0;
-            } else {
-                BulkRequest request = new BulkRequest();
-                for (T document : documents) {
-                    request.add(new IndexRequest(index).source(JsonUtil.toJson(document), XContentType.JSON));
-                }
-                BulkResponse bulk = client.bulk(request, RequestOptions.DEFAULT);
-                return !bulk.hasFailures();
+            BulkRequest request = new BulkRequest();
+            for (T document : documents) {
+                request.add(new IndexRequest(index).source(JsonUtil.toJson(document), XContentType.JSON));
             }
+            BulkResponse bulk = client.bulk(request, RequestOptions.DEFAULT);
+            return !bulk.hasFailures();
         } catch (Throwable cause) {
             log.error("Failed execute to addDocuments, index = {}, cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -215,14 +180,9 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return false;
         }
         try {
-            if (useEyEs) {
-                Integer deleted = getMapper().deleteById(id, index);
-                return  deleted > 0;
-            } else {
-                DeleteRequest request = new DeleteRequest(index, id);
-                DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
-                return response.status().getStatus() == RestStatus.OK.getStatus();
-            }
+            DeleteRequest request = new DeleteRequest(index, id);
+            DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
+            return response.status().getStatus() == RestStatus.OK.getStatus();
         } catch (Throwable cause) {
             log.error("Failed execute to delete document, index = {}, id = {}, cause: {}", index, id, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -236,17 +196,10 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
 
         try {
-            if (useEyEs) {
-                document.setId(id);
-                Integer update = getMapper().updateById(document, index);
-                return update > 0;
-            } else {
-                UpdateRequest request = new UpdateRequest(index, id);
-                request.doc(JsonUtil.toJson(document), XContentType.JSON);
-                UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
-                return response.getShardInfo().getTotal() > 0;
-            }
-
+            UpdateRequest request = new UpdateRequest(index, id);
+            request.doc(JsonUtil.toJson(document), XContentType.JSON);
+            UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
+            return response.getShardInfo().getTotal() > 0;
         } catch (Throwable cause) {
             log.error("Failed execute to update document, index = {}, id = {}, cause: {}", index, id, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -260,14 +213,10 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return null;
         }
         try {
-            if (useEyEs) {
-                 return getMapper().selectById(id);
-            } else {
-                GetRequest request = new GetRequest(index, id);
-                GetResponse response = client.get(request, RequestOptions.DEFAULT);
-                Map<String, Object> source = response.getSource();
-                return JsonUtil.toBean(JsonUtil.toJson(source), getDocumentClass());
-            }
+            GetRequest request = new GetRequest(index, id);
+            GetResponse response = client.get(request, RequestOptions.DEFAULT);
+            Map<String, Object> source = response.getSource();
+            return JsonUtil.toBean(JsonUtil.toJson(source), getDocumentClass());
         } catch (Throwable cause) {
             log.error("Failed execute to get document, index = {}, id = {}, cause: {}", index, id, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -285,14 +234,10 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
             return false;
         }
         try {
-            if (useEyEs) {
-                return getMapper().selectById(id, index) != null;
-            } else {
-                GetRequest request = new GetRequest(index, id);
-                request.fetchSourceContext(new FetchSourceContext(false));
-                request.storedFields("_none_");
-                return client.exists(request, RequestOptions.DEFAULT);
-            }
+            GetRequest request = new GetRequest(index, id);
+            request.fetchSourceContext(new FetchSourceContext(false));
+            request.storedFields("_none_");
+            return client.exists(request, RequestOptions.DEFAULT);
         } catch (Throwable cause) {
             log.error("Failed execute to checkExistDocument, index = {}, id = {}, cause: {}", index, id, cause.getMessage());
             throw new ElasticsearchException(cause);
@@ -306,23 +251,13 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
         }
         PageResult<T> pageResult;
         try {
-            if (useEyEs) {
-                pageResult = eyesQueryPage(index, andQueryMap, orQueryMap, andLikeMap, pageNumber, pageSize);
-            } else {
-                pageResult = clientQueryPage(index, highlightField, andQueryMap, orQueryMap, andLikeMap, pageNumber, pageSize);
-            }
-            return pageResult;
+            return clientQueryPage(index, highlightField, andQueryMap, orQueryMap, andLikeMap, pageNumber, pageSize);
         } catch (Throwable cause) {
             log.error("Failed execute to search, index = {},  cause: {}", index, cause.getMessage());
             throw new ElasticsearchException(cause);
         }
     }
 
-
-    @Override
-    public void setUsingEs(boolean isUsing) {
-        this.useEyEs = isUsing;
-    }
 
     private PageResult<T> eyesQueryPage(String index, Map<String, Object> andQueryMap, Map<String, Object> orQueryMap, Map<String, Object> andLikeMap, int pageNumber, int pageSize) {
         LambdaEsQueryWrapper<T> queryWrapper = EsWrappers.lambdaQuery(getDocumentClass());
@@ -441,3 +376,4 @@ public abstract class EsServiceImpl<T extends EsDocument> implements EsService<T
 
 }
 
+*/

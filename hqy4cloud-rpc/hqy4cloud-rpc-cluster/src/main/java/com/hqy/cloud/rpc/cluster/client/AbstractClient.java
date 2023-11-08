@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.hqy.cloud.common.base.lang.exception.RpcException.REGISTRY_EXCEPTION;
 
@@ -66,7 +67,7 @@ public abstract class AbstractClient implements Client {
         }
         //cluster.
         Cluster cluster = ClusterContext.getCluster(directory.getProviderServiceName(), clusterMode);
-        Invoker<T> invoker = cluster.join(directory);
+        Invoker<T> invoker = cluster.join(directory, hashFactor);
         return proxyFactory.getProxy(invoker, invocationCallback);
     }
 
@@ -92,6 +93,8 @@ public abstract class AbstractClient implements Client {
     public ProxyFactory getProxyFactory() {
         return proxyFactory;
     }
+
+
 
     /**
      * create application directory.

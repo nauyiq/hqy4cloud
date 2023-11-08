@@ -13,17 +13,18 @@
     <artifactId>hqy4cloud-common-timer-service</artifactId>
 
     <dependencies>
-
-        <dependency>
+        <!--<dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
     </dependencies>
 </project>

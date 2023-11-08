@@ -1,0 +1,21 @@
+version: "3.0"
+services:
+  id-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: id-service
+    restart: always
+    privileged: true
+    ports:
+      - 8999:8999
+      - 18999:18999
+    environment:
+      JVM_XMS: 512m
+      JVM_XMX: 512m
+      JVM_XMN: 256m
+      JAVA_OPT_EXT: "-DNACOS_PASSWORD=nacos. -DNACOS_SERVER=172.0.0.1:8848"
+    volumes:
+      - /hongqy/docker/hqy4cloud/hqy4cloud-base-id-service/logs:/hqy4cloud/hqy4cloud-base-id-service/logs
+
+

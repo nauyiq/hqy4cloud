@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.entity;
 
-import com.hqy.cloud.tk.PrimaryLessBaseEntity;
+import com.hqy.cloud.db.tk.PrimaryLessBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

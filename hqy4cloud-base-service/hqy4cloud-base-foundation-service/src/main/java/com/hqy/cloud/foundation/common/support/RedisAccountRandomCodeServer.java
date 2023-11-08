@@ -45,11 +45,11 @@ public abstract class RedisAccountRandomCodeServer implements AccountRandomCodeS
 
     @Override
     public String randomCode(String username, String email, int length, int expiredSeconds) {
-        String code = RandomUtil.randomString(length);
+        String code = RandomUtil.randomNumbers(length);
         int i = 1;
         while (!SmartRedisManager.getInstance().set(redisKey.getKey(genPredix(username, email, code)), StrUtil.EMPTY, (long)expiredSeconds, TimeUnit.SECONDS)) {
             AssertUtil.isTrue(i <= maxRetry, "Already generator random code max time.");
-            code = RandomUtil.randomString(length);
+            code = RandomUtil.randomNumbers(length);
             i++;
         }
         return code;

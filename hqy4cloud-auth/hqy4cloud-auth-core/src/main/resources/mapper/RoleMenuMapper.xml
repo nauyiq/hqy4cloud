@@ -2,14 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.hqy.cloud.auth.mapper.RoleMenuMapper">
-
-    <resultMap id="AuthenticationMap" type="java.util.Map">
-        <result property="role" column="role_name"/>
-        <collection property="permissions" ofType="java.lang.String">
-            <result column="permission"/>
-        </collection>
-    </resultMap>
-
     <resultMap id="permissionDTOMap" type="com.hqy.cloud.auth.base.dto.PermissionDTO">
         <result property="role" column="name"/>
         <collection property="permissions" ofType="java.lang.String">
@@ -27,7 +19,7 @@
         </foreach>
     </select>
 
-    <select id="getManuPermissionsByRoles" resultMap="AuthenticationMap">
+    <select id="getManuPermissionsByRoles" resultMap="permissionDTOMap">
         SELECT am.`permission`, r.name
         FROM t_role r
         LEFT JOIN t_admin_role_menu adm ON r.id = adm.role_id

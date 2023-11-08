@@ -14,14 +14,19 @@
     <artifactId>hqy4cloud-auth-core</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
+            <artifactId>hqy4cloud-common-datasource-tk-mapper</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-datasource-sharding-jdbc</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

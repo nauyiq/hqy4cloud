@@ -14,8 +14,8 @@
     <description>hqy4cloud-基于leaf的分布式id服务</description>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
 
@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
+            <artifactId>hqy4cloud-common-datasource-tk-mapper</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -52,6 +52,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
 
     </dependencies>

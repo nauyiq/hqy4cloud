@@ -6,9 +6,9 @@ import com.facebook.nifty.client.NiftyClientChannel;
 import com.facebook.swift.service.ThriftMethodHandler;
 import com.hqy.cloud.common.base.lang.exception.NoAvailableProviderException;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.thrift.ThriftNiftyFramedClientUtils;
 import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
-import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
@@ -29,18 +29,11 @@ import java.util.Objects;
  * @date 2022/7/12 15:24
  */
 public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObjectFactory<RPCServerAddress, T> {
-
     private static final Logger log = LoggerFactory.getLogger(ThriftClientTargetBaseKeyedFactory.class);
 
-    /**
-     * key: microServiceName
-     */
     private static final Map<String, Map<RPCServerAddress, FramedClientConnector>> RPC_SERVICE_CONNECTOR_MAP = MapUtil.newConcurrentHashMap();
-
     private final String serviceName;
-
     private final Class<T> rpcInterfaceClass;
-
 
     private final ThriftClientManagerWrapper clientManagerWrapper;
 
@@ -50,36 +43,11 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
         this.serviceName = serviceName;
     }
 
-    public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
-        iniFramedClientConnectorMap(invokers);
-    }
-
-    private void iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
-        if (CollectionUtils.isEmpty(invokers)) {
-            RPC_SERVICE_CONNECTOR_MAP.put(serviceName, MapUtil.newConcurrentHashMap(0));
-        }
-        Map<RPCServerAddress, FramedClientConnector> map = MapUtil.newConcurrentHashMap(invokers.size());
-        for (Invoker<T> invoker : invokers) {
-            RPCServerAddress serverAddress = invoker.getModel().getServerAddress();
-            FramedClientConnector framedClientConnector = ThriftNiftyFramedClientUtils.createFramedClientConnector(serverAddress);
-            map.put(serverAddress, framedClientConnector);
-        }
-        RPC_SERVICE_CONNECTOR_MAP.put(serviceName, map);
-    }
-
-    public String gerServiceInfo(T service) {
-        NiftyClientChannel clientChannel = clientManagerWrapper.getClientChannel(service);
-        if (Objects.isNull(clientChannel)) {
-            return String.format("Invalid service: [%s], NiftyClientChannel is null", service.getClass().getSimpleName());
-        }
-        return ThriftNiftyFramedClientUtils.printfChannelInfo(clientChannel);
-    }
-
     @Override
     public T create(RPCServerAddress serverAddress) throws Exception {
         AssertUtil.notNull(serverAddress, "RPCServerAddress should not be null.");
 
-        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.get(serviceName);
+        Map<RPCServerAddress, FramedClientConnector> rpcServerAddressFramedClientConnectorMap = RPC_SERVICE_CONNECTOR_MAP.computeIfAbsent(serviceName, v -> MapUtil.newConcurrentHashMap());
         FramedClientConnector connector = rpcServerAddressFramedClientConnectorMap.get(serverAddress);
         if (connector == null) {
             throw new NoAvailableProviderException("No available connectors for this rpc service "
@@ -107,8 +75,34 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
         rpcServerAddressFramedClientConnectorMap.remove(key);
     }
 
+    public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
+        iniFramedClientConnectorMap(invokers);
+    }
+
+    private void iniFramedClientConnectorMap(List<Invoker<T>> invokers) {
+        if (CollectionUtils.isEmpty(invokers)) {
+            RPC_SERVICE_CONNECTOR_MAP.put(serviceName, MapUtil.newConcurrentHashMap(0));
+            return;
+        }
+        Map<RPCServerAddress, FramedClientConnector> map = MapUtil.newConcurrentHashMap(invokers.size());
+        for (Invoker<T> invoker : invokers) {
+            RPCServerAddress serverAddress = invoker.getModel().getServerAddress();
+            FramedClientConnector framedClientConnector = ThriftNiftyFramedClientUtils.createFramedClientConnector(serverAddress);
+            map.put(serverAddress, framedClientConnector);
+        }
+        RPC_SERVICE_CONNECTOR_MAP.put(serviceName, map);
+    }
+
+    public String gerServiceInfo(T service) {
+        NiftyClientChannel clientChannel = clientManagerWrapper.getClientChannel(service);
+        if (Objects.isNull(clientChannel)) {
+            return String.format("Invalid service: [%s], NiftyClientChannel is null", service.getClass().getSimpleName());
+        }
+        return ThriftNiftyFramedClientUtils.printfChannelInfo(clientChannel);
+    }
+
     /**
-     * 连接池关闭时 清楚缓存
+     * 连接池关闭时 清除缓存
      */
     public void closeConnectionCache(String serviceName) {
         RPC_SERVICE_CONNECTOR_MAP.remove(serviceName);

@@ -12,7 +12,6 @@ import java.util.Map;
  * @date 2022/10/8 11:35
  */
 public interface CacheDataService<T, PK> {
-
     /**
      * 获取数据.
      * @param pk 唯一标识

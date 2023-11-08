@@ -2,6 +2,7 @@ package com.hqy.cloud.foundation.common.route;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,7 +12,6 @@ import java.io.Serializable;
  * @date 2022/3/24 11:07
  */
 public class SocketClusterStatus implements Serializable {
-
     private static final long serialVersionUID = -6308403629096760325L;
 
     /**
@@ -34,7 +34,9 @@ public class SocketClusterStatus implements Serializable {
      */
     private boolean enableMultiWsNode = false;
 
-
+    /**
+     * socket.io context path
+     */
     private String contextPath = "/socket";
 
     public SocketClusterStatus() {
@@ -66,14 +68,22 @@ public class SocketClusterStatus implements Serializable {
      * @return hash值
      */
     public int getSocketIoPathHashMod(String bizId) {
+       return getSocketIoPathHashMod(bizId, countMultiNodes);
+    }
+
+    /**
+     * 根据bizId获取socket io的hash值
+     * @param bizId 业务id
+     * @return hash值
+     */
+    public int getSocketIoPathHashMod(String bizId, int length) {
         if (!enableMultiWsNode) {
             throw new IllegalStateException("@@@ SocketHashContext.enableMultiWsNode is false.");
         }
         if (StringUtils.isBlank(bizId)) {
             throw new IllegalStateException("@@@ bizId can not empty.");
         }
-        int hashcode = Math.abs(bizId.hashCode());
-        return hashcode % countMultiNodes;
+        return bizId.hashCode() & length;
     }
 
     public int getCountMultiNodes() {

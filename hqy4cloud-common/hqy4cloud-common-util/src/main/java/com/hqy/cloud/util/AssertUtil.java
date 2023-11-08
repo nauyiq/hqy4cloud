@@ -87,6 +87,13 @@ public class AssertUtil {
         throw new RuntimeException(message);
     }
 
+    public static void isInstanceOf(Class<?> type, Object obj, String message) {
+        notNull(type, "Type to check against must not be null");
+        if (!type.isInstance(obj)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
 
 
 }

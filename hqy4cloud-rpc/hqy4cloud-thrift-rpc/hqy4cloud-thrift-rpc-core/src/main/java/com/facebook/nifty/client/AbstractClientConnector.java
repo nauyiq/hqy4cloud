@@ -49,9 +49,6 @@ public abstract class AbstractClientConnector<T extends NiftyClientChannel>
     }
 
     protected static SocketAddress toSocketAddress(HostAndPort address) {
-//        return new InetSocketAddress(address.getHostText(), address.getPort());
-
-        //升级guava22
         return new InetSocketAddress(address.getHost(), address.getPort());
     }
 

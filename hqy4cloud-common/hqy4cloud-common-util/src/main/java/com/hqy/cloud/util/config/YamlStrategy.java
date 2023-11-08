@@ -1,5 +1,6 @@
 package com.hqy.cloud.util.config;
 
+import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class YamlStrategy extends AbstractConfigStrategy {
     /**
      * 存放当前yaml文件的数据
      */
-    private Map<String, String> data;
+    private Map<String, String> data = MapUtil.newHashMap();
 
 
     @Override

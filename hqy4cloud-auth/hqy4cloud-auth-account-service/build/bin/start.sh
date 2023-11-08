@@ -41,11 +41,12 @@ JAVA_OPT="${JAVA_OPT} -XX:+AlwaysPreTouch"
 # 当堆内存的使用率达到45%之后就会自动启动G1的并发垃圾回收 默认为45
 JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
 # 每次GC最大的停顿毫秒数
-JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=200"
+JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=400"
 
-# gc日志打印
-JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log"
-JAVA_OPT="${JAVA_OPT} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCApplicationConcurrentTime -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
+# gc日志打印 jdk17: -Xloggc is deprecated.
+JAVA_OPT="${JAVA_OPT} -Xlog:gc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log:time,level"
+#JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log"
+#JAVA_OPT="${JAVA_OPT} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCApplicationConcurrentTime -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 
 # 发生内存溢出时打印堆栈快照
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"

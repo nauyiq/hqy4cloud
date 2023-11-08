@@ -46,15 +46,7 @@ public class UserDTO {
     }
 
     public boolean checkUpdateUser() {
-        if (this.id == null) {
-            return false;
-        }
-
-        if (StringUtils.isAnyBlank(password)) {
-            return false;
-        }
-
-        return true;
+        return this.id != null;
     }
 
 

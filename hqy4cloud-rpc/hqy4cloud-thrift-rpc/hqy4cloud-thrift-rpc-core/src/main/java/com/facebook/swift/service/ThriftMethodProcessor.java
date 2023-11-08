@@ -23,6 +23,7 @@ import com.facebook.swift.codec.internal.TProtocolReader;
 import com.facebook.swift.codec.internal.TProtocolWriter;
 import com.facebook.swift.codec.metadata.ThriftFieldMetadata;
 import com.facebook.swift.codec.metadata.ThriftType;
+import com.facebook.swift.service.exception.support.ThriftServerExceptionRegistry;
 import com.facebook.swift.service.metadata.ThriftMethodMetadata;
 import com.google.common.base.Defaults;
 import com.google.common.collect.ImmutableList;
@@ -33,6 +34,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.rpc.transaction.TransactionContext;
 import com.hqy.cloud.util.ArgsUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -50,6 +52,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.apache.thrift.TApplicationException.INTERNAL_ERROR;
 
@@ -57,6 +60,7 @@ import static org.apache.thrift.TApplicationException.INTERNAL_ERROR;
 public class ThriftMethodProcessor {
     private final String name;
     private final String serviceName;
+    private final String serviceTypeName;
     private final String qualifiedName;
     private final Object service;
     private final Method method;
@@ -68,9 +72,10 @@ public class ThriftMethodProcessor {
     private final ThriftCodec<Object> successCodec;
     private final Map<Class<?>, ExceptionProcessor> exceptionCodecs;
 
-    public ThriftMethodProcessor(Object service, String serviceName, ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
+    public ThriftMethodProcessor(Object service, String serviceName, String serviceTypeName,  ThriftMethodMetadata methodMetadata, ThriftCodecManager codecManager) {
         this.service = service;
         this.serviceName = serviceName;
+        this.serviceTypeName = serviceTypeName;
 
         name = methodMetadata.getName();
         qualifiedName = serviceName + "." + name;
@@ -127,6 +132,10 @@ public class ThriftMethodProcessor {
         return serviceName;
     }
 
+    public String getServiceTypeName() {
+        return serviceTypeName;
+    }
+
     public String getQualifiedName() {
         return qualifiedName;
     }
@@ -141,7 +150,7 @@ public class ThriftMethodProcessor {
         in.readMessageEnd();
 
         // invoke method
-        final ListenableFuture<?> invokeFuture = invokeMethod(args);
+        final ListenableFuture<?> invokeFuture = invokeMethod(args, contextChain);
         final SettableFuture<Boolean> resultFuture = SettableFuture.create();
 
         Futures.addCallback(invokeFuture, new FutureCallback<Object>() {
@@ -198,17 +207,36 @@ public class ThriftMethodProcessor {
                                     t);
                             contextChain.postWriteException(t);
                         } else {
-                            // unexpected exception
-                            TApplicationException applicationException =
-                                    ThriftServiceProcessor.writeApplicationException(
-                                            out,
-                                            method.getName(),
-                                            sequenceId,
-                                            INTERNAL_ERROR,
-                                            "Internal error processing " + method.getName() + "\r\n" + ExceptionUtils.getStackTrace(t),
-                                            t);
+                            TApplicationException applicationException = null;
+                            if (CommonSwitcher.ENABLE_THRIFT_RPC_COMMON_EXCEPTION.isOn()) {
+                                Integer id = ThriftServerExceptionRegistry.getExceptionId(t.getClass());
+                                if (Objects.nonNull(id)) {
+                                    try {
+                                        applicationException = ThriftServerExceptionRegistry.writeCustomException(out, method.getName(), sequenceId, id,
+                                                "Custom error processing " + method.getName() + "\r\n" + ExceptionUtils.getStackTrace(t),
+                                                t);
+                                    } catch (Throwable cause) {
+                                        // do nothing.
+                                    }
+                                }
+                            }
+                            if (Objects.isNull(applicationException)) {
+                                // unexpected exception
+                                applicationException =
+                                        ThriftServiceProcessor.writeApplicationException(
+                                                out,
+                                                method.getName(),
+                                                sequenceId,
+                                                INTERNAL_ERROR,
+                                                "Internal error processing " + method.getName() + "\r\n" + ExceptionUtils.getStackTrace(t),
+                                                t);
+                                contextChain.postWriteException(applicationException);
+                            }
 
-                            contextChain.postWriteException(applicationException);
+
+
+
+
                         }
                     }
 
@@ -225,10 +253,16 @@ public class ThriftMethodProcessor {
         return resultFuture;
     }
 
-    private ListenableFuture<?> invokeMethod(Object[] args) {
+    private ListenableFuture<?> invokeMethod(Object[] args, final ContextChain contextChain) {
         try {
-            //移除动态添加的参数 RemoteParamEx 消费者在执行rpc之前 就把RemoteParamEx放到ThriftHandler中.
+            //移除动态添加的参数 ThriftRequestPram 消费者在执行rpc之前 就把ThriftRequestPram放到ThriftHandler中.
             args = ArgsUtil.reduceTailArg(args);
+            //新增pre method invoke. 兼容服务端自定义异常
+            try {
+                contextChain.preInvokeMethod(args);
+            } catch (Exception e) {
+               return Futures.immediateFailedFuture(e);
+            }
             Object response = method.invoke(service, args);
             if (response instanceof ListenableFuture) {
                 return (ListenableFuture<?>) response;

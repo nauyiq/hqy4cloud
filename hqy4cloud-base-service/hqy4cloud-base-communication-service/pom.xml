@@ -23,6 +23,12 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-sentinel</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-foundation-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -55,10 +61,15 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>common-communication-service</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -68,7 +79,7 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.CommunicationServiceMain</mainClass>
+                            <mainClass>com.hqy.cloud.communication.CommunicationServiceMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>

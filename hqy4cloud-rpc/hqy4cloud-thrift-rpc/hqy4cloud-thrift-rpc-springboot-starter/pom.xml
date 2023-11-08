@@ -15,7 +15,6 @@
     <artifactId>hqy4cloud-thrift-rpc-springboot-starter</artifactId>
 
     <modules>
-        <module>hqy4cloud-thrift-rpc-nacos-springboot-api-starter</module>
         <module>hqy4cloud-thrift-rpc-nacos-springboot-client-starter</module>
         <module>hqy4cloud-thrift-rpc-nacos-springboot-server-starter</module>
     </modules>

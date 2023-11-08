@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.hqy.elasticsearch.config.ElasticsearchProperties,\
- com.hqy.elasticsearch.config.ElasticsearchConfig,\
- com.hqy.elasticsearch.service.ElasticsearchService

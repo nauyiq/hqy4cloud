@@ -44,7 +44,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     /**
      * Initialization at construction time, assertion not null, and always assign not null value
      */
-    protected volatile RPCModel subscribeContext;
+    protected volatile RPCModel subscribeModel;
 
 
     public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory) {
@@ -91,17 +91,17 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     }
 
     public void subscribe(RPCModel rpcModel) {
-        setSubscribeContext(rpcModel);
+        setSubscribeModel(rpcModel);
         getRegistry().subscribe(rpcModel, this);
     }
 
     public void unSubscribe(RPCModel rpcModel) {
-        setSubscribeContext(null);
+        setSubscribeModel(null);
         getRegistry().unsubscribe(rpcModel, this);
     }
 
-    public RPCModel getSubscribeContext() {
-        return subscribeContext;
+    public RPCModel getSubscribeModel() {
+        return subscribeModel;
     }
 
     @Override
@@ -121,7 +121,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
 
         // unsubscribe.
-        RPCModel subscribeContext = getSubscribeContext();
+        RPCModel subscribeContext = getSubscribeModel();
         try {
             if (subscribeContext != null && registry != null && registry.isAvailable()) {
                 registry.unsubscribe(subscribeContext, this);
@@ -165,8 +165,8 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         this.routerFactories = routerFactories;
     }
 
-    public void setSubscribeContext(RPCModel subscribeContext) {
-        this.subscribeContext = subscribeContext;
+    public void setSubscribeModel(RPCModel subscribeModel) {
+        this.subscribeModel = subscribeModel;
     }
 
     public Registry getRegistry() {

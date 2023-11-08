@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.mapper;
 
 import com.hqy.cloud.auth.entity.SysOauthClient;
-import com.hqy.cloud.tk.PrimaryLessTkMapper;
+import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
 import org.springframework.stereotype.Repository;
 
 /**

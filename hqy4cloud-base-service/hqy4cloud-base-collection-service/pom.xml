@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-mapper-mybatis</artifactId>
+            <artifactId>hqy4cloud-common-datasource-tk-mapper</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -56,12 +56,7 @@
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-mq-rocketmq</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

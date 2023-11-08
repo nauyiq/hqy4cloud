@@ -51,12 +51,13 @@ public interface StringRedis extends RedisTemplateCommonOperations {
      */
     void hSet(String key, String hashKey, Object value, long time, TimeUnit timeUnit);
 
+
     /**
      * 设置多个hash值
      * @param key   redis key
      * @param data  data
      */
-    void hmSet(String key, Map<String, Object> data);
+    void hmSet(String key, Map<String, String> data);
 
     /**
      * 获取hash结构的value

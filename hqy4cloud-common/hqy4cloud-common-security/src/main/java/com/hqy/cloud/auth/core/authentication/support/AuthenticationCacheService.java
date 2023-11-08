@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth.core.authentication.support;
 
-import com.hqy.account.service.RemoteAuthService;
-import com.hqy.account.struct.AuthenticationStruct;
-import com.hqy.account.struct.ResourceStruct;
+import com.hqy.cloud.account.service.RemoteAuthService;
+import com.hqy.cloud.account.struct.AuthenticationStruct;
+import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.auth.base.dto.ResourceConfigDTO;
 import com.hqy.cloud.auth.base.dto.RoleAuthenticationDTO;
 import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;

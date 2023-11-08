@@ -1,6 +1,6 @@
 package com.hqy.cloud.coll.entity;
 
-import com.hqy.cloud.tk.model.BaseEntity;
+import com.hqy.cloud.db.tk.model.BaseEntity;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;

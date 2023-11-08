@@ -14,8 +14,8 @@
     <artifactId>hqy4cloud-netty-socketio-springboot-starter</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -35,6 +35,13 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-netty-socketio-core</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- socket.io client -->
+        <dependency>
+            <groupId>io.socket</groupId>
+            <artifactId>socket.io-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
     </dependencies>

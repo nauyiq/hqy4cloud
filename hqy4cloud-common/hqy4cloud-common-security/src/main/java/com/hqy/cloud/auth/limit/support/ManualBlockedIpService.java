@@ -2,6 +2,7 @@ package com.hqy.cloud.auth.limit.support;
 
 import com.hqy.cloud.auth.limit.DefaultRedisBlockedAdaptor;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
+import org.redisson.api.RedissonClient;
 
 /**
  * RedisManualBlockedIpService
@@ -14,7 +15,7 @@ public class ManualBlockedIpService extends DefaultRedisBlockedAdaptor {
 
     public static String NAME = " ManualBlock";
 
-    public ManualBlockedIpService(boolean startScheduled) {
-        super(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY, startScheduled);
+    public ManualBlockedIpService(RedissonClient redissonClient) {
+        super(ProjectContextInfo.MANUAL_BLOCKED_IP_KEY, redissonClient);
     }
 }

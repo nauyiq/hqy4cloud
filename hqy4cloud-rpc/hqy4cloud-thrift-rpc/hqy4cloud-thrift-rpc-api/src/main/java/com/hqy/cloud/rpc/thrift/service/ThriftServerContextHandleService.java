@@ -48,4 +48,14 @@ public interface ThriftServerContextHandleService {
      */
     default void doDone(ThriftServerContext thriftServerContext, String methodName) {}
 
+    /**
+     * 是否抛出异常
+     * @return result
+     */
+    default boolean isThrowException() { return false; }
+
+
+    default void doPreInvokeMethod(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
+
+    }
 }

@@ -1,9 +1,9 @@
 package com.hqy.cloud.auth.service;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.account.service.RemoteAuthService;
-import com.hqy.account.struct.AuthenticationStruct;
-import com.hqy.account.struct.ResourceStruct;
+import com.hqy.cloud.account.service.RemoteAuthService;
+import com.hqy.cloud.account.struct.AuthenticationStruct;
+import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.auth.base.dto.AuthenticationDTO;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.entity.Role;
@@ -58,7 +58,7 @@ public class RemoteAuthServiceImpl extends AbstractRPCService implements RemoteA
 
     @Override
     public List<String> getPermissionsByRoles(List<String> roles) {
-        return authOperationService.getManuPermissionsByRoles(roles);
+        return authOperationService.getMenuPermissionsByRoles(roles);
     }
 
 

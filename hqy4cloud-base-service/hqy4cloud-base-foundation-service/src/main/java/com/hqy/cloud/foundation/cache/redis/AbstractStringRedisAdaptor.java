@@ -32,6 +32,10 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
         this.redisTemplate = redisTemplate;
     }
 
+    public StringRedisTemplate getStringTemplate() {
+        return redisTemplate;
+    }
+
     @Override
     public String get(String key) {
         try {
@@ -122,13 +126,9 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
     }
 
     @Override
-    public void hmSet(String key, Map<String, Object> data) {
+    public void hmSet(String key, Map<String, String> data) {
         try {
-            Map<String, String> stringStringMap = data.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                Object value = e.getValue();
-                return value instanceof String ? (String) value : JsonUtil.toJson(value);
-            }));
-            redisTemplate.opsForHash().putAll(key, stringStringMap);
+            redisTemplate.opsForHash().putAll(key, data);
         } catch (Exception e) {
             log.error("Failed execute to redis [hmSet]. RedisKey: {}.", key, e);
         }
@@ -153,7 +153,7 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
             if (CollectionUtils.isEmpty(objects)) {
                 return Collections.emptyList();
             }
-            return objects.parallelStream().map(Objects::toString).collect(Collectors.toList());
+            return objects.stream().map(Objects::toString).collect(Collectors.toList());
         } catch (Throwable cause) {
             log.error("Failed execute to redis [hmGet]. RedisKey: {}.", key, cause);
             return Collections.emptyList();
@@ -167,7 +167,7 @@ public abstract class AbstractStringRedisAdaptor extends DefaultRedisOperations 
             if (CollectionUtils.isEmpty(objects)) {
                 return Collections.emptyList();
             }
-            return objects.parallelStream().map(e -> {
+            return objects.stream().map(e -> {
                 String json = e.toString();
                 return JsonUtil.toBean(json, clazz);
             }).collect(Collectors.toList());

@@ -16,11 +16,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-core</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-rpc-thrift-monitor</artifactId>
             <version>${project.parent.version}</version>

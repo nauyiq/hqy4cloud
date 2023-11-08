@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth.base.vo;
 
 import cn.hutool.core.date.DateUtil;
-import com.hqy.account.dto.AccountInfoDTO;
-import com.hqy.cloud.auth.utils.AvatarHostUtil;
+import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;

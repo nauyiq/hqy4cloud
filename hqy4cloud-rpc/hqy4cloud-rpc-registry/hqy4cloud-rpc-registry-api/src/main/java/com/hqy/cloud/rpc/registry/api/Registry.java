@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.registry.api;
 
+import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.service.RPCModelService;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.registry.RegistryService;
@@ -17,10 +18,22 @@ import static com.hqy.cloud.rpc.CommonConstants.REGISTRY_DELAY_NOTIFICATION_KEY;
 public interface Registry extends RegistryService, RPCModelService {
 
     /**
+     * return registry name.
+     * @return registry name.
+     */
+    String getName();
+
+    /**
      * 返回当前节点注册到注册中心的名称
      * @return application name.
      */
     String getServiceNameEn();
+
+    /**
+     * 获取当前注册中心信息
+     * @return {@link  RegistryInfo}
+     */
+    RegistryInfo getRegistryInfo();
 
     /**
      * get registry address.
@@ -31,7 +44,6 @@ public interface Registry extends RegistryService, RPCModelService {
         AssertUtil.notNull(rpcModel, "Registry rpcContext is null.");
         return rpcModel.getRegistryAddress();
     }
-
 
     /**
      * 获取延迟通知时间

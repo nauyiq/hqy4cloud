@@ -5,6 +5,7 @@ import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.rpc.service.RPCService;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,6 +38,15 @@ public interface ThriftSocketIoPushService extends RPCService {
     @ThriftMethod
     boolean syncPushMultiple(@ThriftField(1) Set<String> bizIdSet, @ThriftField(2) String eventName, @ThriftField(3) String wsMessageJson);
 
+    /**
+     * 群发消息-同步
+     * 根据不同用法分发不同的消息
+     * @param eventName  事件名
+     * @param messageMap 消息map, key -> bizId, value -> 消息体
+     */
+    @ThriftMethod
+    void syncPushMultiples(@ThriftField(1)String eventName, @ThriftField(2) Map<String, String> messageMap);
+
 
     /**
      * 单发消息-异步
@@ -61,5 +71,13 @@ public interface ThriftSocketIoPushService extends RPCService {
     void asyncPushMultiple(@ThriftField(1) Set<String> bizIdSet, @ThriftField(2) String eventName, @ThriftField(3) String wsMessageJson);
 
 
+    /**
+     * 群发消息-异步
+     * 根据不同用法分发不同的消息
+     * @param eventName  事件名
+     * @param messageMap 消息map, key -> bizId, value -> 消息体
+     */
+    @ThriftMethod(oneway = true)
+    void asyncPushMultiples(@ThriftField(1)String eventName, @ThriftField(2) Map<String, String> messageMap);
 
 }

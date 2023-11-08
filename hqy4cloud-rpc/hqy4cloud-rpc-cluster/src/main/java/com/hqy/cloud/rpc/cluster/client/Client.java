@@ -1,9 +1,11 @@
 package com.hqy.cloud.rpc.cluster.client;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.rpc.CloseableService;
 import com.hqy.cloud.rpc.InvocationCallback;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.ClusterMode;
+import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
 
 /**
  * rpc consumer visual angle.
@@ -11,8 +13,13 @@ import com.hqy.cloud.rpc.cluster.ClusterMode;
  * @version 1.0
  * @date 2022/7/13 15:13
  */
-public interface Client {
+public interface Client extends CloseableService {
 
+    /**
+     * init rpc client.
+     * @param repository ExecutorRepository.
+     */
+    void initialize(ExecutorRepository repository);
 
     /**
      * Get remote invoker.
@@ -70,6 +77,8 @@ public interface Client {
      * @throws RpcException rpc exception.
      */
     <T> T getRemoteService(Class<T> serviceClass, String hashFactor, InvocationCallback invocationCallback, ClusterMode clusterMode) throws RpcException;
+
+
 
 
 }

@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * spring容器加强类
@@ -23,9 +22,8 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    private static ProjectContextInfo contextInfo = new ProjectContextInfo();
+    private volatile static ProjectContextInfo contextInfo;
 
-    private static final AtomicBoolean REGISTRY_PROJECT_CONTEXT = new AtomicBoolean(false);
 
     @Override
     @SneakyThrows
@@ -118,13 +116,9 @@ public class SpringContextHolder implements ApplicationContextAware {
     public static void registerContextInfo(ProjectContextInfo info) {
         if (Objects.nonNull(info)) {
             contextInfo = info;
-            REGISTRY_PROJECT_CONTEXT.compareAndSet(false, true);
         }
     }
 
-    public static boolean isRegistryContextInfo() {
-        return REGISTRY_PROJECT_CONTEXT.get();
-    }
 
 
     /**

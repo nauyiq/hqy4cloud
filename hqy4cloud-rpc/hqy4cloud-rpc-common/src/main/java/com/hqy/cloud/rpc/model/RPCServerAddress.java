@@ -2,6 +2,7 @@ package com.hqy.cloud.rpc.model;
 
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.util.IpUtil;
+import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.NetUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -71,11 +72,7 @@ public class RPCServerAddress implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("port", port)
-                .append("hostAddr", hostAddr)
-                .append("pid", pid)
-                .toString();
+        return JsonUtil.toJson(this);
     }
 
     @Override

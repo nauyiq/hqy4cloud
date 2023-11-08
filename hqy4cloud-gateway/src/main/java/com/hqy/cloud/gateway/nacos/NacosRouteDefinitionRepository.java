@@ -29,11 +29,8 @@ import java.util.concurrent.Executor;
 public class NacosRouteDefinitionRepository implements RouteDefinitionRepository {
 
     private final String gatewayRouteDataId;
-
     private final String gatewayRouteGroup;
-
     private final ApplicationEventPublisher publisher;
-
     private final NacosConfigManager nacosConfigManager;
 
     public NacosRouteDefinitionRepository(String gatewayRouteDataId, String gatewayRouteGroup, ApplicationEventPublisher publisher, NacosConfigProperties nacosConfigProperties) {
@@ -41,7 +38,6 @@ public class NacosRouteDefinitionRepository implements RouteDefinitionRepository
         nacosConfigManager = new NacosConfigManager(nacosConfigProperties);
         this.gatewayRouteDataId = gatewayRouteDataId;
         this.gatewayRouteGroup = gatewayRouteGroup;
-
         addListener();
     }
 
@@ -82,6 +78,7 @@ public class NacosRouteDefinitionRepository implements RouteDefinitionRepository
             nacosConfigManager.getConfigService().addListener(gatewayRouteDataId, gatewayRouteGroup, new Listener() {
                 @Override
                 public Executor getExecutor() {
+                    //use default executor.
                     return null;
                 }
 

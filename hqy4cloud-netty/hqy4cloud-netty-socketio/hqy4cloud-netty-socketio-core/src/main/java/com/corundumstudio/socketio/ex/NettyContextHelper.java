@@ -1,13 +1,11 @@
 package com.corundumstudio.socketio.ex;
 
+import cn.hutool.core.util.StrUtil;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.handler.ClientsBoxEx;
 import com.corundumstudio.socketio.messages.HttpErrorMessage;
-import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.util.JwtUtil;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -78,10 +76,10 @@ public class NettyContextHelper {
      * @param httpResponse httpResponse
      */
     public static void allowCors(HttpResponse httpResponse, String origin) {
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(origin)) {
-            httpResponse.headers().set("access-control-allow-origin", origin);
-        } else {
+        if (StrUtil.isBlank(origin) || origin.equals(StringConstants.NULL)) {
             httpResponse.headers().set("access-control-allow-origin", "*");
+        } else {
+            httpResponse.headers().set("access-control-allow-origin", origin);
         }
         httpResponse.headers().set("Access-Control-Allow-Credentials",true);
         httpResponse.headers().add("Access-Control-Allow-Headers", "*");
@@ -140,13 +138,5 @@ public class NettyContextHelper {
         return "";
     }
 
-
-
-
-    public static void main(String[] args) {
-        SocketProjectContext context = new SocketProjectContext(new SocketProjectContext.App(MicroServiceConstants.MESSAGE_NETTY_SERVICE), "TEST");
-        String sign = JwtUtil.sign(context, NumberConstants.ONE_MINUTES_4MILLISECONDS * 60);
-        System.out.println(sign);
-    }
 
 }

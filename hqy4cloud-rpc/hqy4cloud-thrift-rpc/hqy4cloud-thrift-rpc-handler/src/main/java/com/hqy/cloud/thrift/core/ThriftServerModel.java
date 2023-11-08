@@ -1,12 +1,9 @@
 package com.hqy.cloud.thrift.core;
 
 import com.hqy.cloud.rpc.service.RPCService;
-import com.hqy.cloud.thrift.server.support.SeataGlobalTransactionEventHandler;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerProperties;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,21 +14,16 @@ import java.util.List;
 public class ThriftServerModel {
 
     private final List<RPCService> thriftRpcServices;
-
-    private final List<ThriftServerContextHandleService> serverThriftEventHandlers = new ArrayList<>();
-
     private final ThriftServerProperties thriftServerProperties;
+    private final List<ThriftServerContextHandleService> thriftServerContextHandleServices;
 
-    public ThriftServerModel(List<RPCService> thriftRpcServices, List<ThriftServerContextHandleService> serverThriftEventHandlers, ThriftServerProperties thriftServerProperties) {
+    public ThriftServerModel(List<RPCService> thriftRpcServices, List<ThriftServerContextHandleService> thriftServerContextHandleServices, ThriftServerProperties thriftServerProperties) {
         this.thriftRpcServices = thriftRpcServices;
         this.thriftServerProperties = thriftServerProperties;
-        this.serverThriftEventHandlers.add(new SeataGlobalTransactionEventHandler());
-        if (CollectionUtils.isNotEmpty(serverThriftEventHandlers)) {
-            this.serverThriftEventHandlers.addAll(serverThriftEventHandlers);
-        }
+        this.thriftServerContextHandleServices = thriftServerContextHandleServices;
     }
     public List<ThriftServerContextHandleService> getServerThriftEventHandlers() {
-        return serverThriftEventHandlers;
+        return thriftServerContextHandleServices;
     }
 
     public List<RPCService> getThriftRpcServices() {

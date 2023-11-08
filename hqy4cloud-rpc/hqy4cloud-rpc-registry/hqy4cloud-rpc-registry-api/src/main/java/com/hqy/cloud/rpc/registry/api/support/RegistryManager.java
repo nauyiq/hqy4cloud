@@ -1,6 +1,8 @@
 package com.hqy.cloud.rpc.registry.api.support;
 
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
 import com.hqy.cloud.rpc.registry.api.Registry;
 import org.slf4j.Logger;
@@ -50,6 +52,11 @@ public class RegistryManager {
 
     private static final Registry DEFAULT_NOP_REGISTRY = new Registry() {
         @Override
+        public String getName() {
+            return StringConstants.DEFAULT;
+        }
+
+        @Override
         public String getServiceNameEn() {
             return null;
         }
@@ -67,6 +74,11 @@ public class RegistryManager {
         @Override
         public void destroy() {
 
+        }
+
+        @Override
+        public RegistryInfo getRegistryInfo() {
+            return null;
         }
 
         @Override

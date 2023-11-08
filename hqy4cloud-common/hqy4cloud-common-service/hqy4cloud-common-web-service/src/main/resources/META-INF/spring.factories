@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hqy.cloud.web.config.UploadFileAutoConfiguration,\
+com.hqy.cloud.web.config.UploadFileProperties,\
+com.hqy.cloud.web.upload.support.UploadAspect,\
+com.hqy.cloud.web.handler.WebMvcGlobalExceptionHandler,\
+com.hqy.cloud.web.filter.xss.XssFilter

@@ -1,3 +1,10 @@
+nacos:
+  username: ${NACOS_USERNAME:nacos}
+  password: ${NACOS_PASSWORD:nacos}
+  group: ${NACOS_GROUP:DEV_GROUP}
+  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
+  server: ${NACOS_SERVER:127.0.0.1:8848}
+
 server:
   port: 8999
 
@@ -6,17 +13,17 @@ spring:
     name: @artifactId@
   cloud:
     nacos:
-      username: @nacos.username@
-      password: @nacos.password@
+      username: ${nacos.username}
+      password: ${nacos.password}
       discovery:
-        server-addr: @nacos.host@:@nacos.port@
-        group: @nacos.group@
-        namespace: @nacos.namespace@
+        server-addr: ${nacos.server}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
       config:
-        server-addr: @nacos.host@:@nacos.port@
-        group: @nacos.group@
-        namespace: @nacos.namespace@
+        server-addr: ${nacos.server}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
   config:
     import:
       - nacos:application-@profiles.active@.yaml
-      - nacos:@artifactId@-@profiles.active@.yaml
+      - nacos:@artifactId@.yaml

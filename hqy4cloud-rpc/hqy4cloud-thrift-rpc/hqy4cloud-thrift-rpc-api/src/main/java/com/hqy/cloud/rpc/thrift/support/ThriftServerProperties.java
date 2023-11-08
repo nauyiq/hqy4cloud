@@ -13,7 +13,7 @@ public class ThriftServerProperties {
     /**
      * connect rpc service port.
      */
-    private int rpcPort = 10001;
+    private int rpcPort;
 
     /**
      * thrift service connect failure for retry time.

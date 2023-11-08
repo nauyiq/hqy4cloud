@@ -82,7 +82,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         this.providerServiceName = providerServiceName;
         this.consumerRpcModel = rpcModel;
         setRouterChain(routerChain);
-        connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("thrift-connectivity-scheduler", true));
+        connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("rpc-connectivity-scheduler", true));
         reconnectTaskTryCount = DEFAULT_RECONNECT_TASK_TRY_COUNT;
         reconnectTaskPeriod = DEFAULT_RECONNECT_TASK_PERIOD;
     }

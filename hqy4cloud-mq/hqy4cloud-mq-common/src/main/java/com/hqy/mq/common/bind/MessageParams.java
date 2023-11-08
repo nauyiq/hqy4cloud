@@ -1,7 +1,7 @@
 package com.hqy.mq.common.bind;
 
 import cn.hutool.core.convert.Convert;
-import com.hqy.cloud.tk.support.Parameters;
+import com.hqy.cloud.common.base.Parameters;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -24,10 +24,15 @@ public class MessageParams extends Parameters {
     public MessageParams() {
     }
 
-    public MessageParams(String target, String key) {
+    private MessageParams(String target, String key) {
         this.target = target;
         this.key = key;
     }
+
+    public static MessageParams of(String target, String key) {
+        return new MessageParams(target, key);
+    }
+
 
     public Integer getInt(String key) {
         return getInt(key, null);

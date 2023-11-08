@@ -1,8 +1,8 @@
 package com.hqy.cloud.util.config;
 
+import cn.hutool.system.SystemUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,9 +16,8 @@ import java.util.Objects;
  * @version 1.0
  * @date 2022/3/4 10:40
  */
+@Slf4j
 public abstract class AbstractConfigStrategy implements AbstractStrategyProcessor {
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractConfigStrategy.class);
 
     /**
      * 配置文件名
@@ -37,11 +36,10 @@ public abstract class AbstractConfigStrategy implements AbstractStrategyProcesso
     }
 
     private void setConfigPath() {
-        //windows系统
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            configPath = "D:/hqy/project/conf";
+        if (SystemUtil.getOsInfo().isWindows()) {
+            configPath = "D:/hongqy/project/conf";
         } else {
-            configPath = "/hqy/project/conf";
+            configPath = "/hongqy/project/conf";
         }
     }
 

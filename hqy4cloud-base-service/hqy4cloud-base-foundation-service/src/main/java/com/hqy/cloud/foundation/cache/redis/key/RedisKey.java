@@ -1,8 +1,9 @@
 package com.hqy.cloud.foundation.cache.redis.key;
 
 
-import cn.hutool.core.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
+
+import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.UNION;
 
 /**
  * @author qiyuan.hong
@@ -30,7 +31,7 @@ public interface RedisKey {
             if (StringUtils.isBlank(prefix)) {
                 return key;
             }
-            return prefix + StrUtil.COLON + key;
+            return prefix + UNION + key;
         } catch (Throwable cause) {
             return key;
         }

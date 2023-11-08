@@ -17,17 +17,15 @@
         <module>hqy4cloud-base-service</module>
         <module>hqy4cloud-rpc</module>
         <module>hqy4cloud-mq</module>
-
-
     </modules>
 
     <properties>
         <!-- project -->
         <revision>1.0.0</revision>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>17</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <source.plugin.version>3.0.1</source.plugin.version>
         <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
@@ -37,11 +35,13 @@
         <springboot.version>2.7.9</springboot.version>
         <springcloud.version>2021.0.5</springcloud.version>
         <spring.authorization.version>0.4.0</spring.authorization.version>
+        <springboot.security.version>2.6.11</springboot.security.version>
 
         <!-- alibaba -->
         <nacos.version>2.0.3</nacos.version>
-        <seata.version>1.4.2</seata.version>
+        <seata.version>1.5.2</seata.version>
         <druid.version>1.1.16</druid.version>
+        <sentinel.version>1.8.5</sentinel.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
         <springboot.druid.version>1.1.10</springboot.druid.version>
         <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>
@@ -51,9 +51,11 @@
         <mysql.version>8.0.27</mysql.version>
         <tk.mybatis.version>2.1.2</tk.mybatis.version>
         <org.redisson.version>3.13.6</org.redisson.version>
-        <elasticsearch.version>7.14.0</elasticsearch.version>
-        <ey.es.version>2.0.0-beta1</ey.es.version>
+        <elasticsearch.version>7.17.3</elasticsearch.version>
+        <jakarta-json.version>2.0.1</jakarta-json.version>
+        <dynamic.ds.version>3.6.0</dynamic.ds.version>
         <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
+        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
         <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
 
         <!-- log -->
@@ -64,23 +66,37 @@
 
         <!-- common -->
         <hutool.version>5.6.3</hutool.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <chatgtp.service.version>0.12.0</chatgtp.service.version>
+        <retrofit2.converter.jackson.version>2.9.0</retrofit2.converter.jackson.version>
+        <auth.jwt.version>2.2.0</auth.jwt.version>
+        <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
         <guava.version>22.0</guava.version>
-        <junit.version>4.12</junit.version>
         <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
+        <jsoup.version>1.13.1</jsoup.version>
+        <qcloud.api.version>5.6.133</qcloud.api.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
+        <caffeine.cache.version>3.1.6</caffeine.cache.version>
         <javassist.version>3.28.0-GA</javassist.version>
         <common.collection4.version>4.4</common.collection4.version>
     </properties>
 
 
     <dependencyManagement>
+        <!-- jdk8及以下jdk包里已经包含javax.annotation 8以上不包含.-->
         <dependencies>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+
             <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -88,16 +104,6 @@
                 <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.elasticsearch.client</groupId>
-                        <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.elasticsearch</groupId>
-                        <artifactId>elasticsearch</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- spring cloud -->
@@ -116,47 +122,6 @@
                 <type>pom</type>
                 <scope>import</scope>
                 <version>${springcloud.alibaba.version}</version>
-                <!--<exclusions>
-                    <exclusion>
-                        <groupId>com.alibaba.nacos</groupId>
-                        <artifactId>nacos-client</artifactId>
-                    </exclusion>
-                </exclusions>-->
-            </dependency>
-
-            <!-- version2以上基于grpc的 spring cloud alibaba client-->
-            <!--<dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>-->
-
-            <dependency>
-                <groupId>cn.easy-es</groupId>
-                <artifactId>easy-es-boot-starter</artifactId>
-                <version>${ey.es.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-spring-boot-starter</artifactId>
-                <version>${seata.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.alibaba</groupId>
-                        <artifactId>druid</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -166,9 +131,15 @@
             </dependency>
 
             <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-core</artifactId>
+                <version>${sentinel.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
-                <version>2.6.11</version>
+                <version>${springboot.security.version}</version>
             </dependency>
 
             <dependency>
@@ -184,12 +155,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>2.2.2.RELEASE</version>
-            </dependency>
-
-            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
@@ -202,13 +167,6 @@
                 <version>${druid.version}</version>
             </dependency>
 
-            <!-- rocket mq -->
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot-starter</artifactId>
-                <version>${apache.rocketmq.version}</version>
-            </dependency>
-
             <!-- springboot-druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -216,11 +174,58 @@
                 <version>${springboot.druid.version}</version>
             </dependency>
 
+            <!-- elastic -->
+            <dependency>
+                <groupId>jakarta.json</groupId>
+                <artifactId>jakarta.json-api</artifactId>
+                <version>${jakarta-json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.theokanning.openai-gpt3-java</groupId>
+                <artifactId>service</artifactId>
+                <version>${chatgtp.service.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-jackson</artifactId>
+                <version>${retrofit2.converter.jackson.version}</version>
+            </dependency>
+
+            <!-- rocket mq -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${apache.rocketmq.version}</version>
+            </dependency>
+
             <!-- hibernate-validator -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.2.4.Final</version>
+                <version>${hibernate.validator.version}</version>
             </dependency>
 
             <!-- mybatis整合springboot -->
@@ -228,6 +233,18 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+                <version>${sharding.jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic.ds.version}</version>
             </dependency>
 
             <dependency>
@@ -243,11 +260,72 @@
                 <version>${tk.mybatis.version}</version>
             </dependency>
 
+            <!-- tx oss api -->
+            <dependency>
+                <groupId>com.qcloud</groupId>
+                <artifactId>cos_api</artifactId>
+                <version>${qcloud.api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pinyin4j.version}</version>
+            </dependency>
+
             <!--糊涂工具包-->
             <dependency>
                 <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
+                <artifactId>hutool-core</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-cache</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-captcha</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-http</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-system</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${auth.jwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
             </dependency>
 
             <!-- facebook.thrift -->
@@ -290,20 +368,6 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <!-- elasticsearch client -->
-            <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-
-            <!-- elasticsearch -->
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-
             <!-- Quartz -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -337,9 +401,15 @@
                 <version>${logstash.logback.encoder.version}</version>
             </dependency>
 
+            <!-- 咖啡缓存 -->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.cache.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
-
 
 
     <dependencies>
@@ -385,6 +455,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
@@ -426,12 +501,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <profiles>
@@ -440,12 +509,6 @@
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>dev</profiles.active>
-                <nacos.host>hongqy1024.cn</nacos.host>
-                <nacos.port>8848</nacos.port>
-                <nacos.username>nacos</nacos.username>
-                <nacos.password>hongqy@2021</nacos.password>
-                <nacos.group>DEV_GROUP</nacos.group>
-                <nacos.namespace>9cd8de3b-030a-49f1-9256-f04de35cdb9e</nacos.namespace>
             </properties>
             <activation>
                 <!-- 默认环境 -->
@@ -456,13 +519,7 @@
             <id>test</id>
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
-                <nacos.host>nacos-cloud.hongqy1024.cn</nacos.host>
-                <nacos.port>8848</nacos.port>
                 <profiles.active>test</profiles.active>
-                <nacos.username>nacos</nacos.username>
-                <nacos.password>hongqy@2021</nacos.password>
-                <nacos.group>TEST_GROUP</nacos.group>
-                <nacos.namespace>e3f4bf0e-5118-4e06-90de-087cb676b98c</nacos.namespace>
             </properties>
         </profile>
         <profile>
@@ -470,12 +527,8 @@
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>prod</profiles.active>
-                <nacos.username>nacos</nacos.username>
-                <nacos.password>nacos</nacos.password>
             </properties>
             <activation>
-                <!-- 默认环境 -->
-                <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
     </profiles>
@@ -485,20 +538,6 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-               <!-- <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.lua</include>
-                    <include>*.properties</include>
-                    <include>**/*.properties</include>
-                    <include>*.yml</include>
-                    <include>*.yaml</include>
-                    <include>*.key</include>
-                    <include>**/*.factories</include>
-                    <include>**/*.css</include>
-                    <include>**/*.html</include>
-                    <include>**/*.ftl</include>
-                    <include>*.jks</include>
-                </includes>-->
             </resource>
         </resources>
 
@@ -541,6 +580,7 @@
                 <version>${source.plugin.version}</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <useDefaultDelimiters>true</useDefaultDelimiters>
                 </configuration>
             </plugin>
 

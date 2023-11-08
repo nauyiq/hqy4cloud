@@ -4,11 +4,16 @@ import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.lang.UUID;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * FileUtil.
@@ -54,6 +59,7 @@ public class FileUtil {
         }
     }
 
+
     /**
      * 生成uuid类型的文件名
      * @param fileName  file name.
@@ -76,6 +82,25 @@ public class FileUtil {
         }
         try {
             cn.hutool.core.io.FileUtil.writeBytes(file.getBytes(), fileName);
+        } catch (IOException e) {
+            log.error("Write file error, cause: " + e.getMessage());
+            throw new UploadFileException(e);
+        }
+
+    }
+
+    @SneakyThrows
+    public static void writeToFile(final InputStream inputStream, final String fileName) throws UploadFileException {
+        int index = fileName.lastIndexOf(StringConstants.Symbol.POINT);
+        if (index != -1) {
+            String prefixFileName = fileName.substring(index);
+            if (prefixFileName.trim().equals(StringConstants.Symbol.POINT)) {
+                throw new UploadFileException("File suffix should not be '.' .");
+            }
+        }
+        try {
+            TimeUnit.SECONDS.sleep(5);
+            FileCopyUtils.copy(inputStream, new FileOutputStream(fileName));
         } catch (IOException e) {
             log.error("Write file error, cause: " + e.getMessage());
             throw new UploadFileException(e);

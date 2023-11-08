@@ -1,9 +1,8 @@
 package com.hqy.cloud.auth.entity;
 
-import com.hqy.cloud.tk.model.BaseEntity;
+import com.hqy.cloud.db.tk.model.BaseEntity;
 import com.hqy.cloud.util.ValidationUtil;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Table;
 import java.util.Date;
@@ -52,7 +51,7 @@ public class Account extends BaseEntity<Long> {
     /**
      * 状态
      */
-    private Boolean status = true;
+    private Boolean status;
 
     /**
      * 是否删除

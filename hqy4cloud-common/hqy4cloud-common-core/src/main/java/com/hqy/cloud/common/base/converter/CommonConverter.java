@@ -2,6 +2,7 @@ package com.hqy.cloud.common.base.converter;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.mapstruct.Named;
@@ -32,13 +33,43 @@ public class CommonConverter {
         return status.toString();
     }
 
+    @Named("longToString")
+    public static String longToString(Long value) {
+        return value.toString();
+    }
+
     @Named("dateConvertString")
-    public static String dateConvertString(Date date) {return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");}
+    public static String dateConvertString(Date date) {
+        if (date == null) {
+            return StringConstants.EMPTY;
+        }
+        return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    @Named("dateConvertBirthday")
+    public static String dateConvertBirthday(Date date) {
+        if (date == null) {
+            return StringConstants.EMPTY;
+        }
+        return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm");
+    }
+
+    @Named("dateConvertLong")
+    public static Long dateConvertLong(Date date) {return date.getTime();}
 
     @Named("StringConvertDate")
-    public static Date StringConvertDate(String date) {
+    public static Date stringConvertDate(String date) {
         try {
             return DateUtils.parseDate(date, "yyyy-MM-dd HH:mm:ss");
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    @Named("stringBirthday")
+    public static Date stringBirthday(String date) {
+        try {
+            return DateUtils.parseDate(date, "yyyy-MM-dd HH:mm");
         } catch (ParseException e) {
             return null;
         }

@@ -51,7 +51,7 @@ public class ThriftServiceStatsHandler extends ThriftEventHandler {
     }
 
     @Override
-    public Object getContext(String methodName, RequestContext requestContext) {
+    public Object getContext(String simpleMethodName, String methodName, String serviceName, RequestContext requestContext) {
         stats.putIfAbsent(methodName, new ThriftMethodStats());
         return new PerCallMethodStats(requestContext);
     }

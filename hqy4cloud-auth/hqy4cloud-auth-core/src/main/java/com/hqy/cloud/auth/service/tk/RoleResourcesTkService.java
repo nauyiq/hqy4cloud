@@ -1,9 +1,8 @@
 package com.hqy.cloud.auth.service.tk;
 
-import com.hqy.cloud.auth.base.dto.AuthenticationDTO;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.entity.RoleResources;
-import com.hqy.cloud.tk.PrimaryLessTkService;
+import com.hqy.cloud.db.tk.PrimaryLessTkService;
 
 import java.util.List;
 import java.util.Map;

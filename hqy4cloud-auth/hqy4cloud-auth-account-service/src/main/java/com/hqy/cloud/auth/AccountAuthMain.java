@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth;
 
-import com.hqy.account.service.RemoteAccountProfileService;
-import com.hqy.account.service.RemoteAccountService;
-import com.hqy.account.service.RemoteAuthService;
+import com.hqy.cloud.account.service.RemoteAccountProfileService;
+import com.hqy.cloud.account.service.RemoteAccountService;
+import com.hqy.cloud.account.service.RemoteAuthService;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerLauncher;
 import com.hqy.cloud.util.spring.ProjectContextInfo;

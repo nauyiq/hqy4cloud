@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.service.tk;
 
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.entity.Menu;
-import com.hqy.cloud.tk.BaseTkService;
+import com.hqy.cloud.db.tk.BaseTkService;
 
 import java.util.List;
 

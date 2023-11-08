@@ -1,6 +1,9 @@
 package com.hqy.cloud.rpc;
 
+import com.hqy.cloud.rpc.fallback.Fallback;
+
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Invocation.
@@ -34,18 +37,15 @@ public interface Invocation {
      */
     Invoker<?> getInvoker();
 
-
     /**
      * get the rpc service method parameter types.
      * @return parameter types.
-     * @serial
      */
     Class<?>[] getParameterTypes();
 
     /**
      * get arguments.
      * @return arguments.
-     * @serial
      */
     Object[] getArguments();
 
@@ -61,5 +61,23 @@ public interface Invocation {
      */
     InvocationCallback getInvocationCallback();
 
+    /**
+     * add attachments.
+     * @param attachment attachments
+     */
+    void addObjectAttachmentsIfAbsent(Map<String, Object> attachment);
+
+    /**
+     * get rpc obj attachments.
+     * @return attachments
+     */
+    Map<String, Object> getObjectAttachments();
+
+    /**
+     * get this invocation fallback.
+     * @param exType exception type
+     * @return       {@link Fallback}
+     */
+    Fallback getFallback(Class<? extends Throwable> exType);
 
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * FileValidateContext.
@@ -15,18 +16,17 @@ import java.util.List;
  */
 public class FileValidateContext {
 
-    public static final List<String> NO_SUPPORT_FILE_TYPES
-            = Arrays.asList(".jsp", ".html", ".htm", ".xhtml", ".js", ".php", ".sh", ".svg", ".jspx");
+    public static final List<String> NO_SUPPORT_FILE_TYPES = new CopyOnWriteArrayList<>(
+            Arrays.asList(".jsp", ".html", ".htm", ".xhtml", ".js", ".php", ".sh", ".svg", ".jspx"));
 
-    public static final List<String> SUPPORT_IMAGE_FILE_TYPES
-            = Arrays.asList(".jpg", ".jpeg", ".git", ".bmp", ".png", ".emoji");
+    public static final List<String> SUPPORT_IMAGE_FILE_TYPES = new CopyOnWriteArrayList<>(
+            Arrays.asList(".jpg", ".jpeg", ".git", ".bmp", ".png", ".emoji", ".webp"));
 
-    public static final List<String> SUPPORT_MEDIA_FILE_TYPES
-            = Arrays.asList(".mp3", ".mp4");
+    public static final List<String> SUPPORT_MEDIA_FILE_TYPES = new CopyOnWriteArrayList<>(
+            Arrays.asList(".mp3", ".mp4"));
 
-    public static final List<String> SUPPORT_COMMON_FILE_TYPES
-            = Arrays.asList(".zip", ".doc", ".docx", ".xls", "xlsx", ".pdf", ".mp3", ".mp4", ".pdf");
-
+    public static final List<String> SUPPORT_COMMON_FILE_TYPES = new CopyOnWriteArrayList<>(
+            Arrays.asList(".zip", ".doc", ".docx", ".xls", "xlsx", ".pdf", ".mp3", ".mp4", ".pdf"));
 
     public static boolean isSupportedFileType(String fileType) {
         if (StringUtils.isBlank(fileType)) {

@@ -1,6 +1,7 @@
 package com.hqy.cloud.rpc;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.service.RPCModelService;
 import com.hqy.cloud.rpc.model.RPCModel;
 
@@ -22,14 +23,16 @@ public interface Invoker<T> extends RPCModelService {
      * reflect method invoke.
      * @param invocation    non-null for {@link Invocation}
      * @return result       method
-     * @throws RpcException
+     * @throws RpcException e
      */
     Object invoke(Invocation invocation) throws RpcException;
+
 
     /**
      * get client consumer rpc model.
      * @return {@link RPCModel}
      */
     RPCModel getConsumerModel();
+
 
 }
