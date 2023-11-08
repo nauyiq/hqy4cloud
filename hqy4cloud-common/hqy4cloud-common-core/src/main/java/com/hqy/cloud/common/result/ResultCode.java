@@ -60,7 +60,6 @@ public enum ResultCode implements Result {
      */
     SENTINEL_LIMITED_AUTHORITY(9006, "The request access authority Limit by monitor."),
 
-
     /**
      * 新增数据异常
      */

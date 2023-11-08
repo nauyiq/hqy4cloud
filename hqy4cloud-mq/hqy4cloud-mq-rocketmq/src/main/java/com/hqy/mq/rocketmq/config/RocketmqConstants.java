@@ -14,7 +14,7 @@ public interface RocketmqConstants {
     /**
      * 默认发送消息超时时间
      */
-    public static final long TIMEOUT = 3000;
+    long TIMEOUT = 3000;
 
 
 

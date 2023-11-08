@@ -1,46 +1,55 @@
+nacos:
+  username: ${NACOS_USERNAME:nacos}
+  password: ${NACOS_PASSWORD:nacos}
+  group: ${NACOS_GROUP:DEV_GROUP}
+  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
+  server: ${NACOS_SERVER:127.0.0.1:8848}
+
 server:
   port: 9527
 
 spring:
   application:
     name: @artifactId@
+  config:
+    import:
+      # 环境变量通用配置文件
+      - nacos:application-@profiles.active@.yaml
+      # 当前服务主要配置文件
+      - nacos:@artifactId@.yaml
   cloud:
     nacos:
-      username: @nacos.username@
-      password: @nacos.password@
+      username: ${nacos.username}
+      password: ${nacos.password}
       discovery:
-        server-addr: @nacos.host@:@nacos.port@
-        group: @nacos.group@
-        namespace: @nacos.namespace@
+        server-addr: ${nacos.server}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
       config:
-        server-addr: @nacos.host@:@nacos.port@
-        group: @nacos.group@
-        namespace: @nacos.namespace@
+        server-addr: ${nacos.server}
+        group: ${nacos.group}
+        namespace: ${nacos.namespace}
+
     sentinel:
       enabled: true # 启用sentinel
       eager: true  # 取消懒加载
       transport: # sentinel控制台
-        dashboard: @sentinel.connection@ #sentinel控制台访问路径
-        port: @sentinel.port@ # sentinel控制台和服务端的交互端口 默认8719
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8080} #sentinel控制台访问路径
+        port: ${SENTINEL_PORT:8719} # sentinel控制台和服务端的交互端口 默认8719
       datasource: # sentinel加载nacos远程配置规则
         gw-flow:
           nacos:
-            serverAddr: @nacos.host@:@nacos.port@
-            namespace: @nacos.namespace@
-            groupId: @nacos.group@
+            serverAddr: ${nacos.server}
+            namespace: ${nacos.namespace}
+            groupId: ${nacos.group}
             dataId: @artifactId@-gw-flow
             data-type: json
             ruleType: gw-flow
         gw-api-flow:
           nacos:
-            serverAddr: @nacos.host@:@nacos.port@
-            namespace: @nacos.namespace@
-            groupId: @nacos.group@
+            serverAddr: ${nacos.server}
+            namespace: ${nacos.namespace}
+            groupId: ${nacos.group}
             dataId: @artifactId@-gw-api-flow
             data-type: json
             ruleType: gw-api-group
-
-  config:
-    import:
-      - nacos:application-@profiles.active@.yaml
-      - nacos:@artifactId@-@profiles.active@.yaml

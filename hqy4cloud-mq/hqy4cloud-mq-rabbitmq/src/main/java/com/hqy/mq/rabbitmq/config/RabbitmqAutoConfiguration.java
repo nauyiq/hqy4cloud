@@ -40,16 +40,13 @@ public class RabbitmqAutoConfiguration {
             log.info("ConfirmCallback: ack = {}", b);
             log.info("ConfirmCallback: cause = {}", s);
         });
-
-        //消息退回机制 只要消息投递到exchange失败 就会执行次回调
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            log.info("ReturnCallback: message = {}", message);
-            log.info("ReturnCallback: replyCode = {}", replyCode);
-            log.info("ReturnCallback: replyText = {}", replyText);
-            log.info("ReturnCallback: exchange = {}", exchange);
-            log.info("ReturnCallback: routingKey = {}", routingKey);
+        rabbitTemplate.setReturnsCallback(returned -> {
+            log.info("ReturnCallback: message = {}", returned.getMessage());
+            log.info("ReturnCallback: replyCode = {}", returned.getReplyCode());
+            log.info("ReturnCallback: replyText = {}", returned.getReplyText());
+            log.info("ReturnCallback: exchange = {}", returned.getExchange());
+            log.info("ReturnCallback: routingKey = {}", returned.getRoutingKey());
         });
-
         return rabbitTemplate;
     }
 

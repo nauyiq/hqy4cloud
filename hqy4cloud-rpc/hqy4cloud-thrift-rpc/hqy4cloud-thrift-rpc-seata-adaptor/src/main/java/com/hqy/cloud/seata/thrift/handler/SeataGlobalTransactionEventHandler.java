@@ -36,6 +36,7 @@ public class SeataGlobalTransactionEventHandler implements ThriftServerContextHa
             }
             return;
         }
+        //获取RPC调用传递过来的xid
         String rpcXid = requestPram.getParameter(CommonConstants.SEATA_XID);
         if (StringUtils.isBlank(rpcXid)) {
             if (log.isDebugEnabled()) {
@@ -43,6 +44,7 @@ public class SeataGlobalTransactionEventHandler implements ThriftServerContextHa
             }
             return;
         }
+        //获取当前事务的xid
         String xid = RootContext.getXID();
         if (StringUtils.isBlank(xid)) {
             RootContext.bind(rpcXid);

@@ -40,7 +40,8 @@ public class NacosSentinelDataSourceInitFunc implements InitFunc {
         properties.setProperty("serverAddr", nacosServerInfo.getServerAddr());
         properties.setProperty("namespace", nacosServerInfo.getNamespace());
         ReadableDataSource<String, List<FlowRule>> flowRuleDatasource = new NacosDataSource<>(properties,
-                nacosServerInfo.getGroup(), dataId, source -> JSON.parseObject(source, new TypeReference<List<FlowRule>>(){}));
+                nacosServerInfo.getGroup(), dataId, source -> JSON.parseObject(source, new TypeReference<>() {
+        }));
         FlowRuleManager.register2Property(flowRuleDatasource.getProperty());
     }
 }

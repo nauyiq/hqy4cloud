@@ -1,0 +1,18 @@
+version: "3.0"
+services:
+  gateway:
+    image: registry.cn-shenzhen.aliyuncs.com/hqy4cloud/hqy4cloud-gateway:1.0.0
+    container_name: gateway
+    restart: always
+    privileged: true
+    ports:
+      - 9527:9527
+    environment:
+      JVM_XMS: 512m
+      JVM_XMX: 512m
+      JVM_XMN: 256m
+      JAVA_OPT_EXT: "-DNACOS_PASSWORD=nacos. -DNACOS_SERVER=172.0.0.1:8848"
+    volumes:
+      - /hongqy/docker/hqy4cloud/hqy4cloud-gateway/logs:/hqy4cloud/hqy4cloud-gateway/logs
+
+
