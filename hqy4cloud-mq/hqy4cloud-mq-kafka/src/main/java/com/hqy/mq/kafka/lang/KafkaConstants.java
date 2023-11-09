@@ -7,19 +7,12 @@ package com.hqy.mq.kafka.lang;
  */
 public interface KafkaConstants {
 
-    /**
-     * kafka partition key.
-     */
     String PARTITION_KEY = "kafkaPartition";
-
-    /**
-     * kafka timestamp key.
-     */
     String TIMESTAMP_KEY = "kafkaTimestamp";
 
+    String DEFAULT_CANAL_KAFKA_TOPIC = "canal-topic";
     String DEV_CANAL_KAFKA_TOPIC = "dev-canal-topic";
     String TEST_CANAL_KAFKA_TOPIC = "test-canal-topic";
-
 
 
 
