@@ -68,8 +68,10 @@ public class NacosThriftServerStarterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(ThriftServerModel.class)
-    public NacosThriftRPCServer thriftServer(ThriftServerModel thriftServerModel) {
-        return new NacosThriftRPCServer(port, thriftServerModel);
+    public NacosThriftRPCServer thriftServer(ThriftServerModel thriftServerModel, NacosDiscoveryProperties properties) {
+        // 获取注册到nacos的IP
+        String ip = properties.getIp();
+        return new NacosThriftRPCServer(ip, port, thriftServerModel);
     }
 
     @Bean

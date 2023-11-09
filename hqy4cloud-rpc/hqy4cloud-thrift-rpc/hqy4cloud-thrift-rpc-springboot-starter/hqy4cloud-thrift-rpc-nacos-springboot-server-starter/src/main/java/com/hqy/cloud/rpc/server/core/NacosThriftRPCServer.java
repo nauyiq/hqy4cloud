@@ -23,6 +23,7 @@ import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.NetUtils;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.slf4j.Logger;
@@ -54,17 +55,17 @@ public class NacosThriftRPCServer extends AbstractRPCServer {
     private final ThriftServerModel thriftServerModel;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    public NacosThriftRPCServer(int port, ThriftServerModel thriftServerModel) {
+    public NacosThriftRPCServer(String ip, int port, ThriftServerModel thriftServerModel) {
         super(thriftServerModel.getThriftRpcServices());
         AssertUtil.notNull(thriftServerModel, "ThriftServerModel should not be null.");
         this.port = port;
         this.thriftServerModel = thriftServerModel;
-        this.serverAddress = initRpcServerAddr(thriftServerModel.getThriftServerProperties());
+        this.serverAddress = initRpcServerAddr(ip, thriftServerModel.getThriftServerProperties());
     }
 
-    private RPCServerAddress initRpcServerAddr(ThriftServerProperties thriftServerProperties) {
+    private RPCServerAddress initRpcServerAddr(String ip, ThriftServerProperties thriftServerProperties) {
         int pid = NetUtils.getProgramId();
-        String host = IpUtil.getHostAddress();
+        String host = StringUtils.isBlank(ip) ? IpUtil.getHostAddress() : ip;
         checkCreateThriftServerCondition(thriftServerProperties);
         log.info("Create ThriftServer begin, host {} | begin binding port {} | pid {}.", host, thriftServerProperties.getRpcPort(), pid);
         return new RPCServerAddress(thriftServerProperties.getRpcPort(), host, pid);

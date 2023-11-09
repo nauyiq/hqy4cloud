@@ -61,7 +61,7 @@ public class NacosThriftClientStarterAutoConfiguration {
         // 构建注册中心Info
         RegistryInfo registryInfo = RegistryUtil.buildRegistryInfo(properties.getServerAddr(), NAME);
         // 构建消费者RPC地址数据
-        RPCServerAddress consumerRpcServer = RPCServerAddress.createConsumerRpcServer();
+        RPCServerAddress consumerRpcServer = RPCServerAddress.createConsumerRpcServer(properties.getIp());
         // 构建rpc model.
         RPCModel rpcModel = NacosRPCModelUtil.buildRPCModel(properties.getService(), port, properties.getGroup(),
                 registryInfo, consumerRpcServer, getAttachment());
@@ -76,8 +76,7 @@ public class NacosThriftClientStarterAutoConfiguration {
         if (rpcModel == null) {
             throw new IllegalArgumentException();
         }
-        // 构建消费者RPC地址数据
-        RPCServerAddress consumerRpcServer = RPCServerAddress.createConsumerRpcServer();
+        RPCServerAddress consumerRpcServer = rpcModel.getServerAddress();
         // 构建nacos metadata 暂时采用默认配置.
         Metadata metadata = NacosRPCModelUtil.buildMetadata(CommonConstants.DEFAULT_WEIGHT, CommonConstants.DEFAULT_HASH_FACTOR,
                 ActuatorNode.CONSUMER, consumerRpcServer, environment, rpcModel.getParameters());

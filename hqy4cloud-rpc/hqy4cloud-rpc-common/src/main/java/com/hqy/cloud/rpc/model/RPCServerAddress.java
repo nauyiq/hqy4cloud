@@ -4,6 +4,7 @@ import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.NetUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
@@ -34,6 +35,10 @@ public class RPCServerAddress implements Serializable {
 
     public static RPCServerAddress createConsumerRpcServer() {
         return new RPCServerAddress(IpUtil.getHostAddress(), NetUtils.getProgramId());
+    }
+
+    public static RPCServerAddress createConsumerRpcServer(String ip) {
+        return StringUtils.isBlank(ip) ?  createConsumerRpcServer() : new RPCServerAddress(ip, NetUtils.getProgramId());
     }
 
     public RPCServerAddress() {
