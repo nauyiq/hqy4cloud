@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 export CUSTOM_SEARCH_NAMES="application,custom"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 
@@ -43,7 +42,7 @@ JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
 # 每次GC最大的停顿毫秒数
 JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=400"
 
-# gc日志打印 jdk17: -Xloggc is deprecated.
+# gc日志打印
 JAVA_OPT="${JAVA_OPT} -Xlog:gc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log:time,level"
 #JAVA_OPT="${JAVA_OPT} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCApplicationConcurrentTime -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 

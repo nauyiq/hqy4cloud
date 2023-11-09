@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 export CUSTOM_SEARCH_NAMES="application,custom"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 
@@ -55,7 +54,7 @@ JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 JAVA_OPT="${JAVA_OPT} -Dfile.encoding=UTF-8"
 #JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 
-#JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/target/logback.xml"
+#JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/target/logback.xml.bak"
 #JAVA_OPT="${JAVA_OPT} --logging.file.path=${BASE_DIR}/logs/"
 
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/${JAVA_JAR}"
