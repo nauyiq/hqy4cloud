@@ -1,5 +1,7 @@
 package com.hqy.foundation.limit.service;
 
+import com.hqy.foundation.limit.BlockDTO;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -10,8 +12,6 @@ import java.util.Set;
  */
 public interface BlockedIpService {
 
-    long DELAY = 15;
-    long PERIOD = 60;
 
     /**
      * ip 添加到黑名单
@@ -42,6 +42,12 @@ public interface BlockedIpService {
      * @return 黑名单集合
      */
     Map<String, Long> getAllBlockIp();
+
+    /**
+     * 获取所有的黑名单集合
+     * @return 黑名单集合
+     */
+    Map<String, BlockDTO> getAllBlocked();
 
     /**
      * 是否是黑名单的阻塞ip

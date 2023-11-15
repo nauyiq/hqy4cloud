@@ -25,7 +25,6 @@ public class RedisResourceSlidingWindowsLimiter extends AbstractLimiter {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean isOverLimit(String resource) {
         //流量限制规则
         FlowLimitConfig config = getConfig();

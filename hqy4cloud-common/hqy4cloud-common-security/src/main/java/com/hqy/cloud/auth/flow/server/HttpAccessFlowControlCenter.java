@@ -19,11 +19,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class HttpAccessFlowControlCenter {
-
     private final AccessFlowController getController;
-
     private final AccessFlowController postController;
-
     private final AccessFlowController uriController;
 
     public HttpAccessFlowControlCenter(FlowConfigProperties properties) {

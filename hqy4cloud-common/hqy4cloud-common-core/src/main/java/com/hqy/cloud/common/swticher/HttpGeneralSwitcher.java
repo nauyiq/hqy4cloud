@@ -5,8 +5,7 @@ package com.hqy.cloud.common.swticher;
  *  例如，是否开启http采集？是否开启web防sql注入Filter？<br>
  *  注意：开关id在100以上的是通用开关。
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-30 11:28
+ * @date  2021-07-30 11:28
  */
 public class HttpGeneralSwitcher extends CommonSwitcher {
 
@@ -15,12 +14,6 @@ public class HttpGeneralSwitcher extends CommonSwitcher {
      * 节点(Web)-是否启用http请求体 可重复读的请求包装过滤器 20210630 默认开
      */
     public static final HttpGeneralSwitcher ENABLE_REPEAT_READABLE_HTTP_REQUEST_WRAPPER_FILTER = new HttpGeneralSwitcher(101,"节点(Web)-是否启用http请求体 可重复读的请求包装过滤器",true);
-
-
-    /**
-     * 场景： 启用配置化的Ip访问限制策略（126） 节点后 ，  黑客行为检测 规则:   如果false使用原来的检测(一次黑客行为就拉黑);    true则走限制 配置化的规则(次数可以配置)
-     */
-    public static final HttpGeneralSwitcher ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE = new HttpGeneralSwitcher(128,"节点-在126开关的Ip限流策略下是否容忍多次(次数可以配置)黑客探测行为", false);
 
 
     /**

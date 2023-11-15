@@ -7,7 +7,9 @@ import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
 import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
+import com.hqy.foundation.limit.BlockDTO;
 import com.hqy.foundation.limit.service.BlockedIpService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
@@ -15,7 +17,9 @@ import org.redisson.api.RedissonClient;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -27,18 +31,12 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2022/10/27 17:08
  */
+@Slf4j
 public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
-    private volatile int frequency;
-    private final LRUCache<String, BlockConfig> localCache;
-    private final RMapCache<String, BlockConfig> rCache;
-
+    private final LRUCache<String, BlockDTO> localCache;
+    private final RMapCache<String, BlockDTO> rCache;
 
     public DefaultRedisBlockedAdaptor(String key, RedissonClient redissonClient) {
-       this(key, redissonClient, 1);
-    }
-
-    public DefaultRedisBlockedAdaptor(String key, RedissonClient redissonClient, int frequency) {
-        this.frequency = frequency;
         if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             localCache = CacheUtil.newLRUCache(1024);
             rCache = null;
@@ -50,14 +48,13 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
 
     @Override
     public void addBlockIp(String ip, int blockSeconds) {
+        long now = System.currentTimeMillis();
         if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             long timeout = blockSeconds * 1000L;
-            BlockConfig config = localCache.containsKey(ip) ? localCache.get(ip) : new BlockConfig(0, timeout);
-            config.increment();
+            BlockDTO config = localCache.containsKey(ip) ? localCache.get(ip) : new BlockDTO(timeout, now);
             localCache.put(ip, config, timeout);
         } else {
-            BlockConfig config = rCache.getOrDefault(ip, new BlockConfig(0, blockSeconds * 1000L));
-            config.increment();
+            BlockDTO config = rCache.getOrDefault(ip, new BlockDTO(blockSeconds * 1000L, now));
             rCache.put(ip, config, blockSeconds, TimeUnit.SECONDS);
         }
     }
@@ -93,7 +90,6 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
     public Map<String, Long> getAllBlockIp() {
         Map<String, Long> allBlockIpMap;
        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
-           //未开启redis共享封禁列表 直接return.
            allBlockIpMap = MapUtil.newHashMap(localCache.size());
            for (String ip : localCache.keySet()) {
                allBlockIpMap.put(ip, localCache.get(ip).getBlockedMillis());
@@ -105,33 +101,37 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
     }
 
     @Override
+    public Map<String, BlockDTO> getAllBlocked() {
+        Map<String, BlockDTO> allBlockIpMap;
+        if (CommonSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+            allBlockIpMap = MapUtil.newHashMap(localCache.size());
+            for (String ip : localCache.keySet()) {
+                allBlockIpMap.put(ip, localCache.get(ip));
+            }
+        } else {
+            try {
+                allBlockIpMap = rCache.readAllMapAsync().get(5L, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.warn("Async get all blocked ip exception: {}.", e.getMessage(), e);
+                allBlockIpMap = MapUtil.newHashMap();
+            }
+        }
+        return allBlockIpMap;
+    }
+
+    @Override
     public boolean isBlockIp(String ip) {
         if (StringUtils.isBlank(ip)) {
             return false;
         }
         ip = ip.trim();
-        BlockConfig blockConfig;
+        BlockDTO blockDTO;
         if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
-            blockConfig = localCache.get(ip);
+            blockDTO = localCache.get(ip);
         } else {
-            blockConfig = rCache.get(ip);
+            blockDTO = rCache.get(ip);
         }
-
-        if (Objects.isNull(blockConfig)) {
-            return false;
-        }
-
-        if (HttpGeneralSwitcher.ENABLE_IP_RATE_LIMIT_HACK_CHECK_RULE.isOff()) {
-            return blockConfig.getFrequency() >= this.frequency;
-        }
-        return true;
+        return !Objects.isNull(blockDTO);
     }
 
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-
-    public int getFrequency() {
-        return frequency;
-    }
 }

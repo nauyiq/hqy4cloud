@@ -79,7 +79,15 @@ public class RequestAdminResourceServiceImpl implements RequestAdminResourceServ
             return R.failed(NOT_FOUND_RESOURCE);
         }
         ResourceConverter.CONVERTER.updateResourceByDTO(resourceDTO, resource);
-        return authOperationService.resourceTkService().update(resource) ? R.ok() : R.failed();
+        if (authOperationService.resourceTkService().update(resource)) {
+            // 更新数据库成功， 删除缓存
+            List<String> roles = authOperationService.roleResourcesTkService().getRolesByResource(resourceDTO.getId());
+            if (CollectionUtils.isNotEmpty(roles)) {
+                roles.forEach(roleAuthenticationCacheServer::invalid);
+            }
+            return R.ok();
+        }
+        return R.failed();
     }
 
     @Override
@@ -109,12 +117,12 @@ public class RequestAdminResourceServiceImpl implements RequestAdminResourceServ
             }
         });
 
-        if (result && CollectionUtils.isNotEmpty(roleResources)) {
+        if (Boolean.TRUE.equals(result) && CollectionUtils.isNotEmpty(roleResources)) {
             for (RoleResources roleResource : roleResources) {
                 roleAuthenticationCacheServer.invalid(roleResource.getRoleName());
             }
         }
-        return result ? R.ok() : R.failed();
+        return Boolean.TRUE.equals(result) ? R.ok() : R.failed();
     }
 
     @Override

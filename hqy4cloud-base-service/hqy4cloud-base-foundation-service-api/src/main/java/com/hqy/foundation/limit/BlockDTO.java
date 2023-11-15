@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.limit;
+package com.hqy.foundation.limit;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,13 +14,9 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlockConfig implements Serializable {
+public class BlockDTO implements Serializable {
 
-    private Integer frequency;
     private Long blockedMillis;
-
-    public void increment() {
-        this.frequency = this.frequency + 1;
-    }
+    private Long blockedTimestamp;
 
 }

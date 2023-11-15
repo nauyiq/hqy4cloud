@@ -1,12 +1,15 @@
 package com.hqy.cloud.admin.service.impl;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.admin.service.RequestAdminSystemSettingService;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
 import com.hqy.cloud.auth.base.enums.WhiteListType;
+import com.hqy.cloud.auth.base.vo.BlackAddressVO;
 import com.hqy.cloud.auth.limit.support.BiBlockedIpRedisService;
 import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
 import com.hqy.cloud.common.bind.R;
+import com.hqy.foundation.limit.BlockDTO;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +49,7 @@ public class RequestAdminSystemSettingServiceImpl implements RequestAdminSystemS
     @Override
     public R<Boolean> addWhitelist(BlackWhitelistDTO whiteListDTOBlack) {
         if (whiteListDTOBlack.getType().equalsIgnoreCase(WhiteListType.IP.name())) {
-            manualWhiteIpService.addWhiteIp(whiteListDTOBlack.getValue());
+            manualWhiteIpService.addWhiteIp(whiteListDTOBlack.getIp());
         }
         return R.ok();
     }
@@ -60,17 +63,25 @@ public class RequestAdminSystemSettingServiceImpl implements RequestAdminSystemS
     }
 
     @Override
-    public R<Set<BlackWhitelistDTO>> queryBlacklist() {
-        Set<BlackWhitelistDTO> blackLists = new HashSet<>();
-        Map<String, Long> biBlockedIpMap = biBlockedIpRedisService.getAllBlockIp();
+    public R<Set<BlackAddressVO>> queryBlacklist() {
+        Set<BlackAddressVO> blackLists = new HashSet<>();
+        Map<String, BlockDTO> biBlockedIpMap = biBlockedIpRedisService.getAllBlocked();
         if (MapUtils.isNotEmpty(biBlockedIpMap)) {
             blackLists.addAll(biBlockedIpMap.entrySet().stream()
-                    .map(entry -> new BlackWhitelistDTO(BiBlockedIpRedisService.NAME, entry.getKey(), entry.getValue())).collect(Collectors.toSet()));
+                    .map(entry -> {
+                        BlockDTO value = entry.getValue();
+                        return new BlackAddressVO(BiBlockedIpRedisService.NAME, entry.getKey(),
+                                value.getBlockedMillis() / 1000, DateUtil.formatDateTime(new Date(value.getBlockedTimestamp())));
+                    }).collect(Collectors.toSet()));
         }
-        Map<String, Long> manualBlockedIpMap = manualBlockedIpService.getAllBlockIp();
+        Map<String, BlockDTO> manualBlockedIpMap = manualBlockedIpService.getAllBlocked();
         if (MapUtils.isNotEmpty(manualBlockedIpMap)) {
             blackLists.addAll(manualBlockedIpMap.entrySet().stream()
-                    .map(entry -> new BlackWhitelistDTO(ManualBlockedIpService.NAME, entry.getKey(), entry.getValue())).collect(Collectors.toSet()));
+                    .map(entry -> {
+                        BlockDTO value = entry.getValue();
+                        return new BlackAddressVO(ManualBlockedIpService.NAME, entry.getKey(),
+                                value.getBlockedMillis() / 1000, DateUtil.formatDateTime(new Date(value.getBlockedTimestamp())));
+                    }).collect(Collectors.toSet()));
         }
         return R.ok(blackLists);
     }
@@ -79,9 +90,9 @@ public class RequestAdminSystemSettingServiceImpl implements RequestAdminSystemS
     public R<Boolean> addBlacklist(BlackWhitelistDTO blackWhitelistDTO) {
         Long expired = blackWhitelistDTO.getExpired();
         if (Objects.isNull(expired)) {
-            manualBlockedIpService.addBlockIp(blackWhitelistDTO.getValue(),  Integer.MAX_VALUE);
+            manualBlockedIpService.addBlockIp(blackWhitelistDTO.getIp(),  Integer.MAX_VALUE);
         } else {
-            manualBlockedIpService.addBlockIp(blackWhitelistDTO.getValue(), Convert.toInt(expired / 1000));
+            manualBlockedIpService.addBlockIp(blackWhitelistDTO.getIp(), Convert.toInt(expired / 1000));
         }
         return R.ok();
     }

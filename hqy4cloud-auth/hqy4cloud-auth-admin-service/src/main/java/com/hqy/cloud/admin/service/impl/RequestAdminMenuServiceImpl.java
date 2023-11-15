@@ -1,6 +1,7 @@
 package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.auth.base.converter.MenuConverter;
+import com.hqy.cloud.auth.base.vo.BaseMenuVO;
 import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.admin.service.RequestAdminMenuService;
 import com.hqy.cloud.account.dto.AccountInfoDTO;
@@ -21,10 +22,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hqy.cloud.auth.base.Constants.FIRST_MENU_PARENT_ID;
@@ -51,6 +49,7 @@ public class RequestAdminMenuServiceImpl implements RequestAdminMenuService {
         }
         List<String> roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), StringConstants.Symbol.COMMA));
         List<AdminMenuInfoVO> adminMenuInfo = operationService.getAdminMenuInfo(roles);
+        adminMenuInfo.sort(Comparator.comparingInt(BaseMenuVO::getSortOrder));
         return R.ok(adminMenuInfo);
     }
 

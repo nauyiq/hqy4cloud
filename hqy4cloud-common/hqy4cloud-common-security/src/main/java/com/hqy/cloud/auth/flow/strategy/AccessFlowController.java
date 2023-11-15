@@ -19,13 +19,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class AccessFlowController {
-
     private static final String KEY_PREFIX_STRING = ReflectUtils.genkeyPrefix(AccessFlowController.class);
-
     private final AbstractLimiter localCacheLimiter;
-
     private final AbstractLimiter redisCacheLimiter;
-
     private final Cache<String, String> overLimitCache =
             CacheBuilder.newBuilder().initialCapacity(1024).expireAfterWrite(10L, TimeUnit.MINUTES).build();
 

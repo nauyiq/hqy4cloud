@@ -1,5 +1,7 @@
 package com.hqy.cloud.auth.service.tk.support;
 
+import cn.hutool.core.map.MapUtil;
+import com.hqy.cloud.auth.base.dto.RoleOnResourcesDTO;
 import com.hqy.cloud.auth.mapper.RoleResourcesMapper;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.entity.RoleResources;
@@ -15,6 +17,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author qiyuan.hong
@@ -25,7 +28,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleResources> implements RoleResourcesTkService {
-
     private final RoleResourcesMapper dao;
 
     @Override
@@ -44,8 +46,17 @@ public class RoleResourcesTkServiceImpl extends PrimaryLessTkServiceImpl<RoleRes
     }
 
     @Override
+    public List<String> getRolesByResource(Integer resourceId) {
+        return dao.getRolesByResource(resourceId);
+    }
+
+    @Override
     public Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(List<String> roles) {
-        return dao.getAuthoritiesResourcesByRoles(roles);
+        List<RoleOnResourcesDTO> authoritiesResourcesByRoles = dao.getAuthoritiesResourcesByRoles(roles);
+        if (CollectionUtils.isEmpty(authoritiesResourcesByRoles)) {
+            return MapUtil.empty();
+        }
+        return authoritiesResourcesByRoles.stream().collect(Collectors.toMap(RoleOnResourcesDTO::getRoleName, RoleOnResourcesDTO::getResources));
     }
 
     @Override

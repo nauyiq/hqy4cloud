@@ -121,12 +121,10 @@ public class GatewayHttpThrottles implements HttpThrottles {
         if (throttlesProcess.isManualBlockedIp(requestIp)) {
             return new LimitResult(true, printErrorMessage(requestIp, url, "[MBK]"), LimitResult.ReasonEnum.MANUAL_BLOCKED_IP_NG);
         }
-
         // 是否是行为分析的黑名单ip
         if (throttlesProcess.isBiBlockedIp(requestIp)) {
             return new LimitResult(true, printErrorMessage(requestIp, url, "[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
-
         //是否校验请求中的xss 聚合浓缩黑客判定方法
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
                 !uploadFileSecurityChecker.isUploadFileRequest(request.getHeader(HttpHeaders.CONTENT_TYPE), uri)) {
@@ -136,7 +134,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 return hackCheckLimitResult;
             }
         }
-
         if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             return new LimitResult(false, null, LimitResult.ReasonEnum.NOT_ENABLE_HTTP_THROTTLE_OK);
         } else {
@@ -174,14 +171,12 @@ public class GatewayHttpThrottles implements HttpThrottles {
                     return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_PARAM.value, requestBody);
                 }
             }
-
             //检查url或请求参数
             if (StringUtils.isNotBlank(QueryString)) {
                 if (throttlesProcess.isHackAccess(QueryString, ThrottlesProcess.URI_CHECK_MODE)) {
                     return limitHackAccessAndPersistBlockIp(requestIp, url, BiBlockType.HACK_ACCESS_URI.value, requestBody);
                 }
             }
-
             //检查uri
             if (StringUtils.isNotBlank(uri) && !INCLINED_ROD.equals(uri)) {
                 if (throttlesProcess.isHackAccess(uri, ThrottlesProcess.URI_CHECK_MODE)) {

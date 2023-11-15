@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.mapper;
 
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
+import com.hqy.cloud.auth.base.dto.RoleOnResourcesDTO;
 import com.hqy.cloud.auth.entity.RoleResources;
 import com.hqy.cloud.db.tk.PrimaryLessTkMapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,7 +33,14 @@ public interface RoleResourcesMapper extends PrimaryLessTkMapper<RoleResources> 
      * @param roles 角色列表
      * @return      AuthenticationDTO.
      */
-    Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(@Param("roles") List<String> roles);
+    List<RoleOnResourcesDTO> getAuthoritiesResourcesByRoles(@Param("roles") List<String> roles);
+
+    /**
+     * 根据资源id获取分配的角色名
+     * @param resourceId 资源id
+     * @return           角色名
+     */
+    List<String> getRolesByResource(@Param("resourceId") Integer resourceId);
 
     /**
      * 根据角色id和资源id列表删除数据
@@ -41,4 +49,6 @@ public interface RoleResourcesMapper extends PrimaryLessTkMapper<RoleResources> 
      * @return            result.
      */
     int deleteByRoleAndResourceIds(@Param("roleId") Integer roleId, @Param("resourceIds") List<Integer> resourceIds);
+
+
 }

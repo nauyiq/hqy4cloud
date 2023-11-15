@@ -12,7 +12,6 @@ import org.redisson.api.RedissonClient;
  * @date 2021-08-02 10:51
  */
 public class ManualBlockedIpService extends DefaultRedisBlockedAdaptor {
-
     public static String NAME = " ManualBlock";
 
     public ManualBlockedIpService(RedissonClient redissonClient) {

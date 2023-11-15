@@ -1,6 +1,7 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminSystemSettingService;
+import com.hqy.cloud.auth.base.vo.BlackAddressVO;
 import com.hqy.cloud.auth.core.authentication.PreAuthentication;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
 import com.hqy.cloud.common.bind.R;
@@ -39,15 +40,15 @@ public class AdminSystemSettingController {
 
     @DeleteMapping("/whitelist")
     @PreAuthentication("sys_white_del")
-    public R<Boolean> deleteWhiteList(String type, String value) {
-        if (StringUtils.isAnyBlank(type, value)) {
+    public R<Boolean> deleteWhiteList(String type, String ip) {
+        if (StringUtils.isAnyBlank(type, ip)) {
             return R.failed(ResultCode.ERROR_PARAM_UNDEFINED);
         }
-        return requestService.deleteWhitelist(type, value);
+        return requestService.deleteWhitelist(type, ip);
     }
 
     @GetMapping("/blacklist/all")
-    public R<Set<BlackWhitelistDTO>> queryBlacklist() {
+    public R<Set<BlackAddressVO>> queryBlacklist() {
         return requestService.queryBlacklist();
     }
 
@@ -59,11 +60,11 @@ public class AdminSystemSettingController {
 
     @DeleteMapping("/blacklist")
     @PreAuthentication("sys_black_del")
-    public R<Boolean> deleteBlacklist(String type, String value) {
-        if (StringUtils.isAnyBlank(type, value)) {
+    public R<Boolean> deleteBlacklist(String type, String ip) {
+        if (StringUtils.isAnyBlank(type, ip)) {
             return R.failed(ResultCode.ERROR_PARAM_UNDEFINED);
         }
-        return requestService.deleteBlacklist(type, value);
+        return requestService.deleteBlacklist(type, ip);
     }
 
 

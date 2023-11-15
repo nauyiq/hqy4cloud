@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.Arrays;
@@ -35,8 +36,8 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         if (CollectionUtils.isEmpty(authorities) || Objects.isNull(request)) {
             return false;
         }
-        //如果是admin服务的请求，将请求权限校验下沉到服务的aop去
-        if (EndpointAuthorizationManager.getInstance().isAdminRequest(request.requestUri())) {
+        //如果是admin服务的请求 并且是写请求（非GET请求），则将请求权限校验下沉到服务的aop去
+        if (EndpointAuthorizationManager.getInstance().isAdminRequest(request.requestUri()) && !request.method().equals(HttpMethod.GET.name())) {
             return true;
         }
         //校验是否权限访问.
@@ -81,7 +82,6 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         if (CollectionUtils.isEmpty(resources)) {
             return false;
         }
-
         String uri = request.requestUri();
         AntPathMatcher antPathMatcher = EndpointAuthorizationManager.getInstance().getAntPathMatcher();
         return resources.stream().anyMatch(resource -> {

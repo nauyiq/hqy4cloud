@@ -47,4 +47,10 @@ public interface RoleResourcesTkService extends PrimaryLessTkService<RoleResourc
      */
     boolean deleteByResourceIdAndRoleIds(Integer resourceId, List<Integer> roleIds);
 
+    /**
+     * 获取资源分配给哪些角色...
+     * @param resourceId 资源id
+     * @return           分配的角色
+     */
+    List<String> getRolesByResource(Integer resourceId);
 }

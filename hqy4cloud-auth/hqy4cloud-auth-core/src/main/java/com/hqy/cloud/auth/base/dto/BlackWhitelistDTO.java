@@ -4,7 +4,8 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotEmpty;
 
 /**
  * @author qiyuan.hong
@@ -26,7 +27,7 @@ public class BlackWhitelistDTO {
      * 值
      */
     @NotEmpty(message = StringConstants.SHOULD_NOT_BE_EMPTY)
-    private String value;
+    private String ip;
 
     /**
      * 过期时间
@@ -34,8 +35,8 @@ public class BlackWhitelistDTO {
     private Long expired;
 
 
-    public BlackWhitelistDTO(String type, String value) {
+    public BlackWhitelistDTO(String type, String ip) {
         this.type = type;
-        this.value = value;
+        this.ip = ip;
     }
 }

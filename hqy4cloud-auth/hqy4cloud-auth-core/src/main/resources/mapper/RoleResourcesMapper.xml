@@ -4,8 +4,8 @@
 <mapper namespace="com.hqy.cloud.auth.mapper.RoleResourcesMapper">
 
 
-    <resultMap id="AuthenticationMap" type="java.util.Map">
-        <result property="role" column="role_name"/>
+    <resultMap id="AuthenticationMap" type="com.hqy.cloud.auth.base.dto.RoleOnResourcesDTO">
+        <result property="roleName" column="role_name"/>
         <collection property="resources" ofType="com.hqy.cloud.auth.base.dto.ResourceDTO">
             <result column="path" property="path"/>
             <result column="id" property="id"/>
@@ -61,6 +61,10 @@
         <foreach collection="roles" item="role" open="(" close=")" separator=",">
             #{role}
         </foreach>
+    </select>
+
+    <select id="getRolesByResource" resultType="java.lang.String">
+        SELECT role_name FROM t_role_resources WHERE resource_id = #{resourceId}
     </select>
 
 
