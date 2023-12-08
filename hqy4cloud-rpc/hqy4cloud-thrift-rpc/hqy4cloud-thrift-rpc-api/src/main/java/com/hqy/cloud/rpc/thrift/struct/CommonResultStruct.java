@@ -39,6 +39,11 @@ public final class CommonResultStruct {
         this.code = code;
         this.message = message;
     }
+
+    public static CommonResultStruct of() {
+        return new CommonResultStruct();
+    }
+
     public static CommonResultStruct of(ResultCode resultCode) {
         return new CommonResultStruct(resultCode);
     }

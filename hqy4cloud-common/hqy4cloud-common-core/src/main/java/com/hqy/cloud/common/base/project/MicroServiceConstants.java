@@ -2,6 +2,8 @@ package com.hqy.cloud.common.base.project;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 微服务的模块定义。用在@ThriftService注解上面<br>
@@ -16,7 +18,7 @@ public class MicroServiceConstants {
     /**
      * 全局网关gateway服务
      */
-    public static final String GATEWAY = "hqy4cloud-gateway-service";
+    public static final String GATEWAY = "hqy4cloud-gateway";
     public static final ProjectInfo GATEWAY_INFO = new ProjectInfo("网关服务", GATEWAY);
 
     /**
@@ -63,6 +65,8 @@ public class MicroServiceConstants {
     public static final String BLOG_SERVICE = "hqy4cloud-apps-blog-service";
     public static final ProjectInfo BLOG_INFO = new ProjectInfo("博客服务", BLOG_SERVICE);
 
+    public static final String FOUNDATION_SERVICE = "hqy4cloud-foundation-service";
+
 
     /**
      * 服务列表
@@ -70,8 +74,18 @@ public class MicroServiceConstants {
     public static final List<ProjectInfo> SERVICES = Arrays.asList(GATEWAY_INFO, COLLECTOR_INFO,
             ACCOUNT_AUTH_INFO, MESSAGE_NETTY_INFO, COMMUNICATION_INFO, BLOG_INFO, ADMIN_INFO, ID_INFO);
 
+    public static final Map<String, String> ALIAS_MAP = new ConcurrentHashMap<>();
 
-    public static final String FOUNDATION_SERVICE = "hqy4cloud-foundation-service";
+    static {
+        ALIAS_MAP.put(GATEWAY, GATEWAY_INFO.getName());
+        ALIAS_MAP.put(COMMON_COLLECTOR, COLLECTOR_INFO.getName());
+        ALIAS_MAP.put(COMMUNICATION_SERVICE, COMMUNICATION_INFO.getName());
+        ALIAS_MAP.put(ID_SERVICE, ID_INFO.getName());
+        ALIAS_MAP.put(ACCOUNT_SERVICE, ACCOUNT_AUTH_INFO.getName());
+        ALIAS_MAP.put(ADMIN_SERVICE, ADMIN_INFO.getName());
+        ALIAS_MAP.put(MESSAGE_NETTY_SERVICE, MESSAGE_NETTY_INFO.getName());
+        ALIAS_MAP.put(BLOG_SERVICE, BLOG_INFO.getName());
+    }
 
     public static class SocketContextPath {
         public static final String MESSAGE_SERVICE = "/message/websocket";

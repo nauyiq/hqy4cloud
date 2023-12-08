@@ -33,6 +33,8 @@ public interface StringConstants {
     String TRUE = "1";
     String FALSE = "0";
     String DO_PNG = ".png";
+    String CONSUMER = "消费者";
+    String PROVIDER = "生产者";
 
     interface Symbol {
 
@@ -55,6 +57,8 @@ public interface StringConstants {
          * @
          */
         String AT = "@";
+
+        String AT_AT = "@@";
 
         /**
          * :

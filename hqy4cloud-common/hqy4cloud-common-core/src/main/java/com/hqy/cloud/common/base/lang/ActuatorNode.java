@@ -14,19 +14,25 @@ public enum ActuatorNode {
     /**
      * 服务的消费者
      */
-    CONSUMER,
+    CONSUMER("消费者"),
 
     /**
      * 服务的提供者
      */
-    PROVIDER,
+    PROVIDER("生产者"),
 
     /**
      * 两者都是
      */
-    BOTH
+    BOTH("")
 
     ;
+
+    ActuatorNode(String alias) {
+        this.alias = alias;
+    }
+
+    public final String alias;
 
     public boolean isProvider() {
         return this == PROVIDER || this == BOTH;

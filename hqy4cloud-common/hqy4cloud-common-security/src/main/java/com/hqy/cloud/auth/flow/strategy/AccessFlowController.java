@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.cloud.auth.flow.FlowLimitConfig;
 import com.hqy.cloud.auth.flow.FlowResult;
-import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class AccessFlowController {
     }
 
     public AbstractLimiter getLimiter() {
-        if (HttpGeneralSwitcher.ENABLE_SHARE_IP_OVER_REQUEST_STATISTICS.isOff()) {
+        if (ServerSwitcher.ENABLE_SHARE_IP_OVER_REQUEST_STATISTICS.isOff()) {
             return localCacheLimiter;
         } else {
             return redisCacheLimiter;

@@ -10,13 +10,14 @@
     <version>${revision}</version>
 
     <modules>
-        <module>hqy4cloud-common</module>
+        <module>hqy4cloud-actuator</module>
         <module>hqy4cloud-auth</module>
-        <module>hqy4cloud-netty</module>
-        <module>hqy4cloud-gateway</module>
         <module>hqy4cloud-base-service</module>
-        <module>hqy4cloud-rpc</module>
+        <module>hqy4cloud-common</module>
+        <module>hqy4cloud-gateway</module>
         <module>hqy4cloud-mq</module>
+        <module>hqy4cloud-netty</module>
+        <module>hqy4cloud-rpc</module>
     </modules>
 
     <properties>
@@ -104,6 +105,20 @@
                 <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- spring boot admin server -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+
+            <!-- spring boot admin client -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${springboot.version}</version>
             </dependency>
 
             <!-- spring cloud -->

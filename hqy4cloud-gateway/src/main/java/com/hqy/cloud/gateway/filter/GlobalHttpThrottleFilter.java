@@ -2,7 +2,7 @@ package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.Constants;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.gateway.util.ResponseUtil;
@@ -33,7 +33,6 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
-
     private final GatewayHttpThrottles httpThrottles;
 
     @Override
@@ -50,7 +49,7 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOff()) {
             //没有启用限流器...继续执行责任链
             return chain.filter(exchange);
         } else {

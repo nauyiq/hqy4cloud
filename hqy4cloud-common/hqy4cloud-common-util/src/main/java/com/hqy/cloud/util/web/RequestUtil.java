@@ -1,6 +1,7 @@
 package com.hqy.cloud.util.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,6 +33,8 @@ public class RequestUtil {
     public static boolean checkAuthorization(String authorization) {
         return authorization.startsWith(JWT_PREFIX) || authorization.startsWith(JWT_UPPERCASE_PREFIX) || authorization.startsWith(JWT_BASIC_PREFIX);
     }
+
+
 
 
 

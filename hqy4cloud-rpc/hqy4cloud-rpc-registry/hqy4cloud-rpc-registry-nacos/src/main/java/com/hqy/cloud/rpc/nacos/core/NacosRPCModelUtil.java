@@ -18,9 +18,6 @@ import java.util.Map;
  */
 public class NacosRPCModelUtil {
 
-
-
-
     public static RPCModel buildRPCModel(String application, int port, String group, RegistryInfo registryInfo,
                                          RPCServerAddress rpcServerAddress, Map<String, String> attachment) {
         return new RPCModel(application, port, group, registryInfo, rpcServerAddress, attachment);
@@ -30,7 +27,6 @@ public class NacosRPCModelUtil {
                                          RPCServerAddress rpcServerAddress, Environment environment, Map<String, String> attachment) {
         return new Metadata(wight, getPubMode(environment).value,  rpcServerAddress, hashFactor, actuatorNode, attachment);
     }
-
 
     public static PubMode getPubMode(Environment environment) {
         if (environment.isTestEnvironment()) {

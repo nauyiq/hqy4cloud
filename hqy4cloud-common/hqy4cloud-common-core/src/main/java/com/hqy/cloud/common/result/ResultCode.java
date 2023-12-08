@@ -197,6 +197,11 @@ public enum ResultCode implements Result {
     NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
 
     /**
+     * 租户id或租户秘钥错误
+     */
+    INVALID_CLIENT_OR_SECRET(3007, "ClientId or secret incorrect."),
+
+    /**
      * 空数据
      */
     DATA_EMPTY(4000, "Data is empty."),

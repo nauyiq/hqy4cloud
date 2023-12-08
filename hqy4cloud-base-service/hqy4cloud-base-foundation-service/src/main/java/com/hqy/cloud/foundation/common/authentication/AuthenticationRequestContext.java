@@ -1,6 +1,7 @@
 package com.hqy.cloud.foundation.common.authentication;
 
 import cn.hutool.core.net.URLDecoder;
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.Base64Utils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
@@ -65,5 +67,43 @@ public class AuthenticationRequestContext {
     }
 
 
+    /**
+     * 判断认证请求头是不是basic认证请求头
+     * @param authorization 认证请求头
+     * @return              是否是basic认证
+     */
+    public static boolean isBasicAuthorization(String authorization) {
+        if (StringUtils.isBlank(authorization)) {
+            return false;
+        }
+        return authorization.startsWith(JWT_BASIC_PREFIX) || authorization.startsWith(JWT_LOWERCASE_BASIC_PREFIX);
+    }
+
+    /**
+     * 获取basic认证请求头
+     * @param authorization 认证请求头
+     * @return              {@link UsernamePasswordAuthentication}
+     */
+    public static UsernamePasswordAuthentication getBasicAuthorization(String authorization) {
+        if (!isBasicAuthorization(authorization)) {
+            return null;
+        }
+        String basic = authorization.replace(JWT_BASIC_PREFIX, StringUtils.EMPTY).replace(JWT_LOWERCASE_BASIC_PREFIX, StringUtils.EMPTY);
+        if (StringUtils.isBlank(basic)) {
+            return null;
+        }
+        try {
+            byte[] bytes = Base64Utils.decodeFromString(basic);
+            String decodeBasic = new String(bytes);
+            String[] basics = decodeBasic.split(StrUtil.COLON);
+            if (basics.length != 2) {
+                return null;
+            }
+            return new UsernamePasswordAuthentication(basics[0], basics[1]);
+        } catch (Throwable cause) {
+            log.error("Failed execute to parse basic authentication: {}.", basic, cause);
+            return null;
+        }
+    }
 
 }

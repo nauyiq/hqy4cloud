@@ -2,9 +2,9 @@ package com.hqy.cloud.auth.core.authentication.support;
 
 import com.hqy.cloud.auth.base.dto.ResourceConfigDTO;
 import com.hqy.cloud.auth.base.dto.RoleAuthenticationDTO;
-import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;
 import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
 import com.hqy.cloud.auth.core.authentication.AuthenticationRequest;
+import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;
 import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;

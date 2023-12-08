@@ -4,6 +4,7 @@ package com.hqy.cloud.common.swticher;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.beans.Transient;
+import java.io.Serial;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -13,7 +14,10 @@ import java.util.*;
  * @author qy
  * @date 2021-07-27 16:30
  */
-public class AbstractSwitcher extends IdSwitcher {
+public abstract class AbstractSwitcher extends IdSwitcher {
+
+    @Serial
+    private static final long serialVersionUID = 4279013225825284492L;
 
     /**
      * ACTUATOR 开关类型
@@ -34,12 +38,6 @@ public class AbstractSwitcher extends IdSwitcher {
         VARCHAR
     }
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4279013225825284492L;
-
-
     public static final String ILL_MSG = "S_TYPE ERROR, SHOULD NOT CALL THIS METHOD!!";
 
 
@@ -58,13 +56,6 @@ public class AbstractSwitcher extends IdSwitcher {
      */
     private List<AbstractSwitcherOption> choiceList;
 
-    /**
-     * 布尔型 Actuator开关构造器(默认)
-     *
-     * @param id
-     * @param name
-     * @param status
-     */
     protected AbstractSwitcher(int id, String name, boolean status) {
         super(name, id);
         this.status = status;
@@ -74,13 +65,6 @@ public class AbstractSwitcher extends IdSwitcher {
         this.choiceList.add(BooleanSwitcherOption.FALSE);
     }
 
-    /**
-     * 无符号短整型 Actuator开关构造器
-     *
-     * @param id
-     * @param name
-     * @param status
-     */
     protected AbstractSwitcher(int id, String name, short status) {
         super(name, id);
         this.status = status;
@@ -88,18 +72,11 @@ public class AbstractSwitcher extends IdSwitcher {
         this.choiceList = new ArrayList<>();
     }
 
-    /**
-     * VARCHAR型 Actuator开关构造器
-     *
-     * @param id
-     * @param name
-     * @param status
-     */
     protected AbstractSwitcher(int id, String name, String status) {
         super(name, id);
         this.status = status;
         this.type = S_TYPE.VARCHAR;
-        this.choiceList = new ArrayList<AbstractSwitcherOption>();
+        this.choiceList = new ArrayList<>();
     }
 
 
@@ -131,11 +108,6 @@ public class AbstractSwitcher extends IdSwitcher {
     }
 
 
-    /**
-     * 开关是否是ON状态(仅仅适用于STYPE.BOOLEAN)
-     *
-     * @return
-     */
     public boolean isOn() {
         if (this.type == S_TYPE.BOOLEAN) {
             return (boolean) status;
@@ -143,17 +115,11 @@ public class AbstractSwitcher extends IdSwitcher {
         throw new IllegalAccessError(ILL_MSG);
     }
 
-    /**
-     * 开关是否是Off状态(仅仅适用于STYPE.BOOLEAN)
-     *
-     * @return
-     */
     public boolean isOff() {
         if (this.type == S_TYPE.BOOLEAN) {
             return !((boolean) status);
         }
         throw new IllegalAccessError(ILL_MSG);
-//		return status == false;
     }
 
     public Object getStatus() {
@@ -202,7 +168,6 @@ public class AbstractSwitcher extends IdSwitcher {
                             }
                         }
                     }
-                    //obj = null;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 } finally {
@@ -241,6 +206,7 @@ public class AbstractSwitcher extends IdSwitcher {
         return null;
     }
 
+    @Override
     public String toString() {
         return "[id=" + this.getId() +
                 ",name=" + this.getName() +

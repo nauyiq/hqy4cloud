@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class IpUtil {
 
-    static final String DOCKER_IP_PREFIX = "172.17";
-
     static final String VIRTUAL_IP_ENDING = ".1";
 
     private static MockIpHelper helper = null;
@@ -226,11 +224,6 @@ public class IpUtil {
                     InetAddress inetAddr = inetAddrs.nextElement();
                     // 排除loopback类型地址
                     if (!inetAddr.isLoopbackAddress()) {
-                        // 排除docker 的地址
-                        if (inetAddr.getHostAddress().startsWith(DOCKER_IP_PREFIX)) {
-                            log.warn("IGNORE :{}", inetAddr);
-                            continue;
-                        }
                         // 排除 虚拟地址
                         if (inetAddr.getHostAddress().endsWith(VIRTUAL_IP_ENDING)) {
                             log.warn("IGNORE :{}", inetAddr);

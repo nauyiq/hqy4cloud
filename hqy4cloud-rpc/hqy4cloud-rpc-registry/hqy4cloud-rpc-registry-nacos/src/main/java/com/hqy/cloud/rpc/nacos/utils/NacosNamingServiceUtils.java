@@ -1,9 +1,11 @@
 package com.hqy.cloud.rpc.nacos.utils;
 
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingMaintainService;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.foundation.common.StringConstantFieldValuePredicate;
@@ -32,24 +34,28 @@ public class NacosNamingServiceUtils {
 
     public static NamingServiceWrapper createNamingService(RPCModel rpcModel) {
         NamingService namingService = null;
+        NamingMaintainService namingMaintainService = null;
         try {
             NacosServiceManager nacosServiceManager = SpringContextHolder.getBean(NacosServiceManager.class);
             namingService = nacosServiceManager.getNamingService();
+            NacosDiscoveryProperties properties = SpringContextHolder.getBean(NacosDiscoveryProperties.class);
+            namingMaintainService = nacosServiceManager.getNamingMaintainService(properties.getNacosProperties());
         } catch (Throwable t) {
             log.warn("Get namingService failed from spring context.");
         }
 
-        if (namingService != null) {
-            return new NamingServiceWrapper(namingService, rpcModel.getGroup());
+        if (namingService != null && namingMaintainService != null) {
+            return new NamingServiceWrapper(namingService, namingMaintainService, rpcModel.getGroup());
         }
         Properties nacosProperties = buildNacosProperties(rpcModel);
         try {
             namingService = NacosFactory.createNamingService(nacosProperties);
+            namingMaintainService = NacosFactory.createMaintainService(nacosProperties);
         } catch (NacosException e) {
             log.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
-        return new NamingServiceWrapper(namingService, rpcModel.getGroup());
+        return new NamingServiceWrapper(namingService, namingMaintainService, rpcModel.getGroup());
     }
 
     private static Properties buildNacosProperties(RPCModel rpcModel) {

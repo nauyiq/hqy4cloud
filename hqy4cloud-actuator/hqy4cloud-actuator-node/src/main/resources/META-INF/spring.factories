@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hqy.cloud.actuator.config.ActuatorAutoConfiguration,\
+com.hqy.cloud.actuator.endpoint.MicroServiceGradeManageEndpoint,\
+com.hqy.cloud.actuator.endpoint.MicroServiceGradeSwitcherEndpoint

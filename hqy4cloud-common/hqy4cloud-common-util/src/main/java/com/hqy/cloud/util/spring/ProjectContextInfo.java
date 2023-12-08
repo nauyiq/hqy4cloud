@@ -9,13 +9,11 @@ import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ProjectContextInfo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3512823069773039476L;
 
     /**

@@ -25,23 +25,18 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomerUserDetailServiceImpl implements CustomerUserDetailService {
-
     private final AccountTkService service;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = service.queryAccountByUsernameOrEmail(username);
-
         if (Objects.isNull(account)) {
             throw new UsernameNotFoundException(ResultCode.USER_NOT_FOUND.message);
         }
-
         UserDetails userDetails = new SecurityUser(account.getId(), account.getUsername(), account.getPassword(), account.getEmail() ,account.getStatus(), AuthorityUtils
                 .commaSeparatedStringToAuthorityList(account.getRoles()));
-
         //校验user.
         checkUserDetails(userDetails);
-
         return userDetails;
     }
 

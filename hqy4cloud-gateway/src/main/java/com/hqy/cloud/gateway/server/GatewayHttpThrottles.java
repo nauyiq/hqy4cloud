@@ -8,8 +8,7 @@ import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.base.lang.exception.RpcException;
-import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
@@ -126,7 +125,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             return new LimitResult(true, printErrorMessage(requestIp, url, "[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
         //是否校验请求中的xss 聚合浓缩黑客判定方法
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
                 !uploadFileSecurityChecker.isUploadFileRequest(request.getHeader(HttpHeaders.CONTENT_TYPE), uri)) {
             LimitResult hackCheckLimitResult = checkHackAccess(uri, url, requestParams, request.getRequestBody(), requestIp);
             if (hackCheckLimitResult.isNeedLimit()) {
@@ -134,7 +133,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 return hackCheckLimitResult;
             }
         }
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_VALVE.isOff()) {
             return new LimitResult(false, null, LimitResult.ReasonEnum.NOT_ENABLE_HTTP_THROTTLE_OK);
         } else {
             //检查ip是否访问超限
@@ -164,7 +163,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
     @Override
     public LimitResult checkHackAccess(String uri, String url, String QueryString, String requestBody, String requestIp) {
         //聚合浓缩黑客判定方法....
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             //检查请求体
             if (StringUtils.isNotBlank(requestBody)) {
                 if (throttlesProcess.isHackAccess(requestBody, ThrottlesProcess.PARAMS_CHECK_MODE)) {
@@ -220,7 +219,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
      */
     public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
 
-        if (HttpGeneralSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
             log.warn("Ignore persistThrottleInfo: {}, {}, reason:{}", ip, url, createdBy);
             return;
         }

@@ -1,12 +1,14 @@
 package com.hqy.cloud.common.swticher;
 
+import java.io.Serial;
+
 /**
  * 通用的节点开关
  * @author qy
  * @date 2021-07-28 9:35
  */
 public class CommonSwitcher extends AbstractSwitcher {
-
+    @Serial
     private static final long serialVersionUID = -5097824901579636026L;
 
     protected CommonSwitcher(int id, String name, boolean status) {
@@ -122,6 +124,17 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否基于环境进行canal的隔离
      */
     public static final CommonSwitcher ENABLE_CANAL_ENV_ISO = new CommonSwitcher(220, "节点-是否基于环境进行canal的隔离", false);
+
+    /**
+     * 节点-是否开启actuator端口Http Basic认证 (默认打开)
+     */
+    public static final CommonSwitcher ENABLE_ACTUATOR_BASIC_AUTHORIZATION = new CommonSwitcher(221, "节点-是否开启actuator端口Http Basic认证", true);
+
+    /**
+     * 节点-是否允许使用账号RPC查询校验Actuator-Http-Basic
+     * 默认关闭，关闭情况下 只采用配置中心 + 内存的方式校验http basic认证
+     */
+    public static final CommonSwitcher ENABLE_ACCOUNT_RPC_QUERY_ACTUATOR_BASIC_AUTHORIZATION = new CommonSwitcher(222, "节点-是否允许使用账号RPC查询校验Actuator-Http-Basic", false);
 
     /**
      * 与sid有关（重联场景是生成新的sid)

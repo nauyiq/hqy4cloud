@@ -7,6 +7,7 @@ import com.hqy.cloud.account.struct.AuthenticationStruct;
 import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
+import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 
 import java.util.List;
 
@@ -34,7 +35,6 @@ public interface RemoteAuthService extends RPCService {
     @ThriftMethod
     List<String> getPermissionsByRoles(@ThriftField(1)List<String> roles);
 
-
     /**
      * 根据角色更新资源信息
      * @param role             角色
@@ -42,6 +42,15 @@ public interface RemoteAuthService extends RPCService {
      */
     @ThriftMethod(oneway = true)
     void updateAuthoritiesResource(@ThriftField(1)String role, @ThriftField(2)List<ResourceStruct> resourceStructs);
+
+    /**
+     * basic认证
+     * @param clientId     租户id
+     * @param clientSecret 租户秘钥
+     * @return             result {@link CommonResultStruct}
+     */
+    @ThriftMethod
+    CommonResultStruct basicAuth(@ThriftField(1) String clientId, @ThriftField(2) String clientSecret);
 
 
 }

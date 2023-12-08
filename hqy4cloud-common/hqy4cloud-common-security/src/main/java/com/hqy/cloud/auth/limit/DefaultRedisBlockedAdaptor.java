@@ -5,7 +5,7 @@ import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.common.swticher.HttpGeneralSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.BlockDTO;
 import com.hqy.foundation.limit.service.BlockedIpService;
@@ -17,9 +17,7 @@ import org.redisson.api.RedissonClient;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -126,7 +124,7 @@ public abstract class DefaultRedisBlockedAdaptor implements BlockedIpService {
         }
         ip = ip.trim();
         BlockDTO blockDTO;
-        if (HttpGeneralSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
+        if (ServerSwitcher.ENABLE_SHARED_BLOCK_IP_LIST.isOff()) {
             blockDTO = localCache.get(ip);
         } else {
             blockDTO = rCache.get(ip);

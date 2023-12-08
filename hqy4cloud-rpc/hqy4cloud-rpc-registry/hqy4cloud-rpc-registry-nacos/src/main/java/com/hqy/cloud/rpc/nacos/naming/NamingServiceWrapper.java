@@ -1,6 +1,7 @@
 package com.hqy.cloud.rpc.nacos.naming;
 
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingMaintainService;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Instance;
@@ -38,10 +39,12 @@ import java.util.List;
 public class NamingServiceWrapper {
 
     private final NamingService namingService;
+    private final NamingMaintainService namingMaintainService;
     private final String defaultGroupName;
 
-    public NamingServiceWrapper(NamingService namingService, String defaultGroupName) {
+    public NamingServiceWrapper(NamingService namingService, NamingMaintainService namingMaintainService, String defaultGroupName) {
         this.namingService = namingService;
+        this.namingMaintainService = namingMaintainService;
         this.defaultGroupName = defaultGroupName;
     }
 
@@ -63,6 +66,14 @@ public class NamingServiceWrapper {
 
     public void unsubscribe(String serviceName, String group, EventListener listener) throws NacosException {
         namingService.unsubscribe(serviceName, group, listener);
+    }
+
+    public void updateInstance(String serviceName, Instance instance) throws NacosException {
+        namingMaintainService.updateInstance(serviceName, defaultGroupName, instance);
+    }
+
+    public void updateInstance(String serviceName, String group, Instance instance) throws NacosException {
+        namingMaintainService.updateInstance(serviceName, group, instance);
     }
 
     public List<Instance> getAllInstances(String serviceName, String group) throws NacosException {
@@ -99,5 +110,11 @@ public class NamingServiceWrapper {
         this.namingService.shutDown();
     }
 
+    public NamingService getNamingService() {
+        return namingService;
+    }
 
+    public String getDefaultGroupName() {
+        return defaultGroupName;
+    }
 }

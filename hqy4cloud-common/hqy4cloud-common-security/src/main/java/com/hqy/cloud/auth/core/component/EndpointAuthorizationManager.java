@@ -24,6 +24,10 @@ public class EndpointAuthorizationManager {
     private static final Set<String> UPLOAD_FILES = new CopyOnWriteArraySet<>();
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
+    private static final List<String> ACTUATOR_URI_PATTERN = List.of(
+      "/actuator/**", "**/actuator/**"
+    );
+
     public static EndpointAuthorizationManager getInstance() {
         if (instance == null) {
             synchronized (EndpointAuthorizationManager.class) {
@@ -37,14 +41,14 @@ public class EndpointAuthorizationManager {
 
     static {
         //静态白名单endpoint.
-        ENDPOINTS.addAll(Arrays.asList(
+        ENDPOINTS.addAll(List.of(
                 "/code",
                 "/token",
                 "/favicon.io","/favicon.ico",
                 //Oauth2 Endpoint
-                "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**",
-                //端点监控
-                "/actuator/**" , "/doc.html",
+                "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**", "/doc.html",
+                // 开放springboot actuator端口
+                "/actuator/**",
                 "/*/websocket"
                 //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
@@ -86,6 +90,10 @@ public class EndpointAuthorizationManager {
 
     public boolean isUploadFileRequest(String accessUri) {
         return UPLOAD_FILES.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, accessUri));
+    }
+
+    public boolean isActuatorRequest(String accessUri) {
+        return ACTUATOR_URI_PATTERN.stream().anyMatch(r -> ANT_PATH_MATCHER.match(r, accessUri));
     }
 
 

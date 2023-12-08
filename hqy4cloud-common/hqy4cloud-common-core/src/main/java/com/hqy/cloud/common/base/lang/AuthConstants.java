@@ -12,6 +12,7 @@ public interface AuthConstants {
     String JWT_PREFIX = "bearer ";
     String JWT_UPPERCASE_PREFIX = "Bearer ";
     String JWT_BASIC_PREFIX = "Basic ";
+    String JWT_LOWERCASE_BASIC_PREFIX = "basic ";
     String CLIENT_ID = "client_id";
     String BIZ_ID = "bizId";
 }

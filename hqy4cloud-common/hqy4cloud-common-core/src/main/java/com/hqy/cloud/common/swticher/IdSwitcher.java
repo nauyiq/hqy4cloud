@@ -1,5 +1,6 @@
 package com.hqy.cloud.common.swticher;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +9,11 @@ import java.util.Map;
 
 /**
  * @author qy
- * @project: hqy-parent-all
- * @create 2021-07-27 16:52
+ * @date 2021-07-27 16:52
  */
 public abstract class IdSwitcher implements Comparable<Object>, Serializable {
+    @Serial
+    private static final long serialVersionUID = -8928471116963388732L;
 
     /**
      * 开关id，需要在同一个类中唯一不重复
@@ -23,16 +25,11 @@ public abstract class IdSwitcher implements Comparable<Object>, Serializable {
      */
     private String name;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -8928471116963388732L;
-
-    private static Map<String, IdSwitcher> families = new HashMap<>();
+    private static final Map<String, IdSwitcher> families = new HashMap<>();
 
     protected static Map<String, List<IdSwitcher>> enumFamilies = new HashMap<>();
 
-    public IdSwitcher(){
+    public IdSwitcher() {
 
     }
 
@@ -43,13 +40,6 @@ public abstract class IdSwitcher implements Comparable<Object>, Serializable {
         putEnumFamilies();
     }
 
-//    protected IntStrEnum(String name, int value, String imageUri) {
-//        this.setName(name);
-//        this.setValue(value);
-//        this.imageUri = imageUri;
-//        families.put(getFamilyName(value), this);
-//        putEnumFamiles();
-//    }
 
     private void putEnumFamilies() {
         @SuppressWarnings("unchecked")
@@ -125,22 +115,20 @@ public abstract class IdSwitcher implements Comparable<Object>, Serializable {
 
     @Override
     public int compareTo(Object o) {
-        if(o instanceof IdSwitcher){
-            IdSwitcher target = (IdSwitcher) o;
-            return this.getId() -target.getId();
-        }else {
+        if (o instanceof IdSwitcher target) {
+            return this.getId() - target.getId();
+        } else {
             throw new IllegalArgumentException("parameter not recognized...");
         }
     }
 
 
-
-    public static String getReplaceStr(IdSwitcher[] array){
+    public static String getReplaceStr(IdSwitcher[] array) {
         StringBuilder sb = new StringBuilder();
-        for(int i=0;i<array.length;i++){
+        for (int i = 0; i < array.length; i++) {
             IdSwitcher ise = array[i];
             sb.append(ise.getName()).append("_").append(ise.getId());
-            if(i+1 != array.length){
+            if (i + 1 != array.length) {
                 sb.append(",");
             }
         }
