@@ -1,6 +1,6 @@
-package com.hqy4cloud.dynamics.annotation;
+package com.hqy.cloud.core.dynamics.annotation;
 
-import com.hqy4cloud.dynamics.config.DynamicDataSourceAutoConfiguration;
+import com.hqy.cloud.core.dynamics.config.DynamicDataSourceAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

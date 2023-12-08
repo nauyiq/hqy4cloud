@@ -1,6 +1,6 @@
-package com.hqy4cloud.dynamics.annotation;
+package com.hqy.cloud.core.dynamics.annotation;
 
-import com.hqy4cloud.dynamics.config.MultipleDataSourceProvider;
+import com.hqy.cloud.core.dynamics.config.MultipleDataSourceProvider;
 
 import java.lang.annotation.*;
 

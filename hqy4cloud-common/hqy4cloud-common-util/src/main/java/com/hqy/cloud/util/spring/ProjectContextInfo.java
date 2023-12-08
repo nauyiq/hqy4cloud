@@ -114,7 +114,7 @@ public class ProjectContextInfo implements Serializable {
      * 判断系统是否刚启动不久
      * @return
      */
-    public boolean isJustStarted() {
+    public static boolean isJustStarted() {
         return isJustStarted(null);
     }
 
@@ -126,7 +126,7 @@ public class ProjectContextInfo implements Serializable {
      * @param ignoreMinutes 启动耗时分钟数，多少分钟算是刚启动....
      * @return
      */
-    public boolean isJustStarted(Integer ignoreMinutes) {
+    public static boolean isJustStarted(Integer ignoreMinutes) {
         if (justStarted) {
             if (ignoreMinutes == null || ignoreMinutes < 0) {
                 ignoreMinutes = 3;

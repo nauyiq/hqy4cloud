@@ -12,6 +12,10 @@ public interface NumberConstants {
      */
     long ONE_SECONDS_4MILLISECONDS = 1000;
 
+    long ONE_NANO_4MILLISECONDS = ONE_SECONDS_4MILLISECONDS * ONE_SECONDS_4MILLISECONDS;
+
+    int FIVE = 5;
+
     /**
      * 一分钟 毫秒单位
      */

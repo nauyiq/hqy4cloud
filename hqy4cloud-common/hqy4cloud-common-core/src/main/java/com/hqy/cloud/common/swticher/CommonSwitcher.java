@@ -60,7 +60,6 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_MSG_CHANNEL_4_GENERIC_RPC = new CommonSwitcher(208, "节点-是否支持泛型RPC-MSG通道（消息通道）", false);
 
-
     /**
      * 节点-使用ThriftServer-Bean, 标志为RPC的提供者
      */
@@ -83,7 +82,6 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_NAMESPACE_CLIENTS_LEAK_PROTECTION = new CommonSwitcher(212, "节点-是否启用Namespace Clients内存泄露保护开关", true);
 
-
     /**
      * 节点-是否由nginx反向代理 提供SSL链接?
      */
@@ -98,7 +96,6 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否启用RPC CLIENT CHANNEL内存泄露保护开关
      */
     public static final CommonSwitcher ENABLE_RPC_CLIENT_CHANNEL_LEAK_PROTECTION = new CommonSwitcher(215, "节点-是否启用RPC CLIENT CHANNEL内存泄露保护开关",true);
-
 
     /**
      * 节点-节点-是否采用集群限流统计计数方式
@@ -135,6 +132,18 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 默认关闭，关闭情况下 只采用配置中心 + 内存的方式校验http basic认证
      */
     public static final CommonSwitcher ENABLE_ACCOUNT_RPC_QUERY_ACTUATOR_BASIC_AUTHORIZATION = new CommonSwitcher(222, "节点-是否允许使用账号RPC查询校验Actuator-Http-Basic", false);
+
+    /**
+     * 节点-是否开启数据库慢sql采集
+     * 只针对配置了数据库的服务生效
+     */
+    public static final CommonSwitcher ENABLE_DATABASE_SLOW_SQL_COLLECTION = new CommonSwitcher(223, "节点-是否开启数据库慢sql采集", true);
+
+    /**
+     * 节点-是否开启数据库异常sql采集
+     * 只针对配置了数据库的服务生效
+     */
+    public static final CommonSwitcher ENABLE_DATABASE_ERROR_SQL_COLLECTION = new CommonSwitcher(224, "节点-是否开启数据库异常sql采集", true);
 
     /**
      * 与sid有关（重联场景是生成新的sid)

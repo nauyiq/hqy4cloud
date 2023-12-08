@@ -1,4 +1,4 @@
-package com.hqy4cloud.core;
+package com.hqy.cloud.druid;
 
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.druid.pool.DruidDataSource;
@@ -23,6 +23,7 @@ public class DruidProperties {
     private int minIdle = 10;
     private int maxActive = 50;
     private int maxWait = 2000;
+    private int slowSqlMillis = 2500;
     private int timeBetweenEvictionRunsMillis = 30000;
     private int minEvictableIdleTimeMillis = 30000;
     private int maxEvictableIdleTimeMillis = 30000;

@@ -1,9 +1,8 @@
-package com.hqy4cloud.dynamics.support;
+package com.hqy.cloud.core.dynamics.support;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.hqy4cloud.dynamics.config.MultipleDataSourceProvider;
-import com.hqy4cloud.dynamics.config.DynamicDataSourceProperties;
+import com.hqy.cloud.core.dynamics.config.MultipleDataSourceProvider;
+import com.hqy.cloud.core.dynamics.config.DynamicDataSourceProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;

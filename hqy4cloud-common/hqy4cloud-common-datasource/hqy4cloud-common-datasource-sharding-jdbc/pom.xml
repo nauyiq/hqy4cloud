@@ -22,8 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-datasource-dynamics</artifactId>
-            <version>${revision}</version>
+            <artifactId>hqy4cloud-common-datasource-core</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>

@@ -1,6 +1,6 @@
-package com.hqy4cloud.dynamics.config;
+package com.hqy.cloud.core.dynamics.config;
 
-import com.hqy4cloud.core.DruidProperties;
+import com.hqy.cloud.druid.DruidProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

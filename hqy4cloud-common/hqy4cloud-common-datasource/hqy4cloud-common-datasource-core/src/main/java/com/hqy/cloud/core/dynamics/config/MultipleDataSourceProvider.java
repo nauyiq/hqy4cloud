@@ -1,4 +1,4 @@
-package com.hqy4cloud.dynamics.config;
+package com.hqy.cloud.core.dynamics.config;
 
 import javax.sql.DataSource;
 import java.util.Map;

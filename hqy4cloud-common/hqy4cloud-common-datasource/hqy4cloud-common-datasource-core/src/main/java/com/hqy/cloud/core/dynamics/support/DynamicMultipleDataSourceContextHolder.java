@@ -1,4 +1,4 @@
-package com.hqy4cloud.dynamics.support;
+package com.hqy.cloud.core.dynamics.support;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,6 +1,6 @@
-package com.hqy4cloud.dynamics.support;
+package com.hqy.cloud.core.dynamics.support;
 
-import com.hqy4cloud.dynamics.config.MultipleDataSourceProvider;
+import com.hqy.cloud.core.dynamics.config.MultipleDataSourceProvider;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import java.util.HashMap;

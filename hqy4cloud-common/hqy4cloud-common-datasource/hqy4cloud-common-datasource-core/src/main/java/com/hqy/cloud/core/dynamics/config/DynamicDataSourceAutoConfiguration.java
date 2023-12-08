@@ -1,8 +1,8 @@
-package com.hqy4cloud.dynamics.config;
+package com.hqy.cloud.core.dynamics.config;
 
-import com.hqy4cloud.dynamics.support.DynamicMultipleDataSource;
-import com.hqy4cloud.dynamics.support.MultipleDataSourceAop;
-import com.hqy4cloud.dynamics.support.DruidMultipleDataSourceProvider;
+import com.hqy.cloud.core.dynamics.support.DynamicMultipleDataSource;
+import com.hqy.cloud.core.dynamics.support.MultipleDataSourceAop;
+import com.hqy.cloud.core.dynamics.support.DruidMultipleDataSourceProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;

@@ -1,8 +1,8 @@
-package com.hqy4cloud.dynamics.support;
+package com.hqy.cloud.core.dynamics.support;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.proxy.ProxyUtil;
-import com.hqy4cloud.dynamics.annotation.DataSourceType;
+import com.hqy.cloud.core.dynamics.annotation.DataSourceType;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

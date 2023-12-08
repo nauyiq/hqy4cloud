@@ -12,7 +12,7 @@
 
     <packaging>jar</packaging>
 
-    <artifactId>hqy4cloud-common-datasource-dynamics</artifactId>
+    <artifactId>hqy4cloud-common-datasource-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -28,6 +28,12 @@
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-base-foundation-service</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

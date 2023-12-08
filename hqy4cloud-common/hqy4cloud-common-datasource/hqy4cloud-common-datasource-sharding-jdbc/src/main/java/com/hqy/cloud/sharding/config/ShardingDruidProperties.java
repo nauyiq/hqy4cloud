@@ -1,6 +1,6 @@
 package com.hqy.cloud.sharding.config;
 
-import com.hqy4cloud.core.DruidProperties;
+import com.hqy.cloud.druid.DruidProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
