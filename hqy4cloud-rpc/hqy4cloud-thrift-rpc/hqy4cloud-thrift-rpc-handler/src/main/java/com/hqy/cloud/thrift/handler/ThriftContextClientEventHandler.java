@@ -54,8 +54,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
 
     @Override
     public void preWrite(Object context, String methodName, Object[] args) {
-        if (context instanceof ThriftContext) {
-            ThriftContext thriftContext = (ThriftContext) context;
+        if (context instanceof ThriftContext thriftContext) {
             thriftContext.setPreWriteTime(System.currentTimeMillis());
             //inject ex parameters.
             checkingInjectParams(thriftContext, args);
@@ -83,8 +82,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
 
     @Override
     public void postWrite(Object context, String methodName, Object[] args) {
-        if (context instanceof ThriftContext) {
-            ThriftContext thriftContext = (ThriftContext) context;
+        if (context instanceof ThriftContext thriftContext) {
             thriftContext.setPostWriteTime(System.currentTimeMillis());
             for (ThriftContextClientHandleService service : services) {
                 try {
@@ -102,8 +100,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
 
     @Override
     public void preRead(Object context, String methodName) {
-        if (context instanceof ThriftContext) {
-            ThriftContext thriftContext = (ThriftContext) context;
+        if (context instanceof ThriftContext thriftContext) {
             thriftContext.setPreReadTime(System.currentTimeMillis());
             for (ThriftContextClientHandleService service : services) {
                 try {

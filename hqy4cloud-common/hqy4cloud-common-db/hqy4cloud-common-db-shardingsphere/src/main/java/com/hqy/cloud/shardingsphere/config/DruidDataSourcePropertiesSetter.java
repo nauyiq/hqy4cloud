@@ -5,8 +5,8 @@ import com.alibaba.druid.filter.logging.Slf4jLogFilter;
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.wall.WallFilter;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.datasource.druid.filter.FilterFactory;
-import com.hqy.cloud.datasource.druid.filter.StatFilterConfig;
 import org.apache.shardingsphere.spring.boot.datasource.DataSourcePropertiesSetter;
 import org.springframework.core.env.Environment;
 
@@ -24,20 +24,23 @@ public class DruidDataSourcePropertiesSetter implements DataSourcePropertiesSett
     @Override
     public void propertiesSet(Environment environment, String prefix, String dataSourceName, DataSource dataSource) {
         if (dataSource instanceof DruidDataSource druidDataSource) {
-            List<Filter> filters = new ArrayList<>();
-            StatFilter statFilter = FilterFactory.createStatFilter(environment);
-            if (statFilter != null) {
-                filters.add(statFilter);
+            if (CommonSwitcher.ENABLE_SHARDINGSPHERE_REGISTER_DRUID_FILTERS.isOn()) {
+                List<Filter> filters = new ArrayList<>();
+                StatFilter statFilter = FilterFactory.createStatFilter(environment);
+                if (statFilter != null) {
+                    filters.add(statFilter);
+                }
+                Slf4jLogFilter slf4jLogFilter = FilterFactory.createSlf4jLogFilter(environment);
+                if (slf4jLogFilter != null) {
+                    filters.add(slf4jLogFilter);
+                }
+                WallFilter wallFilter = FilterFactory.createWallFilter(environment);
+                if (wallFilter != null) {
+                    filters.add(wallFilter);
+                }
+                druidDataSource.setProxyFilters(filters);
             }
-            Slf4jLogFilter slf4jLogFilter = FilterFactory.createSlf4jLogFilter(environment);
-            if (slf4jLogFilter != null) {
-                filters.add(slf4jLogFilter);
-            }
-            WallFilter wallFilter = FilterFactory.createWallFilter(environment);
-            if (wallFilter != null) {
-                filters.add(wallFilter);
-            }
-            druidDataSource.setProxyFilters(filters);
+
         }
     }
 

@@ -27,4 +27,5 @@ spring:
     import:
       - nacos:application-@profiles.active@.yaml
       - nacos:@artifactId@.yaml
-      - nacos:datasource-hqy.yaml
+      - nacos:shardingshpere-hqy.yaml
+

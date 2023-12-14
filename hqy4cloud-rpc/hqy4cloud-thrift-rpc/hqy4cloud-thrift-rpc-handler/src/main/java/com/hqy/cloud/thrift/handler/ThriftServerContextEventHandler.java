@@ -56,8 +56,7 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
     @Override
     public void preRead(Object context, String methodName) throws TException {
         super.preRead(context, methodName);
-        if (context instanceof ThriftServerContext) {
-            ThriftServerContext thriftServerContext = (ThriftServerContext) context;
+        if (context instanceof ThriftServerContext thriftServerContext) {
             thriftServerContext.setPreReadTime(System.currentTimeMillis());
             for (ThriftServerContextHandleService service : services) {
                 try {
@@ -74,8 +73,7 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
     @Override
     public void postRead(Object context, String methodName, Object[] args) throws TException {
         super.postRead(context, methodName, args);
-        if (context instanceof ThriftServerContext) {
-            ThriftServerContext thriftServerContext = (ThriftServerContext) context;
+        if (context instanceof ThriftServerContext thriftServerContext) {
             thriftServerContext.setPostReadTime(System.currentTimeMillis());
             checkingInjectParams(thriftServerContext, args);
 
@@ -92,8 +90,7 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
     @Override
     public void preInvokeMethod(Object context, String methodName, Object[] args) {
         super.preInvokeMethod(context, methodName, args);
-        if (context instanceof ThriftServerContext) {
-            ThriftServerContext thriftServerContext = (ThriftServerContext) context;
+        if (context instanceof ThriftServerContext thriftServerContext) {
             for (ThriftServerContextHandleService service : services) {
                 try {
                     service.doPreInvokeMethod(thriftServerContext, methodName, args);

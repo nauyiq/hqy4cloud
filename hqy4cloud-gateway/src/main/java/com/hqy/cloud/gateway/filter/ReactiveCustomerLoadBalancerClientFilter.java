@@ -1,6 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.Constants;
 import com.hqy.cloud.gateway.loadbalance.support.GatewayLoadBalanceStrategyContext;
 import com.hqy.cloud.gateway.loadbalance.LoadBalancer;
@@ -51,7 +52,7 @@ public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, O
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (CommonSwitcher.ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE.isOff()) {
+        if (ServerSwitcher.ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE.isOff()) {
             if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
                 log.info("@@@ 开关-是否采用自定义的网关负载均衡策略 -> isOff");
             }

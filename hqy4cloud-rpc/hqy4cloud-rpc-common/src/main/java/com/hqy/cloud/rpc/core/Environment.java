@@ -1,6 +1,5 @@
 package com.hqy.cloud.rpc.core;
 
-import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -98,15 +97,5 @@ public class Environment {
         return ENV_PROD.equalsIgnoreCase(env);
     }
 
-    public boolean enableRpcDirect() {
-        return false;
-    }
 
-    public boolean isRPCCollection() {
-        return CommonSwitcher.ENABLE_THRIFT_RPC_COLLECTION.isOn();
-    }
-
-    public boolean isRPCCallChainPersistence() {
-        return CommonSwitcher.ENABLE_THRIFT_RPC_CALL_CHAIN_PERSISTENCE.isOn();
-    }
 }

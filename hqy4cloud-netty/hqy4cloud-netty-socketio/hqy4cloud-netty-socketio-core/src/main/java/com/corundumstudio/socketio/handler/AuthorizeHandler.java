@@ -93,9 +93,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         SchedulerKey key = new SchedulerKey(SchedulerKey.Type.PING_TIMEOUT, ctx.channel());
         disconnectScheduler.cancel(key);
-
-        if (msg instanceof FullHttpRequest) {
-            FullHttpRequest req = (FullHttpRequest) msg;
+        if (msg instanceof FullHttpRequest req) {
             Channel channel = ctx.channel();
             QueryStringDecoder queryDecoder = new QueryStringDecoder(req.uri());
             //origin

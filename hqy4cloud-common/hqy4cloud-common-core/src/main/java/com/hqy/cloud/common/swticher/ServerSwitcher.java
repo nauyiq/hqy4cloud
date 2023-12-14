@@ -53,6 +53,11 @@ public class ServerSwitcher extends CommonSwitcher {
             = new ServerSwitcher(153,"网关服务-是否启用HTTP限流结果持久化",true, MicroServiceConstants.GATEWAY);
 
     /**
+     * 节点-是否采用自定义的网关负载均衡策略
+     */
+    public static final ServerSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new ServerSwitcher(154, "节点-是否采用自定义的网关负载均衡策略", true, MicroServiceConstants.GATEWAY);
+
+    /**
      * 采集服务-是否采集来自采集服务本身的异常
      * 采集服务本身发生异常时，是否采集‘采集服务‘的异常
      */
