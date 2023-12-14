@@ -59,7 +59,7 @@ public class DruidShardingJdbcAutoConfiguration implements SmartInitializingSing
     @Override
     @SneakyThrows
     public void afterSingletonsInstantiated() {
-        DataSource dataSource = configurableListableBeanFactory.getBean(DataSource.class);
+        /*DataSource dataSource = configurableListableBeanFactory.getBean(DataSource.class);
         if (dataSource instanceof ShardingDataSource shardingDataSource) {
             Map<String, DataSource> dataSourceMap = shardingDataSource.getDataSourceMap();
             if (MapUtil.isNotEmpty(dataSourceMap)) {
@@ -76,6 +76,6 @@ public class DruidShardingJdbcAutoConfiguration implements SmartInitializingSing
                     }
                 }
             }
-        }
+        }*/
     }
 }
