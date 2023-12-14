@@ -18,7 +18,6 @@
     <modules>
         <module>hqy4cloud-common-arithmetic</module>
         <module>hqy4cloud-common-core</module>
-        <module>hqy4cloud-common-datasource</module>
         <module>hqy4cloud-common-service</module>
         <module>hqy4cloud-common-util</module>
         <module>hqy4cloud-common-security</module>
@@ -27,6 +26,7 @@
         <module>hqy4cloud-common-seata</module>
         <module>hqy4cloud-common-canal</module>
         <module>hqy4cloud-common-chatgpt</module>
+        <module>hqy4cloud-common-db</module>
 
     </modules>
 

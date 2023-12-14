@@ -8,11 +8,19 @@ import java.io.Serial;
  * @date 2021-07-28 9:35
  */
 public class CommonSwitcher extends AbstractSwitcher {
+
     @Serial
     private static final long serialVersionUID = -5097824901579636026L;
 
+    private boolean registerActuator;
+
     protected CommonSwitcher(int id, String name, boolean status) {
+        this(id, name, status, true);
+    }
+
+    protected CommonSwitcher(int id, String name, boolean status, boolean registerActuator) {
         super(id, name, status);
+        this.registerActuator = registerActuator;
     }
 
     /**
@@ -146,6 +154,12 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_DATABASE_ERROR_SQL_COLLECTION = new CommonSwitcher(224, "节点-是否开启数据库异常sql采集", true);
 
     /**
+     * 节点-是否开启异常采集器 默认打开
+     */
+    public static final CommonSwitcher ENABLE_EXCEPTION_COLLECTOR = new CommonSwitcher(225, "节点-是否开启异常采集器", true);
+
+
+    /**
      * 与sid有关（重联场景是生成新的sid)
      * 无用http长连接释放（短时间泄漏）
      * 场景：业务： 兼容忽略js前端框架层面的socketIO层面 多发一次无意义请求的返回开关   <br>
@@ -180,9 +194,11 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_CLOSE_THRIFT_CHANNEL_ON_ERROR = new CommonSwitcher(254, "节点-Thrift Rpc发生异常时是否关闭通道", false);
 
 
+    public boolean isRegisterActuator() {
+        return registerActuator;
+    }
 
-
-
-
-
+    public void setRegisterActuator(boolean registerActuator) {
+        this.registerActuator = registerActuator;
+    }
 }

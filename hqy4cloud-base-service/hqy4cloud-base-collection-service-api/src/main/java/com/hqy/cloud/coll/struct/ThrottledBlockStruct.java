@@ -3,6 +3,7 @@ package com.hqy.cloud.coll.struct;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 /**
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
  * @version 1.0
  * @date 2022/3/1 17:57
  */
+@Builder
 @ThriftStruct
 @NoArgsConstructor
 @AllArgsConstructor

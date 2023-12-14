@@ -2,8 +2,9 @@ package com.hqy.cloud.gateway.server;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
-import com.hqy.cloud.auth.flow.FlowResult;
-import com.hqy.cloud.auth.flow.server.HttpAccessFlowControlCenter;
+import com.hqy.cloud.foundation.collector.support.CollectorCenter;
+import com.hqy.cloud.foundation.limiter.FlowResult;
+import com.hqy.cloud.auth.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
@@ -12,6 +13,8 @@ import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
@@ -218,31 +221,23 @@ public class GatewayHttpThrottles implements HttpThrottles {
      * @param accessParamJson 请求参数json
      */
     public void persistBlockIpAction(String ip, Integer blockSeconds, String url, String createdBy, String accessParamJson) {
-
         if (ServerSwitcher.ENABLE_HTTP_THROTTLE_PERSISTENCE.isOff()) {
             log.warn("Ignore persistThrottleInfo: {}, {}, reason:{}", ip, url, createdBy);
             return;
         }
-
         if (StringUtils.isNotBlank(accessParamJson) && accessParamJson.length() > MAX_LENGTH) {
             //只截取前1024个字符的提示信息,太长了就丢掉
             accessParamJson = accessParamJson.substring(0, MAX_LENGTH);
         }
-
-        ThrottledBlockStruct struct = new ThrottledBlockStruct();
-        struct.ip = ip;
-        struct.accessJson = accessParamJson;
-        struct.blockedSeconds = blockSeconds;
-        struct.url = url;
-        struct.env = Environment.getInstance().getEnvironment();
-        struct.throttleBy = createdBy;
-
-        try {
-            CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
-            remoteService.saveThrottledBlockHistory(struct);
-        } catch (Exception e) {
-            log.warn("Failed execute to persist block log, cause: {}", e.getMessage());
-        }
-
+        ThrottledBlockStruct struct = ThrottledBlockStruct.builder()
+                .ip(ip)
+                .accessJson(accessParamJson)
+                .blockedSeconds(blockSeconds)
+                .url(url)
+                .env(Environment.getInstance().getEnvironment())
+                .throttleBy(createdBy).build();
+        // 调用采集器进行采集
+        Collector<Object> collector = CollectorCenter.getInstance().getCollector(CollectionType.THROTTLES);
+        collector.collect(struct);
     }
 }

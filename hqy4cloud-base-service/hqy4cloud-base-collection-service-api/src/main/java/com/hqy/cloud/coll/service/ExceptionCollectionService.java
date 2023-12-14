@@ -49,4 +49,5 @@ public interface ExceptionCollectionService extends RPCService {
     @ThriftMethod(oneway = true)
     void deleteErrorLog(@ThriftField(1) Long id);
 
+
 }

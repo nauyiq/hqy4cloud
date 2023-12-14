@@ -7,7 +7,7 @@ import com.hqy.cloud.coll.service.RPCFlowRecordService;
 import com.hqy.cloud.rpc.monitor.thrift.service.ThriftMonitorService;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcFlowStruct;
-import com.hqy.cloud.util.thread.ParentExecutorService;
+import com.hqy.cloud.util.ProjectExecutors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,7 +41,7 @@ public class ThriftMonitorServiceImpl implements ThriftMonitorService {
             return;
         }
         List<RPCFlowRecord> rpcFlowRecords = structs.stream().map(RPCFlowRecord::new).collect(Collectors.toList());
-        ParentExecutorService.getInstance().execute(() -> rpcFlowRecordService.insertList(rpcFlowRecords));
+        ProjectExecutors.getInstance().execute(() -> rpcFlowRecordService.insertList(rpcFlowRecords));
     }
 
     @Override

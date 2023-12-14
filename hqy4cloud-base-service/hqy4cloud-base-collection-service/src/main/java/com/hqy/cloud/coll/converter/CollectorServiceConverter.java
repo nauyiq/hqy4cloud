@@ -1,14 +1,8 @@
 package com.hqy.cloud.coll.converter;
 
+import com.hqy.cloud.coll.entity.*;
+import com.hqy.cloud.coll.struct.*;
 import com.hqy.cloud.common.base.converter.CommonConverter;
-import com.hqy.cloud.coll.struct.PfExceptionStruct;
-import com.hqy.cloud.coll.struct.RpcExceptionRecordStruct;
-import com.hqy.cloud.coll.struct.RpcFlowRecordStruct;
-import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
-import com.hqy.cloud.coll.entity.PfException;
-import com.hqy.cloud.coll.entity.RPCExceptionRecord;
-import com.hqy.cloud.coll.entity.RPCFlowRecord;
-import com.hqy.cloud.coll.entity.ThrottledBlock;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -64,6 +58,14 @@ public interface CollectorServiceConverter {
      */
     @Mapping(target = "requestTime", source = "requestTime", qualifiedByName = "timeStampConvertString")
     RpcExceptionRecordStruct convert(RPCExceptionRecord record);
+
+
+    /**
+     * SqlRecordStruct to SqlRecord
+     * @param record {@link SqlRecordStruct}
+     * @return       {@link SqlRecord}
+     */
+    SqlRecord convert(SqlRecordStruct record);
 
 
 

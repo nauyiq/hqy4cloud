@@ -50,9 +50,14 @@ public class ServerSwitcher extends CommonSwitcher {
      * 节点-是否启用HTTP限流结果持久化
      */
     public static final ServerSwitcher ENABLE_HTTP_THROTTLE_PERSISTENCE
-            = new ServerSwitcher(153,"网关服务-是否启用HTTP限流结果持久化",true , MicroServiceConstants.GATEWAY);
+            = new ServerSwitcher(153,"网关服务-是否启用HTTP限流结果持久化",true, MicroServiceConstants.GATEWAY);
 
-
+    /**
+     * 采集服务-是否采集来自采集服务本身的异常
+     * 采集服务本身发生异常时，是否采集‘采集服务‘的异常
+     */
+    public static final ServerSwitcher ENABLE_COLLECT_COLLECTION_SERVICE_EXCEPTION
+            = new ServerSwitcher(160, "采集服务-是否采集'采集服务'本身的异常", false, MicroServiceConstants.COMMON_COLLECTOR);
 
 
 }

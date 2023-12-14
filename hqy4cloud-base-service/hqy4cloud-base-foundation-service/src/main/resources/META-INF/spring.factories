@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.cloud.foundation.cache.redis.config.RedisAutoConfiguration
+com.hqy.cloud.foundation.cache.redis.config.RedisAutoConfiguration, \
+  com.hqy.cloud.foundation.collector.CollectorAutoConfiguration

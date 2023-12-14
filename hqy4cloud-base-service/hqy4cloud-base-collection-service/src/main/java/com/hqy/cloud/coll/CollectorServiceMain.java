@@ -2,6 +2,7 @@ package com.hqy.cloud.coll;
 
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.service.ExceptionCollectionService;
+import com.hqy.cloud.coll.service.RemoteSqlLogCollectionService;
 import com.hqy.cloud.coll.service.RpcLogRemoteService;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.monitor.thrift.service.ThriftMonitorService;
@@ -36,15 +37,15 @@ public class CollectorServiceMain {
     @Component
     @RequiredArgsConstructor
     public static class ThriftServerRegisterServer implements ThriftServerLauncher {
-
         private final CollPersistService collPersistService;
         private final ThriftMonitorService thriftMonitorService;
         private final ExceptionCollectionService exceptionCollectionService;
         private final RpcLogRemoteService rpcLogRemoteService;
+        private final RemoteSqlLogCollectionService sqlLogCollectionService;
 
         @Override
         public List<RPCService> getRpcServices() {
-            return Arrays.asList(collPersistService, thriftMonitorService, exceptionCollectionService, rpcLogRemoteService);
+            return List.of(collPersistService, thriftMonitorService, exceptionCollectionService, rpcLogRemoteService, sqlLogCollectionService);
         }
     }
 
