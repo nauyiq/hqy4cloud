@@ -15,6 +15,11 @@ public class ServerSwitcher extends CommonSwitcher {
         this.serverName = serverName;
     }
 
+    protected ServerSwitcher(int id, String name, boolean status, boolean registerActuator, String serverName) {
+        super(id, name, status, registerActuator);
+        this.serverName = serverName;
+    }
+
     public String getServerName() {
         return serverName;
     }

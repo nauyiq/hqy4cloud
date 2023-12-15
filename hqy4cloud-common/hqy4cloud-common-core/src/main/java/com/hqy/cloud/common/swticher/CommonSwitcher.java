@@ -12,15 +12,14 @@ public class CommonSwitcher extends AbstractSwitcher {
     @Serial
     private static final long serialVersionUID = -5097824901579636026L;
 
-    private boolean registerActuator;
+
 
     protected CommonSwitcher(int id, String name, boolean status) {
         this(id, name, status, true);
     }
 
     protected CommonSwitcher(int id, String name, boolean status, boolean registerActuator) {
-        super(id, name, status);
-        this.registerActuator = registerActuator;
+        super(id, name, status, registerActuator);
     }
 
 
@@ -149,11 +148,17 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_SHARDINGSPHERE_REGISTER_DRUID_FILTERS = new CommonSwitcher(231, "节点-shardingsphere是否注入druid filters", true, false);
 
+    /**
+     * 节点-是否定期清除druid stat 数据
+     */
+    public static final CommonSwitcher ENABLE_SCHEDULE_RESET_DRUID_STAT_DATA = new CommonSwitcher(232, "节点-是否定期清除druid stat 数据", true);
+
 
     /**
      * 节点-是否禁用SpringBoot热部署 (默认 true)
      */
     public static final CommonSwitcher ENABLE_SPRING_BOOT_RESTART_DEVTOOLS = new CommonSwitcher(240, "节点-是否禁用Springboot热部署", true);
+
 
     /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）
@@ -161,11 +166,5 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher JUST_4_TEST_DEBUG = new CommonSwitcher(250,"节点-DEBUG开关（默认关）",true);
 
 
-    public boolean isRegisterActuator() {
-        return registerActuator;
-    }
 
-    public void setRegisterActuator(boolean registerActuator) {
-        this.registerActuator = registerActuator;
-    }
 }

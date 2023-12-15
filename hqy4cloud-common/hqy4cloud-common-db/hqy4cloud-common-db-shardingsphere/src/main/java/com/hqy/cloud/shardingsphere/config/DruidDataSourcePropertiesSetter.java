@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * shardingsphere druid 连接池属性注入
+ * 基于SPI的方式 {@link org.apache.shardingsphere.spring.boot.datasource.DataSourcePropertiesSetterHolder}
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/12/14 17:58
@@ -24,6 +26,7 @@ public class DruidDataSourcePropertiesSetter implements DataSourcePropertiesSett
     @Override
     public void propertiesSet(Environment environment, String prefix, String dataSourceName, DataSource dataSource) {
         if (dataSource instanceof DruidDataSource druidDataSource) {
+            // 注入filters
             if (CommonSwitcher.ENABLE_SHARDINGSPHERE_REGISTER_DRUID_FILTERS.isOn()) {
                 List<Filter> filters = new ArrayList<>();
                 StatFilter statFilter = FilterFactory.createStatFilter(environment);

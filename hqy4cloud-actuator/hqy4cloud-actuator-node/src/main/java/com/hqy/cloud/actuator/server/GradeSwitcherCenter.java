@@ -20,7 +20,8 @@ import java.util.Map;
 public class GradeSwitcherCenter {
     private static volatile GradeSwitcherCenter instance;
     private volatile boolean initialize = false;
-    private final Map<Integer, AbstractSwitcher> switchers = MapUtil.newConcurrentHashMap(64);
+    private final Map<Integer, AbstractSwitcher> actuatorSwitchers = MapUtil.newConcurrentHashMap(64);
+    private final Map<Integer, AbstractSwitcher> allSwitcherMap = MapUtil.newConcurrentHashMap(64);
 
     public static GradeSwitcherCenter getInstance() {
         if (instance == null) {
@@ -52,12 +53,17 @@ public class GradeSwitcherCenter {
                     continue;
                 }
                 Integer switcherId = switcher.getId();
-                if (switchers.containsKey(switcherId)) {
+                if (actuatorSwitchers.containsKey(switcherId)) {
                     // 重复ID注册 业务上不允许这样设计
                     log.warn("Duplicate switcher id, please check all switcher ids.");
                     continue;
                 }
-                switchers.put(switcherId, switcher);
+                allSwitcherMap.put(switcherId, switcher);
+                if (!switcher.isRegisterActuator()) {
+                    // 不注册到actuator
+                    continue;
+                }
+                actuatorSwitchers.put(switcherId, switcher);
             }
         } finally {
             initialize = true;
@@ -67,12 +73,16 @@ public class GradeSwitcherCenter {
 
 
     public void updateGradeSwitcherStatus(MicroServerSwitcherInfo info) {
-        AbstractSwitcher switcher = switchers.get(info.getId());
+        AbstractSwitcher switcher = actuatorSwitchers.get(info.getId());
         switcher.setStatus(info.getStatus());
     }
 
-    public Map<Integer, AbstractSwitcher> getSwitchers() {
-        return this.switchers;
+    public Map<Integer, AbstractSwitcher> getActuatorSwitchers() {
+        return this.actuatorSwitchers;
+    }
+
+    public Map<Integer, AbstractSwitcher> getAllSwitchers() {
+        return this.allSwitcherMap;
     }
 
 

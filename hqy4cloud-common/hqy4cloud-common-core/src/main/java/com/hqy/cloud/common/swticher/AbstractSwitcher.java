@@ -52,6 +52,11 @@ public abstract class AbstractSwitcher extends IdSwitcher {
     private S_TYPE type;
 
     /**
+     * 是否注册actuator
+     */
+    private boolean registerActuator = true;
+
+    /**
      * 选项列表，开关value的备选值
      */
     private List<AbstractSwitcherOption> choiceList;
@@ -60,6 +65,16 @@ public abstract class AbstractSwitcher extends IdSwitcher {
         super(name, id);
         this.status = status;
         this.type = S_TYPE.BOOLEAN;
+        this.choiceList = new ArrayList<>();
+        this.choiceList.add(BooleanSwitcherOption.TRUE);
+        this.choiceList.add(BooleanSwitcherOption.FALSE);
+    }
+
+    protected AbstractSwitcher(int id, String name, boolean status, boolean registerActuator) {
+        super(name, id);
+        this.status = status;
+        this.type = S_TYPE.BOOLEAN;
+        this.registerActuator = registerActuator;
         this.choiceList = new ArrayList<>();
         this.choiceList.add(BooleanSwitcherOption.TRUE);
         this.choiceList.add(BooleanSwitcherOption.FALSE);
@@ -239,6 +254,7 @@ public abstract class AbstractSwitcher extends IdSwitcher {
         return choiceList;
     }
 
+
     /**
      * 开关value的备选值
      *
@@ -250,6 +266,14 @@ public abstract class AbstractSwitcher extends IdSwitcher {
 
     public void addSwitcherOption(AbstractSwitcherOption option) {
         this.choiceList.add(option);
+    }
+
+    public boolean isRegisterActuator() {
+        return registerActuator;
+    }
+
+    public void setRegisterActuator(boolean registerActuator) {
+        this.registerActuator = registerActuator;
     }
 
 

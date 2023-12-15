@@ -46,4 +46,6 @@ public class MicroServiceGradeSwitcherEndpoint implements Indicator<MicroServerS
         }
         microServiceGradeManageService.changeServerSwitcher(switcherInfo);
     }
+
+
 }

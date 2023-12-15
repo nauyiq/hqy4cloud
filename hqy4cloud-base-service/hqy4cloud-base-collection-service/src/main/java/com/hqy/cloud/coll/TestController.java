@@ -3,6 +3,7 @@ package com.hqy.cloud.coll;
 import com.hqy.cloud.coll.entity.SqlRecord;
 import com.hqy.cloud.coll.mapper.SqlRecordTkMapper;
 import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +21,10 @@ public class TestController {
     @GetMapping("/test")
     public R<Boolean> test() {
         SqlRecord sqlRecord = new SqlRecord();
-//        sqlRecord.setApplication("test");
-//        sqlRecord.setType(1);
+        if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
+            sqlRecord.setApplication("test");
+            sqlRecord.setType(1);
+        }
         mapper.insert(sqlRecord);
         return R.ok();
     }

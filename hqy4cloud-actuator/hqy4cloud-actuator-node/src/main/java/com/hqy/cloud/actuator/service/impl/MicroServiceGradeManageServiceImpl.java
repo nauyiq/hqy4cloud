@@ -69,7 +69,7 @@ public class MicroServiceGradeManageServiceImpl implements MicroServiceGradeMana
 
     @Override
     public Map<String, Object> getServerSwitcherInfo() {
-        Map<Integer, AbstractSwitcher> switchers = GradeSwitcherCenter.getInstance().getSwitchers();
+        Map<Integer, AbstractSwitcher> switchers = GradeSwitcherCenter.getInstance().getActuatorSwitchers();
         HashMap<String, Object> resultMap = MapUtil.newHashMap(switchers.size());
         for (Map.Entry<Integer, AbstractSwitcher> entry : switchers.entrySet()) {
             Integer switcherId = entry.getKey();
