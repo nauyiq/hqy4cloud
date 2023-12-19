@@ -6,14 +6,12 @@ import com.hqy.cloud.foundation.collector.support.CollectorCenter;
 import com.hqy.cloud.foundation.limiter.FlowResult;
 import com.hqy.cloud.auth.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.coll.enums.BiBlockType;
-import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.rpc.core.Environment;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
@@ -237,7 +235,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 .env(Environment.getInstance().getEnvironment())
                 .throttleBy(createdBy).build();
         // 调用采集器进行采集
-        Collector<Object> collector = CollectorCenter.getInstance().getCollector(CollectionType.THROTTLES);
+        Collector<Object> collector = CollectorCenter.getInstance().getCollector(EventType.THROTTLES);
         collector.collect(struct);
     }
 }

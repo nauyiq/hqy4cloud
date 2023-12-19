@@ -1,22 +1,17 @@
 package com.hqy.cloud.foundation.collector.support.execption;
 
 import cn.hutool.core.date.DateUtil;
-import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.coll.service.ExceptionCollectionService;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.cloud.foundation.collector.support.CollectorCenter;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
 import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.cloud.util.thread.ExecutorServiceProject;
-import com.hqy.cloud.util.thread.ParentExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,7 +59,7 @@ public class ExceptionCollectorUtils {
         String nameEn = SpringContextHolder.getProjectContextInfo().getNameWithIpPort();
         PfExceptionStruct struct = buildStruct(env, nameEn, exceptionStackTrace, event);
         exceptionCollectionService.collect(struct);
-        Collector<PfExceptionStruct> collector = CollectorCenter.getInstance().getCollector(CollectionType.EXCEPTION);
+        Collector<PfExceptionStruct> collector = CollectorCenter.getInstance().getCollector(EventType.EXCEPTION);
         collector.collect(struct);
     }
 

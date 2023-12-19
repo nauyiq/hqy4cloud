@@ -1,4 +1,4 @@
-package com.hqy.foundation.alerter;
+package com.hqy.foundation.notice;
 
 /**
  * 通知类型

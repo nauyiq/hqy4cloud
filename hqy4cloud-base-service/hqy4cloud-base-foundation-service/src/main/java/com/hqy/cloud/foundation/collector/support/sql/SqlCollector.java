@@ -4,7 +4,7 @@ import com.hqy.cloud.coll.service.RemoteSqlLogCollectionService;
 import com.hqy.cloud.coll.struct.SqlRecordStruct;
 import com.hqy.cloud.foundation.collector.AbstractCollector;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +25,8 @@ public class SqlCollector extends AbstractCollector<SqlRecordStruct> {
     private int maxLength;
 
     @Override
-    public CollectionType type() {
-        return CollectionType.SQL;
+    public EventType type() {
+        return EventType.SQL;
     }
 
     @Override

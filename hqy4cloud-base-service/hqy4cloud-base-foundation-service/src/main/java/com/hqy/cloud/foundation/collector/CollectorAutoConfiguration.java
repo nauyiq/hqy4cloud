@@ -6,7 +6,7 @@ import com.hqy.cloud.foundation.collector.support.execption.ExceptionCollActionE
 import com.hqy.cloud.foundation.collector.support.execption.ExceptionCollector;
 import com.hqy.cloud.foundation.collector.support.sql.SqlCollector;
 import com.hqy.cloud.foundation.collector.support.throttles.ThrottledCollector;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.collection.CollectorConfig;
 import org.springframework.beans.BeansException;
@@ -64,7 +64,7 @@ public class CollectorAutoConfiguration implements SmartInitializingSingleton, B
         if (MapUtil.isNotEmpty(map)) {
             Collection<Collector> collectors = map.values();
             collectors.forEach(collector -> {
-                CollectionType type = collector.type();
+                EventType type = collector.type();
                 CollectorConfig config = CollectorCenter.getInstance().getConfig(type);
                 collector.setConfig(config);
                 CollectorCenter.getInstance().registry(collector);

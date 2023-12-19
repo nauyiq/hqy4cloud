@@ -4,7 +4,7 @@ import com.hqy.cloud.coll.service.ExceptionCollectionService;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.cloud.foundation.collector.AbstractCollector;
 import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ExceptionCollector extends AbstractCollector<PfExceptionStruct> {
 
     @Override
-    public CollectionType type() {
-        return CollectionType.EXCEPTION;
+    public EventType type() {
+        return EventType.EXCEPTION;
     }
 
     @Override

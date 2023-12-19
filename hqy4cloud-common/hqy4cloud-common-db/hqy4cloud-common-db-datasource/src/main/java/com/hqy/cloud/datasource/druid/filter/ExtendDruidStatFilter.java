@@ -9,7 +9,7 @@ import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.datasource.core.CollectionModelUtil;
 import com.hqy.cloud.foundation.collector.support.CollectorCenter;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +48,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_DATABASE_ERROR_SQL_COLLECTION.isOff()) {
                 // 获取采集器进行sql采集
                 SqlRecordStruct struct = CollectionModelUtil.buildErrorSqlRecordStruct(params, sql, SystemClock.now(), costMills, error);
-                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(CollectionType.SQL);
+                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(EventType.SQL);
                 collector.collect(struct);
             }
         } catch (Throwable cause) {
@@ -72,7 +72,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_DATABASE_SLOW_SQL_COLLECTION.isOn()) {
                 // 获取采集器进行sql采集
                 SqlRecordStruct struct = CollectionModelUtil.buildSlowSqlRecordStruct(params, sql, SystemClock.now(), costMills);
-                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(CollectionType.SQL);
+                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(EventType.SQL);
                 collector.collect(struct);
             }
         } catch (Throwable cause) {

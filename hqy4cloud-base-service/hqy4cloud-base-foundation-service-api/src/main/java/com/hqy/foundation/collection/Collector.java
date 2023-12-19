@@ -1,5 +1,7 @@
 package com.hqy.foundation.collection;
 
+import com.hqy.foundation.common.EventType;
+
 /**
  * 业务数据采集器
  * @author qiyuan.hong
@@ -16,9 +18,9 @@ public interface Collector<T> {
 
     /**
      * 获取业务采集的类型
-     * @return {@link CollectionType}
+     * @return {@link EventType}
      */
-    CollectionType type();
+    EventType type();
 
     /**
      * 设置采集器配置类

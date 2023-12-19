@@ -2,7 +2,7 @@ package com.hqy.cloud.foundation.collector.support;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.collection.CollectorConfig;
 
@@ -23,16 +23,16 @@ public enum CollectorCenter {
 
     ;
 
-    private static final Map<CollectionType, Collector<?>> COLLECTOR_MAP = MapUtil.newConcurrentHashMap();
-    private static final Map<CollectionType, CollectorConfig> CONFIG_MAP = MapUtil.newConcurrentHashMap();
+    private static final Map<EventType, Collector<?>> COLLECTOR_MAP = MapUtil.newConcurrentHashMap();
+    private static final Map<EventType, CollectorConfig> CONFIG_MAP = MapUtil.newConcurrentHashMap();
 
     static {
         CollectorConfig sqlConfig = new CollectorConfig(true, 1, true);
-        CONFIG_MAP.put(CollectionType.SQL, sqlConfig);
+        CONFIG_MAP.put(EventType.SQL, sqlConfig);
         CollectorConfig exceptionConfig = new CollectorConfig(true, 50, true);
-        CONFIG_MAP.put(CollectionType.EXCEPTION, exceptionConfig);
+        CONFIG_MAP.put(EventType.EXCEPTION, exceptionConfig);
         CollectorConfig throttleConfig = new CollectorConfig(true, 1, true);
-        CONFIG_MAP.put(CollectionType.THROTTLES, throttleConfig);
+        CONFIG_MAP.put(EventType.THROTTLES, throttleConfig);
     }
     private final static CollectorConfig DEFAULT_CONFIG = new CollectorConfig();
 
@@ -45,11 +45,11 @@ public enum CollectorCenter {
         COLLECTOR_MAP.put(collector.type(), collector);
     }
 
-    public CollectorConfig getConfig(CollectionType type) {
+    public CollectorConfig getConfig(EventType type) {
         return CONFIG_MAP.getOrDefault(type, DEFAULT_CONFIG);
     }
 
-    public void setConfig(CollectionType type, CollectorConfig config) {
+    public void setConfig(EventType type, CollectorConfig config) {
         AssertUtil.notNull(type, "Collection type should not be null.");
         AssertUtil.notNull(config, "Collection config should not be null.");
         CONFIG_MAP.put(type, config);
@@ -57,7 +57,7 @@ public enum CollectorCenter {
 
 
     @SuppressWarnings("unchecked")
-    public <T> Collector<T> getCollector(CollectionType type) {
+    public <T> Collector<T> getCollector(EventType type) {
         return (Collector<T>) COLLECTOR_MAP.get(type);
     }
 

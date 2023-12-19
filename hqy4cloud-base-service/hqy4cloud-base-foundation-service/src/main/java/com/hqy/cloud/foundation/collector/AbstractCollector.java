@@ -8,7 +8,7 @@ import com.hqy.cloud.foundation.limiter.Measurement;
 import com.hqy.cloud.util.concurrent.AbstractIExecutorService;
 import com.hqy.cloud.util.concurrent.IExecutorService;
 import com.hqy.cloud.util.concurrent.IExecutorsRepository;
-import com.hqy.foundation.collection.CollectionType;
+import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.collection.Collector;
 import com.hqy.foundation.collection.CollectorConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public abstract class AbstractCollector<T> implements Collector<T> {
      * 频率计数器， 可能不太准
      * 因为hashcode判断时很大概率发生hash冲突。 但是采集业务允许误差
      */
-    private final Map<CollectionType, AtomicLong> frequencyMap = new ConcurrentHashMap<>();
+    private final Map<EventType, AtomicLong> frequencyMap = new ConcurrentHashMap<>();
 
 
     @Override
