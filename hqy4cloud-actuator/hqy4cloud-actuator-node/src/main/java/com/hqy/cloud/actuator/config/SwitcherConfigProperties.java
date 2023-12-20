@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ConfigurationProperties(prefix = "com.hqy.cloud.switchers")
+@ConfigurationProperties(prefix = "hqy4cloud.switchers")
 public class SwitcherConfigProperties {
 
     private List<Config> configs;

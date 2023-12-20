@@ -2,7 +2,7 @@ package com.hqy.cloud.gateway.server;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
-import com.hqy.cloud.foundation.collector.support.CollectorCenter;
+import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
 import com.hqy.cloud.foundation.limiter.FlowResult;
 import com.hqy.cloud.auth.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.coll.enums.BiBlockType;
@@ -12,7 +12,7 @@ import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.foundation.common.EventType;
-import com.hqy.foundation.collection.Collector;
+import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.common.HttpRequestInfo;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;

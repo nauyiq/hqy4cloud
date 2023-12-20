@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2022/6/17 16:39
  */
 @Data
-@ConfigurationProperties(prefix = "resource.limit")
+@ConfigurationProperties(prefix = "hqy4cloud.resource.limit")
 public class FlowConfigProperties {
 
     public static final FlowLimitConfig DEFAULT_CONFIG = new FlowLimitConfig(15, Measurement.Seconds.ONE_SECONDS);

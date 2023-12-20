@@ -1,6 +1,8 @@
 package com.hqy.cloud.notice.email;
 
+import com.hqy.foundation.common.EventContent;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,14 +12,18 @@ import lombok.NoArgsConstructor;
  * @date 2023/12/19 16:55
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailContent {
+public class EmailContent implements EventContent {
 
+    private String id;
     private String sender;
     private String subject;
     private String content;
 
-
-
+    @Override
+    public String getId() {
+        return id;
+    }
 }

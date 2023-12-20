@@ -155,6 +155,12 @@ public class CommonSwitcher extends AbstractSwitcher {
 
 
     /**
+     * 节点-是否开启异常sql通知
+     */
+    public static final CommonSwitcher ENABLE_EXCEPTION_SQL_ALTER = new CommonSwitcher(233, "节点-是否启用异常sql通知", true);
+
+
+    /**
      * 节点-是否禁用SpringBoot热部署 (默认 true)
      */
     public static final CommonSwitcher ENABLE_SPRING_BOOT_RESTART_DEVTOOLS = new CommonSwitcher(240, "节点-是否禁用Springboot热部署", true);

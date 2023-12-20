@@ -7,7 +7,7 @@ import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.foundation.common.enums.ExceptionType;
-import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
+import com.hqy.foundation.event.ExceptionCollActionEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,7 +11,7 @@ import com.hqy.cloud.netty.websocket.exception.ExceptionListener;
 import com.hqy.cloud.netty.websocket.session.BaseWsSession;
 import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
 import com.hqy.foundation.common.enums.ExceptionType;
-import com.hqy.foundation.spring.event.ExceptionCollActionEvent;
+import com.hqy.foundation.event.ExceptionCollActionEvent;
 import com.hqy.cloud.netty.websocket.base.HandshakeData;
 import com.hqy.cloud.netty.websocket.base.WsErrorReason;
 import com.hqy.cloud.netty.websocket.base.enums.CloseCode;

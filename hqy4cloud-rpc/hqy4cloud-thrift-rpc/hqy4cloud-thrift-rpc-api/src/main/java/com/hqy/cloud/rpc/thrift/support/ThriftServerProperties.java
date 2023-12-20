@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 1.0
  * @date 2022/7/7 17:30
  */
-@ConfigurationProperties(prefix = "thrift")
+@ConfigurationProperties(prefix = "hqy4cloud.thrift")
 public class ThriftServerProperties {
 
     /**
