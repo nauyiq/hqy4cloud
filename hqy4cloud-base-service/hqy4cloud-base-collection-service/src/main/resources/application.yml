@@ -6,7 +6,7 @@ nacos:
   server: ${NACOS_SERVER:127.0.0.1:8848}
 
 server:
-  port: 8887
+  port: 8888
 
 spring:
   application:

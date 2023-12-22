@@ -44,10 +44,10 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- 实时监控  spring-boot-starter-actuator-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-actuator-node</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- spring boot email starter -->

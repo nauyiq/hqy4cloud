@@ -108,5 +108,7 @@
     <logger name="tk.mybatis" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
     <logger name="io.lettuce" level="WARN"/>
+    <logger name="org.apache.http" level="info"/>
+    <logger name="de.codecentric.boot.admin.client.registration" level="info"/>
 
 </configuration>

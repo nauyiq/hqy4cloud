@@ -1,6 +1,8 @@
 package com.hqy.cloud.util.spring;
 
 
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.core.util.ArrayUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -9,7 +11,12 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.ResolvableType;
 
+import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -65,6 +72,23 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(TypeReference<T> reference) {
+        final ParameterizedType parameterizedType = (ParameterizedType) reference.getType();
+        final Class<T> rawType = (Class<T>) parameterizedType.getRawType();
+        final Class<?>[] genericTypes = Arrays.stream(parameterizedType.getActualTypeArguments()).map(type -> (Class<?>) type).toArray(Class[]::new);
+        final String[] beanNames = applicationContext.getBeanNamesForType(ResolvableType.forClassWithGenerics(rawType, genericTypes));
+        return getBean(beanNames[0], rawType);
+    }
+
+    public static <T> Map<String, T> getBeansOfType(Class<T> type) {
+        return applicationContext.getBeansOfType(type);
+    }
+
+    public static <T> T getBean(String name, Class<T> clazz) {
+        return applicationContext.getBean(name, clazz);
+    }
+
     /**
      * 从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.
      */
@@ -117,6 +141,20 @@ public class SpringContextHolder implements ApplicationContextAware {
         if (Objects.nonNull(info)) {
             contextInfo = info;
         }
+    }
+
+    public static String[] getActiveProfiles() {
+        return applicationContext.getEnvironment().getActiveProfiles();
+    }
+
+    public static String getActiveProfile() {
+        final String[] activeProfiles = getActiveProfiles();
+        return ArrayUtil.isNotEmpty(activeProfiles) ? activeProfiles[0] : null;
+    }
+
+    public static <T> void registerBean(String beanName, T bean) {
+        ConfigurableApplicationContext context = (ConfigurableApplicationContext) applicationContext;
+        context.getBeanFactory().registerSingleton(beanName, bean);
     }
 
 

@@ -3,7 +3,9 @@ package com.hqy.cloud.actuator.server;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.actuator.model.MicroServerSwitcherInfo;
 import com.hqy.cloud.common.swticher.AbstractSwitcher;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
+import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,19 @@ public class GradeSwitcherCenter {
         return this.allSwitcherMap;
     }
 
+    /**
+     * 初始化某些开关
+     */
+    public void initializeSwitchers() {
+        if (Environment.getInstance().isDevEnvironment()) {
+            CommonSwitcher.ENABLE_THRIFT_RPC_COLLECT.setStatus(false);
+            CommonSwitcher.ENABLE_DATABASE_SLOW_SQL_COLLECTION.setStatus(false);
+            CommonSwitcher.ENABLE_DATABASE_ERROR_SQL_COLLECTION.setStatus(false);
+            CommonSwitcher.ENABLE_EXCEPTION_COLLECTOR.setStatus(false);
+            CommonSwitcher.ENABLE_EXCEPTION_SQL_ALTER.setStatus(false);
+        } else {
+            CommonSwitcher.JUST_4_TEST_DEBUG.setStatus(false);
+        }
 
-
+    }
 }

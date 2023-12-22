@@ -10,6 +10,7 @@ import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.cluster.client.Client;
+import com.hqy.cloud.rpc.config.EnvironmentConfiguration;
 import com.hqy.cloud.rpc.config.model.ConsumerModel;
 import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.model.*;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -48,6 +50,7 @@ import static com.hqy.cloud.rpc.nacos.core.NacosRegistry.NAME;
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
 @RequiredArgsConstructor
+@AutoConfigureAfter({EnvironmentConfiguration.class})
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class, CommonsClientAutoConfiguration.class, NacosDiscoveryClientConfiguration.class, SpringApplicationConfiguration.class})
 public class NacosThriftClientStarterAutoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(NacosThriftClientStarterAutoConfiguration.class);

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -70,6 +71,12 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
         registration.setOrder(Ordered.LOWEST_PRECEDENCE);
         return registration;
     }
+
+    @Bean
+    public CommandLineRunner initActuatorSwitchers() {
+        return args -> GradeSwitcherCenter.getInstance().initializeSwitchers();
+    }
+
 
     public EndpointBasicAuthorizationFilter actuatorBasicFilter(BasicAuthorizationService basicAuthorizationService) {
         return new EndpointBasicAuthorizationFilter(basicAuthorizationService);

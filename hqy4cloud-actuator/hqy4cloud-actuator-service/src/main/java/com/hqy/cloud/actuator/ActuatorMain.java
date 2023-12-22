@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @version 1.0
  * @date 2023/11/15 15:36
  */
-
 @EnableAdminServer
 @SpringBootApplication
 public class ActuatorMain {

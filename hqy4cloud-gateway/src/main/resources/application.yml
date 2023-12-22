@@ -39,6 +39,8 @@ spring:
       datasource: # sentinel加载nacos远程配置规则
         gw-flow:
           nacos:
+            username: ${nacos.username}
+            password: ${nacos.password}
             serverAddr: ${nacos.server}
             namespace: ${nacos.namespace}
             groupId: ${nacos.group}
@@ -47,6 +49,8 @@ spring:
             ruleType: gw-flow
         gw-api-flow:
           nacos:
+            username: ${nacos.username}
+            password: ${nacos.password}
             serverAddr: ${nacos.server}
             namespace: ${nacos.namespace}
             groupId: ${nacos.group}
