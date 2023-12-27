@@ -106,4 +106,18 @@ public class AuthenticationRequestContext {
         }
     }
 
+    /**
+     * 生成basic认证
+     * @param username 用户名
+     * @param password 密码
+     * @return         basic认证.
+     */
+    public static String buildBasicAuth(String username, String password) {
+        if (StringUtils.isAnyBlank(username, password)) {
+            return null;
+        }
+        String auth = Base64Utils.encodeToString((username.concat(StrUtil.COLON).concat(password)).getBytes(StandardCharsets.UTF_8));
+        return JWT_BASIC_PREFIX + auth;
+    }
+
 }

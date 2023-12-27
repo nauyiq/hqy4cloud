@@ -20,9 +20,23 @@ public interface ConfigConstants {
     String APPLICATION_NAME = "spring.application.name";
     String NACOS_GROUP = "spring.cloud.nacos.discovery.group";
 
+    String SPRING_BOOT_ADMIN_CLIENT_USERNAME = "spring.boot.admin.client.username";
+    String SPRING_BOOT_ADMIN_CLIENT_PASSWORD = "spring.boot.admin.client.password";
+
+    String DRUID_MONITOR_ENABLED_KEY = "spring.datasource.druid.stat-view-servlet.enabled";
+    String DRUID_MONITOR_ALLOW_KEY = "spring.datasource.druid.stat-view-servlet.allow";
+    String DRUID_MONITOR_USERNAME_KEY = "spring.datasource.druid.stat-view-servlet.loginUsername";
+    String DRUID_MONITOR_PASSWORD_KEY = "spring.datasource.druid.stat-view-servlet.loginPassword";
+
     int DEFAULT_SOCKET_CLUSTER_NODES = 1;
     int DEFAULT_SOCKET_CLUSTER_HASH = 0;
     boolean DEFAULT_SOCKET_ENABLE_CLUSTER = false;
+
+    String DISCOVERY_IP = "hqy4cloud.discovery.ip";
+
+
+
+
 
 
 

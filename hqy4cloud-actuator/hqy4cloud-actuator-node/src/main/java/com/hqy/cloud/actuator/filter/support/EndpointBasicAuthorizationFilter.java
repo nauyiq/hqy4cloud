@@ -8,6 +8,8 @@ import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.web.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -26,6 +28,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class EndpointBasicAuthorizationFilter implements Filter {
     private final BasicAuthorizationService basicAuthorizationService;
+    public static final int ORDERED = Ordered.LOWEST_PRECEDENCE;
+    public static final String[] PATTERNS = {"/actuator/*", "/druid/*"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -35,7 +39,7 @@ public class EndpointBasicAuthorizationFilter implements Filter {
             return;
         }
         HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String authorization = getBasicAuth(req);
         if (!basicAuthorizationService.isAuth(authorization)) {
             log.warn("Failed basic auth, authorization: {}, ip:{}", authorization, IpUtil.getRequestIp(req));
             ResponseUtil.out((HttpServletResponse) response, HttpStatus.UNAUTHORIZED.value(), R.failed(ResultCode.INVALID_CLIENT_OR_SECRET));
@@ -43,4 +47,18 @@ public class EndpointBasicAuthorizationFilter implements Filter {
         }
         chain.doFilter(request, response);
     }
+
+    private String getBasicAuth(HttpServletRequest req) {
+        String authorization = req.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            // 尝试从请求参数中获取
+            authorization = req.getParameter(HttpHeaders.AUTHORIZATION);
+        }
+        if (StringUtils.isBlank(authorization)) {
+            // 尝试从attribute中获取basic认证
+            authorization = (String) req.getAttribute(HttpHeaders.AUTHORIZATION);
+        }
+        return authorization;
+    }
+
 }

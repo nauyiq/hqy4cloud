@@ -34,8 +34,12 @@ public class SecurityActuatorAutoConfiguration  {
                         .and().formLogin().loginPage(contextPath + "/login").successHandler(successHandler)
                         .and().logout().logoutUrl(contextPath + "/logout")
                         .and().httpBasic().and().csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
                         .rememberMe((rememberMe) -> rememberMe.key(UUID.fastUUID().toString(true)).tokenValiditySeconds(3600 * 6));
         return httpSecurity.build();
     }
+
+
 
 }

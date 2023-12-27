@@ -3,6 +3,7 @@ package com.hqy.cloud.actuator.config;
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.actuator.core.GradeSwitcherListener;
 import com.hqy.cloud.actuator.endpoint.MicroServiceInfoContributorEndpoint;
+import com.hqy.cloud.actuator.filter.support.DruidMonitorAutoBasicAuthFilter;
 import com.hqy.cloud.actuator.filter.support.EndpointBasicAuthorizationFilter;
 import com.hqy.cloud.actuator.server.GradeSwitcherCenter;
 import com.hqy.cloud.actuator.server.GradeSwitcherListenerRepository;
@@ -64,22 +65,31 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
 
     @Bean
     public FilterRegistrationBean<EndpointBasicAuthorizationFilter> webAuthFilterRegistration(EndpointBasicAuthorizationFilter filter) {
-        FilterRegistrationBean<EndpointBasicAuthorizationFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(filter);
-        registration.setName("EndpointBasicAuthorizationFilter");
-        registration.addUrlPatterns("/actuator/*");
-        registration.setOrder(Ordered.LOWEST_PRECEDENCE);
+        FilterRegistrationBean<EndpointBasicAuthorizationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setName(EndpointBasicAuthorizationFilter.class.getSimpleName());
+        registration.addUrlPatterns(EndpointBasicAuthorizationFilter.PATTERNS);
+        registration.setOrder(EndpointBasicAuthorizationFilter.ORDERED);
         return registration;
     }
 
     @Bean
-    public CommandLineRunner initActuatorSwitchers() {
-        return args -> GradeSwitcherCenter.getInstance().initializeSwitchers();
+    public DruidMonitorAutoBasicAuthFilter druidMonitorAutoBasicAuthFilter() {
+        return new DruidMonitorAutoBasicAuthFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean<DruidMonitorAutoBasicAuthFilter> druidMonitorAutoBasicAuthFilterFilterRegistration(DruidMonitorAutoBasicAuthFilter filter) {
+        FilterRegistrationBean<DruidMonitorAutoBasicAuthFilter> registrationBean = new FilterRegistrationBean<>(filter);
+        registrationBean.setName(DruidMonitorAutoBasicAuthFilter.class.getSimpleName());
+        registrationBean.addUrlPatterns(DruidMonitorAutoBasicAuthFilter.PATTERN);
+        registrationBean.setOrder(DruidMonitorAutoBasicAuthFilter.ORDERED);
+        return registrationBean;
     }
 
 
-    public EndpointBasicAuthorizationFilter actuatorBasicFilter(BasicAuthorizationService basicAuthorizationService) {
-        return new EndpointBasicAuthorizationFilter(basicAuthorizationService);
+    @Bean
+    public CommandLineRunner initActuatorSwitchers() {
+        return args -> GradeSwitcherCenter.getInstance().initializeSwitchers();
     }
 
     @Override

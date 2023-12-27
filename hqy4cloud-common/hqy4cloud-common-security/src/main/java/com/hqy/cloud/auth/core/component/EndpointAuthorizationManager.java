@@ -48,7 +48,7 @@ public class EndpointAuthorizationManager {
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**", "/doc.html",
                 // 开放springboot actuator端口
-                "/actuator/**",
+                "/actuator/**", "/druid/**",
                 "/*/websocket"
                 //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
