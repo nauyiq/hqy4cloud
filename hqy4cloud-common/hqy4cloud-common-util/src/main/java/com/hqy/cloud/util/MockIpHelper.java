@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface MockIpHelper {
 
-    static final String  PREFIX = "GEN-";
+    String  PREFIX = "GEN-";
     
     /**
      ** 初始化一个调试ip

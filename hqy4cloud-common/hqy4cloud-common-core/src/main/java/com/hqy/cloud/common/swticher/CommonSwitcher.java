@@ -164,6 +164,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_TRANSLATE_DRUID_BASIC_AUTH_FILTER = new CommonSwitcher(234, "节点-是否启用druid basic认证传递过滤器", true);
 
+    /**
+     * 是否开启mock ip测试
+     */
+    public static final CommonSwitcher ENABLE_REQUEST_MOCK_IP = new CommonSwitcher(235, "是否开启mock ip测试", false);
+
 
     /**
      * 节点-是否禁用SpringBoot热部署 (默认 true)

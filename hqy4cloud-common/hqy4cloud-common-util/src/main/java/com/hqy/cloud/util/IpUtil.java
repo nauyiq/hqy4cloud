@@ -1,7 +1,9 @@
 package com.hqy.cloud.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.enums.CountryEnum;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,11 +29,6 @@ public class IpUtil {
     static final String VIRTUAL_IP_ENDING = ".1";
 
     private static MockIpHelper helper = null;
-
-    /**
-     * 防止非spring项目频繁warn 警告
-     */
-    private static boolean warn_of_helper_bean = false;
 
     /**
      * 标准IPv4地址的正则表达式
@@ -115,43 +112,30 @@ public class IpUtil {
     }
 
     public static String getRequestIp(HttpServletRequest request) {
-        String debug = request.getQueryString();
-        if (debug != null && debug.contains("mock_ip=true")) {
-            //模拟生成多个ip
-            //socket.io限流，HTTP限流 和 ab测试场景等模拟压测时使用
-            try {
-                helper = SpringContextHolder.getBean(MockIpHelper.class);
-                String mock_ip = helper.generateIp(request);
-                if (mock_ip != null) {
-                    return mock_ip;
+        if (CommonSwitcher.ENABLE_REQUEST_MOCK_IP.isOn()) {
+            String debug = request.getQueryString();
+            if (StrUtil.isNotBlank(debug) && debug.contains("mock_ip=true")) {
+                //模拟生成多个ip
+                try {
+                    helper = SpringContextHolder.getBean(MockIpHelper.class);
+                    String mock_ip = helper.generateIp(request);
+                    if (mock_ip != null) {
+                        return mock_ip;
+                    }
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
                 }
-            } catch (Exception ex) {
-                if (warn_of_helper_bean) {
-                } else {
-                    log.warn(ex.getMessage());
-                    warn_of_helper_bean = true;
+            }
+            if (helper != null) {
+                //测试环境调试模式下，获取一个模拟的ip
+                //socket.io限流，HTTP限流 和 ab测试场景等模拟压测时使用
+                String ip0 = helper.tryGetIp(request);
+                if (ip0 != null) {
+                    return ip0;
                 }
+            }
+        }
 
-            }
-        }
-        if (helper == null) {
-            try {
-                helper = SpringContextHolder.getBean(MockIpHelper.class);
-            } catch (Exception ex) {
-                if (warn_of_helper_bean) {
-                } else {
-                    log.warn(ex.getMessage());
-                    warn_of_helper_bean = true;
-                }
-            }
-        } else {
-            //测试环境调试模式下，获取一个模拟的ip
-            //socket.io限流，HTTP限流 和 ab测试场景等模拟压测时使用
-            String ip0 = helper.tryGetIp(request);
-            if (ip0 != null) {
-                return ip0;
-            }
-        }
         // 一些 CDN 会在 CDN 回源请求加 HTTP 头信息，其中可能包含访客的“真实 IP ”。具体要看是哪家 CDN ，比如 Cloudflare 是
         // CF-Connecting-IP
         String cfIp = request.getHeader("cf-connecting-ip");
@@ -199,7 +183,6 @@ public class IpUtil {
 
 
     public static String getRequestIp(ServerHttpRequest request) {
-
         // 一些 CDN 会在 CDN 回源请求加 HTTP 头信息，其中可能包含访客的“真实 IP ”。具体要看是哪家 CDN ，比如 Cloudflare 是
         HttpHeaders headers = request.getHeaders();
         List<String> list = headers.get("cf-connecting-ip");

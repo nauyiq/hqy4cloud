@@ -36,9 +36,11 @@ public class SecurityWebAutoConfiguration {
                 // 开放options请求
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 避免iframe同源无法登录
-                .anyRequest().authenticated()).headers().frameOptions().sameOrigin().
+                .anyRequest().authenticated()).headers().frameOptions().sameOrigin()
+                // druid监控页面允许iframe
+                .and().antMatcher("/druid").headers().frameOptions().disable()
                 // 表单登录个性化
-                and().apply(new FormIdentityLoginConfigurer());
+                .and().apply(new FormIdentityLoginConfigurer());
                 // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         return http.build();
