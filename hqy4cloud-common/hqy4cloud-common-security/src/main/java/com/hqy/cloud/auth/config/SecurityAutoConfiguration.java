@@ -4,7 +4,6 @@ import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
 import com.hqy.cloud.auth.core.authentication.support.AuthenticationAspect;
 import com.hqy.cloud.auth.core.authentication.support.AuthenticationCacheService;
 import com.hqy.cloud.auth.core.authentication.support.DefaultAuthPermissionService;
-import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.limit.support.BiBlockedIpRedisService;
 import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
 import com.hqy.cloud.auth.limit.support.ManualWhiteIpRedisService;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 
 import java.util.Locale;
 

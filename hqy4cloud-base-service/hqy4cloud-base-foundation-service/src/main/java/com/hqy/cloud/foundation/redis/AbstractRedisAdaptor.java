@@ -1,7 +1,7 @@
-package com.hqy.cloud.foundation.cache.redis;
+package com.hqy.cloud.foundation.redis;
 
 import com.hqy.foundation.cache.redis.Redis;
-import com.hqy.cloud.foundation.cache.exception.RedisException;
+import com.hqy.cloud.foundation.redis.exception.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 

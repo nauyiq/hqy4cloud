@@ -1,6 +1,6 @@
-package com.hqy.cloud.foundation.cache.redis.support;
+package com.hqy.cloud.foundation.redis.support;
 
-import com.hqy.cloud.foundation.cache.exception.RedisException;
+import com.hqy.cloud.foundation.redis.exception.RedisException;
 
 import java.util.concurrent.TimeUnit;
 

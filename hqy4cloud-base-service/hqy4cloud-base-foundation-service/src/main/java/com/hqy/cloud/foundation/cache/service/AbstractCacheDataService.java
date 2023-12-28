@@ -1,11 +1,10 @@
-package com.hqy.cloud.foundation.cache.support;
+package com.hqy.cloud.foundation.cache.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.foundation.cache.CacheConfig;
-import com.hqy.cloud.foundation.cache.CacheDataService;
-import com.hqy.cloud.foundation.cache.redis.support.RedisManager;
+import com.hqy.cloud.foundation.redis.support.RedisManager;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;

@@ -2,9 +2,9 @@ package com.hqy.cloud.gateway.server;
 
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
-import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
-import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
+import com.hqy.cloud.foundation.redis.key.RedisKey;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.foundation.redis.support.SmartRedisManager;
 import org.apache.commons.lang3.StringUtils;
 
 /**

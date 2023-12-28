@@ -5,10 +5,17 @@ nacos:
   namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
   server: ${NACOS_SERVER:127.0.0.1:8848}
 
+
+
 server:
   port: 9527
 
 spring:
+  cache:
+    type: REDIS
+    cache-names:
+      - test
+      - hhhhhh
   application:
     name: @artifactId@
   config:

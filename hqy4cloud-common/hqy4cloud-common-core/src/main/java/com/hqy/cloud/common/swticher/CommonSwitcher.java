@@ -165,9 +165,14 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_TRANSLATE_DRUID_BASIC_AUTH_FILTER = new CommonSwitcher(234, "节点-是否启用druid basic认证传递过滤器", true);
 
     /**
-     * 是否开启mock ip测试
+     * 节点-是否开启mock ip测试
      */
     public static final CommonSwitcher ENABLE_REQUEST_MOCK_IP = new CommonSwitcher(235, "是否开启mock ip测试", false);
+
+    /**
+     * 节点-是否开启redis缓存token时采用json序列化
+     */
+    public static final CommonSwitcher ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE = new CommonSwitcher(236, "是否开启redis缓存token时采用json序列化", false);
 
 
     /**

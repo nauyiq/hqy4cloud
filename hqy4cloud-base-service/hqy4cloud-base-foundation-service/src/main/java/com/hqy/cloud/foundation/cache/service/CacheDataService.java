@@ -1,4 +1,4 @@
-package com.hqy.cloud.foundation.cache;
+package com.hqy.cloud.foundation.cache.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +12,7 @@ import java.util.Map;
  * @date 2022/10/8 11:35
  */
 public interface CacheDataService<T, PK> {
+
     /**
      * 获取数据.
      * @param pk 唯一标识

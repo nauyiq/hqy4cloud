@@ -22,6 +22,11 @@ public enum ExceptionType {
      */
     WEBSOCKET,
 
+    /**
+     * 缓存异常
+     */
+    CACHE
+
 
 
 }

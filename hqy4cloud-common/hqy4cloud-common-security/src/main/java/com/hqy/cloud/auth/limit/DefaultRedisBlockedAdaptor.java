@@ -6,7 +6,7 @@ import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
-import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.BlockDTO;
 import com.hqy.foundation.limit.service.BlockedIpService;
 import lombok.extern.slf4j.Slf4j;

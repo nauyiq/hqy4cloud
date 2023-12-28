@@ -53,12 +53,15 @@ public class ExceptionCollectorUtils {
 
 
     public static void collect(ExceptionCollActionEvent event) {
-        ExceptionCollectionService exceptionCollectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
+        // 构造异常堆栈
         String exceptionStackTrace = getExceptionStackTrace(event.getException());
+        // 环境
         String env = Environment.getInstance().getEnvironment();
+        // 服务名
         String nameEn = SpringContextHolder.getProjectContextInfo().getNameWithIpPort();
+        // 构建异常rpc对象
         PfExceptionStruct struct = buildStruct(env, nameEn, exceptionStackTrace, event);
-        exceptionCollectionService.collect(struct);
+        // 调用采集器采集异常
         Collector<PfExceptionStruct> collector = CollectorCenter.getInstance().getCollector(EventType.EXCEPTION);
         collector.collect(struct);
     }

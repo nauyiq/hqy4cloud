@@ -40,6 +40,7 @@ public class WebMvcGlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public R<Boolean> handler(RuntimeException e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
+        // 异常采集
         collectionException(e, request);
         return R.failed(ResultCode.SYSTEM_ERROR);
     }

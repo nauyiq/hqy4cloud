@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public abstract class AbstractCollector<T> implements Collector<T> {
 
-
     /**
      * 初始化线程池
      */

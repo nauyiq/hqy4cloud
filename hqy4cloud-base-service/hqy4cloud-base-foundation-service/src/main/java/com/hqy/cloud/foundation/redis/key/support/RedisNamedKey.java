@@ -1,6 +1,6 @@
-package com.hqy.cloud.foundation.cache.redis.key.support;
+package com.hqy.cloud.foundation.redis.key.support;
 
-import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
+import com.hqy.cloud.foundation.redis.key.RedisKey;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.UNION;

@@ -1,4 +1,4 @@
-package com.hqy.cloud.foundation.cache.redis.key;
+package com.hqy.cloud.foundation.redis.key;
 
 
 import org.apache.commons.lang3.StringUtils;

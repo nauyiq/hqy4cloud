@@ -69,5 +69,8 @@ public class ServerSwitcher extends CommonSwitcher {
     public static final ServerSwitcher ENABLE_COLLECT_COLLECTION_SERVICE_EXCEPTION
             = new ServerSwitcher(160, "采集服务-是否采集'采集服务'本身的异常", false, MicroServiceConstants.COMMON_COLLECTOR);
 
-
+    /**
+     * 节点-是否开启用户token生成次数限制，即当用于重复生成token时，将旧token移除
+     */
+    public static final ServerSwitcher ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT = new ServerSwitcher(237, "是否开启用户token生成次数限制", true, MicroServiceConstants.ACCOUNT_SERVICE);
 }

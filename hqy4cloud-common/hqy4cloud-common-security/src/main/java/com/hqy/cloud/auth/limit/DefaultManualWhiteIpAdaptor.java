@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.limit;
 
-import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;

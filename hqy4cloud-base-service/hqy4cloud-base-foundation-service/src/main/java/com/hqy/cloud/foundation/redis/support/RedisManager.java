@@ -1,7 +1,7 @@
-package com.hqy.cloud.foundation.cache.redis.support;
+package com.hqy.cloud.foundation.redis.support;
 
-import com.hqy.cloud.foundation.cache.redis.AbstractRedisAdaptor;
-import com.hqy.cloud.foundation.cache.redis.config.RedisAutoConfiguration;
+import com.hqy.cloud.foundation.redis.AbstractRedisAdaptor;
+import com.hqy.cloud.foundation.redis.config.RedisAutoConfiguration;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

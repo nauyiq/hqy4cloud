@@ -1,7 +1,16 @@
 package com.hqy.cloud.auth.core.component;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
+import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.util.ProjectExecutors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.Nullable;
@@ -19,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @see org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
@@ -28,47 +38,47 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiredArgsConstructor
 public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationService {
-
     private static final String AUTHORIZATION = "token";
     private final static Long TIMEOUT = 10L;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    @Value("${hqy4cloud.token.max-size:2}")
+    private int maxSize;
+    private static final Cache<String, List<String>> ACCESS_TOKEN_CACHE = Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).maximumSize(10240).build();
+    private static final Cache<String, List<String>> REFRESH_TOKEN_CACHE = Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).maximumSize(10240).build();
+
     @Override
     public void save(OAuth2Authorization authorization) {
-        AssertUtil.notNull(authorization, "authorization should not be null.");
+        if (authorization == null) {
+            throw new UnsupportedOperationException("Authorization should not be null.");
+        }
 
         if (isState(authorization)) {
             String token = authorization.getAttribute(OAuth2ParameterNames.STATE);
-            redisTemplate.setValueSerializer(RedisSerializer.java());
+            if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+                redisTemplate.setValueSerializer(RedisSerializer.java());
+            }
             redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.STATE, token), authorization, TIMEOUT,
                     TimeUnit.MINUTES);
         }
 
         if (isCode(authorization)) {
-            OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization
-                    .getToken(OAuth2AuthorizationCode.class);
+            OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization.getToken(OAuth2AuthorizationCode.class);
             OAuth2AuthorizationCode authorizationCodeToken = authorizationCode.getToken();
-            long between = ChronoUnit.MINUTES.between(authorizationCodeToken.getIssuedAt(),
-                    authorizationCodeToken.getExpiresAt());
-            redisTemplate.setValueSerializer(RedisSerializer.java());
+            long between = ChronoUnit.MINUTES.between(authorizationCodeToken.getIssuedAt(), authorizationCodeToken.getExpiresAt());
+            if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+                redisTemplate.setValueSerializer(RedisSerializer.java());
+            }
             redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.CODE, authorizationCodeToken.getTokenValue()),
                     authorization, between, TimeUnit.MINUTES);
         }
 
         if (isRefreshToken(authorization)) {
-            OAuth2RefreshToken refreshToken = authorization.getRefreshToken().getToken();
-            long between = ChronoUnit.SECONDS.between(refreshToken.getIssuedAt(), refreshToken.getExpiresAt());
-            redisTemplate.setValueSerializer(RedisSerializer.java());
-            redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.REFRESH_TOKEN, refreshToken.getTokenValue()),
-                    authorization, between, TimeUnit.SECONDS);
+            savingRefreshToken(authorization);
         }
 
         if (isAccessToken(authorization)) {
-            OAuth2AccessToken accessToken = authorization.getAccessToken().getToken();
-            long between = ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt());
-            redisTemplate.setValueSerializer(RedisSerializer.java());
-            redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.ACCESS_TOKEN, accessToken.getTokenValue()),
-                    authorization, between, TimeUnit.SECONDS);
+            savingAccessToken(authorization);
         }
 
     }
@@ -112,12 +122,86 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
     public OAuth2Authorization findByToken(String token, @Nullable OAuth2TokenType tokenType) {
         Assert.hasText(token, "token cannot be empty");
         Assert.notNull(tokenType, "tokenType cannot be empty");
-        redisTemplate.setValueSerializer(RedisSerializer.java());
+        if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+            redisTemplate.setValueSerializer(RedisSerializer.java());
+        }
         return (OAuth2Authorization) redisTemplate.opsForValue().get(buildKey(tokenType.getValue(), token));
     }
 
+    private void savingAccessToken(OAuth2Authorization authorization) {
+        OAuth2AccessToken accessToken = authorization.getAccessToken().getToken();
+        String tokenValue = accessToken.getTokenValue();
+        long between = ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt());
+        if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+            redisTemplate.setValueSerializer(RedisSerializer.java());
+        }
+        redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.ACCESS_TOKEN, tokenValue),
+                authorization, between, TimeUnit.SECONDS);
+
+        // 防止单个用户生成太多的TOKEN.
+        if (ServerSwitcher.ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT.isOn()) {
+            ProjectExecutors.getInstance().execute(() -> {
+                String principalName = authorization.getPrincipalName();
+                // 缓存在本地的已经授权过的access_token
+                List<String> tokenCaches = ACCESS_TOKEN_CACHE.get(principalName, v -> new ArrayList<>());
+                if (CollectionUtils.isNotEmpty(tokenCaches)) {
+                    if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+                        redisTemplate.setValueSerializer(RedisSerializer.java());
+                    }
+                    List<String> keys = tokenCaches.stream().map(token -> buildKey(OAuth2ParameterNames.ACCESS_TOKEN, token)).toList();
+                    List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+                    if (CollectionUtils.isNotEmpty(values)) {
+                        List<OAuth2Authorization> oAuth2Authorizations = values.stream().filter(Objects::nonNull).map(v -> (OAuth2Authorization) v).toList();
+                        if (oAuth2Authorizations.size() == maxSize) {
+                            // 本地持有的token缓存列表已经达到最大值. 删除最开始认证的OAuth2Authorization
+                            String removeToken = tokenCaches.remove(0);
+                            redisTemplate.delete(keys.get(0));
+                        }
+                    }
+                }
+                tokenCaches.add(tokenValue);
+            });
+        }
+    }
+
+    private void savingRefreshToken(OAuth2Authorization authorization) {
+        OAuth2RefreshToken refreshToken = authorization.getRefreshToken().getToken();
+        String tokenValue = refreshToken.getTokenValue();
+        long between = ChronoUnit.SECONDS.between(refreshToken.getIssuedAt(), refreshToken.getExpiresAt());
+        if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+            redisTemplate.setValueSerializer(RedisSerializer.java());
+        }
+        redisTemplate.opsForValue().set(buildKey(OAuth2ParameterNames.REFRESH_TOKEN, tokenValue),
+                authorization, between, TimeUnit.SECONDS);
+
+        // 防止单个用户生成太多的TOKEN.
+        if (ServerSwitcher.ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT.isOn()) {
+            ProjectExecutors.getInstance().execute(() -> {
+                String principalName = authorization.getPrincipalName();
+                // 缓存在本地的已经授权过的refresh_token
+                List<String> tokenCaches = REFRESH_TOKEN_CACHE.get(principalName, v -> new ArrayList<>());
+                if (CollectionUtils.isNotEmpty(tokenCaches)) {
+                    if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
+                        redisTemplate.setValueSerializer(RedisSerializer.java());
+                    }
+                    List<String> keys = tokenCaches.stream().map(token -> buildKey(OAuth2ParameterNames.REFRESH_TOKEN, token)).toList();
+                    List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+                    if (CollectionUtils.isNotEmpty(values)) {
+                        List<OAuth2Authorization> oAuth2Authorizations = values.stream().filter(Objects::nonNull).map(v -> (OAuth2Authorization) v).toList();
+                        if (oAuth2Authorizations.size() == maxSize) {
+                            // 本地持有的token缓存列表已经达到最大值. 删除最开始认证的OAuth2Authorization
+                            String removeToken = tokenCaches.remove(0);
+                            redisTemplate.delete(keys.get(0));
+                        }
+                    }
+                }
+                tokenCaches.add(tokenValue);
+            });
+        }
+    }
+
     private String buildKey(String type, String id) {
-        return String.format("%s::%s::%s", AUTHORIZATION, type, id);
+        return String.format("%s::%s::%s::%s", AUTHORIZATION, Environment.getInstance().getEnvironment(), type, id);
     }
 
     private static boolean isCode(OAuth2Authorization authorization) {

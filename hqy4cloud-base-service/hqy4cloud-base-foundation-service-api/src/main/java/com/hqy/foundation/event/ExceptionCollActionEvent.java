@@ -4,6 +4,7 @@ import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.foundation.common.enums.ExceptionType;
 import org.springframework.context.ApplicationEvent;
 
+import java.io.Serial;
 import java.util.Date;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
  */
 public class ExceptionCollActionEvent extends ApplicationEvent {
 
+    @Serial
     private static final long serialVersionUID = -3800351556037011654L;
 
     public ExceptionCollActionEvent(Object source) {

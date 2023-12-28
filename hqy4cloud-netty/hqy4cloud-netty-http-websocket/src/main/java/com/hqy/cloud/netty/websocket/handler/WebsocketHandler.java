@@ -6,20 +6,20 @@ import com.google.common.cache.CacheBuilder;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.PublishedException;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.netty.websocket.exception.DefaultExceptionListener;
-import com.hqy.cloud.netty.websocket.exception.ExceptionListener;
-import com.hqy.cloud.netty.websocket.session.BaseWsSession;
-import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
-import com.hqy.foundation.common.enums.ExceptionType;
-import com.hqy.foundation.event.ExceptionCollActionEvent;
 import com.hqy.cloud.netty.websocket.base.HandshakeData;
 import com.hqy.cloud.netty.websocket.base.WsErrorReason;
 import com.hqy.cloud.netty.websocket.base.enums.CloseCode;
 import com.hqy.cloud.netty.websocket.base.enums.CloseScene;
 import com.hqy.cloud.netty.websocket.base.enums.WsMessageType;
+import com.hqy.cloud.netty.websocket.exception.DefaultExceptionListener;
+import com.hqy.cloud.netty.websocket.exception.ExceptionListener;
+import com.hqy.cloud.netty.websocket.session.BaseWsSession;
+import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
 import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.ProjectExecutors;
 import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.cloud.util.thread.ParentExecutorService;
+import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.foundation.event.ExceptionCollActionEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -186,7 +186,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
             String remoteAddress = ctx.channel().remoteAddress().toString();
             debugPrint("handleWebSocketFrame", "server 收到 文本消息[" + text + "]", "remoteAddress= "+ remoteAddress);
             //异步处理消息
-            ParentExecutorService.getInstance().execute(() -> {
+            ProjectExecutors.getInstance().execute(() -> {
                 String responseMsg = null;
                 try {
                     responseMsg = (String) ChannelWsSessionManager.getSession(channelId).onMessage(WsMessageType.TEXT, text);
@@ -207,7 +207,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
             String remoteAddress = ctx.channel().remoteAddress().toString();
             debugPrint("handleWebSocketFrame", "server 收到 二进制消息", "remoteAddress= "+ remoteAddress);
             //异步处理消息
-            ParentExecutorService.getInstance().execute(() -> {
+            ProjectExecutors.getInstance().execute(() -> {
                 ByteBuf responseMsg = null;
                 try {
                     responseMsg = (ByteBuf) ChannelWsSessionManager.getSession(channelId).onMessage(WsMessageType.BINARY, byteBuf);

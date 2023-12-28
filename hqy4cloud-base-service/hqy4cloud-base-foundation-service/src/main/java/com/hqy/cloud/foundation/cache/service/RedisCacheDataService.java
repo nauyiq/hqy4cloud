@@ -1,8 +1,7 @@
-package com.hqy.cloud.foundation.cache.support;
+package com.hqy.cloud.foundation.cache.service;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.foundation.cache.CacheDataService;
-import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
+import com.hqy.cloud.foundation.redis.key.RedisKey;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class RedisCacheDataService<T, PK> implements CacheDataService<T, PK> {
 
     private final RedisKey redisKey;
-    private int delayMs = 500;
+    private int delayMs = 300;
 
     @Override
     public final T getData(PK pk) {

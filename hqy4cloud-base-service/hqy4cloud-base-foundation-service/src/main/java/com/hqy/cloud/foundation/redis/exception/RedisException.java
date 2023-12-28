@@ -1,4 +1,4 @@
-package com.hqy.cloud.foundation.cache.exception;
+package com.hqy.cloud.foundation.redis.exception;
 
 /**
  * @author qiyuan.hong

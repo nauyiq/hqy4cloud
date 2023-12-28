@@ -1,7 +1,7 @@
 package com.hqy.cloud.foundation.limiter;
 
 import com.hqy.cloud.common.base.lang.NumberConstants;
-import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
+import com.hqy.cloud.foundation.redis.support.SmartRedisManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;

@@ -1,6 +1,6 @@
-package com.hqy.cloud.foundation.cache.redis.support;
+package com.hqy.cloud.foundation.redis.support;
 
-import com.hqy.cloud.foundation.cache.redis.AbstractStringRedisAdaptor;
+import com.hqy.cloud.foundation.redis.AbstractStringRedisAdaptor;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.springframework.data.redis.core.StringRedisTemplate;
 

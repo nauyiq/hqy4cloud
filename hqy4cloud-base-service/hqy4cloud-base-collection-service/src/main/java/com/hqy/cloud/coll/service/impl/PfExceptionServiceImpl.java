@@ -8,6 +8,7 @@ import com.hqy.cloud.coll.mapper.PfExceptionTkMapper;
 import com.hqy.cloud.coll.entity.PfException;
 import com.hqy.cloud.coll.service.PfExceptionService;
 import com.hqy.cloud.rpc.thrift.struct.PageStruct;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,14 @@ import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.PERCENT;
  * @date 2022/3/7 14:31
  */
 @Service
+@RequiredArgsConstructor
 public class PfExceptionServiceImpl extends BaseTkServiceImpl<PfException, Long> implements PfExceptionService {
-
-    @Resource
-    private PfExceptionTkMapper pfExceptionDao;
+    private final PfExceptionTkMapper pfExceptionDao;
 
     @Override
     public BaseTkMapper<PfException, Long> getTkMapper() {
         return pfExceptionDao;
     }
-
 
     @Override
     public PageInfo<PfException> queryPage(String serviceName, String type, String env, String exceptionClass, String ip, String url, PageStruct struct) {

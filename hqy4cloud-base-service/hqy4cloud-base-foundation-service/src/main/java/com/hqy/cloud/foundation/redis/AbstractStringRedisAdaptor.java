@@ -1,8 +1,8 @@
-package com.hqy.cloud.foundation.cache.redis;
+package com.hqy.cloud.foundation.redis;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.foundation.cache.redis.StringRedis;
-import com.hqy.cloud.foundation.cache.exception.RedisException;
+import com.hqy.cloud.foundation.redis.exception.RedisException;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

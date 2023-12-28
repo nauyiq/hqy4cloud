@@ -3,9 +3,9 @@ package com.hqy.cloud.foundation.common.route;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hqy.cloud.foundation.cache.redis.key.RedisKey;
-import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
-import com.hqy.cloud.foundation.cache.redis.support.SmartRedisManager;
+import com.hqy.cloud.foundation.redis.key.RedisKey;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.foundation.redis.support.SmartRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

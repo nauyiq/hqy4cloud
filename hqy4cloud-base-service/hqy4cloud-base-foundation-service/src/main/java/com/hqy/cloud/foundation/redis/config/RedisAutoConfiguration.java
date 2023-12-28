@@ -1,4 +1,4 @@
-package com.hqy.cloud.foundation.cache.redis.config;
+package com.hqy.cloud.foundation.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

@@ -1,6 +1,6 @@
 package com.hqy.cloud.foundation.common.account;
 
-import com.hqy.cloud.foundation.cache.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.common.support.RedisAccountRandomCodeServer;
 
 /**

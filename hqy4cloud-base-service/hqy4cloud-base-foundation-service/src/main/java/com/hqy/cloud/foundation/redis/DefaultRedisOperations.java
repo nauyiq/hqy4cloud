@@ -1,7 +1,7 @@
-package com.hqy.cloud.foundation.cache.redis;
+package com.hqy.cloud.foundation.redis;
 
 import com.hqy.foundation.cache.redis.RedisTemplateCommonOperations;
-import com.hqy.cloud.foundation.cache.exception.RedisException;
+import com.hqy.cloud.foundation.redis.exception.RedisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.BitFieldSubCommands;
