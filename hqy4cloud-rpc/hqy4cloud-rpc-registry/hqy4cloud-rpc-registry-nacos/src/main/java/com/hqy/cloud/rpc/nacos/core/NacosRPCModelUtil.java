@@ -7,7 +7,7 @@ import com.hqy.cloud.rpc.model.PubMode;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.model.RegistryInfo;
-import com.hqy.cloud.rpc.nacos.node.Metadata;
+import com.hqy.cloud.rpc.registry.discovery.RPCMetadata;
 
 import java.util.Map;
 
@@ -23,9 +23,9 @@ public class NacosRPCModelUtil {
         return new RPCModel(application, port, group, registryInfo, rpcServerAddress, attachment);
     }
 
-    public static Metadata buildMetadata(int wight, String hashFactor, ActuatorNode actuatorNode,
-                                         RPCServerAddress rpcServerAddress, Environment environment, Map<String, String> attachment) {
-        return new Metadata(wight, getPubMode(environment).value,  rpcServerAddress, hashFactor, actuatorNode, attachment);
+    public static RPCMetadata buildMetadata(int wight, String hashFactor, ActuatorNode actuatorNode,
+                                            RPCServerAddress rpcServerAddress, Environment environment, Map<String, String> attachment) {
+        return new RPCMetadata(wight, getPubMode(environment).value,  rpcServerAddress, hashFactor, actuatorNode, attachment);
     }
 
     public static PubMode getPubMode(Environment environment) {

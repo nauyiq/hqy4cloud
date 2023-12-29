@@ -15,7 +15,7 @@ import com.hqy.cloud.rpc.core.Environment;
 import com.hqy.cloud.rpc.model.*;
 import com.hqy.cloud.rpc.nacos.core.NacosRPCModelUtil;
 import com.hqy.cloud.rpc.nacos.core.NacosRPCStarter;
-import com.hqy.cloud.rpc.nacos.node.Metadata;
+import com.hqy.cloud.rpc.registry.discovery.RPCMetadata;
 import com.hqy.cloud.rpc.nacos.node.NacosServerInfo;
 import com.hqy.cloud.rpc.registry.api.support.RegistryUtil;
 import com.hqy.cloud.rpc.server.core.NacosThriftRPCServer;
@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Primary;
 
 import java.util.Map;
 
-import static com.hqy.cloud.rpc.nacos.core.NacosRegistry.NAME;
+import static com.hqy.cloud.rpc.nacos.core.NacosRPCRegistry.NAME;
 
 /**
  * @author qiyuan.hong
@@ -93,7 +93,7 @@ public class NacosThriftServerStarterAutoConfiguration {
                 registryInfo, serverAddr, attachment);
         ProjectContextInfo.setBean(RPCModel.class, rpcModel);
         // 构建nacos metadata 暂时采用默认配置.
-        Metadata metadata = NacosRPCModelUtil.buildMetadata(thriftServerLauncher.getWight(), thriftServerLauncher.getHashFactor(),
+        RPCMetadata RPCMetadata = NacosRPCModelUtil.buildMetadata(thriftServerLauncher.getWight(), thriftServerLauncher.getHashFactor(),
                 ActuatorNode.PROVIDER, serverAddr, environment, attachment);
         // 构建ApplicationModel
         ApplicationModel applicationModel;
@@ -104,7 +104,7 @@ public class NacosThriftServerStarterAutoConfiguration {
             applicationModel = ApplicationModel.of(rpcModel, providerModel);
         }
         applicationModel.setActuatorNode(ActuatorNode.PROVIDER);
-        return new NacosRPCStarter(applicationModel, new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace()), metadata);
+        return new NacosRPCStarter(applicationModel, new NacosServerInfo(registryInfo, properties.getGroup(), properties.getNamespace()), RPCMetadata);
     }
 
     @Bean

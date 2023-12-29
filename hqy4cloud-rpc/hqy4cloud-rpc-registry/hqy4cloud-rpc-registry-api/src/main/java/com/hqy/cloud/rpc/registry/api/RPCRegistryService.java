@@ -1,7 +1,6 @@
-package com.hqy.cloud.rpc.registry;
+package com.hqy.cloud.rpc.registry.api;
 
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.api.NotifyListener;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/6/23 11:06
  */
-public interface RegistryService {
+public interface RPCRegistryService {
 
     /**
      * Register data, such as : provider service, consumer address, route rule, override rule and other data.

@@ -63,11 +63,11 @@ public class ProjectContextInfo implements Serializable {
      */
     private UsingIpPort uip;
 
-
     /**
      * 节点类型
      */
     private ActuatorNode nodeType;
+
 
     /**
      * 全局上下文属性定义

@@ -1,18 +1,13 @@
 package com.hqy.cloud.rpc.registry.api.support;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.core.net.NetUtil;
-import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
-import com.hqy.cloud.rpc.registry.api.Registry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * AbstractRegistry  {@link Registry}
+ * AbstractRegistry  {@link RPCRegistry}
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/23 18:02
  */
-public abstract class AbstractRegistry implements Registry {
+public abstract class AbstractRPCRegistry implements RPCRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractRPCRegistry.class);
 
     private volatile RegistryInfo registryInfo;
 
@@ -52,7 +47,7 @@ public abstract class AbstractRegistry implements Registry {
     private final ConcurrentMap<RPCModel, List<RPCModel>> notified = new ConcurrentHashMap<>();
 
 
-    public AbstractRegistry(RPCModel rpcModel) {
+    public AbstractRPCRegistry(RPCModel rpcModel) {
         setRegistryRpcModel(rpcModel);
     }
 

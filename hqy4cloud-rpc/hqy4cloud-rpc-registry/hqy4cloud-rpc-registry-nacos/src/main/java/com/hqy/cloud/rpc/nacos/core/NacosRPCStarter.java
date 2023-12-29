@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.nacos.core;
 
 import com.hqy.cloud.rpc.config.deploy.AbstractRPCStarter;
 import com.hqy.cloud.rpc.model.ApplicationModel;
-import com.hqy.cloud.rpc.nacos.node.Metadata;
+import com.hqy.cloud.rpc.registry.discovery.RPCMetadata;
 import com.hqy.cloud.rpc.nacos.node.NacosServerInfo;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.slf4j.Logger;
@@ -19,17 +19,17 @@ public class NacosRPCStarter extends AbstractRPCStarter implements InitializingB
     private static final Logger log = LoggerFactory.getLogger(NacosRPCStarter.class);
 
     private final NacosServerInfo nacosServerInfo;
-    private final Metadata metadata;
+    private final RPCMetadata RPCMetadata;
 
     public NacosRPCStarter(ApplicationModel model, NacosServerInfo nacosServerInfo,
-                           Metadata metadata) {
+                           RPCMetadata RPCMetadata) {
         super(model);
         this.nacosServerInfo = nacosServerInfo;
-        this.metadata = metadata;
+        this.RPCMetadata = RPCMetadata;
     }
 
-    public Metadata getMetadata() {
-        return metadata;
+    public RPCMetadata getMetadata() {
+        return RPCMetadata;
     }
 
     public NacosServerInfo getNacosServerInfo() {

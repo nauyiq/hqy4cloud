@@ -4,7 +4,7 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
-import com.hqy.cloud.rpc.registry.api.Registry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class RegistryManager {
     /**
      * Registry Collection Map<RegistryAddress, Registry>
      */
-    private final Map<String, Registry> registries = new ConcurrentHashMap<>();
+    private final Map<String, RPCRegistry> registries = new ConcurrentHashMap<>();
 
     /**
      * The lock for the acquisition process of the registry
@@ -50,7 +50,7 @@ public class RegistryManager {
 
     private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
-    private static final Registry DEFAULT_NOP_REGISTRY = new Registry() {
+    private static final RPCRegistry DEFAULT_NOP_REGISTRY = new RPCRegistry() {
         @Override
         public String getName() {
             return StringConstants.DEFAULT;
@@ -111,15 +111,15 @@ public class RegistryManager {
      * Get all registries
      * @return all registries
      */
-    public Collection<Registry> getRegistries() {
+    public Collection<RPCRegistry> getRegistries() {
         return Collections.unmodifiableCollection(new LinkedList<>(registries.values()));
     }
 
-    public Registry getRegistry(String key) {
+    public RPCRegistry getRegistry(String key) {
         return registries.get(key);
     }
 
-    public void putRegistry(String key, Registry registry) {
+    public void putRegistry(String key, RPCRegistry registry) {
         registries.put(key, registry);
     }
 
@@ -137,7 +137,7 @@ public class RegistryManager {
         // Lock up the registry shutdown process
         lock.lock();
         try {
-            for (Registry registry : getRegistries()) {
+            for (RPCRegistry registry : getRegistries()) {
                 try {
                     registry.destroy();
                 } catch (Throwable e) {
@@ -151,7 +151,7 @@ public class RegistryManager {
         }
     }
 
-    public void removeDestroyedRegistry(Registry toRm) {
+    public void removeDestroyedRegistry(RPCRegistry toRm) {
         lock.lock();
         try {
             registries.entrySet().removeIf(entry -> entry.getValue().equals(toRm));
@@ -164,7 +164,7 @@ public class RegistryManager {
         return lock;
     }
 
-    public Registry getDefaultNopRegistryIfDestroyed() {
+    public RPCRegistry getDefaultNopRegistryIfDestroyed() {
         if (destroyed.get()) {
             log.warn("All registry instances have been destroyed, failed to fetch any instance. " +
                     "Usually, this means no need to try to do unnecessary redundant resource clearance, all registries has been taken care of.");

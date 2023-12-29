@@ -145,7 +145,7 @@
 
 **Annotation**
 
-> Annotation（注释）是另一种附加在对象之上的键值类型的数据，但它拥有更大的数据容量。Annotation常用于将各种非标识型元数据（metadata）附加到对象上，但它不能用于标识和选择对象，通常也不会被Kubernetes直接使用，其主要目的是方便工具或用户的阅读和查找等。
+> Annotation（注释）是另一种附加在对象之上的键值类型的数据，但它拥有更大的数据容量。Annotation常用于将各种非标识型元数据（RPCMetadata）附加到对象上，但它不能用于标识和选择对象，通常也不会被Kubernetes直接使用，其主要目的是方便工具或用户的阅读和查找等。
 
 
 
@@ -589,7 +589,7 @@ yum install ipvsadm -y
 ```shell
 apiVersion: apps/v1
 kind: StatefulSet
-metadata:
+RPCMetadata:
   name: elasticsearch
 spec:
   replicas: 1
@@ -598,7 +598,7 @@ spec:
       app: elasticsearch
   serviceName: elasticsearch
   template:
-    metadata:
+    RPCMetadata:
       labels:
         app: elasticsearch
     spec:
@@ -617,7 +617,7 @@ spec:
         - name: node.name
           valueFrom:
             fieldRef:
-              fieldPath: metadata.name
+              fieldPath: RPCMetadata.name
         - name: cluster.initial_master_nodes
           value: "elasticsearch-0"
         - name: discovery.zen.minimum_master_nodes
@@ -658,7 +658,7 @@ spec:
   volumeClaimTemplates:
   - apiVersion: v1
     kind: PersistentVolumeClaim
-    metadata:
+    RPCMetadata:
       name: elasticsearch-data
     spec:
       accessModes:
@@ -914,7 +914,7 @@ spec:
 | 负载均衡(Discovery &LB)   | Service、Ingress                          |
 | 配置和存储(Config&Storage) | Volume、CSI、ConfigMap、Secret、DownwardAPI  |
 | 集群(Cluster)           | Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding |
-| 元数据(metadata)         | HPA、PodTemplate、LimitRange               |
+| 元数据(RPCMetadata)         | HPA、PodTemplate、LimitRange               |
 
 
 
@@ -934,7 +934,7 @@ kubectl get pod nginx-67685f79b5-8rjk7 -o yaml    #获取该pod的配置清单
 
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   creationTimestamp: "2019-08-30T07:00:30Z"
   generateName: nginx-67685f79b5-
   labels:
@@ -1015,7 +1015,7 @@ apiVersion: 指明api资源属于哪个群组和版本，同一个组可以有�
 kind:       资源类别，标记创建的资源类型，k8s主要支持以下资源类别
     Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、Cronjob
 
-metadata:   用于描述对象的属性信息，主要提供以下字段：
+RPCMetadata:   用于描述对象的属性信息，主要提供以下字段：
   name:          指定当前对象的名称，其所属的名称空间的同一类型中必须唯一
   namespace:     指定当前对象隶属的名称空间，默认值为default
   labels:        设定用于标识当前对象的标签，键值数据，常被用作挑选条件
@@ -1330,7 +1330,7 @@ key=value
 # vim init-pod-demo.yaml
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: myapp-pod
   labels:
     app: myapp
@@ -1360,7 +1360,7 @@ spec:
 # vim init-myservice.yaml
 apiVersion: v1
 kind: Service
-metadata:
+RPCMetadata:
   name: myservice
 spec:
   ports:
@@ -1377,7 +1377,7 @@ spec:
 # vim init-mydb.yaml
 apiVersion: v1
 kind: Service
-metadata:
+RPCMetadata:
   name: mydb
 spec:
   ports:
@@ -1399,7 +1399,7 @@ spec:
 
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: liveness-exec-pod
   namespace: default
   labels:
@@ -1435,7 +1435,7 @@ scheme	<string>：建立连接使用的协议，仅可为HTTP或HTTPS，默认�
 # vim liveness-httpget.yaml
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: liveness-http
   namespace: default
   labels:
@@ -1474,7 +1474,7 @@ port	<string>：请求连接的目标端口，必选字段
 # vim liveness-tcp.yaml
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: liveness-tcp-pod
   namespace: default
   labels:
@@ -1538,7 +1538,7 @@ tcpSocket  #端口探测
 
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: readiness-http
   namespace: default
   labels:
@@ -1663,7 +1663,7 @@ vim rs-demo.yaml
 
 apiVersion: apps/v1  #api版本定义
 kind: ReplicaSet  #定义资源类型为ReplicaSet
-metadata:  #元数据定义
+RPCMetadata:  #元数据定义
   name: myapp
   namespace: default
 spec:  #ReplicaSet的规格定义
@@ -1673,7 +1673,7 @@ spec:  #ReplicaSet的规格定义
       app: myapp
       release: canary
   template:  #Pod的模板定义
-    metadata:  #Pod的元数据定义
+    RPCMetadata:  #Pod的元数据定义
       name: myapp-pod  #自定义Pod的名称
       labels:  #定义Pod的标签，需要和上面的标签选择器内匹配规则中定义的标签一致，可以多出其他标签
         app: myapp
@@ -1733,7 +1733,7 @@ kubectl explain deployment.spec.template
 vim deploy-demo.yaml
 apiVersion: apps/v1  #api版本定义
 kind: Deployment  #定义资源类型为Deploymant
-metadata:  #元数据定义
+RPCMetadata:  #元数据定义
   name: deploy-demo  #deployment控制器名称
   namespace: default  #名称空间
 spec:  #deployment控制器的规格定义
@@ -1743,7 +1743,7 @@ spec:  #deployment控制器的规格定义
       app: deploy-app
       release: canary
   template:  #Pod的模板定义
-    metadata:  #Pod的元数据定义
+    RPCMetadata:  #Pod的元数据定义
       labels:  #定义Pod的标签，需要和上面的标签选择器内匹配规则中定义的标签一致，可以多出其他标签
         app: deploy-app
         release: canary
@@ -1832,7 +1832,7 @@ vim daemonset-demo.yaml
 
 apiVersion: apps/v1    #api版本定义
 kind: DaemonSet    #定义资源类型为DaemonSet
-metadata:    #元数据定义
+RPCMetadata:    #元数据定义
   name: daemset-nginx    #daemonset控制器名称
   namespace: default    #名称空间
   labels:    #设置daemonset的标签
@@ -1842,7 +1842,7 @@ spec:    #DaemonSet控制器的规格定义
     matchLabels:    #指定匹配pod的标签
       app: daem-nginx    #注意：这里需要和template中定义的标签一样
   template:    #Pod的模板定义
-    metadata:    #Pod的元数据定义
+    RPCMetadata:    #Pod的元数据定义
       name: nginx  
       labels:    #定义Pod的标签，需要和上面的标签选择器内匹配规则中定义的标签一致，可以多出其他标签
         app: daem-nginx
@@ -2030,7 +2030,7 @@ kubectl create deployment collector-service --image=registry.cn-shenzhen.aliyunc
 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+RPCMetadata:
   creationTimestamp: null
   labels:
     app: collector-service
@@ -2043,7 +2043,7 @@ spec:
       app: collector-service
   strategy: {}
   template:
-    metadata:
+    RPCMetadata:
       creationTimestamp: null
       labels:
         app: collector-service
@@ -2067,7 +2067,7 @@ kubectl expose deployment collector-service --port=8888 --target-port=8888 --typ
 
 apiVersion: v1
 kind: Service
-metadata:
+RPCMetadata:
   creationTimestamp: null
   labels:
     app: collector-service
@@ -2094,7 +2094,7 @@ status:
 ```shell
 apiVersion: extensions/v1beta1
 kind: Ingress
-metadata:
+RPCMetadata:
   name: collector-service
   namespace: default
 spec:
@@ -2133,7 +2133,7 @@ kubectl create secret tls hongqy-ingress-secret --cert=www.hongqy.com.crt --key=
 cat > collector-service-tls-ingress.yaml <<EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
-metadata:
+RPCMetadata:
   name: hongqy-ingress-https
   annotations:
     kubernetes.io/ingress.class: "nginx"
@@ -2179,7 +2179,7 @@ tar -xvf ingress-nginx-4.0.13.tgz && cd ingress-nginx
 > ```shell
 > apiVersion: networking.k8s.io/v1
 > kind: Ingress
-> metadata:
+> RPCMetadata:
 >   name: example
 >   namespace: foo
 > spec:
@@ -2206,7 +2206,7 @@ tar -xvf ingress-nginx-4.0.13.tgz && cd ingress-nginx
 >
 > apiVersion: v1
 > kind: Secret
-> metadata:
+> RPCMetadata:
 >   name: example-tls
 >   namespace: foo
 > data:
@@ -2267,7 +2267,7 @@ cat >  cm-appvars.yaml << EOF
 
 apiVersion: v1
 kind: ConfigMap
-metadata:
+RPCMetadata:
   name: cm-appvars
 data:
   apploglevel: info
@@ -2303,7 +2303,7 @@ kubectl get configmap cm-appvars -o yaml
 ```shell
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: cm-test-pod
 spec:
   containers:
@@ -2329,7 +2329,7 @@ spec:
 ```shell
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: cm-test-pod
 spec:
   containers:
@@ -2351,7 +2351,7 @@ spec:
 ```shell
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: cm-test-pod
 spec:
   containers:
@@ -2379,7 +2379,7 @@ spec:
 ```shell
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: dapi-test-pod
 spec:
   containers:
@@ -2560,7 +2560,7 @@ vim vol-emptydir.yaml
 
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: vol-emptydir-pod
 spec:
   volumes:    #定义存储卷
@@ -2621,7 +2621,7 @@ type	<string>    #指定存储卷类型
 vim vol-hostpath.yaml
 apiVersion: v1
 kind: Pod
-metadata:
+RPCMetadata:
   name: pod-vol-hostpath
   namespace: default
 spec:
@@ -2810,19 +2810,19 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ```shell
 > apiVersion: v1
 > kind: Namespace
-> metadata:
+> RPCMetadata:
 >   name: nfs
 > ---
 > apiVersion: v1
 > kind: ServiceAccount
-> metadata:
+> RPCMetadata:
 >   name: nfs-client-provisioner
 >   # replace with namespace where provisioner is deployed
 >   namespace: nfs
 > ---
 > kind: ClusterRole
 > apiVersion: rbac.authorization.k8s.io/v1
-> metadata:
+> RPCMetadata:
 >   name: nfs-client-provisioner-runner
 > rules:
 >   - apiGroups: [""]
@@ -2843,7 +2843,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ---
 > kind: ClusterRoleBinding
 > apiVersion: rbac.authorization.k8s.io/v1
-> metadata:
+> RPCMetadata:
 >   name: run-nfs-client-provisioner
 > subjects:
 >   - kind: ServiceAccount
@@ -2857,7 +2857,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ---
 > kind: Role
 > apiVersion: rbac.authorization.k8s.io/v1
-> metadata:
+> RPCMetadata:
 >   name: leader-locking-nfs-client-provisioner
 >   # replace with namespace where provisioner is deployed
 >   namespace: nfs
@@ -2868,7 +2868,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ---
 > kind: RoleBinding
 > apiVersion: rbac.authorization.k8s.io/v1
-> metadata:
+> RPCMetadata:
 >   name: leader-locking-nfs-client-provisioner
 >   # replace with namespace where provisioner is deployed
 >   namespace: nfs
@@ -2890,7 +2890,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ```shell
 > apiVersion: storage.k8s.io/v1
 > kind: StorageClass
-> metadata:
+> RPCMetadata:
 >   name: managed-nfs-storage
 > provisioner: k8s-sigs.io/nfs-subdir-external-provisioner # or choose another name, must match deployment's env PROVISIONER_NAME'
 > reclaimPolicy: Retain #PV的删除策略，默认为delete，删除PV后立即删除NFS server的数据
@@ -2910,7 +2910,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 > ```shell
 > apiVersion: apps/v1
 > kind: Deployment
-> metadata:
+> RPCMetadata:
 >   name: nfs-client-provisioner
 >   labels:
 >     app: nfs-client-provisioner
@@ -2924,7 +2924,7 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 >     matchLabels:
 >       app: nfs-client-provisioner
 >   template:
->     metadata:
+>     RPCMetadata:
 >       labels:
 >         app: nfs-client-provisioner
 >     spec:
@@ -2954,13 +2954,13 @@ readOnly	<boolean>    #是否将存储卷挂载为只读模式，默认为false�
 
 
 
-kubectl patch storageclass nfs-kubesphere-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch storageclass nfs-kubesphere-client -p '{"RPCMetadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 
 
 
 
-kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l app=ks-install -o jsonpath='{.items[0].metadata.name}') -f
+kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l app=ks-install -o jsonpath='{.items[0].RPCMetadata.name}') -f
 
  
 
@@ -3002,13 +3002,13 @@ chmod a+x /usr/local/bin/helm
 ```yaml
 apiVersion: v1
 kind: ServiceAccount
-metadata:
+RPCMetadata:
   name: tiller
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
-metadata:
+RPCMetadata:
   name: tiller
 roleRef:
   apiGroup: rbac.authorization.k8s.io

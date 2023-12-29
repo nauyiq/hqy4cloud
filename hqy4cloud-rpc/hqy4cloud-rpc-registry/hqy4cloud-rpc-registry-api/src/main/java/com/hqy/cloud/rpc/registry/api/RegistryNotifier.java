@@ -1,6 +1,7 @@
-package com.hqy.cloud.rpc.registry;
+package com.hqy.cloud.rpc.registry.api;
 
 import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.registry.Constants;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.hqy.cloud.rpc.registry.Constants.DEFAULT_DELAY_EXECUTE_TIMES;
 
 /**
  * @author qiyuan.hong
@@ -59,7 +58,7 @@ public abstract class RegistryNotifier<T> {
             scheduler.schedule(new NotificationTask<>(this, notifyTime), -delta, TimeUnit.MILLISECONDS);
         } else {
             // check if more than 10 calls
-            if (!shouldDelay.get() && executeTime.incrementAndGet() > DEFAULT_DELAY_EXECUTE_TIMES) {
+            if (!shouldDelay.get() && executeTime.incrementAndGet() > Constants.DEFAULT_DELAY_EXECUTE_TIMES) {
                 shouldDelay.set(true);
             }
             scheduler.submit(new NotificationTask<>(this, notifyTime));

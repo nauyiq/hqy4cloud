@@ -3,7 +3,6 @@ package com.hqy.cloud.rpc.registry.api;
 import com.hqy.cloud.rpc.model.RegistryInfo;
 import com.hqy.cloud.rpc.service.RPCModelService;
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.RegistryService;
 import com.hqy.cloud.util.AssertUtil;
 
 import static com.hqy.cloud.rpc.CommonConstants.DEFAULT_DELAY_NOTIFICATION_TIME;
@@ -15,7 +14,7 @@ import static com.hqy.cloud.rpc.CommonConstants.REGISTRY_DELAY_NOTIFICATION_KEY;
  * @version 1.0
  * @date 2022/6/23 16:24
  */
-public interface Registry extends RegistryService, RPCModelService {
+public interface RPCRegistry extends RPCRegistryService, RPCModelService {
 
     /**
      * return registry name.

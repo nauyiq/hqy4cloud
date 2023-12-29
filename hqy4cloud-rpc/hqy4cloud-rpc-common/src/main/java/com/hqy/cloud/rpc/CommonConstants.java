@@ -23,6 +23,7 @@ public interface CommonConstants {
     String HASH_FACTOR = "hashFactor";
     String RPC_SERVER_ADDR = "rpcServerAddress";
     String ACTUATOR_TYPE = "actuatorType";
+    String MASTER_NODE = "master";
 
     String DEFAULT_HASH_FACTOR = StringConstants.DEFAULT;
     String DIRECT_SERVICE = "direct-service";
@@ -74,7 +75,7 @@ public interface CommonConstants {
     String RPC_MONITOR_WARNING_KEY = "maxWarning";
     int DEFAULT_MONITOR_WARNING_KEY = 60;
 
-
+    String DEFAULT_REVISION = "1.0.0";
 
 
 

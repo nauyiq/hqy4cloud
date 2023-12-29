@@ -28,9 +28,9 @@ import static com.hqy.cloud.rpc.registry.Constants.REGISTRY_RETRY_PERIOD_KEY;
  * @version 1.0
  * @date 2022/6/24 17:26
  */
-public abstract class FailBackRegistry extends AbstractRegistry {
+public abstract class FailBackRPCRegistry extends AbstractRPCRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(FailBackRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(FailBackRPCRegistry.class);
 
     private final Map<RPCModel, FailRegisteredTask> failRegistered = MapUtil.newConcurrentHashMap();
 
@@ -44,7 +44,7 @@ public abstract class FailBackRegistry extends AbstractRegistry {
 
     private final HashedWheelTimer retryTimer;
 
-    public FailBackRegistry(RPCModel rpcModel) {
+    public FailBackRPCRegistry(RPCModel rpcModel) {
         super(rpcModel);
         this.retryPeriod = rpcModel.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
         retryTimer = new HashedWheelTimer(new DefaultThreadFactory("ThriftRegistryRetryTimer"), retryPeriod, TimeUnit.MINUTES, 128);

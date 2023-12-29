@@ -3,7 +3,7 @@
 # This ConfigMap is used to configure a self-hosted Calico installation.
 kind: ConfigMap
 apiVersion: v1
-metadata:
+RPCMetadata:
   name: calico-config
   namespace: kube-system
 data:
@@ -58,7 +58,7 @@ data:
 
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: bgpconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -84,7 +84,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: BGPConfigurationSpec contains the values of the BGP configuration.
@@ -201,7 +201,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: bgppeers.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -226,7 +226,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: BGPPeerSpec contains the specification for a BGPPeer resource.
@@ -314,7 +314,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: blockaffinities.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -339,7 +339,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: BlockAffinitySpec contains the specification for a BlockAffinity
@@ -375,7 +375,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: clusterinformations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -401,7 +401,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: ClusterInformationSpec contains the values of describing
@@ -439,7 +439,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: felixconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -465,7 +465,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: FelixConfigurationSpec contains the values of the Felix configuration.
@@ -811,14 +811,14 @@ spec:
                   type: integer
                 metadataAddr:
                   description: 'MetadataAddr is the IP address or domain name of the
-                  server that can answer VM queries for cloud-init metadata. In OpenStack,
+                  server that can answer VM queries for cloud-init RPCMetadata. In OpenStack,
                   this corresponds to the machine running nova-api (or in Ubuntu,
-                  nova-api-metadata). A value of none (case insensitive) means that
-                  Felix should not set up any NAT rule for the metadata path. [Default:
+                  nova-api-RPCMetadata). A value of none (case insensitive) means that
+                  Felix should not set up any NAT rule for the RPCMetadata path. [Default:
                   127.0.0.1]'
                   type: string
                 metadataPort:
-                  description: 'MetadataPort is the port of the metadata server. This,
+                  description: 'MetadataPort is the port of the RPCMetadata server. This,
                   combined with global.MetadataAddr (if not ''None''), is used to
                   set up a NAT rule, from 169.254.169.254:80 to MetadataAddr:MetadataPort.
                   In most cases this should not need to be changed [Default: 8775].'
@@ -1013,7 +1013,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: globalnetworkpolicies.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1038,7 +1038,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               properties:
@@ -1249,7 +1249,7 @@ spec:
                         description: IPVersion is an optional field that restricts the
                           rule to only match a specific IP version.
                         type: integer
-                      metadata:
+                      RPCMetadata:
                         description: Metadata contains additional information for this
                           rule
                         properties:
@@ -1622,7 +1622,7 @@ spec:
                         description: IPVersion is an optional field that restricts the
                           rule to only match a specific IP version.
                         type: integer
-                      metadata:
+                      RPCMetadata:
                         description: Metadata contains additional information for this
                           rule
                         properties:
@@ -1868,7 +1868,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: globalnetworksets.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1896,7 +1896,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: GlobalNetworkSetSpec contains the specification for a NetworkSet
@@ -1921,7 +1921,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: hostendpoints.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1946,7 +1946,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: HostEndpointSpec contains the specification for a HostEndpoint
@@ -2029,7 +2029,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: ipamblocks.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2054,7 +2054,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: IPAMBlockSpec contains the specification for an IPAMBlock
@@ -2110,7 +2110,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: ipamconfigs.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2135,7 +2135,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: IPAMConfigSpec contains the specification for an IPAMConfig
@@ -2166,7 +2166,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: ipamhandles.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2191,7 +2191,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: IPAMHandleSpec contains the specification for an IPAMHandle
@@ -2222,7 +2222,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: ippools.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2247,7 +2247,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: IPPoolSpec contains the specification for an IPPool resource.
@@ -2321,7 +2321,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: kubecontrollersconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2346,7 +2346,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: KubeControllersConfigurationSpec contains the values of the
@@ -2564,7 +2564,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: networkpolicies.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2589,7 +2589,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               properties:
@@ -2789,7 +2789,7 @@ spec:
                         description: IPVersion is an optional field that restricts the
                           rule to only match a specific IP version.
                         type: integer
-                      metadata:
+                      RPCMetadata:
                         description: Metadata contains additional information for this
                           rule
                         properties:
@@ -3162,7 +3162,7 @@ spec:
                         description: IPVersion is an optional field that restricts the
                           rule to only match a specific IP version.
                         type: integer
-                      metadata:
+                      RPCMetadata:
                         description: Metadata contains additional information for this
                           rule
                         properties:
@@ -3400,7 +3400,7 @@ status:
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata:
+RPCMetadata:
   name: networksets.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -3426,7 +3426,7 @@ spec:
               object represents. Servers may infer this from the endpoint the client
               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
               type: string
-            metadata:
+            RPCMetadata:
               type: object
             spec:
               description: NetworkSetSpec contains the specification for a NetworkSet
@@ -3456,7 +3456,7 @@ status:
 # and bind it to the calico-kube-controllers serviceaccount.
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-metadata:
+RPCMetadata:
   name: calico-kube-controllers
 rules:
   # Nodes are watched to monitor for deletions.
@@ -3527,7 +3527,7 @@ rules:
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
-metadata:
+RPCMetadata:
   name: calico-kube-controllers
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3545,7 +3545,7 @@ subjects:
 # and bind it to the calico-node serviceaccount.
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-metadata:
+RPCMetadata:
   name: calico-node
 rules:
   # The CNI plugin needs to get pods, nodes, and namespaces.
@@ -3691,7 +3691,7 @@ rules:
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
-metadata:
+RPCMetadata:
   name: calico-node
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3709,7 +3709,7 @@ subjects:
 # each master and worker node in a Kubernetes cluster.
 kind: DaemonSet
 apiVersion: apps/v1
-metadata:
+RPCMetadata:
   name: calico-node
   namespace: kube-system
   labels:
@@ -3723,7 +3723,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
   template:
-    metadata:
+    RPCMetadata:
       labels:
         k8s-app: calico-node
     spec:
@@ -4006,7 +4006,7 @@ spec:
 
 apiVersion: v1
 kind: ServiceAccount
-metadata:
+RPCMetadata:
   name: calico-node
   namespace: kube-system
 
@@ -4015,7 +4015,7 @@ metadata:
 # See https://github.com/projectcalico/kube-controllers
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+RPCMetadata:
   name: calico-kube-controllers
   namespace: kube-system
   labels:
@@ -4029,7 +4029,7 @@ spec:
   strategy:
     type: Recreate
   template:
-    metadata:
+    RPCMetadata:
       name: calico-kube-controllers
       namespace: kube-system
       labels:
@@ -4074,7 +4074,7 @@ spec:
 
 apiVersion: v1
 kind: ServiceAccount
-metadata:
+RPCMetadata:
   name: calico-kube-controllers
   namespace: kube-system
 
@@ -4084,7 +4084,7 @@ metadata:
 
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
-metadata:
+RPCMetadata:
   name: calico-kube-controllers
   namespace: kube-system
   labels:

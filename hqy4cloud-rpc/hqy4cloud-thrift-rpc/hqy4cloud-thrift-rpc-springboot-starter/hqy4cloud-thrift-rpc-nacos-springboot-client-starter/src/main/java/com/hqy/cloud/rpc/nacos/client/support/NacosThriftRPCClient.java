@@ -5,7 +5,7 @@ import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.model.RPCServerAddress;
 import com.hqy.cloud.rpc.model.RegistryInfo;
-import com.hqy.cloud.rpc.nacos.core.NacosRegistry;
+import com.hqy.cloud.rpc.nacos.core.NacosRPCRegistry;
 import com.hqy.cloud.rpc.nacos.core.NacosRegistryFactory;
 import com.hqy.cloud.rpc.nacos.utils.NacosConfigurationUtils;
 import com.hqy.cloud.rpc.registry.api.RegistryFactory;
@@ -69,7 +69,7 @@ public class NacosThriftRPCClient extends ThriftRPCClient {
     }
 
     private RPCModel createDirectRpcModel() {
-        RegistryInfo registryInfo = RegistryUtil.buildRegistryInfo(NacosConfigurationUtils.getServerAddress(), NacosRegistry.NAME);
+        RegistryInfo registryInfo = RegistryUtil.buildRegistryInfo(NacosConfigurationUtils.getServerAddress(), NacosRPCRegistry.NAME);
         return new RPCModel(CommonConstants.DIRECT_SERVICE, 0, getGroup(), registryInfo, RPCServerAddress.createConsumerRpcServer(), createdDirectRpcParams());
     }
 

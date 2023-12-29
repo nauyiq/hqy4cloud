@@ -7,7 +7,7 @@ import com.hqy.cloud.rpc.cluster.router.gray.GrayModeRouterFactory;
 import com.hqy.cloud.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
-import com.hqy.cloud.rpc.registry.api.Registry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
 import com.hqy.cloud.rpc.registry.api.RegistryFactory;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
@@ -111,7 +111,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
 
         RPCModel rpcModel = getConsumerModel();
-        Registry registry = getRegistry();
+        RPCRegistry registry = getRegistry();
         try {
             if (rpcModel != null && registry != null && registry.isAvailable()) {
                 registry.unregister(rpcModel);
@@ -169,7 +169,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         this.subscribeModel = subscribeModel;
     }
 
-    public Registry getRegistry() {
+    public RPCRegistry getRegistry() {
         return factory.getRegistry(getConsumerModel());
     }
 

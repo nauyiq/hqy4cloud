@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.nacos.core;
 
 import com.hqy.cloud.rpc.model.RPCModel;
 import com.hqy.cloud.rpc.registry.api.AbstractRegistryFactory;
-import com.hqy.cloud.rpc.registry.api.Registry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
 import com.hqy.cloud.rpc.nacos.utils.NacosNamingServiceUtils;
 
 /**
@@ -14,7 +14,7 @@ import com.hqy.cloud.rpc.nacos.utils.NacosNamingServiceUtils;
 public class NacosRegistryFactory extends AbstractRegistryFactory {
 
     @Override
-    protected Registry createRegistry(RPCModel rpcModel) {
-        return new NacosRegistry(rpcModel, NacosNamingServiceUtils.createNamingService(rpcModel));
+    protected RPCRegistry createRegistry(RPCModel rpcModel) {
+        return new NacosRPCRegistry(rpcModel, NacosNamingServiceUtils.createNamingService(rpcModel));
     }
 }

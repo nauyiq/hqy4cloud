@@ -1,6 +1,6 @@
 kind: Deployment
 apiVersion: apps/v1
-metadata:
+RPCMetadata:
   name: account-auth-service
   namespace: app
 spec:
@@ -9,7 +9,7 @@ spec:
     matchLabels:
       app: account-auth-service
   template:
-    metadata:
+    RPCMetadata:
       labels:
         app: account-auth-service
     spec:

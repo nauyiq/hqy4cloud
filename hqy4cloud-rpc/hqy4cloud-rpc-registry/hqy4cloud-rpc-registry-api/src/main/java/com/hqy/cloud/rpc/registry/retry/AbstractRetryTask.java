@@ -4,7 +4,7 @@ import com.hqy.foundation.timer.Timeout;
 import com.hqy.foundation.timer.Timer;
 import com.hqy.foundation.timer.TimerTask;
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.api.support.FailBackRegistry;
+import com.hqy.cloud.rpc.registry.api.support.FailBackRPCRegistry;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public abstract class AbstractRetryTask implements TimerTask {
     /**
      * registry for this task
      */
-    protected final FailBackRegistry registry;
+    protected final FailBackRPCRegistry registry;
 
     /**
      * retry period
@@ -58,7 +58,7 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     private volatile boolean cancel;
 
-    AbstractRetryTask(RPCModel rpcModel, FailBackRegistry registry, String taskName) {
+    AbstractRetryTask(RPCModel rpcModel, FailBackRPCRegistry registry, String taskName) {
         AssertUtil.isFalse(Objects.isNull(rpcModel) || StringUtils.isBlank(taskName), "Initial retry task failure. url or taskName error.");
 
         this.metadata = rpcModel;
@@ -115,5 +115,5 @@ public abstract class AbstractRetryTask implements TimerTask {
      * @param registry  registry
      * @param timeout   timeout handler
      */
-    protected abstract void doRetry(RPCModel rpcModel, FailBackRegistry registry, Timeout timeout);
+    protected abstract void doRetry(RPCModel rpcModel, FailBackRPCRegistry registry, Timeout timeout);
 }

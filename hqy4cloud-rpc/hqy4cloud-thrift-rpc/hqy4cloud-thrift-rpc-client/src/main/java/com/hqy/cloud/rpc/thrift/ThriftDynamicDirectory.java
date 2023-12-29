@@ -7,7 +7,7 @@ import com.hqy.cloud.rpc.thrift.protocol.ThriftInvoker;
 import com.hqy.cloud.rpc.thrift.support.ThriftClientManagerWrapper;
 import com.hqy.cloud.rpc.cluster.directory.DynamicDirectory;
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.api.Registry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
 import com.hqy.cloud.rpc.registry.api.RegistryFactory;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,7 +47,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
     }
 
     private void subscribeAndNotify(String providerServiceName, RegistryFactory factory) {
-        Registry registry = factory.getRegistry(consumerRpcModel);
+        RPCRegistry registry = factory.getRegistry(consumerRpcModel);
         //create provider rpc model.
         //does not represent a specific remote service
         RPCModel rpcModel = new RPCModel(providerServiceName, 0, consumerRpcModel.getGroup(), consumerRpcModel.getRegistryInfo(), null);

@@ -19,14 +19,14 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
 
 
     @Override
-    public Registry getRegistry(RPCModel rpcModel) {
+    public RPCRegistry getRegistry(RPCModel rpcModel) {
         AssertUtil.notNull(rpcModel, "Failed execute to getRegistry, rpcContext is null.");
 
-        Registry defaultNopRegistry = RegistryManager.getInstance().getDefaultNopRegistryIfDestroyed();
+        RPCRegistry defaultNopRegistry = RegistryManager.getInstance().getDefaultNopRegistryIfDestroyed();
         if (defaultNopRegistry != null) {
             return defaultNopRegistry;
         }
-        Registry registry;
+        RPCRegistry registry;
         String registryAddress = rpcModel.getRegistryAddress();
         RegistryManager.getInstance().getRegistryLock().lock();
         try {
@@ -60,5 +60,5 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
      * @param rpcModel metadata.
      * @return           {@link RPCModel}
      */
-    protected abstract Registry createRegistry(RPCModel rpcModel);
+    protected abstract RPCRegistry createRegistry(RPCModel rpcModel);
 }

@@ -1,7 +1,7 @@
 ---
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
-metadata:
+RPCMetadata:
   name: psp.flannel.unprivileged
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
@@ -48,7 +48,7 @@ spec:
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
+RPCMetadata:
   name: flannel
 rules:
   - apiGroups: ['extensions']
@@ -77,7 +77,7 @@ rules:
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
+RPCMetadata:
   name: flannel
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -90,13 +90,13 @@ subjects:
 ---
 apiVersion: v1
 kind: ServiceAccount
-metadata:
+RPCMetadata:
   name: flannel
   namespace: kube-system
 ---
 kind: ConfigMap
 apiVersion: v1
-metadata:
+RPCMetadata:
   name: kube-flannel-cfg
   namespace: kube-system
   labels:
@@ -133,7 +133,7 @@ data:
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+RPCMetadata:
   name: kube-flannel-ds-amd64
   namespace: kube-system
   labels:
@@ -144,7 +144,7 @@ spec:
     matchLabels:
       app: flannel
   template:
-    metadata:
+    RPCMetadata:
       labels:
         tier: node
         app: flannel
@@ -204,11 +204,11 @@ spec:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: RPCMetadata.name
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: RPCMetadata.namespace
           volumeMounts:
             - name: run
               mountPath: /run/flannel
@@ -227,7 +227,7 @@ spec:
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+RPCMetadata:
   name: kube-flannel-ds-arm64
   namespace: kube-system
   labels:
@@ -238,7 +238,7 @@ spec:
     matchLabels:
       app: flannel
   template:
-    metadata:
+    RPCMetadata:
       labels:
         tier: node
         app: flannel
@@ -298,11 +298,11 @@ spec:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: RPCMetadata.name
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: RPCMetadata.namespace
           volumeMounts:
             - name: run
               mountPath: /run/flannel
@@ -321,7 +321,7 @@ spec:
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+RPCMetadata:
   name: kube-flannel-ds-arm
   namespace: kube-system
   labels:
@@ -332,7 +332,7 @@ spec:
     matchLabels:
       app: flannel
   template:
-    metadata:
+    RPCMetadata:
       labels:
         tier: node
         app: flannel
@@ -392,11 +392,11 @@ spec:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: RPCMetadata.name
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: RPCMetadata.namespace
           volumeMounts:
             - name: run
               mountPath: /run/flannel
@@ -415,7 +415,7 @@ spec:
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+RPCMetadata:
   name: kube-flannel-ds-ppc64le
   namespace: kube-system
   labels:
@@ -426,7 +426,7 @@ spec:
     matchLabels:
       app: flannel
   template:
-    metadata:
+    RPCMetadata:
       labels:
         tier: node
         app: flannel
@@ -486,11 +486,11 @@ spec:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: RPCMetadata.name
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: RPCMetadata.namespace
           volumeMounts:
             - name: run
               mountPath: /run/flannel
@@ -509,7 +509,7 @@ spec:
 ---
 apiVersion: apps/v1
 kind: DaemonSet
-metadata:
+RPCMetadata:
   name: kube-flannel-ds-s390x
   namespace: kube-system
   labels:
@@ -520,7 +520,7 @@ spec:
     matchLabels:
       app: flannel
   template:
-    metadata:
+    RPCMetadata:
       labels:
         tier: node
         app: flannel
@@ -580,11 +580,11 @@ spec:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: RPCMetadata.name
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.namespace
+                  fieldPath: RPCMetadata.namespace
           volumeMounts:
             - name: run
               mountPath: /run/flannel

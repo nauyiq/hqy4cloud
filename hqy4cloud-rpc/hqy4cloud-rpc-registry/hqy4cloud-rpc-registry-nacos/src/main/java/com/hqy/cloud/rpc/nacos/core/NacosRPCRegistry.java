@@ -8,10 +8,10 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.RegistryNotifier;
 import com.hqy.cloud.rpc.registry.api.NotifyListener;
-import com.hqy.cloud.rpc.registry.api.Registry;
-import com.hqy.cloud.rpc.registry.api.support.FailBackRegistry;
+import com.hqy.cloud.rpc.registry.api.RPCRegistry;
+import com.hqy.cloud.rpc.registry.api.RegistryNotifier;
+import com.hqy.cloud.rpc.registry.api.support.FailBackRPCRegistry;
 import com.hqy.cloud.rpc.nacos.naming.NamingServiceWrapper;
 import com.hqy.cloud.rpc.nacos.utils.NacosInstanceUtils;
 import com.hqy.cloud.util.AssertUtil;
@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Nacos {@link Registry}
+ * Nacos {@link RPCRegistry}
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/6/23 17:19
  */
-public class NacosRegistry extends FailBackRegistry {
+public class NacosRPCRegistry extends FailBackRPCRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(NacosRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(NacosRPCRegistry.class);
 
     public static final String NAME = "nacos";
     private final static String UP = "UP";
@@ -36,7 +36,7 @@ public class NacosRegistry extends FailBackRegistry {
     private final Map<RPCModel, EventListener> nacosListeners = MapUtil.newConcurrentHashMap();
 
 
-    public NacosRegistry(RPCModel rpcModel, NamingServiceWrapper namingService) {
+    public NacosRPCRegistry(RPCModel rpcModel, NamingServiceWrapper namingService) {
         super(rpcModel);
         this.namingService = namingService;
     }
@@ -149,7 +149,7 @@ public class NacosRegistry extends FailBackRegistry {
             filterEnabledInstances(enabledInstances);
         }
         List<RPCModel> rpcModels = NacosInstanceUtils.instancesConvert(rpcModel.getRegistryInfo(), rpcModel.getGroup(),instances);
-        NacosRegistry.this.notify(rpcModel, listener, rpcModels);
+        NacosRPCRegistry.this.notify(rpcModel, listener, rpcModels);
     }
 
     private void filterEnabledInstances(Collection<Instance> instances) {
@@ -184,11 +184,11 @@ public class NacosRegistry extends FailBackRegistry {
             this.rpcModel = rpcModel;
             this.serviceName = serviceName;
             this.notifyListener = listener;
-            this.notifier = new RegistryNotifier<List<Instance>>(getModel(), NacosRegistry.this.getNotifyDelay()) {
+            this.notifier = new RegistryNotifier<>(getModel(), NacosRPCRegistry.this.getNotifyDelay()) {
                 @Override
                 protected void doNotify(List<Instance> rawAddresses) {
 //                    NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, rawAddresses);
-                    NacosRegistry.this.notifySubscriber(rpcModel, rawAddresses, listener);
+                    NacosRPCRegistry.this.notifySubscriber(rpcModel, rawAddresses, listener);
                 }
             };
         }

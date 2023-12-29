@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.registry.retry;
 
 import com.hqy.foundation.timer.Timeout;
 import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.api.support.FailBackRegistry;
+import com.hqy.cloud.rpc.registry.api.support.FailBackRPCRegistry;
 
 /**
  * Registry Fail Task.
@@ -14,12 +14,12 @@ public final class FailRegisteredTask extends AbstractRetryTask {
 
     private static final String NAME = "retry register task";
 
-    public FailRegisteredTask(RPCModel rpcModel, FailBackRegistry registry) {
+    public FailRegisteredTask(RPCModel rpcModel, FailBackRPCRegistry registry) {
         super(rpcModel, registry, NAME);
     }
 
     @Override
-    protected void doRetry(RPCModel rpcModel, FailBackRegistry registry, Timeout timeout) {
+    protected void doRetry(RPCModel rpcModel, FailBackRPCRegistry registry, Timeout timeout) {
         registry.doRegister(rpcModel);
         registry.removeFailedRegisteredTask(rpcModel);
     }

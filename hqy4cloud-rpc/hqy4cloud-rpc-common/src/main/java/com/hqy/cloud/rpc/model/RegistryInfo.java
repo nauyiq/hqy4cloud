@@ -7,6 +7,7 @@ import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -18,9 +19,12 @@ import java.util.Objects;
  * @date 2022/6/27 16:44
  */
 public class RegistryInfo extends Parameters implements Serializable {
-
+    @Serial
     private static final long serialVersionUID = -508803540161945493L;
 
+    /**
+     * register application name
+     */
     protected String name;
 
     /**

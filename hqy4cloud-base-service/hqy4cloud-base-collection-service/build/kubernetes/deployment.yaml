@@ -1,6 +1,6 @@
 kind: Deployment
 apiVersion: apps/v1
-metadata:
+RPCMetadata:
   name: common-collector-service
   namespace: app
 spec:
@@ -9,7 +9,7 @@ spec:
     matchLabels:
       app: common-collector-service
   template:
-    metadata:
+    RPCMetadata:
       labels:
         app: common-collector-service
     spec:

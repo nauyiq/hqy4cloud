@@ -74,7 +74,7 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
         return new RouterResult<>(invokers, true);
     }
 
-    private  List<Invoker<T>> findSuitableInvokers(boolean colorModeRpcRemote, boolean sameIpHighPriority, RPCModel rpcModel, List<Invoker<T>> invokers) {
+    private List<Invoker<T>> findSuitableInvokers(boolean colorModeRpcRemote, boolean sameIpHighPriority, RPCModel rpcModel, List<Invoker<T>> invokers) {
         List<Invoker<T>> chooseInvokers = new ArrayList<>(invokers);
         if (colorModeRpcRemote) {
             chooseInvokers = findGaryModeInvokers(rpcModel, invokers);
