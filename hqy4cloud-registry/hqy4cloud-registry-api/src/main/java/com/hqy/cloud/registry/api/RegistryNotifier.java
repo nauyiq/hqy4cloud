@@ -1,7 +1,6 @@
-package com.hqy.cloud.rpc.registry.api;
+package com.hqy.cloud.registry.api;
 
-import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.Constants;
+import com.hqy.cloud.registry.common.Constants;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +13,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * RegistryNotifier.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/5 16:48
+ * @date 2024/1/2
  */
 public abstract class RegistryNotifier<T> {
-
     private static final Logger log = LoggerFactory.getLogger(RegistryNotifier.class);
 
     private volatile long lastExecuteTime;
@@ -28,19 +27,16 @@ public abstract class RegistryNotifier<T> {
     private final AtomicBoolean shouldDelay = new AtomicBoolean(false);
     private final AtomicInteger executeTime = new AtomicInteger(0);
     private final ScheduledExecutorService scheduler;
-
     private T rawAddresses;
 
-    public RegistryNotifier(RPCModel rpcModel, long delayTime) {
-        this(rpcModel, delayTime, null);
+    public RegistryNotifier(long delayTime) {
+        this(delayTime, null);
     }
 
-
-    public RegistryNotifier(RPCModel rpcModel, long delayTime, ScheduledExecutorService scheduler) {
+    public RegistryNotifier(long delayTime, ScheduledExecutorService scheduler) {
         this.delayTime = delayTime;
-        this.scheduler = Objects.requireNonNullElseGet(scheduler, () -> Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("thrift-registry-notification")));
+        this.scheduler = Objects.requireNonNullElseGet(scheduler, () -> Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("hqy4cloud-registry-notification")));
     }
-
 
     public synchronized void notify(T rawAddresses) {
         this.rawAddresses = rawAddresses;
@@ -62,11 +58,9 @@ public abstract class RegistryNotifier<T> {
         }
     }
 
-
     public long getDelayTime() {
         return delayTime;
     }
-
 
     /**
      * notification of instance addresses (aka providers).
@@ -75,14 +69,8 @@ public abstract class RegistryNotifier<T> {
      */
     protected abstract void doNotify(T rawAddresses);
 
-    public static class NotificationTask<T> implements Runnable {
-        private final RegistryNotifier<T> listener;
-        private final long time;
-
-        public NotificationTask(RegistryNotifier<T> listener, long time) {
-            this.listener = listener;
-            this.time = time;
-        }
+    public record NotificationTask<T>(RegistryNotifier<T> listener,
+                                      long time) implements Runnable {
 
         @Override
         public void run() {
@@ -101,10 +89,6 @@ public abstract class RegistryNotifier<T> {
             }
         }
     }
-
-
-
-
 
 
 }

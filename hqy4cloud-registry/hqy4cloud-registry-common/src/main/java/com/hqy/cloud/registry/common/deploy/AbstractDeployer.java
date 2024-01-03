@@ -10,9 +10,11 @@ import java.util.List;
 import static com.hqy.cloud.registry.common.deploy.DeployState.*;
 
 /**
+ * AbstractDeployer.
+ * @see com.hqy.cloud.registry.common.deploy.Deployer
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/5/31 17:25
+ * @date 2023/5/31
  */
 public abstract class AbstractDeployer<T extends DeployModel> implements Deployer<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractDeployer.class);

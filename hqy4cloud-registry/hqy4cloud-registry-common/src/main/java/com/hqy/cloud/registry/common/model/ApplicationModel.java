@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -65,6 +66,29 @@ public class ApplicationModel extends Parameters implements Serializable {
         getNumbers().put(key, intValue);
         return intValue;
     }
+
+    public double getParameter(String key, double defaultValue) {
+        Number number = getNumbers().get(key);
+        if (number != null) {
+            return number.doubleValue();
+        }
+        String value  = getParameter(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        double doubleValue = Double.parseDouble(value);
+        getNumbers().put(key, doubleValue);
+        return doubleValue;
+    }
+
+    public boolean getParameter(String key, boolean defaultValue) {
+        String value  = getParameter(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
 
     private String buildString(boolean appendUser) {
         StringBuilder buf = new StringBuilder();
@@ -140,5 +164,54 @@ public class ApplicationModel extends Parameters implements Serializable {
 
     public Long getStartupTimeMillis() {
         return startupTimeMillis;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public void setHealthy(Boolean healthy) {
+        this.healthy = healthy;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setRegistryInfo(RegistryInfo registryInfo) {
+        this.registryInfo = registryInfo;
+    }
+
+    public void setMetadataInfo(MetadataInfo metadataInfo) {
+        this.metadataInfo = metadataInfo;
+    }
+
+    public void setStartupTimeMillis(Long startupTimeMillis) {
+        this.startupTimeMillis = startupTimeMillis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ApplicationModel that = (ApplicationModel) o;
+        return port == that.port && applicationName.equals(that.applicationName) && namespace.equals(that.namespace) && group.equals(that.group) && ip.equals(that.ip) && registryInfo.equals(that.registryInfo) && Objects.equals(metadataInfo, that.metadataInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(applicationName, namespace, group, port, ip, registryInfo);
     }
 }

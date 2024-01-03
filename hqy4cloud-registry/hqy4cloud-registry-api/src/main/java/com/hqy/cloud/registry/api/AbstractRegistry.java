@@ -2,7 +2,6 @@ package com.hqy.cloud.registry.api;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.registry.common.deploy.Deployer;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.MetadataInfo;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
@@ -25,11 +24,6 @@ public abstract class AbstractRegistry implements Registry {
     private static final Logger log = LoggerFactory.getLogger(AbstractRegistry.class);
 
     /**
-     * application deployer
-     */
-    private final Deployer<?> deployer;
-
-    /**
      * registry information.
      */
     private final RegistryInfo registryInfo;
@@ -37,12 +31,12 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * current service model.
      */
-    private final ApplicationModel model;
+    private ApplicationModel model;
 
     /**
      * current service instance.
      */
-    private volatile ServiceInstance instance;
+    protected volatile ServiceInstance instance;
 
     /**
      * same cluster registered map
@@ -62,12 +56,10 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * notify list
      */
-    private final Map<ServiceInstance, List<ServiceInstance>> notified = new ConcurrentHashMap<>();
+    private final Map<ApplicationModel, List<ServiceInstance>> notified = new ConcurrentHashMap<>();
 
-    public AbstractRegistry(ApplicationModel model, Deployer<?> deployer) {
+    public AbstractRegistry(ApplicationModel model) {
         AssertUtil.notNull(model, "Registry application model should not be null.");
-        AssertUtil.notNull(deployer, "Service deployer  should not be null.");
-        this.deployer = deployer;
         this.model = model;
         this.registryInfo = model.getRegistryInfo();
     }
@@ -76,9 +68,6 @@ public abstract class AbstractRegistry implements Registry {
         return querySelfInstanceInfo();
     }
 
-    public Deployer<?> getDeployer() {
-        return deployer;
-    }
 
     @Override
     public RegistryInfo getRegistryInfo() {
@@ -86,37 +75,54 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public ApplicationModel selfModel() {
+    public ApplicationModel getModel() {
         return this.model;
     }
 
+    public void setModel(ApplicationModel model) {
+        this.model = model;
+    }
+
     @Override
-    public ServiceInstance selfInstance() {
-        if (instance == null && deployer.isRunning()) {
+    public ServiceInstance getInstance() {
+        if (instance == null) {
             instance = currentInstance();
         }
         return instance;
     }
 
     @Override
-    public MetadataInfo selfMetadataInfo() {
+    public MetadataInfo getMetadataInfo() {
         return this.model.getMetadataInfo();
     }
 
     @Override
-    public synchronized void register() throws RuntimeException {
-        // check enable using register api.
-        if (deployer.isPending()) {
-            this.instance = doRegister();
+    public ServiceInstance getMasterInstance() {
+        if (instance.isMaster()) {
+            return instance;
         }
+        return queryMasterInstance();
+    }
+
+
+
+    @Override
+    public synchronized void register() throws RuntimeException {
+        if (this.instance != null) {
+            this.instance = null;
+        }
+        // check enable using register api.
+        this.instance = doRegister();
     }
 
     @Override
     public synchronized void unRegister() throws RuntimeException {
-        // check enable using unRegister api.
-        if (!deployer.isPending() || !deployer.isStopping() || !deployer.isStopped()) {
-            doUnRegister();
+        if (instance == null) {
+            return;
         }
+        // check enable using unRegister api.
+         doUnRegister();
+        this.instance = null;
     }
 
     @Override
@@ -134,6 +140,7 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void subscribe(ServiceInstance instance, ServiceNotifyListener serviceNotifyListener) {
         AssertUtil.notNull(instance, "subscribe instance should not be  null.");
+        AssertUtil.notNull(serviceNotifyListener, "subscribe notify listener should not be  null.");
         log.info("subscribe instance: {}", instance);
         Set<ServiceNotifyListener> listeners = subscribed.get(instance);
         if (CollectionUtils.isNotEmpty(listeners) && serviceNotifyListener != null) {
@@ -144,13 +151,14 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void unsubscribe(ServiceInstance instance, ServiceNotifyListener serviceNotifyListener) {
         AssertUtil.notNull(instance, "unSubscribe instance should not be  null.");
+        AssertUtil.notNull(instance, "unSubscribe notify listener should not be  null.");
         log.info("unSubscribe instance: {}", instance);
         if (serviceNotifyListener != null) {
             Set<ServiceNotifyListener> listeners = subscribed.computeIfAbsent(instance, v -> new ConcurrentHashSet<>());
             listeners.add(serviceNotifyListener);
         }
         // do not forget remove notified
-        notified.remove(instance);
+        notified.remove(instance.getApplicationModel());
     }
 
     @Override
@@ -198,7 +206,7 @@ public abstract class AbstractRegistry implements Registry {
             if (CollectionUtils.isNotEmpty(listeners)) {
                 for (ServiceNotifyListener listener : listeners) {
                     try {
-                        notify(serviceInstance, listener, serviceInstances);
+                        notify(serviceInstance.getApplicationModel(), listener, serviceInstances);
                     } catch (Throwable t) {
                         log.error("Failed to notify registry event, urls: {}, cause: {}, {}", serviceInstances, t.getMessage(), t);
                     }
@@ -207,21 +215,25 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    protected void notify(ServiceInstance serviceInstance, ServiceNotifyListener listener, List<ServiceInstance> serviceInstances) {
-        AssertUtil.notNull(serviceInstance, "notify instance should not be null.");
+    protected <T> void notify(ApplicationModel applicationModel, ServiceNotifyListener listener, List<ServiceInstance> serviceInstances) {
+        AssertUtil.notNull(applicationModel, "notify instance should not be null.");
         AssertUtil.notNull(listener, "notify listener should not be null.");
         if (CollectionUtils.isEmpty(serviceInstances)) {
             log.warn("Ignore empty notify instance for subscribe url {}", serviceInstances);
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Notify urls for subscribe instance {}, url size {}", serviceInstance, serviceInstances.size());
+            log.info("Notify urls for subscribe instance {}, url size {}", applicationModel, serviceInstances.size());
         }
         listener.notify(serviceInstances);
-        notified.put(serviceInstance, serviceInstances);
+        notified.put(applicationModel, serviceInstances);
     }
 
     private Map<ServiceInstance, Set<ServiceNotifyListener>> getSubscribed() {
         return subscribed;
+    }
+
+    public Map<ApplicationModel, List<ServiceInstance>> getNotified() {
+        return notified;
     }
 
     public Set<ServiceInstance> getRegistered() {
@@ -233,6 +245,12 @@ public abstract class AbstractRegistry implements Registry {
      * @return current self instance.
      */
     protected abstract ServiceInstance querySelfInstanceInfo();
+
+    /**
+     * select master instance from registry
+     * @return master instance
+     */
+    protected abstract ServiceInstance queryMasterInstance();
 
     /**
      * do register self service.

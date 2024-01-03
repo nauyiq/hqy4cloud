@@ -27,7 +27,6 @@ public interface Constants {
      */
     String REGISTRY_RETRY_TIMES_KEY = "retry.times";
 
-
     /**
      * Default value for the times of retry: 3
      */
@@ -40,5 +39,20 @@ public interface Constants {
 
 
     int DEFAULT_DELAY_EXECUTE_TIMES = 10;
+
+    String REGISTRY_DELAY_NOTIFICATION_KEY = "delay-notification";
+
+    /**
+     * delay notification time
+     */
+    int DEFAULT_DELAY_NOTIFICATION_TIME = 5000;
+
+    /**
+     * default cluster master lock millis
+     */
+    long DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_MILLIS = 5000;
+
+    long DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_TIMEOUT_MILLIS = 1000;
+
 
 }

@@ -174,6 +174,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE = new CommonSwitcher(236, "是否开启redis缓存token时采用json序列化", false);
 
+    /**
+     * 节点-是否开启主节点选举监听器
+     */
+    public static final CommonSwitcher ENABLE_REGISTRY_MASTER_NODE_LISTENER = new CommonSwitcher(237, "是否开启主节点选举监听器", true);
+
 
     /**
      * 节点-是否禁用SpringBoot热部署 (默认 true)

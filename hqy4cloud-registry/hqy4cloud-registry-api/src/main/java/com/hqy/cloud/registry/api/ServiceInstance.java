@@ -1,6 +1,7 @@
 package com.hqy.cloud.registry.api;
 
 
+import com.hqy.cloud.registry.cluster.ClusterService;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.MetadataInfo;
 
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2023/12/28 17:42
  */
-public interface ServiceInstance extends Serializable {
+public interface ServiceInstance extends ClusterService, Serializable {
 
     /**
      * The name of service that current instance belongs to.
@@ -31,6 +32,13 @@ public interface ServiceInstance extends Serializable {
      * @return server port
      */
     int port();
+
+    /**
+     * return ip
+     * @return non-null
+     */
+    String getIp();
+
 
     /**
      * The registered service instance is health or not.

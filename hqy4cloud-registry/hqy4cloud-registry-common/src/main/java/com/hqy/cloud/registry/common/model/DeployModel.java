@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 封装了服务部署过程中的生命周期，储存了服务部署的元数据
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/12/29 13:22
+ * @date 2023/12/29
  */
-public abstract class DeployModel implements ModelNameService {
+public abstract class DeployModel implements ModelService {
     private static final Logger log = LoggerFactory.getLogger(DeployModel.class);
 
     private final ApplicationModel model;
@@ -36,7 +36,7 @@ public abstract class DeployModel implements ModelNameService {
         this.desc = model.getApplicationDesc();
     }
 
-    protected void initialize() {
+    public void initialize() {
         this.deployerListeners = new LinkedHashSet<>();
         this.attributes = MapUtil.newConcurrentHashMap();
     }
@@ -100,6 +100,7 @@ public abstract class DeployModel implements ModelNameService {
         return desc;
     }
 
+    @Override
     public ApplicationModel getModel() {
         return model;
     }

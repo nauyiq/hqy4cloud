@@ -1,7 +1,6 @@
 package com.hqy.cloud.registry.api;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.registry.common.deploy.Deployer;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.retry.*;
 import com.hqy.cloud.util.AssertUtil;
@@ -34,8 +33,8 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     private final int retryPeriod;
     private final HashedWheelTimer retryTimer;
 
-    public FailedBackRegistry(ApplicationModel model, Deployer<?> deployer) {
-        super(model, deployer);
+    public FailedBackRegistry(ApplicationModel model) {
+        super(model);
         this.retryPeriod = model.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
         this.retryTimer = new HashedWheelTimer(new DefaultThreadFactory("FailedBackRegistryTimer"), retryPeriod, TimeUnit.MINUTES, 128);
     }
@@ -277,6 +276,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         }
 
     }
+
 
     /**
      * retry register template method.
