@@ -138,7 +138,7 @@ public class ThriftServer implements Closeable {
         String protocolName = config.getProtocolName();
 
         checkState(availableFrameCodecFactories.containsKey(transportName), "No available server transport named " + transportName);
-        checkState(availableProtocolFactories.containsKey(protocolName), "No available server protocol named " + protocolName);
+        checkState(availableProtocolFactories.containsKey(protocolName), "No available server com.hqy.cloud.rpc.thrift.client.protocol named " + protocolName);
 
         configuredPort = config.getPort();
 

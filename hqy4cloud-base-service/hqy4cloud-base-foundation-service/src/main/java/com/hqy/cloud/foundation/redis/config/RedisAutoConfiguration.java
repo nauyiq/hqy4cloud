@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hqy.cloud.foundation.cache.service.RedissonLockService;
+import com.hqy.foundation.lock.LockService;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -73,6 +76,13 @@ public class RedisAutoConfiguration {
         // 配置连接工厂
         template.setConnectionFactory(factory);
         return template;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean({RedissonClient.class})
+    public LockService lockService(RedissonClient redissonClient) {
+        return new RedissonLockService(redissonClient);
     }
 
 }

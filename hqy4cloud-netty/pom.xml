@@ -8,19 +8,15 @@
         <relativePath>../pom.xml</relativePath>
         <version>${revision}</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy4cloud-netty</artifactId>
     <packaging>pom</packaging>
 
     <modules>
         <module>hqy4cloud-netty-core</module>
-        <module>hqy4cloud-netty-http-websocket</module>
-        <module>hqy4cloud-netty-socketio</module>
+        <module>hqy4cloud-netty-socket</module>
     </modules>
-
-    <modelVersion>4.0.0</modelVersion>
-
-
 
 
 </project>

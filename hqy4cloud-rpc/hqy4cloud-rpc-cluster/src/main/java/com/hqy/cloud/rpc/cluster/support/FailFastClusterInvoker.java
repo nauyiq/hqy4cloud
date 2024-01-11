@@ -9,18 +9,19 @@ import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
 import com.hqy.cloud.util.IpUtil;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Execute exactly once, which means this policy will throw an exception immediately in case of an invocation error.
  * Usually used for non-idempotent write operations
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 13:51
+ * @date 2022/7/13
  */
 public class FailFastClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
-    public FailFastClusterInvoker(Directory<T> directory, String hashFactor) {
-        super(directory, hashFactor);
+    public FailFastClusterInvoker(Directory<T> directory, Map<String, Object> attachments) {
+        super(directory, attachments);
     }
 
     @Override

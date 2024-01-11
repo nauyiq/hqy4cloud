@@ -37,10 +37,20 @@ public interface Constants {
      */
     int DEFAULT_REGISTRY_RETRY_PERIOD = 5 * 1000;
 
-
+    /**
+     * default executor enable delay count.
+     */
     int DEFAULT_DELAY_EXECUTE_TIMES = 10;
 
+    /**
+     * using get registry delay notification time.
+     */
     String REGISTRY_DELAY_NOTIFICATION_KEY = "delay-notification";
+
+    /**
+     * using get registry cluster name.
+     */
+    String REGISTRY_CLUSTER_KEY = "registry-cluster";
 
     /**
      * delay notification time
@@ -52,7 +62,27 @@ public interface Constants {
      */
     long DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_MILLIS = 5000;
 
+    /**
+     * using master lock timeout
+     */
     long DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_TIMEOUT_MILLIS = 1000;
+
+    /**
+     * default instance revision
+     */
+    String DEFAULT_REVISION = "1.0.0";
+
+    /**
+     * default weight
+     */
+    int DEFAULT_WEIGHT = 100;
+
+
+
+
+
+
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.hqy.cloud.actuator.service;
 
 import com.hqy.cloud.actuator.model.MicroServerSwitcherInfo;
+import com.hqy.cloud.registry.common.model.PubMode;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public interface MicroServiceGradeManageService {
 
     /**
      * 更改服务节点的灰白度
-     * @param grayOrWhiteValue 灰度或白度值 {@link com.hqy.cloud.rpc.model.PubMode#GRAY} OR {@link com.hqy.cloud.rpc.model.PubMode#WHITE}
+     * @param grayOrWhiteValue 灰度或白度值 {@link PubMode#GRAY} OR {@link PubMode#WHITE}
      */
     void changeServerPubModeValue(int grayOrWhiteValue);
 

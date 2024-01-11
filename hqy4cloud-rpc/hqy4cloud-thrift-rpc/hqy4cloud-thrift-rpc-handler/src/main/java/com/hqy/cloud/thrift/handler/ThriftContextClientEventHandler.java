@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @date 2022/7/19 17:03
  */
 public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
-
     private static final Logger log = LoggerFactory.getLogger(ThriftContextClientEventHandler.class);
 
     private final List<ThriftContextClientHandleService> services = new CopyOnWriteArrayList<>();

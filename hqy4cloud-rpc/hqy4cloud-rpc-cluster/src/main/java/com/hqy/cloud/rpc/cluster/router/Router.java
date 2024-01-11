@@ -1,7 +1,8 @@
 package com.hqy.cloud.rpc.cluster.router;
 
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 import java.util.List;
 
@@ -19,15 +20,15 @@ public interface Router<T> extends Comparable<Router<T>> {
      * get router metadata.
      * @return metadata
      */
-    RPCModel getContext();
+    RpcModel getRpcModel();
 
     /**
      * route conditional invokers
      * @param invokers          invokers
-     * @param rpcModel          rpcContext
+     * @param invocation        this request invoker condition
      * @return                  router result
      */
-    RouterResult<Invoker<T>> route(List<Invoker<T>> invokers, RPCModel rpcModel);
+    RouterResult<Invoker<T>> route(List<Invoker<T>> invokers, Invocation invocation);
 
 
     /**
@@ -40,7 +41,7 @@ public interface Router<T> extends Comparable<Router<T>> {
 
     /**
      * Notify the router the invoker list. Invoker list may change from time to time. This method gives the router a
-     * chance to prepare before {@link Router#route(List, RPCModel)} gets called.
+     * chance to prepare before {@link Router#route(List, Invocation)} gets called.
      *
      * @param invokers invoker list
      */

@@ -17,7 +17,6 @@ package com.facebook.swift.service;
 
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.codec.ThriftCodec;
-import com.hqy.cloud.rpc.core.InvokeResult;
 import org.apache.thrift.TException;
 
 public abstract class ThriftEventHandler {

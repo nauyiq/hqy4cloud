@@ -35,7 +35,7 @@ import static com.hqy.cloud.common.result.ResultCode.USER_NOT_FOUND;
 /**
  * remote account rpc service.
  * @author qiyuan.hong
- * @date 2022-03-16 11:18
+ * @date 2022-03-16
  */
 @Slf4j
 @Service

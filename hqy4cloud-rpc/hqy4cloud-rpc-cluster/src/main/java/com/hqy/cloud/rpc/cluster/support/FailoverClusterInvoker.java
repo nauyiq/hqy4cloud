@@ -1,34 +1,29 @@
 package com.hqy.cloud.rpc.cluster.support;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
-import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * When invoke fails, log the initial error and retry other invokers (retry n times, which means at most n different invokers will be invoked)
  * Note that retry causes latency.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 13:58
+ * @date 2022/7/13
  */
 public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
-
     private final static Logger log = LoggerFactory.getLogger(FailoverClusterInvoker.class);
 
-    public FailoverClusterInvoker(Directory<T> directory, String hashFactor) {
-        super(directory, hashFactor);
+    public FailoverClusterInvoker(Directory<T> directory, Map<String, Object> attachments) {
+        super(directory, attachments);
     }
 
     @Override
@@ -48,7 +43,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy.
             if (i > 0) {
                 checkWhetherDestroyed();
-                copyInvokers = list(getModel(), getHashFactor());
+                copyInvokers = list(invocation);
                 // check again
                 checkInvokers(copyInvokers, invocation);
             }
@@ -60,10 +55,10 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 if (le != null && log.isWarnEnabled()) {
                     log.warn("Although retry the method " + methodName
                             + " in the service " + getInterface().getName()
-                            + " was successful by the provider " + invoker.getModel().getHost()
+                            + " was successful by the provider " + invoker.getModel().getServerHost()
                             + ", but there have been failed providers " + providers
                             + " (" + providers.size() + "/" + copyInvokers.size()
-                            + ") from the registry " + directory.getConsumerModel().getRegistryAddress()
+                            + ") from the registry " + directory.getModel().getRegistryInfo()
                             + " on the consumer " + IpUtil.getHostAddress()
                             + le.getMessage(), le);
                 }
@@ -79,7 +74,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 le = new RpcException(e.getMessage(), e);
             } finally {
                 if (!success) {
-                    providers.add(invoker.getModel().getHost());
+                    providers.add(invoker.getModel().getServerHost());
                 }
             }
         }
@@ -87,7 +82,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 + methodName + " in the service " + getInterface().getName()
                 + ". Tried " + len + " times of the providers " + providers
                 + " (" + providers.size() + "/" + copyInvokers.size()
-                + ") from the registry " + directory.getConsumerModel().getRegistryAddress()
+                + ") from the registry " + directory.getModel().getRegistryInfo()
                 + " on the consumer " + IpUtil.getHostAddress());
     }
 

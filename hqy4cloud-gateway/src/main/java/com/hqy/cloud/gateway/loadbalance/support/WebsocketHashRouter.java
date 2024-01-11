@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/7/26 16:11
+ * @date 2023/7/26
  */
 @Slf4j
 public class WebsocketHashRouter implements WebsocketRouter {
@@ -23,6 +23,12 @@ public class WebsocketHashRouter implements WebsocketRouter {
             log.warn("WebsocketHashRouter service instances is empty.");
             return null;
         }
+
+
+
+
+
+
 
         if (instances.size() == 1) {
             ServiceInstance instance = instances.get(0);

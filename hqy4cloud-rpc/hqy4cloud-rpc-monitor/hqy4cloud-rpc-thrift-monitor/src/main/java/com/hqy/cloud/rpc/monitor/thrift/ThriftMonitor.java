@@ -2,13 +2,13 @@ package com.hqy.cloud.rpc.monitor.thrift;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.rpc.cluster.client.Client;
 import com.hqy.cloud.rpc.CommonConstants;
-import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.threadpool.FrameworkExecutorRepository;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.monitor.CollectionData;
 import com.hqy.cloud.rpc.monitor.Monitor;
 import com.hqy.cloud.rpc.monitor.thrift.service.ThriftMonitorService;
+import com.hqy.cloud.rpc.starter.client.Client;
+import com.hqy.cloud.rpc.threadpool.FrameworkExecutorRepository;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcFlowStruct;
 import com.hqy.cloud.util.JsonUtil;
@@ -44,7 +44,7 @@ public class ThriftMonitor implements Monitor {
 
     private final ExecutorService exceptionExecutorService;
 
-    private final RPCModel rpcModel;
+    private final RpcModel rpcModel;
 
     private final ScheduledFuture<?> sendFuture;
 
@@ -56,7 +56,7 @@ public class ThriftMonitor implements Monitor {
 
     private final int maxWarn;
 
-    public ThriftMonitor(Client client, RPCModel rpcModel) {
+    public ThriftMonitor(Client client, RpcModel rpcModel) {
         this.client = client;
         this.rpcModel = rpcModel;
         ScheduledExecutorService executorService = FrameworkExecutorRepository.getInstance().getSharedScheduledExecutor();
@@ -208,7 +208,7 @@ public class ThriftMonitor implements Monitor {
         String eventType = data.isRpcResult() ? StringConstants.EMPTY : ERROR_RPC;
         if (StringUtils.isBlank(eventType)) {
             long slowRpcTimeMillis = CommonConstants.DEFAULT_RPC_SLOW_TIME_MILLIS;
-            RPCModel rpcModel = ProjectContextInfo.getBean(RPCModel.class);
+            RpcModel rpcModel = ProjectContextInfo.getBean(RpcModel.class);
             if (rpcModel != null) {
                 slowRpcTimeMillis = rpcModel.getParameter(RPC_SLOW_TIME_KEY, slowRpcTimeMillis);
             }

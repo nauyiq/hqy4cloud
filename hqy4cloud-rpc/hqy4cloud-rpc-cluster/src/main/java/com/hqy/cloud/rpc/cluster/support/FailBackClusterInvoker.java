@@ -1,7 +1,6 @@
 package com.hqy.cloud.rpc.cluster.support;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
-import com.hqy.cloud.rpc.Result;
 import com.hqy.foundation.timer.HashedWheelTimer;
 import com.hqy.foundation.timer.Timeout;
 import com.hqy.foundation.timer.Timer;
@@ -10,13 +9,14 @@ import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.hqy.cloud.rpc.CommonConstants.*;
@@ -24,13 +24,11 @@ import static com.hqy.cloud.rpc.CommonConstants.*;
 /**
  * When fails, record failure requests and schedule for retry on a regular interval.
  * Especially useful for services of notification.
- *
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 11:26
+ * @date 2022/7/13
  */
 public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
-
     private static final Logger log = LoggerFactory.getLogger(FailBackClusterInvoker.class);
 
     private static final long RETRY_FAILED_PERIOD = 5;
@@ -44,8 +42,8 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
     private volatile Timer failTimer;
 
-    public FailBackClusterInvoker(Directory<T> directory, String hashFactor) {
-        super(directory, hashFactor);
+    public FailBackClusterInvoker(Directory<T> directory, Map<String, Object> attachments) {
+        super(directory, attachments);
         int retriesParams = getModel().getParameter(RPC_CLUSTER_RETRIES_TIMES, DEFAULT_FAIL_BACK_TIMES);
         if (retriesParams < 0) {
             retriesParams = DEFAULT_FAIL_BACK_TIMES;
@@ -71,7 +69,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
     @Override
     protected Object doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) throws RpcException {
         Invoker<T> invoker = null;
-        RPCModel rpcModel = getModel();
+        RpcModel rpcModel = getModel();
         try {
             checkInvokers(invokers, invocation);
             invoker = select(loadBalance, invocation, invokers, null);
@@ -86,7 +84,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
         return null;
     }
 
-    private void addFailed(Invocation invocation, List<Invoker<T>> invokers, Invoker<T> invoker, LoadBalance loadBalance, RPCModel rpcModel) {
+    private void addFailed(Invocation invocation, List<Invoker<T>> invokers, Invoker<T> invoker, LoadBalance loadBalance, RpcModel rpcModel) {
         if (failTimer == null) {
             synchronized (this) {
                 if (failTimer == null) {
@@ -109,7 +107,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
         private final List<Invoker<T>> invokers;
         private final long tick;
         private Invoker<T> lastInvoker;
-        private RPCModel rpcModel;
+        private RpcModel rpcModel;
         /**
          * Number of retries obtained from the configuration, don't contain the first invoke.
          */
@@ -120,7 +118,7 @@ public class FailBackClusterInvoker<T> extends AbstractClusterInvoker<T> {
          */
         private int retriedTimes = 0;
 
-        public RetryTimerTask(LoadBalance loadbalance, Invocation invocation, List<Invoker<T>> invokers, int retries, long tick, Invoker<T> lastInvoker, RPCModel rpcModel) {
+        public RetryTimerTask(LoadBalance loadbalance, Invocation invocation, List<Invoker<T>> invokers, int retries, long tick, Invoker<T> lastInvoker, RpcModel rpcModel) {
             this.invocation = invocation;
             this.loadbalance = loadbalance;
             this.invokers = invokers;

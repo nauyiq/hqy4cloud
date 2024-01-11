@@ -1,6 +1,7 @@
 package com.hqy.cloud.registry.common.model;
 
 import cn.hutool.core.map.MapUtil;
+import com.hqy.cloud.registry.common.deploy.DeployMetaDataService;
 import com.hqy.cloud.registry.common.deploy.ModelDeployerListener;
 import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version 1.0
  * @date 2023/12/29
  */
-public abstract class DeployModel implements ModelService {
+public abstract class DeployModel implements ModelService, DeployMetaDataService {
     private static final Logger log = LoggerFactory.getLogger(DeployModel.class);
 
     private final ApplicationModel model;
@@ -55,6 +56,10 @@ public abstract class DeployModel implements ModelService {
      * do destroy.
      */
     public abstract void onDestroy();
+
+    public void start() {
+
+    }
 
 
     public boolean isDestroy() {

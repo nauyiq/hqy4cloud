@@ -34,7 +34,7 @@
         &lt;!&ndash; Message、CanalEntry.Entry等来自此安装包 &ndash;&gt;
         <dependency>
             <groupId>com.alibaba.otter</groupId>
-            <artifactId>canal.protocol</artifactId>
+            <artifactId>canal.com.hqy.cloud.rpc.thrift.client.protocol</artifactId>
             <version>${alibaba.canal.version}</version>
         </dependency>-->
 

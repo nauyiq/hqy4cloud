@@ -1,8 +1,8 @@
 package com.hqy.cloud.rpc.core;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.model.RPCServerAddress;
+import com.hqy.cloud.rpc.model.RpcModel;
+import com.hqy.cloud.rpc.model.RpcServerAddress;
 import com.hqy.cloud.rpc.threadlocal.InternalThreadLocal;
 import com.hqy.cloud.rpc.transaction.TransactionContext;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.Builder;
  * RPCContext.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/18 17:46
+ * @date 2022/7/18
  */
 @Builder
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class RPCContext {
 
     private static final InternalThreadLocal<RPCContext> RPC_CONTEXT = new InternalThreadLocal<>();
 
-    private RPCModel rpcModel;
+    private RpcModel rpcModel;
 
     private String method;
 
@@ -34,9 +34,9 @@ public class RPCContext {
 
     private String provider;
 
-    private RPCServerAddress consumerAddress;
+    private RpcServerAddress consumerAddress;
 
-    private RPCServerAddress providerAddress;
+    private RpcServerAddress providerAddress;
 
     private Object request;
 
@@ -69,7 +69,7 @@ public class RPCContext {
     }
 
 
-    public RPCModel getRpcModel() {
+    public RpcModel getRpcModel() {
         return rpcModel;
     }
 
@@ -97,7 +97,7 @@ public class RPCContext {
         return serviceClass;
     }
 
-    public void setRpcModel(RPCModel rpcModel) {
+    public void setRpcModel(RpcModel rpcModel) {
         this.rpcModel = rpcModel;
     }
 
@@ -125,11 +125,11 @@ public class RPCContext {
         this.provider = provider;
     }
 
-    public void setConsumerAddress(RPCServerAddress consumerAddress) {
+    public void setConsumerAddress(RpcServerAddress consumerAddress) {
         this.consumerAddress = consumerAddress;
     }
 
-    public void setProviderAddress(RPCServerAddress providerAddress) {
+    public void setProviderAddress(RpcServerAddress providerAddress) {
         this.providerAddress = providerAddress;
     }
 
@@ -137,11 +137,11 @@ public class RPCContext {
         this.request = request;
     }
 
-    public RPCServerAddress getConsumerAddress() {
+    public RpcServerAddress getConsumerAddress() {
         return consumerAddress;
     }
 
-    public RPCServerAddress getProviderAddress() {
+    public RpcServerAddress getProviderAddress() {
         return providerAddress;
     }
 

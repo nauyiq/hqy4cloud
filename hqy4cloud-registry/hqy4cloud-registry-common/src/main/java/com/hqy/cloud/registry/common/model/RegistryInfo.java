@@ -106,8 +106,16 @@ public class RegistryInfo extends Parameters implements Serializable {
         return getParameter(Constants.USERNAME);
     }
 
+    public void setUsername(String username) {
+        setParameter(Constants.USERNAME, username);
+    }
+
     public String getPassword() {
         return getParameter(Constants.PASSWORD);
+    }
+
+    public void setPassword(String password) {
+        setParameter(Constants.PASSWORD, password);
     }
 
     public String getName() {

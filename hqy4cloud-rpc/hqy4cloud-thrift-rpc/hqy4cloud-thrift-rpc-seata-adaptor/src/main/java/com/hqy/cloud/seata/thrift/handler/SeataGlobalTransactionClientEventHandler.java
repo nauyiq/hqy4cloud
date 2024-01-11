@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @see RootContext
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/21 15:04
+ * @date 2022/7/21
  */
 public class SeataGlobalTransactionClientEventHandler implements ThriftContextClientHandleService {
 

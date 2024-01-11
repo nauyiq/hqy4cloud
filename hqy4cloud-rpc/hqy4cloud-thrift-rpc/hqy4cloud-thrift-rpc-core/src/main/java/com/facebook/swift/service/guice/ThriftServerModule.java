@@ -82,7 +82,7 @@ public class ThriftServerModule implements Module
         newMapBinder(binder, String.class, ThriftFrameCodecFactory.class).addBinding(key).toInstance(frameCodecFactory);
     }
 
-    // helpers for binding protocol factories
+    // helpers for binding com.hqy.cloud.rpc.thrift.client.protocol factories
 
     public static ScopedBindingBuilder bindProtocolFactory(Binder binder, String key, Class<? extends TDuplexProtocolFactory> protocolFactoryClass)
     {

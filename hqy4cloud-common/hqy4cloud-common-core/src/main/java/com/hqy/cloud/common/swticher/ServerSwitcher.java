@@ -63,6 +63,12 @@ public class ServerSwitcher extends CommonSwitcher {
     public static final ServerSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new ServerSwitcher(154, "节点-是否采用自定义的网关负载均衡策略", true, MicroServiceConstants.GATEWAY);
 
     /**
+     * 节点-网关负载均衡websocket项目时是否重新路由端口
+     */
+    public static final ServerSwitcher ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER = new ServerSwitcher(155, "节点-网关负载均衡websocket项目时是否重新路由端口", false, MicroServiceConstants.GATEWAY);
+
+
+    /**
      * 采集服务-是否采集来自采集服务本身的异常
      * 采集服务本身发生异常时，是否采集‘采集服务‘的异常
      */

@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.monitor;
 
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * MonitorFactory.
@@ -12,9 +12,9 @@ public interface MonitorFactory {
 
     /**
      * create monitor.
-     * @param rpcModel {@link RPCModel}
+     * @param rpcModel {@link RpcModel}
      * @return           Monitor.
      */
-    Monitor getMonitor(RPCModel rpcModel);
+    Monitor getMonitor(RpcModel rpcModel);
 
 }

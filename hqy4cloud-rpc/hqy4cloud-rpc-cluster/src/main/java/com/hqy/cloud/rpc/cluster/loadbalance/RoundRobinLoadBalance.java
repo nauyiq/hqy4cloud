@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.cluster.loadbalance;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
      * @return
      */
     @Override
-    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RPCModel rpcModel) {
+    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RpcModel rpcModel) {
         String key = invokers.get(0).getInterface().getSimpleName();
 
         int totalWeight = 0;

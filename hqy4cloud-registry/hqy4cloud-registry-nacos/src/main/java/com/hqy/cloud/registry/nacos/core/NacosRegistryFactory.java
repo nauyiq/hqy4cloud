@@ -2,8 +2,9 @@ package com.hqy.cloud.registry.nacos.core;
 
 import com.hqy.cloud.registry.api.AbstractRegistryFactory;
 import com.hqy.cloud.registry.api.Registry;
+import com.hqy.cloud.registry.common.metadata.support.DefaultMetadataConverter;
+import com.hqy.cloud.registry.common.metadata.MetadataConverter;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.converter.MetadataConverter;
 import com.hqy.cloud.registry.nacos.utils.NacosNamingServiceUtil;
 
 /**
@@ -14,6 +15,10 @@ import com.hqy.cloud.registry.nacos.utils.NacosNamingServiceUtil;
  */
 public class NacosRegistryFactory extends AbstractRegistryFactory {
     private final MetadataConverter metadataConverter;
+
+    public NacosRegistryFactory() {
+        this(new DefaultMetadataConverter());
+    }
 
     public NacosRegistryFactory(MetadataConverter metadataConverter) {
         this.metadataConverter = metadataConverter;

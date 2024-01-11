@@ -4,7 +4,7 @@ import com.alibaba.csp.sentinel.*;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
 import com.hqy.cloud.thrift.sentinel.adaptor.exception.ThriftSentinelBlockException;
@@ -27,7 +27,7 @@ public class SentinelThriftServerContextHandleServiceImpl implements ThriftServe
     @SneakyThrows
     public void doPreInvokeMethod(ThriftServerContext thriftServerContext, String methodName, Object[] args) {
         if (CommonSwitcher.ENABLE_RPC_SENTINEL_ADAPTOR_HANDLER.isOn()) {
-            RPCModel rpcModel = thriftServerContext.getRpcModel();
+            RpcModel rpcModel = thriftServerContext.getRpcModel();
             if (Objects.isNull(rpcModel)) {
                 log.warn("Rpc context should not be null.");
                 return;

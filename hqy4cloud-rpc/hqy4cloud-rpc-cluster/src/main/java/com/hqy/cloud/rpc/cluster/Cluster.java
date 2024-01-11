@@ -4,32 +4,33 @@ import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 
+import java.util.Map;
+
 /**
  * Cluster.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/1 15:58
+ * @date 2022/7/1
  */
 public interface Cluster {
-
     ClusterMode DEFAULT = ClusterMode.FAILOVER;
 
     /**
      * Merge the directory invokers to a virtual invoker.
      * @param directory     {@link Directory}
      * @return              {@link Invoker}
-     * @throws RpcException
+     * @throws RpcException non-catch
      */
     <T> Invoker<T> join(Directory<T> directory) throws RpcException;
 
     /**
      * Merge the directory invokers to a virtual invoker.
      * @param directory     {@link Directory}
-     * @param hashFactor    use rpc cluster.
+     * @param attachments   rpc invoker attachments.
      * @return              {@link Invoker}
-     * @throws RpcException
+     * @throws RpcException non-catch
      */
-    <T> Invoker<T> join(Directory<T> directory, String hashFactor) throws RpcException;
+    <T> Invoker<T> join(Directory<T> directory, Map<String, Object> attachments) throws RpcException;
 
 
 

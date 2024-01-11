@@ -3,10 +3,9 @@ package com.hqy.cloud.thrift.handler;
 import com.facebook.nifty.core.RequestContext;
 import com.facebook.swift.service.ThriftEventHandler;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.facebook.ThriftRequestPram;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
-import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
 import com.hqy.cloud.thrift.core.ThriftEventHandlerUtil;
 import com.hqy.cloud.util.ArgsUtil;
@@ -46,7 +45,7 @@ public class ThriftServerContextEventHandler extends ThriftEventHandler {
     @Override
     public Object getContext(String simpleMethodName, String methodName, String serviceName, RequestContext requestContext) {
         String communicationParty = requestContext.getConnectionContext().getRemoteAddress().toString();
-        RPCModel rpcModel = ProjectContextInfo.getBean(RPCModel.class);
+        RpcModel rpcModel = ProjectContextInfo.getBean(RpcModel.class);
         if (rpcModel == null) {
             log.warn("Not found RPC model from ProjectContextInfo.");
         }

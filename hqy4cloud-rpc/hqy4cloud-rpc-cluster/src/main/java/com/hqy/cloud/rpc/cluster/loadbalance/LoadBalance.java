@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.cluster.loadbalance;
 
 
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 import java.util.List;
 
@@ -20,6 +20,6 @@ public interface LoadBalance {
      * @param rpcModel  refer rpcContext
      * @return            selected invoker.
      */
-    <T> Invoker<T> select(List<Invoker<T>> invokers, RPCModel rpcModel);
+    <T> Invoker<T> select(List<Invoker<T>> invokers, RpcModel rpcModel);
 
 }

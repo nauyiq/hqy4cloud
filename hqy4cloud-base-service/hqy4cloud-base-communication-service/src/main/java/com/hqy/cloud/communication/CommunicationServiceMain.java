@@ -17,7 +17,7 @@ import java.util.List;
  * 公共通讯服务 - 启动入口
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/10/14 10:51
+ * @date 2022/10/14
  */
 @SpringBootApplication
 @EnableDiscoveryClient

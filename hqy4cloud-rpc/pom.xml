@@ -17,11 +17,10 @@
     <modules>
         <module>hqy4cloud-rpc-monitor</module>
         <module>hqy4cloud-rpc-common</module>
-        <module>hqy4cloud-rpc-registry</module>
         <module>hqy4cloud-thrift-rpc</module>
         <module>hqy4cloud-rpc-api</module>
         <module>hqy4cloud-rpc-cluster</module>
-        <module>hqy4cloud-rpc-config</module>
+        <module>hqy4cloud-rpc-starter</module>
     </modules>
 
 </project>

@@ -11,14 +11,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy4cloud-thrift-rpc-client</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-thrift-rpc-handler</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
-
 
 </project>

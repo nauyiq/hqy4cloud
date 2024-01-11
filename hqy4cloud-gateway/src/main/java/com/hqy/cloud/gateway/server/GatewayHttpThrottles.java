@@ -10,7 +10,7 @@ import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.util.RequestUtil;
-import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.common.HttpRequestInfo;

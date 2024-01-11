@@ -5,7 +5,7 @@ import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.core.RPCContext;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,7 +20,7 @@ import java.util.Map;
  * This Invoker works on Consumer side.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/6 15:19
+ * @date 2022/7/6
  */
 public abstract class AbstractInvoker<T> implements Invoker<T> {
 
@@ -34,12 +34,12 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     /**
      *  rpc model
      */
-    private final RPCModel rpcModel;
+    private final RpcModel rpcModel;
 
     /**
      * consumer rpc model.
      */
-    private final RPCModel consumerModel;
+    private final RpcModel consumerModel;
 
     /**
      * {@link Invoker} default attachment
@@ -47,34 +47,34 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     private final Map<String, Object> attachment;
 
     /**
-     * {@link RPCModel} available
+     * {@link RpcModel} available
      */
     private volatile boolean available = true;
 
     /**
-     * {@link RPCModel} destroy
+     * {@link RpcModel} destroy
      */
     private boolean destroyed = false;
 
-    public AbstractInvoker(Class<T> type, RPCModel model, RPCModel consumerModel) {
+    public AbstractInvoker(Class<T> type, RpcModel model, RpcModel consumerModel) {
         this(type, model, consumerModel, (Map<String, Object>) null);
     }
 
-    public AbstractInvoker(Class<T> type, RPCModel model, RPCModel consumerModel, String[] keys) {
+    public AbstractInvoker(Class<T> type, RpcModel model, RpcModel consumerModel, String[] keys) {
         this(type, model, consumerModel, convertAttachment(model, keys));
     }
 
-    public AbstractInvoker(Class<T> type, RPCModel context, RPCModel consumerModel, Map<String, Object> attachment) {
+    public AbstractInvoker(Class<T> type, RpcModel providerModel, RpcModel consumerModel, Map<String, Object> attachment) {
         AssertUtil.notNull(type, "Service type should not be null.");
-        AssertUtil.notNull(context, "Service context should not be null.");
+        AssertUtil.notNull(providerModel, "Service providerModel should not be null.");
         this.type = type;
-        this.rpcModel = context;
+        this.rpcModel = providerModel;
         this.consumerModel = consumerModel;
         this.attachment = attachment == null ? null : Collections.unmodifiableMap(attachment);
     }
 
 
-    private static Map<String, Object> convertAttachment(RPCModel rpcModel, String[] keys) {
+    private static Map<String, Object> convertAttachment(RpcModel rpcModel, String[] keys) {
         if (ArrayUtils.isEmpty(keys)) {
             return null;
         }
@@ -157,7 +157,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     }
 
     @Override
-    public RPCModel getModel() {
+    public RpcModel getModel() {
         return rpcModel;
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     }
 
     @Override
-    public RPCModel getConsumerModel() {
+    public RpcModel getConsumerModel() {
         return consumerModel;
     }
 

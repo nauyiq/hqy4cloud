@@ -1,5 +1,6 @@
 package com.hqy.cloud.registry.api;
 
+import com.hqy.cloud.registry.common.context.CloseableService;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
@@ -15,7 +16,7 @@ import static com.hqy.cloud.registry.common.Constants.REGISTRY_DELAY_NOTIFICATIO
  * @version 1.0
  * @date 2023/12/29 14:32
  */
-public interface Registry extends ServerDiscovery {
+public interface Registry extends ServerDiscovery, CloseableService {
 
     /**
      * registry name.
@@ -53,5 +54,11 @@ public interface Registry extends ServerDiscovery {
     default int getNotifyDelay() {
         return getModel().getParameter(REGISTRY_DELAY_NOTIFICATION_KEY, DEFAULT_DELAY_NOTIFICATION_TIME);
     }
+
+    /**
+     * notify subscribe service instance.
+     * @param serviceInstances
+     */
+//    void notify(List<ServiceInstance> serviceInstances);
 
 }

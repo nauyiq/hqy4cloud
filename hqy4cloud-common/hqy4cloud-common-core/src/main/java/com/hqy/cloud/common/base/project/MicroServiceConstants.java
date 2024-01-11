@@ -19,6 +19,8 @@ public class MicroServiceConstants {
      * 全局网关gateway服务
      */
     public static final String GATEWAY = "hqy4cloud-gateway";
+    public static final int DEFAULT_PORT_GATEWAY = 9527;
+    public static final String DEFAULT_ACCESS_DOMAIN_NAME = "https://api.hongqy1024.cn";
     public static final ProjectInfo GATEWAY_INFO = new ProjectInfo("网关服务", GATEWAY);
 
     /**

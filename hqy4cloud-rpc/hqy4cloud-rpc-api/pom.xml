@@ -19,6 +19,11 @@
             <artifactId>hqy4cloud-rpc-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-registry-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
     </dependencies>
 
 

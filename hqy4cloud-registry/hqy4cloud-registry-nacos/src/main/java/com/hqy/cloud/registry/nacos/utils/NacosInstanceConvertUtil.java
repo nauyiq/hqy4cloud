@@ -1,8 +1,8 @@
 package com.hqy.cloud.registry.nacos.utils;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.common.model.MetadataInfo;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.nacos.Constants;
 import org.apache.commons.lang3.StringUtils;
@@ -19,15 +19,11 @@ public class NacosInstanceConvertUtil {
 
     public static Instance convert(ApplicationModel model, Map<String, String> metadataMap) {
         Instance instance = new Instance();
+        instance.setInstanceId(model.getId());
         instance.setServiceName(model.getApplicationName());
         instance.setIp(model.getIp());
         instance.setPort(model.getPort());
         instance.setMetadata(metadataMap);
-        // setting params
-        String instanceId = model.getParameter(Constants.INSTANCE_ID);
-        if (StringUtils.isNotBlank(instanceId)) {
-            instance.setInstanceId(instanceId);
-        }
         double weight = model.getParameter(Constants.WEIGHT, Constants.DEFAULT_WEIGHT);
         instance.setWeight(weight);
         boolean ephemeral = model.getParameter(Constants.EPHEMERAL, Constants.DEFAULT_EPHEMERAL);
@@ -36,9 +32,8 @@ public class NacosInstanceConvertUtil {
     }
 
     public static ApplicationModel convert(Instance instance, String group, RegistryInfo registryInfo, MetadataInfo metadataInfo) {
-        ApplicationModel model = new ApplicationModel();
-        model.setApplicationName(instance.getServiceName());
-        model.setGroup(group);
+        ApplicationModel model = ApplicationModel.of(instance.getServiceName(), metadataInfo.getEnv(), group);
+        model.setId(instance.getInstanceId());
         model.setHealthy(instance.isHealthy());
         model.setPort(instance.getPort());
         model.setIp(instance.getIp());

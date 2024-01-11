@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.cluster.router;
 
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * RouterFactory.
@@ -12,9 +12,9 @@ public interface RouterFactory<T> {
 
     /**
      * create router.
-     * @param rpcModel {@link RPCModel}
+     * @param rpcModel {@link RpcModel}
      * @return           {@link Router}
      */
-    Router<T> createRouter(RPCModel rpcModel);
+    Router<T> createRouter(RpcModel rpcModel);
 
 }

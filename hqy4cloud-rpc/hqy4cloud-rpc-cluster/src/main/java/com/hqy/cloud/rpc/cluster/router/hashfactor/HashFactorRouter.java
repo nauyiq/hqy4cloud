@@ -1,10 +1,12 @@
 package com.hqy.cloud.rpc.cluster.router.hashfactor;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
+import com.hqy.cloud.rpc.cluster.ClusterJoinConstants;
 import com.hqy.cloud.rpc.cluster.router.AbstractRouter;
 import com.hqy.cloud.rpc.cluster.router.RouterResult;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,26 +16,25 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * HashFactorRouter.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/1 11:01
+ * @date 2022/7/1
  */
 public class HashFactorRouter<T> extends AbstractRouter<T> {
-
     private static final Logger log = LoggerFactory.getLogger(HashFactorRouter.class);
+
     private static transient final String HASH_FACTOR_PRIORITY_KEY = "hashFactor-priority";
     private static transient final int DEFAULT_PRIORITY = 1;
-//    private final boolean force;
 
-    public HashFactorRouter(RPCModel rpcModel) {
+    public HashFactorRouter(RpcModel rpcModel) {
         this.rpcModel = rpcModel;
         this.priority = rpcModel.getParameter(HASH_FACTOR_PRIORITY_KEY, DEFAULT_PRIORITY);
-//        this.force = Boolean.parseBoolean(rpcContext.getParameter(FORCE_KEY, "false"));
     }
 
     @Override
-    public RouterResult<Invoker<T>> route(List<Invoker<T>> invokers, RPCModel rpcModel) {
-        String hashFactor = rpcModel.getHashFactor();
+    public RouterResult<Invoker<T>> route(List<Invoker<T>> invokers, Invocation invocation) {
+        String hashFactor = (String) invocation.getObjectAttachments().getOrDefault(ClusterJoinConstants.HASH_FACTOR, StringConstants.DEFAULT);
         boolean hashFactorRoute = StringUtils.isNotEmpty(hashFactor) && !hashFactor.equals(StringConstants.DEFAULT);
         if (log.isDebugEnabled()) {
             log.debug("HashFactorRouter -> consumer hashFactor: {}", hashFactor);
@@ -62,13 +63,11 @@ public class HashFactorRouter<T> extends AbstractRouter<T> {
                     break;
                 }
             }
-
             if (chooseInvoker != null && chooseInvoker.isAvailable()) {
                 return new RouterResult<>(Collections.singletonList(chooseInvoker), false);
             }
-
         } catch (Throwable t) {
-            log.error("Failed to execute hashFactor router rule: " + getContext() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);
+            log.error("Failed to execute hashFactor router rule: " + getRpcModel() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);
         }
         return new RouterResult<>(new ArrayList<>(), false);
     }

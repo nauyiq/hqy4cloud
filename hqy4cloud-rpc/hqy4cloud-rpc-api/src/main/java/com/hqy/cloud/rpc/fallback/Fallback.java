@@ -7,7 +7,7 @@ import com.hqy.cloud.rpc.Invoker;
  * Fallback handler for rpc services.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/5/5 17:03
+ * @date 2023/5/5
  */
 public interface Fallback {
 

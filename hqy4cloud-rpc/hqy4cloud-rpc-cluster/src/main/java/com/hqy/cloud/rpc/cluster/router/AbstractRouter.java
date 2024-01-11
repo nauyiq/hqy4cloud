@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.cluster.router;
 
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * abstract Router.
@@ -9,13 +9,13 @@ import com.hqy.cloud.rpc.model.RPCModel;
  * @date 2022/6/30 17:28
  */
 public abstract class AbstractRouter<T> implements Router<T> {
-
     protected static final transient String FORCE_KEY = "force";
-    protected RPCModel rpcModel;
+
+    protected RpcModel rpcModel;
     protected int priority;
 
     @Override
-    public RPCModel getContext() {
+    public RpcModel getRpcModel() {
         return rpcModel;
     }
 

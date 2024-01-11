@@ -178,7 +178,7 @@ public class ThriftMethodProcessor {
 
                         resultFuture.set(true);
                     } catch (Exception e) {
-                        // An exception occurred trying to serialize a return value onto the output protocol
+                        // An exception occurred trying to serialize a return value onto the output com.hqy.cloud.rpc.thrift.client.protocol
                         resultFuture.setException(e);
                     } finally {
                         RequestContexts.setCurrentContext(oldRequestContext);
@@ -242,7 +242,7 @@ public class ThriftMethodProcessor {
 
                     resultFuture.set(true);
                 } catch (Exception e) {
-                    // An exception occurred trying to serialize an exception onto the output protocol
+                    // An exception occurred trying to serialize an exception onto the output com.hqy.cloud.rpc.thrift.client.protocol
                     resultFuture.setException(e);
                 } finally {
                     RequestContexts.setCurrentContext(oldRequestContext);

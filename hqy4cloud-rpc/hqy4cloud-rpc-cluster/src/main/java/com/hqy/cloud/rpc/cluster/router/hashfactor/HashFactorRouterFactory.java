@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.cluster.router.hashfactor;
 
 import com.hqy.cloud.rpc.cluster.router.Router;
 import com.hqy.cloud.rpc.cluster.router.RouterFactory;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * @author qiyuan.hong
@@ -12,7 +12,7 @@ import com.hqy.cloud.rpc.model.RPCModel;
 public class HashFactorRouterFactory<T> implements RouterFactory<T> {
 
     @Override
-    public Router<T> createRouter(RPCModel rpcModel) {
+    public Router<T> createRouter(RpcModel rpcModel) {
         return new HashFactorRouter<>(rpcModel);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
  * @see Invoker#invoke(Invocation)
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/8 17:36
+ * @date 2022/7/8
  */
 public interface Result extends Serializable {
 

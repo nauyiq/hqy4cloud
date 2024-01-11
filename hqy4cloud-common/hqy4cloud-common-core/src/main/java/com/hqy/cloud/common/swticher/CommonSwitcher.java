@@ -153,7 +153,6 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_SCHEDULE_RESET_DRUID_STAT_DATA = new CommonSwitcher(232, "节点-是否定期清除druid stat 数据", true);
 
-
     /**
      * 节点-是否开启异常sql通知
      */
@@ -178,6 +177,12 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否开启主节点选举监听器
      */
     public static final CommonSwitcher ENABLE_REGISTRY_MASTER_NODE_LISTENER = new CommonSwitcher(237, "是否开启主节点选举监听器", true);
+
+
+    /**
+     * 节点 - 是否当socket路由策略获取不到服务时采用随机路由机制
+     */
+    public static final CommonSwitcher ENABLE_WHEN_SOCKET_ROUTER_NOT_USING_RANDOM = new CommonSwitcher(238, "节点-是否当socket路由策略获取不到服务时采用随机路由机制", true);
 
 
     /**

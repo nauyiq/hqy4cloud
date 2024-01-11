@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.cluster.loadbalance;
 
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,7 +28,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
      * @return The selected invoker
      */
     @Override
-    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RPCModel rpcModel) {// Number of invokers
+    protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RpcModel rpcModel) {// Number of invokers
         int length = invokers.size();
         if (!needWeightLoadBalance(invokers)){
             return invokers.get(ThreadLocalRandom.current().nextInt(length));
@@ -66,7 +66,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
 
     private <T> boolean needWeightLoadBalance(List<Invoker<T>> invokers) {
         Invoker<T> invoker = invokers.get(0);
-        RPCModel rpcModel = invoker.getModel();
+        RpcModel rpcModel = invoker.getModel();
         int weight = rpcModel.getWeight();
         return weight != 0;
     }

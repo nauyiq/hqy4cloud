@@ -3,11 +3,11 @@ package com.hqy.cloud.rpc.cluster.router.gray;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.AbstractRouter;
 import com.hqy.cloud.rpc.cluster.router.RouterResult;
-import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.util.IpUtil;
+import com.hqy.cloud.rpc.model.RpcModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +19,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ * GrayModeRouter
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/30 17:41
+ * @date 2022/6/30
  */
 public class GrayModeRouter<T> extends AbstractRouter<T> {
-
     private static final Logger log = LoggerFactory.getLogger(GrayModeRouter.class);
 
     private static transient final String GRAY_PRIORITY_KEY = "gray-mode-priority";
@@ -38,14 +38,14 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
     private final Cache<String, List<Invoker<T>>> HOST_INSTANCES = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
 
 
-    public GrayModeRouter(RPCModel rpcModel) {
+    public GrayModeRouter(RpcModel rpcModel) {
         this.rpcModel = rpcModel;
         this.priority = rpcModel.getParameter(GRAY_PRIORITY_KEY, DEFAULT_PRIORITY);
         this.force = Boolean.parseBoolean(rpcModel.getParameter(FORCE_KEY, "false"));
     }
 
     @Override
-    public RouterResult<Invoker<T>> route(List<Invoker<T>> invokers, RPCModel rpcModel) {
+    public RouterResult<Invoker<T>> route(List<Invoker<T>> invokers,  Invocation invocation) {
         if (CollectionUtils.isEmpty(invokers) || rpcModel == null) {
             return new RouterResult<>(invokers, false);
         }
@@ -64,20 +64,20 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
             if (CollectionUtils.isNotEmpty(chooseInvokers)) {
                 return new RouterResult<>(chooseInvokers, true);
             } else if (force) {
-                log.warn("The route result is empty and force execute. consumer: " + IpUtil.getHostAddress() + ", service: " + rpcModel.getName());
+                log.warn("The route result is empty and force execute. consumer: " + getRpcModel() + ", service: " + rpcModel.getName());
                 new RouterResult<>(chooseInvokers, true);
             }
         } catch (Throwable t) {
-            log.error("Failed to execute GrayMode router rule: " + getContext() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);
+            log.error("Failed to execute GrayMode router rule: " + getRpcModel() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);
         }
 
         return new RouterResult<>(invokers, true);
     }
 
-    private List<Invoker<T>> findSuitableInvokers(boolean colorModeRpcRemote, boolean sameIpHighPriority, RPCModel rpcModel, List<Invoker<T>> invokers) {
+    private List<Invoker<T>> findSuitableInvokers(boolean colorModeRpcRemote, boolean sameIpHighPriority, RpcModel rpcModel, List<Invoker<T>> invokers) {
         List<Invoker<T>> chooseInvokers = new ArrayList<>(invokers);
         if (colorModeRpcRemote) {
-            chooseInvokers = findGaryModeInvokers(rpcModel, invokers);
+            chooseInvokers = findGaryModeInvokers(invokers);
             if (CollectionUtils.isEmpty(chooseInvokers)) {
                 return chooseInvokers;
             }
@@ -91,9 +91,9 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
         return chooseInvokers;
     }
 
-    private List<Invoker<T>> findGaryModeInvokers(RPCModel consumerContext, List<Invoker<T>> invokers) {
+    private List<Invoker<T>> findGaryModeInvokers(List<Invoker<T>> invokers) {
         try {
-            int consumerPubModeValue = consumerContext.getPubMode();
+            int consumerPubModeValue = getRpcModel().getPubMode();
             // only call services of the same color as current server.
             List<Invoker<T>> colorInvokers = MODE_INSTANCES.getIfPresent(consumerPubModeValue);
             if (CollectionUtils.isEmpty(colorInvokers)) {
@@ -108,7 +108,7 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
 
     }
 
-    private List<Invoker<T>> findSameIpInvokers(RPCModel rpcModel, List<Invoker<T>> invokers) {
+    private List<Invoker<T>> findSameIpInvokers(RpcModel rpcModel, List<Invoker<T>> invokers) {
         try {
             String host = rpcModel.getServerHost();
             List<Invoker<T>> hostInvokers = HOST_INSTANCES.getIfPresent(host);
@@ -135,7 +135,7 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
                 MODE_INSTANCES.putAll(invokerModeMap);
             }
 
-            Map<String, List<Invoker<T>>> invokerHostMap = invokers.stream().collect(Collectors.groupingBy(invoker -> invoker.getModel().getHost()));
+            Map<String, List<Invoker<T>>> invokerHostMap = invokers.stream().collect(Collectors.groupingBy(invoker -> invoker.getModel().getServerHost()));
             if (!invokerHostMap.isEmpty()) {
                 HOST_INSTANCES.putAll(invokerHostMap);
             }

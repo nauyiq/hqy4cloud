@@ -1,5 +1,6 @@
 package com.hqy.cloud.registry.api;
 
+import com.hqy.cloud.registry.api.support.RegistryManager;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.util.AssertUtil;

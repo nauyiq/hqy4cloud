@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.cloud.rpc.nacos.discovery.NacosDiscovery

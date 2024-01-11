@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.threadpool;
 
-import com.hqy.cloud.rpc.CloseableService;
+import com.hqy.cloud.registry.common.context.CloseableService;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

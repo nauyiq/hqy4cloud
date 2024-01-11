@@ -10,7 +10,7 @@ import java.util.ServiceLoader;
  * GlobalFallbackContext.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/5/5 17:21
+ * @date 2023/5/5
  */
 public class GlobalFallbackContext {
 

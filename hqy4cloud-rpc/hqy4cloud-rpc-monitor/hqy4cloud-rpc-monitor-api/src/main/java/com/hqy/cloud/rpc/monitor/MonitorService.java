@@ -4,7 +4,7 @@ package com.hqy.cloud.rpc.monitor;
  * MonitorService.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/15 17:18
+ * @date 2022/7/15
  */
 public interface MonitorService {
 

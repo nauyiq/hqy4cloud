@@ -25,6 +25,7 @@ public record LockMasterServiceImpl(LockService lockService, Registry registry) 
 
     @Override
     public void elect(List<ServiceInstance> instances) {
+        // 当前节点信息
         ServiceInstance instance = registry.getInstance();
         ApplicationModel model = instance.getApplicationModel();
         String host = instance.getHost();
@@ -49,7 +50,7 @@ public record LockMasterServiceImpl(LockService lockService, Registry registry) 
             // 竞争主节点. 超时时间为1秒 1秒内获取不到锁则表示竞争主节点失败。
             boolean result = lockService.tryLock(lockName, Constants.DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_MILLIS, Constants.DEFAULT_MASTER_INSTANCE_CHOOSE_LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             if (result != isMaster) {
-                // update instance
+                // 更新自己
                 model.getMetadataInfo().setMaster(result);
                 registry.update(model);
             }

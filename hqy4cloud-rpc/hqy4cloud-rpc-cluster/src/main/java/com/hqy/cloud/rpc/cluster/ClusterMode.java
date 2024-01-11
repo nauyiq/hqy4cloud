@@ -8,7 +8,7 @@ import com.hqy.cloud.rpc.cluster.support.FailoverClusterInvoker;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 15:23
+ * @date 2022/7/13
  */
 public enum ClusterMode {
 

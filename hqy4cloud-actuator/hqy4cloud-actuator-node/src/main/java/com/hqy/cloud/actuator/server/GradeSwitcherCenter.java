@@ -5,7 +5,7 @@ import com.hqy.cloud.actuator.model.MicroServerSwitcherInfo;
 import com.hqy.cloud.common.swticher.AbstractSwitcher;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
-import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;

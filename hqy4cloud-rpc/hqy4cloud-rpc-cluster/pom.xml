@@ -20,14 +20,11 @@
             <artifactId>hqy4cloud-rpc-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-rpc-registry-api</artifactId>
+            <artifactId>hqy4cloud-registry-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
-
     </dependencies>
 
 

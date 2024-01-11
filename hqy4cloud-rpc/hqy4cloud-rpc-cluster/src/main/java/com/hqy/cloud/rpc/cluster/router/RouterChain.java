@@ -1,9 +1,10 @@
 package com.hqy.cloud.rpc.cluster.router;
 
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.gray.GrayModeRouterFactory;
 import com.hqy.cloud.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class RouterChain<T> {
      */
     private final boolean shouldFailFast;
 
-    public static <T> RouterChain<T> buildChain(Class<T> interfaceClass, RPCModel rpcModel) {
+    public static <T> RouterChain<T> buildChain(Class<T> interfaceClass, RpcModel rpcModel) {
         //TODO according to interfaceClass init routers
         List<RouterFactory<T>> routerFactories = Arrays.asList(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>());
         List<Router<T>> routers = routerFactories.stream().map(factory -> factory.createRouter(rpcModel)).sorted(Router::compareTo).collect(Collectors.toList());
@@ -49,7 +50,7 @@ public class RouterChain<T> {
         return new RouterChain<>(routers, true);
     }
 
-    public static <T> RouterChain<T> buildChain(RPCModel rpcModel, List<RouterFactory<T>> routerFactories, boolean shouldFailFast) {
+    public static <T> RouterChain<T> buildChain(RpcModel rpcModel, List<RouterFactory<T>> routerFactories, boolean shouldFailFast) {
         List<Router<T>> routers = routerFactories.stream().map(factory -> factory.createRouter(rpcModel)).sorted(Router::compareTo).collect(Collectors.toList());
         return new RouterChain<>(routers, shouldFailFast);
     }
@@ -78,15 +79,13 @@ public class RouterChain<T> {
         return routers;
     }
 
-    public List<Invoker<T>> route(RPCModel rpcModel, List<Invoker<T>> availableInvokers) {
-
+    public List<Invoker<T>> route(List<Invoker<T>> availableInvokers, Invocation invocation) {
         List<Invoker<T>> commonRouterResult = new ArrayList<>(availableInvokers);
 
         for (Router<T> router : routers) {
-            RouterResult<Invoker<T>> routerResult = router.route(commonRouterResult, rpcModel);
+            RouterResult<Invoker<T>> routerResult = router.route(commonRouterResult, invocation);
             commonRouterResult = routerResult.getResult();
             if (CollectionUtils.isEmpty(commonRouterResult) && shouldFailFast) {
-                printRouterSnapshot(rpcModel, availableInvokers);
                 return Collections.emptyList();
             }
 
@@ -102,13 +101,6 @@ public class RouterChain<T> {
 
         return commonRouterResult;
     }
-
-    private void printRouterSnapshot(RPCModel rpcModel, List<Invoker<T>> availableInvokers) {
-        if (log.isWarnEnabled()) {
-
-        }
-    }
-
 
     /**
      * Notify router chain of the initial addresses from registry at the first time.

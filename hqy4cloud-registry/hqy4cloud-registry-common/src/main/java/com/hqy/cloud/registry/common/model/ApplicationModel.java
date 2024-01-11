@@ -1,8 +1,8 @@
 package com.hqy.cloud.registry.common.model;
 
-import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,17 +10,17 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The service instance model.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/12/29 10:02
+ * @date 2023/12/29
  */
 public class ApplicationModel extends Parameters implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(ApplicationModel.class);
 
+    private String id;
     private String applicationName;
     private String namespace;
     private String group;
@@ -30,7 +30,16 @@ public class ApplicationModel extends Parameters implements Serializable {
     private RegistryInfo registryInfo;
     private MetadataInfo metadataInfo;
     private Long startupTimeMillis;
-    private Map<String, DeployModel> deployModels = new ConcurrentHashMap<>();
+
+    private ApplicationModel(String applicationName, String namespace, String group) {
+        this.applicationName = applicationName;
+        this.namespace = namespace;
+        this.group = group;
+    }
+
+    public static ApplicationModel of(String applicationName, String namespace, String group) {
+        return new ApplicationModel(applicationName, namespace, group);
+    }
 
     /**
      * cache.
@@ -46,26 +55,6 @@ public class ApplicationModel extends Parameters implements Serializable {
                 + StringConstants.Symbol.COLON + buildString(false);
     }
 
-    public Map<String, Number> getNumbers() {
-        if (numbers == null) {
-            numbers = MapUtil.newConcurrentHashMap();
-        }
-        return numbers;
-    }
-
-    public int getParameter(String key, int defaultValue) {
-        Number number = getNumbers().get(key);
-        if (number != null) {
-            return number.intValue();
-        }
-        String value  = getParameter(key);
-        if (StringUtils.isBlank(value)) {
-            return defaultValue;
-        }
-        int intValue = Integer.parseInt(value);
-        getNumbers().put(key, intValue);
-        return intValue;
-    }
 
     public double getParameter(String key, double defaultValue) {
         Number number = getNumbers().get(key);
@@ -80,15 +69,6 @@ public class ApplicationModel extends Parameters implements Serializable {
         getNumbers().put(key, doubleValue);
         return doubleValue;
     }
-
-    public boolean getParameter(String key, boolean defaultValue) {
-        String value  = getParameter(key);
-        if (StringUtils.isBlank(value)) {
-            return defaultValue;
-        }
-        return Boolean.parseBoolean(value);
-    }
-
 
     private String buildString(boolean appendUser) {
         StringBuilder buf = new StringBuilder();
@@ -110,12 +90,8 @@ public class ApplicationModel extends Parameters implements Serializable {
         return buf.toString();
     }
 
-    public Map<String, DeployModel> getDeployModels() {
-        return deployModels;
-    }
-
-    public void setDeployModels(Map<String, DeployModel> deployModels) {
-        this.deployModels = deployModels;
+    public Map<String, String> getMetadataMap() {
+        return this.metadataInfo.getParameters();
     }
 
     public RegistryInfo getRegistryInfo() {
@@ -136,6 +112,14 @@ public class ApplicationModel extends Parameters implements Serializable {
             host = host + StringConstants.Symbol.COLON + getPort();
         }
         return host;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getPort() {

@@ -16,14 +16,8 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>hqy4cloud-registry-common</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

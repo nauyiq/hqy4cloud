@@ -2,7 +2,7 @@ package com.hqy.cloud.registry.api;
 
 import com.hqy.cloud.registry.cluster.MasterService;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.common.model.MetadataInfo;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 
 /**
  * server discovery
@@ -51,11 +51,6 @@ public interface ServerDiscovery extends RegistryService, MasterService {
      */
     void update(ApplicationModel model) throws  RuntimeException;
 
-    /**
-     * destroy from registry
-     * @throws Exception destroy exception
-     */
-    void destroy() throws Exception;
 
 
 

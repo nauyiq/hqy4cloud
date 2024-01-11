@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.monitor.suport;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.monitor.Monitor;
 import com.hqy.cloud.rpc.monitor.MonitorFactory;
 import org.slf4j.Logger;
@@ -26,9 +26,6 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
      */
     private static final ReentrantLock LOCK = new ReentrantLock();
 
-    /**
-     *  The monitor centers Map<MonitorServerAddress, Registry>
-     */
     private static final Map<String, Monitor> MONITORS = MapUtil.newConcurrentHashMap(2);
 //    private static final Map<String, Future<Monitor>> FUTURES = MapUtil.newConcurrentHashMap(2);
 //    private static final ExecutorService MONITOR_EXECUTOR = new ThreadPoolExecutor(0, 10, 60L,
@@ -39,8 +36,8 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
     }
 
     @Override
-    public Monitor getMonitor(RPCModel rpcModel) {
-        String key = rpcModel.toServiceString();
+    public Monitor getMonitor(RpcModel rpcModel) {
+        String key = rpcModel.getName();
         Monitor monitor = MONITORS.get(key);
 //        Future<Monitor> future = FUTURES.get(key);
         if (monitor != null) {
@@ -77,8 +74,8 @@ public abstract class AbstractMonitorFactory implements MonitorFactory {
 
     /**
      * create monitor.
-     * @param monitorRpcModel {@link RPCModel}
+     * @param monitorRpcModel {@link RpcModel}
      * @return                {@link Monitor}
      */
-    protected abstract Monitor createMonitor(RPCModel monitorRpcModel);
+    protected abstract Monitor createMonitor(RpcModel monitorRpcModel);
 }

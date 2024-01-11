@@ -1,7 +1,5 @@
 package com.hqy.cloud.rpc;
 
-import com.hqy.cloud.common.base.lang.StringConstants;
-
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -17,15 +15,14 @@ public interface CommonConstants {
     String USERNAME = "username";
     String PASSWORD = "password";
 
-    String WEIGHT = "weight";
     String PUB_MODE = "pubMode";
     String START_SERVER_TIMESTAMP = "startServerTimestamp";
-    String HASH_FACTOR = "hashFactor";
-    String RPC_SERVER_ADDR = "rpcServerAddress";
+
+
     String ACTUATOR_TYPE = "actuatorType";
     String MASTER_NODE = "master";
 
-    String DEFAULT_HASH_FACTOR = StringConstants.DEFAULT;
+
     String DIRECT_SERVICE = "direct-service";
 
     String EVENT_LOOP_BOSS_POOL_NAME  = "NettyServerBoss";
@@ -74,8 +71,6 @@ public interface CommonConstants {
 
     String RPC_MONITOR_WARNING_KEY = "maxWarning";
     int DEFAULT_MONITOR_WARNING_KEY = 60;
-
-    String DEFAULT_REVISION = "1.0.0";
 
 
 

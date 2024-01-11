@@ -2,8 +2,9 @@ package com.hqy.cloud.rpc.thrift.service;
 
 import cn.hutool.core.map.MapUtil;
 import com.facebook.swift.service.ThriftEventHandler;
-import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.CommonConstants;
+import com.hqy.cloud.rpc.model.RpcMetadata;
+import com.hqy.cloud.rpc.service.RPCService;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,11 +19,11 @@ import java.util.Map;
 public interface ThriftServerLauncher {
 
     /**
-     * get rpc provider server hashFactor. default hashFactor {@link CommonConstants#DEFAULT_HASH_FACTOR}
+     * get rpc provider server hashFactor. default hashFactor {@link com.hqy.cloud.rpc.model.RpcMetadata#DEFAULT_HASH_FACTOR}
      * @return provider hashFactor.
      */
     default String getHashFactor() {
-        return CommonConstants.DEFAULT_HASH_FACTOR;
+        return RpcMetadata.DEFAULT_HASH_FACTOR;
     }
 
     /**

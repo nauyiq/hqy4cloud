@@ -1,13 +1,13 @@
 package com.hqy.cloud.rpc;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * {@link Invoker} proxy factory.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/29 11:24
+ * @date 2022/6/29
  */
 public interface ProxyFactory {
 
@@ -40,6 +40,6 @@ public interface ProxyFactory {
      * @return              {@link Invoker}
      * @throws RpcException exception.
      */
-    <T> Invoker<T> getInvoker(T proxy, Class<T> type, RPCModel rpcModel) throws RpcException;
+    <T> Invoker<T> getInvoker(T proxy, Class<T> type, RpcModel rpcModel) throws RpcException;
 
 }

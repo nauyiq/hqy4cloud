@@ -2,8 +2,9 @@ package com.hqy.cloud.registry.api;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.registry.api.support.RegistryManager;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.common.model.MetadataInfo;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -104,8 +105,6 @@ public abstract class AbstractRegistry implements Registry {
         return queryMasterInstance();
     }
 
-
-
     @Override
     public synchronized void register() throws RuntimeException {
         if (this.instance != null) {
@@ -140,11 +139,10 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void subscribe(ServiceInstance instance, ServiceNotifyListener serviceNotifyListener) {
         AssertUtil.notNull(instance, "subscribe instance should not be  null.");
-        AssertUtil.notNull(serviceNotifyListener, "subscribe notify listener should not be  null.");
         log.info("subscribe instance: {}", instance);
-        Set<ServiceNotifyListener> listeners = subscribed.get(instance);
-        if (CollectionUtils.isNotEmpty(listeners) && serviceNotifyListener != null) {
-            listeners.remove(serviceNotifyListener);
+        if (serviceNotifyListener != null) {
+            Set<ServiceNotifyListener> listeners = subscribed.computeIfAbsent(instance, v -> new ConcurrentHashSet<>());
+            listeners.add(serviceNotifyListener);
         }
     }
 
@@ -153,16 +151,16 @@ public abstract class AbstractRegistry implements Registry {
         AssertUtil.notNull(instance, "unSubscribe instance should not be  null.");
         AssertUtil.notNull(instance, "unSubscribe notify listener should not be  null.");
         log.info("unSubscribe instance: {}", instance);
-        if (serviceNotifyListener != null) {
-            Set<ServiceNotifyListener> listeners = subscribed.computeIfAbsent(instance, v -> new ConcurrentHashSet<>());
-            listeners.add(serviceNotifyListener);
+        Set<ServiceNotifyListener> listeners = subscribed.get(instance);
+        if (CollectionUtils.isNotEmpty(listeners) && serviceNotifyListener != null) {
+            listeners.remove(serviceNotifyListener);
         }
         // do not forget remove notified
         notified.remove(instance.getApplicationModel());
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("Destroy registry: {}", getRegistryInfo());
         }

@@ -39,7 +39,7 @@ import java.util.Set;
  * 令牌端点
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/3/6 13:38
+ * @date 2023/3/6
  */
 @RestController
 @RequestMapping("/auth")

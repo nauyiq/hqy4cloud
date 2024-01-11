@@ -82,7 +82,7 @@ class SyncClientHelpers {
      * by waits instead of using blocking network operations.
      *
      * @param request
-     * @throws TException           if a network or protocol error occurs while serializing or
+     * @throws TException           if a network or com.hqy.cloud.rpc.thrift.client.protocol error occurs while serializing or
      *                              sending the request
      * @throws InterruptedException if the thread is interrupted before the request is sent
      */

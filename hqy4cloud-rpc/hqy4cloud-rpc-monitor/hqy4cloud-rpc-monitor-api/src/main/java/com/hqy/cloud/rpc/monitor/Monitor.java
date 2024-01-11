@@ -5,7 +5,7 @@ package com.hqy.cloud.rpc.monitor;
  * @see MonitorFactory
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/18 9:36
+ * @date 2022/7/18
  */
 public interface Monitor extends MonitorService {
 

@@ -17,13 +17,11 @@
         <module>hqy4cloud-registry-api</module>
         <module>hqy4cloud-registry-common</module>
         <module>hqy4cloud-registry-nacos</module>
+        <module>hqy4cloud-registry-nacos-starter</module>
+        <module>hqy4cloud-registry-configuration</module>
     </modules>
 
     <packaging>pom</packaging>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
 </project>

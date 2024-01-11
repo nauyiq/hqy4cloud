@@ -3,6 +3,7 @@ package com.hqy.cloud.rpc;
 import com.hqy.cloud.rpc.fallback.Fallback;
 import com.hqy.cloud.rpc.fallback.GlobalFallbackContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -15,9 +16,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * RPC Invocation.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/29 14:56
+ * @date 2022/6/29
  */
 public class RpcInvocation implements Invocation, Serializable {
+
+    @Serial
     private static final long serialVersionUID = -1549902387737186173L;
 
     private final transient Invoker<?> invoker;

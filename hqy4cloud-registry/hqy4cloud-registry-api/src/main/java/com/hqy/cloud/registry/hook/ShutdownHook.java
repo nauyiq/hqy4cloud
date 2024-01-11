@@ -1,6 +1,6 @@
 package com.hqy.cloud.registry.hook;
 
-import com.hqy.cloud.registry.deploy.LifecycleDeployModel;
+import com.hqy.cloud.registry.deploy.ApplicationDeployModel;
 import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ShutdownHook extends Thread {
     private static final Logger log = LoggerFactory.getLogger(ShutdownHook.class);
 
-    private final LifecycleDeployModel model;
+    private final ApplicationDeployModel model;
     private final ShutdownHookCallbacks callbacks = new ShutdownHookCallbacks();
 
-    public ShutdownHook(LifecycleDeployModel model) {
+    public ShutdownHook(ApplicationDeployModel model) {
         super(ShutdownHook.class.getSimpleName());
         this.model = model;
         AssertUtil.notNull(this.model, "Application model should not be null.");

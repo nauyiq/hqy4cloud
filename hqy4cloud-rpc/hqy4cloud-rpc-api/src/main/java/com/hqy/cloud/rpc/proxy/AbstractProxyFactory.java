@@ -13,7 +13,7 @@ import java.util.LinkedHashSet;
  * AbstractProxyFactory.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/29 11:40
+ * @date 2022/6/29
  */
 public abstract class AbstractProxyFactory implements ProxyFactory {
 

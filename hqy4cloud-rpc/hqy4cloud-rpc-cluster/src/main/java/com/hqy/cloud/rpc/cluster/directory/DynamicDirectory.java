@@ -1,21 +1,22 @@
 package com.hqy.cloud.rpc.cluster.directory;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.registry.api.Registry;
+import com.hqy.cloud.registry.api.ServiceInstance;
+import com.hqy.cloud.registry.api.ServiceNotifyListener;
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.RouterFactory;
 import com.hqy.cloud.rpc.cluster.router.gray.GrayModeRouterFactory;
 import com.hqy.cloud.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
-import com.hqy.cloud.rpc.model.RPCModel;
-import com.hqy.cloud.rpc.registry.api.NotifyListener;
-import com.hqy.cloud.rpc.registry.api.RPCRegistry;
-import com.hqy.cloud.rpc.registry.api.RegistryFactory;
+import com.hqy.cloud.rpc.cluster.router.master.MasterNodeRouterFactory;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,8 +25,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/7/4 13:28
  */
-public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
-
+public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implements ServiceNotifyListener {
     private static final Logger log = LoggerFactory.getLogger(DynamicDirectory.class);
 
     protected List<RouterFactory<T>> routerFactories;
@@ -34,7 +34,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
 
     protected volatile boolean forbidden = false;
 
-    private final RegistryFactory factory;
+    private final Registry registry;
 
     /**
      * Should continue route if directory is empty
@@ -44,38 +44,37 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     /**
      * Initialization at construction time, assertion not null, and always assign not null value
      */
-    protected volatile RPCModel subscribeModel;
+    protected volatile RpcModel subscribeModel;
 
 
-    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory) {
-        this(providerServiceName, rpcModel, serviceType, registryFactory, Arrays.asList(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>()));
+    public DynamicDirectory(String providerServiceName, RpcModel rpcModel, Class<T> serviceType, Registry registry) {
+        this(providerServiceName, rpcModel, serviceType, registry, List.of(new GrayModeRouterFactory<>(), new HashFactorRouterFactory<>(), new MasterNodeRouterFactory<>()));
     }
 
-    public DynamicDirectory(String providerServiceName, RPCModel rpcModel, Class<T> serviceType, RegistryFactory registryFactory, List<RouterFactory<T>> routerFactories) {
+    public DynamicDirectory(String providerServiceName, RpcModel rpcModel, Class<T> serviceType, Registry registry, List<RouterFactory<T>> routerFactories) {
         super(providerServiceName, serviceType, rpcModel);
-        this.consumerRpcModel = rpcModel;
+        this.rpcModel = rpcModel;
         this.serviceType = serviceType;
         setRouterFactories(routerFactories);
-        this.factory = registryFactory;
+        this.registry = registry;
         AssertUtil.notNull(getRegistry(), "Registry is null, please check status of Directory.");
         shouldFailFast = true;
     }
 
     @Override
-    protected List<Invoker<T>> doList(List<Invoker<T>> availableInvokers) {
-
+    protected List<Invoker<T>> doList(List<Invoker<T>> availableInvokers, Invocation invocation) {
         if (forbidden && shouldFailFast) {
             // 1. No service provider 2. Service providers are disabled
             throw new RpcException(RpcException.FORBIDDEN_EXCEPTION, "No provider available from registry " +
-                    getRegistry().getRegistryAddress() + " for service " + getProviderServiceName() + " on consumer " +
+                    getRegistry().getRegistryInfo() + " for service " + getProviderServiceName() + " on consumer " +
                     IpUtil.getHostAddress() +
                     ", please check status of providers(disabled, not registered or in blacklist).");
         }
 
         try {
-            return routerChain.route(getConsumerModel(), availableInvokers);
+            return routerChain.route(availableInvokers, invocation);
         } catch (Throwable t) {
-            log.error("Failed to execute router: " + getConsumerModel() + ", cause: " + t.getMessage(), t);
+            log.error("Failed to execute router: " + getRPCModel() + ", cause: " + t.getMessage(), t);
             return Collections.emptyList();
         }
 
@@ -90,17 +89,17 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
                 && getValidInvokers().stream().anyMatch(Invoker::isAvailable);
     }
 
-    public void subscribe(RPCModel rpcModel) {
+    public void subscribe(RpcModel rpcModel) {
         setSubscribeModel(rpcModel);
-        getRegistry().subscribe(rpcModel, this);
+        getRegistry().subscribe(buildInstance(rpcModel), this);
     }
 
-    public void unSubscribe(RPCModel rpcModel) {
+    public void unSubscribe(RpcModel rpcModel) {
         setSubscribeModel(null);
-        getRegistry().unsubscribe(rpcModel, this);
+        getRegistry().unsubscribe(buildInstance(rpcModel), this);
     }
 
-    public RPCModel getSubscribeModel() {
+    public RpcModel getSubscribeModel() {
         return subscribeModel;
     }
 
@@ -109,22 +108,21 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         if (isDestroyed()) {
             return;
         }
-
-        RPCModel rpcModel = getConsumerModel();
-        RPCRegistry registry = getRegistry();
+        RpcModel rpcModel = getRPCModel();
+        Registry registry = getRegistry();
         try {
             if (rpcModel != null && registry != null && registry.isAvailable()) {
-                registry.unregister(rpcModel);
+                registry.unregister(buildInstance(rpcModel));
             }
         } catch (Throwable t) {
             log.warn("unexpected error when unregister service " + rpcModel.getName() + " from registry: " + registry.getModel(), t);
         }
 
         // unsubscribe.
-        RPCModel subscribeContext = getSubscribeModel();
+        RpcModel subscribeContext = getSubscribeModel();
         try {
             if (subscribeContext != null && registry != null && registry.isAvailable()) {
-                registry.unsubscribe(subscribeContext, this);
+                registry.unsubscribe(buildInstance(subscribeContext), this);
             }
         } catch (Throwable t) {
             log.warn("unexpected error when unsubscribe service " + subscribeContext.getName() + " from registry: " + registry.getModel(), t);
@@ -141,10 +139,6 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         }
     }
 
-    public RegistryFactory getFactory() {
-        return factory;
-    }
-
 
     @Override
     public Class<T> getInterface() {
@@ -157,25 +151,38 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
     }
 
     @Override
-    public RPCModel getConsumerModel() {
-        return consumerRpcModel;
+    public RpcModel getRPCModel() {
+        return rpcModel;
     }
 
     public void setRouterFactories(List<RouterFactory<T>> routerFactories) {
         this.routerFactories = routerFactories;
     }
 
-    public void setSubscribeModel(RPCModel subscribeModel) {
+    public void setSubscribeModel(RpcModel subscribeModel) {
         this.subscribeModel = subscribeModel;
     }
 
-    public RPCRegistry getRegistry() {
-        return factory.getRegistry(getConsumerModel());
+    public Registry getRegistry() {
+        return registry;
     }
-
-    protected abstract void destroyAllInvokers();
 
     protected synchronized void invokersChanged() {
         refreshInvoker();
     }
+
+    /**
+     * rpc model building service instance
+     * @param rpcModel rpc model, {@link RpcModel}
+     * @return ServiceInstance
+     */
+    protected abstract ServiceInstance buildInstance(RpcModel rpcModel);
+
+    /**
+     * destroy all.
+     */
+    protected abstract void destroyAllInvokers();
+
+
+
 }

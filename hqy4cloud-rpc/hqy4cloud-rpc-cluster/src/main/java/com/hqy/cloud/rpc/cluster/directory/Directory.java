@@ -1,10 +1,12 @@
 package com.hqy.cloud.rpc.cluster.directory;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.registry.common.context.CloseableService;
+import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.RouterChain;
-import com.hqy.cloud.rpc.CloseableService;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -33,11 +35,11 @@ public interface Directory<T> extends CloseableService {
 
     /**
      * Based on the incoming Invocation request, Filter the self-maintained Invoker collection and return the eligible Invoker collection
-     * @param rpcModel     rpcContext
-     * @return               invokers
-     * @throws RpcException  RpcException
+     * @param invocation    invoker condition
+     * @return              invokers
+     * @throws RpcException non-catch
      */
-    List<Invoker<T>> list(RPCModel rpcModel) throws RpcException;
+    List<Invoker<T>> list(Invocation invocation) throws RpcException;
 
     /**
      * get list invokers, include all invokers from registry
@@ -49,7 +51,19 @@ public interface Directory<T> extends CloseableService {
      * get rpc consumer model
      * @return metadata
      */
-    RPCModel getConsumerModel();
+    RpcModel getRPCModel();
+
+    /**
+     * get application model
+     * @return application model
+     */
+    ApplicationModel getModel();
+
+    /**
+     * get remote rpc provider application model
+     * @return remote rpc provider application model
+     */
+    ApplicationModel getProviderModel();
 
 
     /**
@@ -87,6 +101,8 @@ public interface Directory<T> extends CloseableService {
      * @return RouterChain
      */
     RouterChain<T> getRouterChain();
+
+
 
 
 

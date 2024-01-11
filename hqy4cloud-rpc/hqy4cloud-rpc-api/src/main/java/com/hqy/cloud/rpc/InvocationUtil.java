@@ -6,7 +6,7 @@ import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.RIGHT_BRACKE
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/5/6 10:28
+ * @date 2023/5/6
  */
 public class InvocationUtil {
 

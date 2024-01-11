@@ -7,7 +7,7 @@ package com.hqy.cloud.registry.nacos;
  */
 public interface Constants {
 
-    String NAME = "nacos";
+    String NACOS_NAME = "nacos";
     String UP = "UP";
 
 

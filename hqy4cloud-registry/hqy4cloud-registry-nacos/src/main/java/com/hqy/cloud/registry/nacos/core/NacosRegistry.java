@@ -9,11 +9,12 @@ import com.hqy.cloud.registry.api.FailedBackRegistry;
 import com.hqy.cloud.registry.api.RegistryNotifier;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.api.ServiceNotifyListener;
+import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
+import com.hqy.cloud.registry.common.metadata.MetadataConverter;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.common.model.MetadataInfo;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
-import com.hqy.cloud.registry.converter.MetadataConverter;
 import com.hqy.cloud.registry.nacos.Constants;
 import com.hqy.cloud.registry.nacos.naming.NamingServiceWrapper;
 import com.hqy.cloud.registry.nacos.utils.NacosInstanceConvertUtil;
@@ -34,9 +35,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NacosRegistry extends FailedBackRegistry {
     private static final Logger log = LoggerFactory.getLogger(NacosRegistry.class);
 
+    private static final String UP = "UP";
     private final NamingServiceWrapper namingService;
     private final MetadataConverter metadataConverter;
     private final Map<ApplicationModel, EventListener> nacosListeners = new ConcurrentHashMap<>();
+
 
     public NacosRegistry(ApplicationModel model, NamingServiceWrapper namingService, MetadataConverter metadataConverter) {
         super(model);
@@ -51,7 +54,6 @@ public class NacosRegistry extends FailedBackRegistry {
         ApplicationModel applicationModel = getModel();
         String applicationName = applicationModel.getApplicationName();
         String group = applicationModel.getGroup();
-        RegistryInfo registryInfo = applicationModel.getRegistryInfo();
         try {
             List<Instance> allInstances = namingService.getAllInstances(applicationName, group)
                     .stream().filter(instance -> instance.getIp().equals(applicationModel.getIp()) && instance.getPort() == applicationModel.getPort()).toList();
@@ -59,7 +61,8 @@ public class NacosRegistry extends FailedBackRegistry {
                 throw new IllegalStateException();
             }
             Instance instance = allInstances.get(0);
-            return new NacosServiceInstance(instance, group, registryInfo, metadataConverter.convertMetadataInfo(applicationName, instance.getMetadata()));
+            applicationModel.setId(instance.getInstanceId());
+            return new ApplicationServiceInstance(applicationModel);
         } catch (Throwable cause) {
             throw new RegisterDiscoverException("Not found self instance by " + applicationName + ", nacos " + getRegistryInfo());
         }
@@ -88,13 +91,13 @@ public class NacosRegistry extends FailedBackRegistry {
         ApplicationModel model = getModel();
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
-        Instance instance = NacosInstanceConvertUtil.convert(model, metadataConverter.convertMap(metadataInfo));
+        Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
         try {
             namingService.registerInstance(applicationName, model.getGroup(), instance);
         } catch (NacosException cause) {
             throw new RegisterDiscoverException("Failed to register to nacos " + getRegistryInfo() + ", cause: " + cause.getMessage(), cause);
         }
-        return new NacosServiceInstance(instance, model.getGroup(), model.getRegistryInfo(), metadataConverter.convertMetadataInfo(applicationName, instance.getMetadata()));
+        return new ApplicationServiceInstance(model);
     }
 
     @Override
@@ -106,18 +109,10 @@ public class NacosRegistry extends FailedBackRegistry {
     @Override
     public synchronized void update(ApplicationModel model) throws RuntimeException {
         try {
-            ServiceInstance serviceInstance = this.getInstance();
-            NacosServiceInstance nacosServiceInstance = (NacosServiceInstance) serviceInstance;
-            Instance instance = nacosServiceInstance.getInstance();
-            // update params
-            NacosInstanceConvertUtil.updateInstance(instance, model, metadataConverter.convertMap(model.getMetadataInfo()));
+            ApplicationServiceInstance serviceInstance = new ApplicationServiceInstance(model);
+            Instance instance = NacosInstanceConvertUtil.convert(model, model.getMetadataMap());
             // do update to nacos
-            namingService.updateInstance(nacosServiceInstance.gerServiceName(), model.getGroup(), instance);
-            // reset
-            nacosServiceInstance.setInstance(instance);
-            nacosServiceInstance.setModel(model);
-            super.instance = nacosServiceInstance;
-            this.setModel(model);
+            namingService.updateInstance(model.getApplicationName(), model.getGroup(), instance);
         } catch (Throwable cause) {
             throw new RegisterDiscoverException("Failed to update to nacos " + getRegistryInfo() + ", cause: " + cause.getMessage(), cause);
         }
@@ -128,7 +123,7 @@ public class NacosRegistry extends FailedBackRegistry {
     public void doRegister(ApplicationModel model) {
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
-        Instance instance = NacosInstanceConvertUtil.convert(model, metadataConverter.convertMap(metadataInfo));
+        Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
         try {
             namingService.registerInstance(applicationName, model.getGroup(), instance);
         } catch (NacosException cause) {
@@ -140,7 +135,7 @@ public class NacosRegistry extends FailedBackRegistry {
     public void doUnregister(ApplicationModel model) {
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
-        Instance instance = NacosInstanceConvertUtil.convert(model, metadataConverter.convertMap(metadataInfo));
+        Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
         try {
             namingService.deregisterInstance(applicationName, model.getGroup(), instance);
         } catch (NacosException cause) {
@@ -176,7 +171,12 @@ public class NacosRegistry extends FailedBackRegistry {
 
     @Override
     public String name() {
-        return Constants.NAME;
+        return Constants.NACOS_NAME;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return UP.equals(namingService.getServerStatus());
     }
 
 
@@ -231,7 +231,8 @@ public class NacosRegistry extends FailedBackRegistry {
     private List<ServiceInstance> getServiceInstances(List<Instance> instances, RegistryInfo registryInfo, String group) {
         List<ServiceInstance> serviceInstances = new ArrayList<>(instances.size());
         for (Instance instance : instances) {
-            ServiceInstance serviceInstance = new NacosServiceInstance(instance, group, registryInfo, metadataConverter.convertMetadataInfo(instance.getServiceName(), instance.getMetadata()));
+            ApplicationModel model = NacosInstanceConvertUtil.convert(instance, group, registryInfo, metadataConverter.convertMetadataInfo(instance.getServiceName(), instance.getMetadata()));
+            ServiceInstance serviceInstance = new ApplicationServiceInstance(model);
             serviceInstances.add(serviceInstance);
         }
         return serviceInstances;

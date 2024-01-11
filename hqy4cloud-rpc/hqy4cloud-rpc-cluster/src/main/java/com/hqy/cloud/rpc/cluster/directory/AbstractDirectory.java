@@ -2,9 +2,11 @@ package com.hqy.cloud.rpc.cluster.directory;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.RouterChain;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
@@ -20,15 +22,15 @@ import static com.hqy.cloud.rpc.CommonConstants.DEFAULT_RECONNECT_TASK_TRY_COUNT
  * Abstract implementation of Directory: Invoker list returned from this Directory's list method have been filtered by Routers <br>
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/30 15:52
+ * @date 2022/6/30
  */
 public abstract class AbstractDirectory<T> implements Directory<T> {
-
     private static final Logger log = LoggerFactory.getLogger(AbstractDirectory.class);
 
     protected final String providerServiceName;
+    protected final ApplicationModel providerModel;
     private volatile boolean destroyed = false;
-    protected volatile RPCModel consumerRpcModel;
+    protected volatile RpcModel rpcModel;
     protected RouterChain<T> routerChain;
 
     /**
@@ -60,8 +62,6 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
     private final ScheduledExecutorService connectivityExecutor;
 
-    private volatile ScheduledFuture<?> connectivityCheckFuture;
-
     /**
      * The max count of invokers for each reconnect task select to try to reconnect.
      */
@@ -73,14 +73,15 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private final int reconnectTaskPeriod;
 
 
-    public AbstractDirectory(String providerServiceName, Class<T> serviceClass, RPCModel rpcModel) {
+    public AbstractDirectory(String providerServiceName, Class<T> serviceClass, RpcModel rpcModel) {
         this(providerServiceName, rpcModel, RouterChain.buildChain(serviceClass, rpcModel));
     }
 
-    public AbstractDirectory(String providerServiceName, RPCModel rpcModel, RouterChain<T> routerChain) {
-        AssertUtil.notNull(rpcModel, "metadata is null.");
+    public AbstractDirectory(String providerServiceName, RpcModel rpcModel, RouterChain<T> routerChain) {
+        AssertUtil.notNull(rpcModel, "Rpc model is null.");
         this.providerServiceName = providerServiceName;
-        this.consumerRpcModel = rpcModel;
+        this.rpcModel = rpcModel;
+        this.providerModel = ApplicationModel.of(providerServiceName, rpcModel.getModel().getNamespace(), rpcModel.getModel().getGroup());
         setRouterChain(routerChain);
         connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("rpc-connectivity-scheduler", true));
         reconnectTaskTryCount = DEFAULT_RECONNECT_TASK_TRY_COUNT;
@@ -139,7 +140,13 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private void checkConnectivity() {
         // try to submit task, to ensure there is only one task at most for each directory
         if (checkConnectivityPermit.tryAcquire()) {
-            this.connectivityCheckFuture = connectivityExecutor.schedule(() -> {
+            // 1. pick invokers from invokersToReconnect
+            // limit max reconnectTaskTryCount, prevent this task hang up all the connectivityExecutor for long time
+            // ignore if is selected, invokersToTry's size is always smaller than reconnectTaskTryCount + 1
+            // 2. try to check the invoker's status
+            // 3. recover valid invoker
+            // 4. submit new task if it has more to recover
+            ScheduledFuture<?> connectivityCheckFuture = connectivityExecutor.schedule(() -> {
                 try {
                     if (isDestroyed()) {
                         return;
@@ -241,7 +248,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
 
 
     @Override
-    public List<Invoker<T>> list(RPCModel context) throws RpcException {
+    public List<Invoker<T>> list(Invocation invocation) throws RpcException {
         if (destroyed) {
             throw new RpcException("Directory of type " + this.getClass().getSimpleName() +  " already destroyed for service " + getProviderServiceName() + " from registry.");
         }
@@ -253,22 +260,29 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
             availableInvokers = new ArrayList<>(invokers);
         }
 
-        List<Invoker<T>> routedResult = doList(availableInvokers);
+        List<Invoker<T>> routedResult = doList(availableInvokers, invocation);
         if (routedResult.isEmpty()) {
             log.warn("No provider available after connectivity filter for the service " + getProviderServiceName()
                     + " All validInvokers' size: " + validInvokers.size()
                     + " All routed invokers' size: " + routedResult.size()
                     + " All invokers' size: " + invokers.size()
-                    + " from registry " + getConsumerModel().getServerAddress()
-                    + " on the consumer " + getConsumerModel().getHost()
+                    + " from registry " + getModel().getRegistryInfo()
+                    + " on the consumer " + getModel().getHost()
                     + ".");
         }
 
         return Collections.unmodifiableList(routedResult);
     }
 
+    @Override
+    public ApplicationModel getModel() {
+        return getRPCModel().getModel();
+    }
 
-
+    @Override
+    public ApplicationModel getProviderModel() {
+        return this.providerModel;
+    }
 
     public List<Invoker<T>> getInvokers() {
         return invokers;
@@ -293,9 +307,10 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     /**
      * choose conditional invokers.
      * @param availableInvokers invokers {@link Invoker}
+     * @param invocation        the request invoker condition
      * @return                  match condition invokers.
      */
-    protected abstract List<Invoker<T>> doList(List<Invoker<T>> availableInvokers);
+    protected abstract List<Invoker<T>> doList(List<Invoker<T>> availableInvokers, Invocation invocation);
 
 
 }

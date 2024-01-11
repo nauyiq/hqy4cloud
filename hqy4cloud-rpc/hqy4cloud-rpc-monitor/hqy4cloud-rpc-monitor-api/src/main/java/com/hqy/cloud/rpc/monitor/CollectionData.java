@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.monitor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -9,6 +10,8 @@ import java.io.Serializable;
  * @date 2022/7/20 16:32
  */
 public class CollectionData implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = -8097290602617530819L;
 
     private final String caller;

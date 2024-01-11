@@ -1,7 +1,7 @@
 package com.hqy.cloud.thrift.handler.support;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.rpc.core.Environment;
+import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.monitor.CollectionData;
 import com.hqy.cloud.rpc.monitor.Monitor;

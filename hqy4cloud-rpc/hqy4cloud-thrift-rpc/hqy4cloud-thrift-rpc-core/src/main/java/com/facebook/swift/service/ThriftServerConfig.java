@@ -388,14 +388,14 @@ public class ThriftServerConfig
     }
 
     /**
-     * Sets the name of the protocol that this server will speak. The available options by default
+     * Sets the name of the com.hqy.cloud.rpc.thrift.client.protocol that this server will speak. The available options by default
      * are 'binary' and 'compact'. Additional modules may install other options. Server startup will
-     * fail if you specify an unavailable protocol here.
+     * fail if you specify an unavailable com.hqy.cloud.rpc.thrift.client.protocol here.
      *
-     * @param protocolName The name of the protocol
+     * @param protocolName The name of the com.hqy.cloud.rpc.thrift.client.protocol
      * @return This {@link ThriftServerConfig} instance
      */
-    @Config("thrift.protocol")
+    @Config("thrift.com.hqy.cloud.rpc.thrift.client.protocol")
     public ThriftServerConfig setProtocolName(String protocolName)
     {
         this.protocolName = protocolName;

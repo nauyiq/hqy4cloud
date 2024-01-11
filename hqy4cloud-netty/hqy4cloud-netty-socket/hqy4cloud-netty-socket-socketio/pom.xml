@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy4cloud-netty-socket</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <relativePath>../pom.xml</relativePath>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hqy4cloud-netty-socket-socketio</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>hqy4cloud-netty-socket-socketio-core</module>
+        <module>hqy4cloud-netty-socket-socketio-api</module>
+        <module>hqy4cloud-netty-socket-socketio-springboot</module>
+    </modules>
+
+
+</project>

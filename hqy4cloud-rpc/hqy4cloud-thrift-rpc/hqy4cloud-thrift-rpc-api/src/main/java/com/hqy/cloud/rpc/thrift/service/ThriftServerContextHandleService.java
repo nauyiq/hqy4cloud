@@ -6,7 +6,7 @@ import com.hqy.cloud.rpc.thrift.support.ThriftServerContext;
  * ThriftServerContextHandleService.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/21 15:39
+ * @date 2022/7/21
  */
 public interface ThriftServerContextHandleService {
 

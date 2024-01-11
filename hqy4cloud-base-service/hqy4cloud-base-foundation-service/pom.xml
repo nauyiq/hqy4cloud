@@ -11,16 +11,10 @@
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>hqy4cloud-微服务的基础模块，提供通用的功能， 比如redis、异常采集等、rpc客户端、分布式id生成器</description>
+    <description>hqy4cloud-微服务的基础模块，提供通用的功能， 比如redis、异常采集等、分布式id生成器</description>
     <artifactId>hqy4cloud-base-foundation-service</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-client-starter</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-collection-service-api</artifactId>

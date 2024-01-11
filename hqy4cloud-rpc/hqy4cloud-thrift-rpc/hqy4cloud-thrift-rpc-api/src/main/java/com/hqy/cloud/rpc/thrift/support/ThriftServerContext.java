@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.thrift.support;
 
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 
 /**
  * ThriftServerContext.
@@ -10,13 +10,13 @@ import com.hqy.cloud.rpc.model.RPCModel;
  */
 public class ThriftServerContext extends Context {
 
-    private final RPCModel rpcModel;
+    private final RpcModel rpcModel;
     private final String communicationParty;
     private boolean bind = false;
     private final String methodName;
     private final String serviceTypeName;
 
-    public ThriftServerContext(String methodName, String serviceTypeName, String communicationParty, RPCModel rpcModel) {
+    public ThriftServerContext(String methodName, String serviceTypeName, String communicationParty, RpcModel rpcModel) {
         this.methodName = methodName;
         this.serviceTypeName = serviceTypeName;
         this.communicationParty = communicationParty;
@@ -43,7 +43,7 @@ public class ThriftServerContext extends Context {
         this.bind = bind;
     }
 
-    public RPCModel getRpcModel() {
+    public RpcModel getRpcModel() {
         return rpcModel;
     }
 

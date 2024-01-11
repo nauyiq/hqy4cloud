@@ -1,5 +1,7 @@
 package com.hqy.cloud.registry.cluster;
 
+import com.hqy.cloud.common.base.lang.StringConstants;
+
 /**
  * Registry Cluster Service.
  * @author qiyuan.hong
@@ -12,7 +14,9 @@ public interface ClusterService {
      * get registry cluster name.
      * @return cluster name
      */
-    String getClusterName();
+    default String getClusterName() {
+        return StringConstants.EMPTY;
+    }
 
 
 

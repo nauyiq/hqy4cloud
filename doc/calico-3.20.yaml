@@ -115,7 +115,7 @@ spec:
                     type: object
                   type: array
                 listenPort:
-                  description: ListenPort is the port where BGP protocol should listen.
+                  description: ListenPort is the port where BGP com.hqy.cloud.rpc.thrift.client.protocol should listen.
                     Defaults to 179
                   maximum: 65535
                   minimum: 1
@@ -590,7 +590,7 @@ spec:
                   [Default: Drop]'
                   type: string
                 deviceRouteProtocol:
-                  description: This defines the route protocol added to programmed device
+                  description: This defines the route com.hqy.cloud.rpc.thrift.client.protocol added to programmed device
                     routes, by default this will be RTPROT_BOOT when left blank.
                   type: integer
                 deviceRouteSourceAddress:
@@ -616,24 +616,24 @@ spec:
                   and CIDRs that Felix will allow incoming traffic to host endpoints
                   on irrespective of the security policy. This is useful to avoid
                   accidentally cutting off a host with incorrect configuration. For
-                  back-compatibility, if the protocol is not specified, it defaults
+                  back-compatibility, if the com.hqy.cloud.rpc.thrift.client.protocol is not specified, it defaults
                   to "tcp". If a CIDR is not specified, it will allow traffic from
                   all addresses. To disable all inbound host ports, use the value
                   none. The default value allows ssh access and DHCP. [Default: tcp:22,
                   udp:68, tcp:179, tcp:2379, tcp:2380, tcp:6443, tcp:6666, tcp:6667]'
                   items:
-                    description: ProtoPort is combination of protocol, port, and CIDR.
+                    description: ProtoPort is combination of com.hqy.cloud.rpc.thrift.client.protocol, port, and CIDR.
                       Protocol and port must be specified.
                     properties:
                       net:
                         type: string
                       port:
                         type: integer
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         type: string
                     required:
                       - port
-                      - protocol
+                      - com.hqy.cloud.rpc.thrift.client.protocol
                     type: object
                   type: array
                 failsafeOutboundHostPorts:
@@ -641,7 +641,7 @@ spec:
                   and CIDRs that Felix will allow outgoing traffic from host endpoints
                   to irrespective of the security policy. This is useful to avoid
                   accidentally cutting off a host with incorrect configuration. For
-                  back-compatibility, if the protocol is not specified, it defaults
+                  back-compatibility, if the com.hqy.cloud.rpc.thrift.client.protocol is not specified, it defaults
                   to "tcp". If a CIDR is not specified, it will allow traffic from
                   all addresses. To disable all outbound host ports, use the value
                   none. The default value opens etcd''s standard ports to ensure that
@@ -649,18 +649,18 @@ spec:
                   DNS. [Default: tcp:179, tcp:2379, tcp:2380, tcp:6443, tcp:6666,
                   tcp:6667, udp:53, udp:67]'
                   items:
-                    description: ProtoPort is combination of protocol, port, and CIDR.
+                    description: ProtoPort is combination of com.hqy.cloud.rpc.thrift.client.protocol, port, and CIDR.
                       Protocol and port must be specified.
                     properties:
                       net:
                         type: string
                       port:
                         type: integer
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         type: string
                     required:
                       - port
-                      - protocol
+                      - com.hqy.cloud.rpc.thrift.client.protocol
                     type: object
                   type: array
                 featureDetectOverride:
@@ -1282,12 +1282,12 @@ spec:
                           field.
                         pattern: ^.*
                         x-kubernetes-int-or-string: true
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         anyOf:
                           - type: integer
                           - type: string
                         description: "Protocol is an optional field that restricts the
-                        rule to only apply to traffic of a specific IP protocol. Required
+                        rule to only apply to traffic of a specific IP com.hqy.cloud.rpc.thrift.client.protocol. Required
                         if any of the EntityRules contain Ports (because ports only
                         apply to certain protocols). \n Must be one of these string
                         values: \"TCP\", \"UDP\", \"ICMP\", \"ICMPv6\", \"SCTP\",
@@ -1655,12 +1655,12 @@ spec:
                           field.
                         pattern: ^.*
                         x-kubernetes-int-or-string: true
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         anyOf:
                           - type: integer
                           - type: string
                         description: "Protocol is an optional field that restricts the
-                        rule to only apply to traffic of a specific IP protocol. Required
+                        rule to only apply to traffic of a specific IP com.hqy.cloud.rpc.thrift.client.protocol. Required
                         if any of the EntityRules contain Ports (because ports only
                         apply to certain protocols). \n Must be one of these string
                         values: \"TCP\", \"UDP\", \"ICMP\", \"ICMPv6\", \"SCTP\",
@@ -1995,7 +1995,7 @@ spec:
                         type: string
                       port:
                         type: integer
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         anyOf:
                           - type: integer
                           - type: string
@@ -2004,7 +2004,7 @@ spec:
                     required:
                       - name
                       - port
-                      - protocol
+                      - com.hqy.cloud.rpc.thrift.client.protocol
                     type: object
                   type: array
                 profiles:
@@ -2822,12 +2822,12 @@ spec:
                           field.
                         pattern: ^.*
                         x-kubernetes-int-or-string: true
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         anyOf:
                           - type: integer
                           - type: string
                         description: "Protocol is an optional field that restricts the
-                        rule to only apply to traffic of a specific IP protocol. Required
+                        rule to only apply to traffic of a specific IP com.hqy.cloud.rpc.thrift.client.protocol. Required
                         if any of the EntityRules contain Ports (because ports only
                         apply to certain protocols). \n Must be one of these string
                         values: \"TCP\", \"UDP\", \"ICMP\", \"ICMPv6\", \"SCTP\",
@@ -3195,12 +3195,12 @@ spec:
                           field.
                         pattern: ^.*
                         x-kubernetes-int-or-string: true
-                      protocol:
+                      com.hqy.cloud.rpc.thrift.client.protocol:
                         anyOf:
                           - type: integer
                           - type: string
                         description: "Protocol is an optional field that restricts the
-                        rule to only apply to traffic of a specific IP protocol. Required
+                        rule to only apply to traffic of a specific IP com.hqy.cloud.rpc.thrift.client.protocol. Required
                         if any of the EntityRules contain Ports (because ports only
                         apply to certain protocols). \n Must be one of these string
                         values: \"TCP\", \"UDP\", \"ICMP\", \"ICMPv6\", \"SCTP\",

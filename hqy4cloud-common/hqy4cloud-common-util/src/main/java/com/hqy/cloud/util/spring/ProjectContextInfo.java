@@ -68,6 +68,11 @@ public class ProjectContextInfo implements Serializable {
      */
     private ActuatorNode nodeType;
 
+    /**
+     * 版本revision
+     */
+    private String revision;
+
 
     /**
      * 全局上下文属性定义
@@ -183,6 +188,11 @@ public class ProjectContextInfo implements Serializable {
         log.info("##### Server Started OK. serviceName = {}", projectContextInfo.getNameEn());
         log.info("############################## ############### ############### ###############");
     }
+
+
+
+
+
 
 
     public void setProperties(String key, Object data) {

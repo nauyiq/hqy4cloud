@@ -9,7 +9,7 @@ import java.util.Map;
  * Invocation.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/6/29 11:20
+ * @date 2022/6/29
  */
 public interface Invocation {
 

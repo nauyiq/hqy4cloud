@@ -1,14 +1,14 @@
 package com.hqy.cloud.rpc.cluster.support;
 
+import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.ClusterInvoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
 import com.hqy.cloud.rpc.cluster.loadbalance.RandomLoadBalance;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,19 +18,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.hqy.cloud.rpc.CommonConstants.*;
 
 /**
- * AbstractClusterInvoker. {@link ClusterInvoker}
+ * AbstractClusterInvoker.
+ * @see com.hqy.cloud.rpc.cluster.ClusterInvoker
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 10:06
+ * @date 2022/7/13
  */
 public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
-
     private static final Logger log = LoggerFactory.getLogger(AbstractClusterInvoker.class);
 
     protected Directory<T> directory;
@@ -41,22 +42,22 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
-    private final String hashFactor;
-
     private volatile Invoker<T> stickyInvoker = null;
+
+    private volatile Map<String, Object> attachments;
 
     private int reselectCount = 10;
 
-    public AbstractClusterInvoker(Directory<T> directory, String hashFactor) {
-        this(directory, directory.getConsumerModel(), hashFactor);
+    public AbstractClusterInvoker(Directory<T> directory) {
+        this(directory, MapUtil.empty());
     }
 
-    public AbstractClusterInvoker(Directory<T> directory, RPCModel rpcModel, String hashFactor) {
+    public AbstractClusterInvoker(Directory<T> directory, Map<String, Object> attachments) {
         AssertUtil.notNull(directory, "Directory should not be null.");
         this.directory = directory;
-        this.hashFactor = hashFactor;
-        this.availableCheck = rpcModel.getParameter(RPC_CLUSTER_AVAILABLE_CHECK, DEFAULT_RPC_CLUSTER_AVAILABLE_CHECK);
+        this.availableCheck = getModel().getParameter(RPC_CLUSTER_AVAILABLE_CHECK, DEFAULT_RPC_CLUSTER_AVAILABLE_CHECK);
     }
+
 
     @Override
     public Class<T> getInterface() {
@@ -64,18 +65,15 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     @Override
-    public RPCModel getModel() {
-        return getDirectory().getConsumerModel();
+    public RpcModel getModel() {
+        return getDirectory().getRPCModel();
     }
 
     @Override
-    public RPCModel getConsumerModel() {
-        return getDirectory().getConsumerModel();
+    public RpcModel getConsumerModel() {
+        return getDirectory().getRPCModel();
     }
 
-    public String getHashFactor() {
-        return hashFactor;
-    }
 
     @Override
     public boolean isAvailable() {
@@ -105,9 +103,16 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     @Override
     public Object invoke(Invocation invocation) throws RpcException {
-        List<Invoker<T>> invokers = list(getModel(), hashFactor);
-        LoadBalance loadBalance =  initLoadBalance(invokers, invocation);
+        // Provider suitable nodes.
+        List<Invoker<T>> invokers = list(invocation);
+        invocation.addObjectAttachmentsIfAbsent(this.attachments);
+        // load balance select one node to invoker.
+        LoadBalance loadBalance = initLoadBalance(invokers, invocation);
         return doInvoke(invocation, invokers, loadBalance);
+    }
+
+    protected List<Invoker<T>> list(Invocation invocation) {
+        return getDirectory().list(invocation);
     }
 
     /**
@@ -164,7 +169,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
             return tInvoker;
         }
 
-        Invoker<T> invoker = loadBalance.select(invokers, getModel()  );
+        Invoker<T> invoker = loadBalance.select(invokers, getModel());
 
         //If the `invoker` is in the  `selected` or invoker is unavailable && availablecheck is true, reselect.
         boolean isSelected = selected != null && selected.contains(invoker);
@@ -320,9 +325,9 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         if (CollectionUtils.isEmpty(invokers)) {
             throw new RpcException(RpcException.NO_INVOKER_AVAILABLE_AFTER_FILTER, "Failed to invoke the method "
                     + invocation.getMethodName() + " in the service " + getInterface().getName()
-                    + ". No provider available for the service " + getDirectory().getConsumerModel().getName()
-                    + " from registry " + getDirectory().getConsumerModel().getRegistryAddress()
-                    + " on the consumer " + IpUtil.getHostAddress()
+                    + ". No provider available for the service " + getDirectory().getRPCModel().getName()
+                    + " from registry " + getDirectory().getModel().getRegistryInfo()
+                    + " on the consumer " + getDirectory().getModel().getHost()
                     + ". Please check if the providers have been started and registered.");
         }
     }
@@ -342,10 +347,4 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         return new RandomLoadBalance();
     }
 
-    protected List<Invoker<T>> list(RPCModel rpcModel, String hashFactor) throws RpcException {
-        if (StringUtils.isNotBlank(hashFactor) || !DEFAULT_HASH_FACTOR.equals(hashFactor)) {
-            rpcModel.setHashFactor(hashFactor);
-        }
-        return getDirectory().list(rpcModel);
-    }
 }

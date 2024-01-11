@@ -641,10 +641,10 @@ spec:
         ports:
         - containerPort: 9200
           name: 9200tcp2
-          protocol: TCP
+          com.hqy.cloud.rpc.thrift.client.protocol: TCP
         - containerPort: 9300
           name: 9300tcp2
-          protocol: TCP
+          com.hqy.cloud.rpc.thrift.client.protocol: TCP
         resources:
           limits:
             cpu: "1"
@@ -1047,7 +1047,7 @@ spec
         ports   <[]Object>              # 指定容器暴露的端口
             containerPort <integer> -required-  # 容器的监听端口
             name    <string>            # 为端口取名，该名称可以在service种被引用
-            protocol  <string>          # 指定协议，默认TCP
+            com.hqy.cloud.rpc.thrift.client.protocol  <string>          # 指定协议，默认TCP
             hostIP    <string>          # 绑定到宿主机的某个IP
             hostPort  <integer>         # 绑定到宿主机的端口
         readinessProbe <Object>         # 就绪性探测，确认就绪后提供服务
@@ -1364,7 +1364,7 @@ RPCMetadata:
   name: myservice
 spec:
   ports:
-  - protocol: TCP
+  - com.hqy.cloud.rpc.thrift.client.protocol: TCP
     port: 80
     targetPort: 80
     
@@ -1381,7 +1381,7 @@ RPCMetadata:
   name: mydb
 spec:
   ports:
-  - protocol: TCP
+  - com.hqy.cloud.rpc.thrift.client.protocol: TCP
     port: 3306
     targetPort: 3306
     
@@ -2076,11 +2076,11 @@ spec:
   ports:
   - name: http
     port: 8888
-    protocol: TCP
+    com.hqy.cloud.rpc.thrift.client.protocol: TCP
     targetPort: 8888
   - name: socket
     port: 10001
-    protocol: TCP
+    com.hqy.cloud.rpc.thrift.client.protocol: TCP
     targetPort: 10001
   selector:
     app: collector-service

@@ -10,7 +10,7 @@ import com.hqy.cloud.rpc.cluster.directory.Directory;
  * The ClusterInvoker implementation usually provides LB or HA policies, like FailoverClusterInvoker.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 10:02
+ * @date 2022/7/13
  */
 public interface ClusterInvoker<T> extends Invoker<T> {
 

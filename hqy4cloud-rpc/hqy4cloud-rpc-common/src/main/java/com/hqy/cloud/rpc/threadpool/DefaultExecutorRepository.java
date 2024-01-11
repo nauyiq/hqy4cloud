@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.threadpool;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +23,12 @@ import static com.hqy.cloud.rpc.CommonConstants.RPC_COMMON_SCHEDULED_SERVICE_THR
 public class DefaultExecutorRepository implements ExecutorRepository {
     private final static Logger log = LoggerFactory.getLogger(DefaultExecutorRepository.class);
 
-    private final RPCModel rpcModel;
+    private final RpcModel rpcModel;
     private final Object lock = new Object();
     private final Map<String, ExecutorService> repository = MapUtil.newConcurrentHashMap(4);
     private volatile ScheduledExecutorService commonScheduledExecutorService;
 
-    public DefaultExecutorRepository(RPCModel rpcModel) {
+    public DefaultExecutorRepository(RpcModel rpcModel) {
         this.rpcModel = rpcModel;
     }
 

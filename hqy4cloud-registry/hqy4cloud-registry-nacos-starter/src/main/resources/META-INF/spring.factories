@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hqy.cloud.registry.nacos.starter.autoconfigure.NacosApplicationAutoConfiguration,\
+com.hqy.cloud.registry.nacos.starter.autoconfigure.NacosRegistryBindingAutoConfiguration

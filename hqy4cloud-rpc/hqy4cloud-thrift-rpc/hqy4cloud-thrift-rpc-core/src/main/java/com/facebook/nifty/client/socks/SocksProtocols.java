@@ -22,7 +22,7 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import java.net.InetAddress;
 
 /**
- * static helper for dealing with socks protocol.
+ * static helper for dealing with socks com.hqy.cloud.rpc.thrift.client.protocol.
  *
  * @see <a href="http://en.wikipedia.org/wiki/SOCKS">http://en.wikipedia.org/wiki/SOCKS</a>
  * @see <a href="http://www.openssh.org/txt/socks4.protocol">SOCKS Protocol Version 4</a>

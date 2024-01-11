@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.cluster.loadbalance;
 
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.model.RPCModel;
+import com.hqy.cloud.rpc.model.RpcModel;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -24,11 +24,11 @@ public abstract class AbstractLoadBalance implements LoadBalance {
      * @param rpcModel    refer rpcContext
      * @return              selected invoker.
      */
-    protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RPCModel rpcModel);
+    protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, RpcModel rpcModel);
 
 
     @Override
-    public <T> Invoker<T> select(List<Invoker<T>> invokers, RPCModel rpcModel) {
+    public <T> Invoker<T> select(List<Invoker<T>> invokers, RpcModel rpcModel) {
         if (CollectionUtils.isEmpty(invokers)) {
             return null;
         }
@@ -42,7 +42,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
      * @return weight
      */
     protected int getWeight(Invoker<?> invoker) {
-        RPCModel rpcModel = invoker.getModel();
+        RpcModel rpcModel = invoker.getModel();
         int weight = rpcModel.getWeight();
         if (weight > 0) {
             long timestamp = rpcModel.serverStartTimestamp();

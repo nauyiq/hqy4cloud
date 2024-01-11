@@ -4,16 +4,18 @@ import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.AbstractCluster;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 
+import java.util.Map;
+
 /**
  * {@link FailFastClusterInvoker}
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/7/13 13:50
+ * @date 2022/7/13
  */
 public class FailFastCluster extends AbstractCluster {
 
     @Override
-    public <T> Invoker<T> doJoin(Directory<T> directory, String hashFactor) {
-        return new FailFastClusterInvoker<>(directory, hashFactor);
+    public <T> Invoker<T> doJoin(Directory<T> directory, Map<String, Object> attachments) {
+        return new FailFastClusterInvoker<>(directory, attachments);
     }
 }
