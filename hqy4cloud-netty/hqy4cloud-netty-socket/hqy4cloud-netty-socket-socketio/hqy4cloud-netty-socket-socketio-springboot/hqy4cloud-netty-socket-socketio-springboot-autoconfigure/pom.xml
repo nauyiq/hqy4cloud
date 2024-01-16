@@ -16,7 +16,17 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-netty-socket-socketio-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-nacos</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-netty-socket-socketio-cluster</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

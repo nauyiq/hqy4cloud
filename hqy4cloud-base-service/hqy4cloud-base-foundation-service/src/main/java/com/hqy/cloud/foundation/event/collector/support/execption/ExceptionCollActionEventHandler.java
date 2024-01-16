@@ -3,12 +3,11 @@ package com.hqy.cloud.foundation.event.collector.support.execption;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.foundation.event.ExceptionCollActionEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -23,7 +22,6 @@ import java.util.Set;
  * @date 2022/3/7 14:47
  */
 @Slf4j
-@RefreshScope
 public class ExceptionCollActionEventHandler {
     private static final Set<String> IGNORE_EXCEPTION_CLASS_LIST = new HashSet<>();
 
@@ -51,7 +49,7 @@ public class ExceptionCollActionEventHandler {
             return;
         }
         // 判断是否需要采集'采集服务'的异常
-        if (SpringContextHolder.getProjectContextInfo().getNameEn().equals(MicroServiceConstants.COMMON_COLLECTOR) &&
+        if (ProjectContext.getContextInfo().getNameEn().equals(MicroServiceConstants.COMMON_COLLECTOR) &&
                 ServerSwitcher.ENABLE_COLLECT_COLLECTION_SERVICE_EXCEPTION.isOff()) {
             return;
         }

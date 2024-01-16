@@ -6,10 +6,10 @@ import com.hqy.cloud.actuator.core.Indicator;
 import com.hqy.cloud.common.base.config.ConfigConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
-import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.IpUtil;
+import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.cloud.util.web.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +82,7 @@ public class MicroServiceDruidMonitorUrlEndpoint implements Indicator<String> {
     }
 
     private String getLocalUrl() {
-        ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+        ProjectContextInfo info = ProjectContext.getContextInfo();
         UsingIpPort uip = info.getUip();
         return StringConstants.Host.HTTP + IpUtil.getHostAddress() + StrUtil.COLON + uip.getPort() + StrUtil.SLASH + ID;
     }

@@ -4,7 +4,6 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.foundation.common.bind.CloudSecret;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.time.Duration;
 
@@ -16,7 +15,6 @@ import static com.hqy.cloud.web.upload.UploadFileService.DEFAULT_FOLDER;
  * @date 2023/5/25 10:24
  */
 @Data
-@RefreshScope
 @ConfigurationProperties(prefix = "hqy4cloud.upload")
 public class UploadFileProperties {
 

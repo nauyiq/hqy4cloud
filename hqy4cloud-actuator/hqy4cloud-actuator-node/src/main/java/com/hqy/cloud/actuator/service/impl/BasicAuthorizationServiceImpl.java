@@ -3,15 +3,14 @@ package com.hqy.cloud.actuator.service.impl;
 import com.hqy.cloud.account.service.RemoteAuthService;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
-import com.hqy.cloud.foundation.common.authentication.UsernamePasswordAuthentication;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
+import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.util.authentication.UsernamePasswordAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-@RefreshScope
 @RequiredArgsConstructor
 public class BasicAuthorizationServiceImpl implements BasicAuthorizationService {
     @Value("${spring.boot.admin.client.username}")
@@ -42,7 +40,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         }
         // 采用账号RPC进行认证
         if (CommonSwitcher.ENABLE_ACCOUNT_RPC_QUERY_ACTUATOR_BASIC_AUTHORIZATION.isOn()) {
-            RemoteAuthService authService = RPCClient.getRemoteService(RemoteAuthService.class);
+            RemoteAuthService authService = RpcClient.getRemoteService(RemoteAuthService.class);
             CommonResultStruct struct = authService.basicAuth(basicAuthorization.getUsername(), basicAuthorization.getUsername());
             return struct.result;
         }

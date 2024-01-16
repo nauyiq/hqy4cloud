@@ -13,8 +13,8 @@ import com.hqy.cloud.datasource.core.SqlExceptionType;
 import com.hqy.cloud.foundation.event.alerter.AlerterHolder;
 import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
 import com.hqy.cloud.notice.email.EmailContent;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.event.notice.NotificationType;
@@ -45,7 +45,7 @@ public class ExtendDruidStatFilter extends StatFilter {
     }
 
     private void handlerErrorSql(StatementProxy statement, String sql, Throwable error) {
-        if (ProjectContextInfo.isJustStarted(1)) {
+        if (ProjectContext.getContextInfo().isJustStarted(1)) {
             // 系统刚启动, 忽略异常sql采集
             return;
         }
@@ -59,7 +59,7 @@ public class ExtendDruidStatFilter extends StatFilter {
                 AlerterHolder.getInstance().notify(EventType.SQL, NotificationType.EMAIL, emailContent);
             }
 
-            if (MicroServiceConstants.COMMON_COLLECTOR.equals(SpringContextHolder.getProjectContextInfo().getNameEn())) {
+            if (MicroServiceConstants.COMMON_COLLECTOR.equals(ProjectContext.getContextInfo().getNameEn())) {
                 // 采集服务的错误sql不进行采集
                 return;
             }
@@ -78,7 +78,7 @@ public class ExtendDruidStatFilter extends StatFilter {
 
     @Override
     protected void handleSlowSql(StatementProxy statementProxy) {
-        if (ProjectContextInfo.isJustStarted(NumberConstants.FIVE)) {
+        if (ProjectContext.getContextInfo().isJustStarted(NumberConstants.FIVE)) {
             // 系统刚启动, 忽略慢sql采集
             return;
         }
@@ -94,7 +94,7 @@ public class ExtendDruidStatFilter extends StatFilter {
                 AlerterHolder.getInstance().notify(EventType.SQL, NotificationType.EMAIL, emailContent);
             }
 
-            if (MicroServiceConstants.COMMON_COLLECTOR.equals(SpringContextHolder.getProjectContextInfo().getNameEn())) {
+            if (MicroServiceConstants.COMMON_COLLECTOR.equals(ProjectContext.getContextInfo().getNameEn())) {
                 // 采集服务的慢sql不进行采集
                 return;
             }

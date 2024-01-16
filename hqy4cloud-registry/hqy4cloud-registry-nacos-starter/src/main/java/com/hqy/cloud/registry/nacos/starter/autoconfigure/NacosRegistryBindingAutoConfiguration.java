@@ -5,10 +5,14 @@ import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosDiscoveryClientConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
+import com.hqy.cloud.registry.common.deploy.DeployState;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.cloud.registry.config.autoconfigure.AutoApplicationDeployerConfiguration;
+import com.hqy.cloud.registry.config.autoconfigure.ApplicationDeployerModelConfiguration;
+import com.hqy.cloud.registry.context.ProjectContext;
+import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -26,10 +30,11 @@ import java.util.Map;
  * @version 1.0
  * @date 2024/1/5
  */
-@Configuration
+@Slf4j
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnNacosDiscoveryEnabled
-@AutoConfigureAfter({AutoApplicationDeployerConfiguration.class, NacosApplicationAutoConfiguration.class})
+@AutoConfigureAfter({ApplicationDeployerModelConfiguration.class, NacosApplicationAutoConfiguration.class})
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class, CommonsClientAutoConfiguration.class, NacosDiscoveryClientConfiguration.class})
 public class NacosRegistryBindingAutoConfiguration {
 
@@ -37,12 +42,16 @@ public class NacosRegistryBindingAutoConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnBean({NacosDiscoveryProperties.class, NacosServiceManager.class, ApplicationModel.class})
     @ConditionalOnProperty(value = {"spring.cloud.nacos.discovery.watch.enabled"}, matchIfMissing = true)
-    public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceManager nacosServiceManager, ApplicationModel applicationModel) {
+    public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceManager nacosServiceManager,
+                                 ApplicationModel applicationModel, ProjectContext projectContext) {
+        DeployState state = projectContext.deployer().getState();
         MetadataInfo metadataInfo = applicationModel.getMetadataInfo();
         Map<String, String> metadataMap = metadataInfo.getMetadataMap();
         Map<String, String> metadata = nacosDiscoveryProperties.getMetadata();
         metadata.putAll(metadataMap);
         nacosDiscoveryProperties.setMetadata(metadata);
+        log.info("Deploy metadata info to nacos, state: {}.", state);
+        log.info("Metadata:{}.", JsonUtil.toJson(metadata));
         return new NacosWatch(nacosServiceManager, nacosDiscoveryProperties);
     }
 

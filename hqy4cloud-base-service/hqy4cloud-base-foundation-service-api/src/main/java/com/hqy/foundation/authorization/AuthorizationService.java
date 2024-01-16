@@ -9,18 +9,18 @@ public interface AuthorizationService {
 
     /**
      * 生成验证secret
-     * @param applicationName 服务名
-     * @param bizId           业务id
+     * @param authorization   认证对象
      * @return                authorization token
      */
-    String getAuthorization(String applicationName, String bizId);
+    <T> String encryptAuthorization(T authorization);
 
     /**
      * 解密authorization, 并且返回业务id
-     * @param authorization 认证token
-     * @return              bizId
+     * @param authorization      认证token
+     * @param authorizationClass 解密后的认证类型
+     * @return                   解密后的对象
      */
-    String decryptAuthorization(String authorization);
+    <T> T decryptAuthorization(String authorization, Class<T> authorizationClass);
 
 
 }

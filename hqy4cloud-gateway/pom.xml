@@ -21,20 +21,23 @@
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-netty-socket-socketio-cluster</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-security</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -42,14 +45,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-collection-service-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

@@ -1,8 +1,6 @@
 package com.hqy.cloud.actuator.service.impl;
 
 import cn.hutool.core.map.MapUtil;
-import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.cloud.actuator.core.GradeSwitcherListener;
 import com.hqy.cloud.actuator.model.MicroServerSwitcherInfo;
 import com.hqy.cloud.actuator.server.GradeSwitcherCenter;
@@ -12,12 +10,11 @@ import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.AbstractSwitcher;
+import com.hqy.cloud.registry.api.Registry;
+import com.hqy.cloud.registry.api.ServiceInstance;
+import com.hqy.cloud.registry.common.metadata.MetadataInfo;
+import com.hqy.cloud.registry.common.model.PubMode;
 import com.hqy.cloud.rpc.CommonConstants;
-import com.hqy.cloud.rpc.nacos.discovery.NacosDiscovery;
-import com.hqy.cloud.rpc.nacos.naming.NamingServiceWrapper;
-import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,32 +34,30 @@ import static com.hqy.cloud.common.base.lang.StringConstants.PROVIDER;
 @Service
 @RequiredArgsConstructor
 public class MicroServiceGradeManageServiceImpl implements MicroServiceGradeManageService {
-    private final NacosDiscovery nacosDiscovery;
+    private final Registry registry;
 
     @Override
     public Map<String, Object> getServerGradeInfo() {
-        Instance selfInstance = nacosDiscovery.getSelfInstance();
-        if (selfInstance == null) {
+        ServiceInstance instance = registry.getInstance();
+        if (instance == null) {
             log.warn("Failed execute to get self instance.");
             return MapUtil.empty();
         }
-        return convert(selfInstance);
+        return convert(instance);
     }
 
     @Override
     public void changeServerPubModeValue(int grayOrWhiteValue) {
-        Instance selfInstance = nacosDiscovery.getSelfInstance();
-        ProjectContextInfo contextInfo = SpringContextHolder.getProjectContextInfo();
-        if (selfInstance == null) {
-            log.error("Can not found self instance. info: {}.", JsonUtil.toJson(contextInfo.getUip()));
+        ServiceInstance instance = registry.getInstance();
+        if (instance == null) {
+            log.warn("Failed execute to get self instance.");
             return;
         }
-        NamingServiceWrapper wrapper = nacosDiscovery.getServiceWrapper();
         try {
-            Map<String, String> metadata = selfInstance.getMetadata();
-            metadata.put(CommonConstants.PUB_MODE, grayOrWhiteValue + "");
-            wrapper.updateInstance(contextInfo.getNameEn(), selfInstance);
-        } catch (NacosException e) {
+            MetadataInfo metadata = instance.getMetadata();
+            metadata.setPubMode(PubMode.of(grayOrWhiteValue));
+            registry.update(instance.getApplicationModel());
+        } catch (Exception e) {
             log.error("Failed execute to change server pubMode.", e);
         }
     }
@@ -92,15 +87,10 @@ public class MicroServiceGradeManageServiceImpl implements MicroServiceGradeMana
         queryListener.onGradeChange(microServerSwitcherInfo);
     }
 
-    private Map<String, Object> convert(Instance instance) {
+    private Map<String, Object> convert(ServiceInstance instance) {
         HashMap<String, Object> resultMap = MapUtil.newHashMap(8);
-        Map<String, String> metadata = instance.getMetadata();
-        String serviceName = instance.getServiceName();
-        String[] split = serviceName.split(StringConstants.Symbol.AT_AT);
-        if (split.length == 2) {
-            resultMap.put(CommonConstants.GROUP, split[0]);
-            serviceName = split[1];
-        }
+        Map<String, String> metadata = instance.getMetadata().getMetadataMap();
+        String serviceName = instance.gerServiceName();
         resultMap.put("name", serviceName);
         resultMap.put("alias", MicroServiceConstants.ALIAS_MAP.getOrDefault(serviceName, StringConstants.UNKNOWN));
         resultMap.put(CommonConstants.ACTUATOR_TYPE, metadata.get(CommonConstants.ACTUATOR_TYPE).equals(ActuatorNode.CONSUMER.name()) ? CONSUMER : PROVIDER);

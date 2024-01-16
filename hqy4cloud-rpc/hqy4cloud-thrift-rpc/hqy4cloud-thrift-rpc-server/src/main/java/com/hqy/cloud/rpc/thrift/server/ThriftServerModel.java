@@ -24,7 +24,7 @@ public class ThriftServerModel {
         this.thriftServerProperties = thriftServerProperties;
     }
 
-    public ThriftServerModel(RpcModel rpcModel, List<RPCService> thriftRpcServices, List<ThriftServerContextHandleService> thriftServerContextHandleServices, ThriftServerProperties thriftServerProperties) {
+    public ThriftServerModel(RpcModel rpcModel, ThriftServerProperties thriftServerProperties, List<RPCService> thriftRpcServices, List<ThriftServerContextHandleService> thriftServerContextHandleServices) {
         this.rpcModel = rpcModel;
         this.thriftRpcServices = thriftRpcServices;
         this.thriftServerProperties = thriftServerProperties;

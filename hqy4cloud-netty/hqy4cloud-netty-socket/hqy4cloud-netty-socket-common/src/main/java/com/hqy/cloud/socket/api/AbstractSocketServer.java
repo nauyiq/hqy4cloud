@@ -6,8 +6,7 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
 
-import static com.hqy.cloud.socket.SocketConstants.ENABLED_SOCKET_SERVER_CLUSTER;
-import static com.hqy.cloud.socket.SocketConstants.SOCKET_SERVER_CONTEXT;
+import static com.hqy.cloud.socket.SocketConstants.*;
 
 /**
  * @author qiyuan.hong
@@ -39,13 +38,20 @@ public abstract class AbstractSocketServer implements SocketServer {
         return address;
     }
 
+    @Override
+    public SocketServerMetadata getMetadata() {
+        return getInfo().getMetadata();
+    }
+
     protected void initialize() {
         String applicationName = model.getApplicationName();
         // 是否集群启动.
         boolean isCluster = model.getParameter(ENABLED_SOCKET_SERVER_CLUSTER, true);
         // 获取context
         String context = model.getParameter(SOCKET_SERVER_CONTEXT, StringConstants.EMPTY);
-        SocketServerMetadata metadata = new SocketServerMetadata(bindPort, context, isCluster);
+        // 获取cluster 类型
+        String clusterType = model.getParameter(SOCKET_CLUSTER_TYPE);
+        SocketServerMetadata metadata = new SocketServerMetadata(bindPort, clusterType, context, isCluster);
 
         this.address = model.getIp() + StrUtil.COLON + bindPort;
         this.socketServerInfo = new SocketServerInfo(applicationName, model.getId(), metadata);

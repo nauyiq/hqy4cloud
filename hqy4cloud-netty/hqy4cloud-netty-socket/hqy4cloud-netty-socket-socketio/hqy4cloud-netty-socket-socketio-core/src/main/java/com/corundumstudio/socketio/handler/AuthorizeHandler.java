@@ -17,7 +17,7 @@ package com.corundumstudio.socketio.handler;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.ack.AckManager;
-import com.corundumstudio.socketio.ex.NettyContextHelper;
+import com.corundumstudio.socketio.ex.SocketIoUtil;
 import com.corundumstudio.socketio.namespace.Namespace;
 import com.corundumstudio.socketio.namespace.NamespacesHub;
 import com.corundumstudio.socketio.protocol.AuthPacket;
@@ -108,7 +108,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                     //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
                     //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
                     channel.attr(EncoderHandler.ORIGIN).set(origin);
-                    channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "error connectPath."));
+                    channel.writeAndFlush(SocketIoUtil.createHttpErrorMessage(0, "error connectPath."));
                 } else {
                     HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
                     channel.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
@@ -143,7 +143,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                 (InetSocketAddress)channel.localAddress(),
                 req.uri(), origin != null && !"null".equalsIgnoreCase(origin));
         //获取客户端真实ip
-        String requestIp = NettyContextHelper.getRequestIp(req);
+        String requestIp = SocketIoUtil.getRequestIp(req);
         data.setRealIp(requestIp);
         log.info("@@@ [准备校验握手数据] ip:{}, userAgent:{}", requestIp, data.getUserAgent());
 
@@ -159,7 +159,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                 //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
                 channel.attr(EncoderHandler.ORIGIN).set(origin);
                 HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-                channel.writeAndFlush(NettyContextHelper.
+                channel.writeAndFlush(SocketIoUtil.
                         createHttpErrorMessage(ResultCode.INVALID_ACCESS_TOKEN.code, ResultCode.INVALID_ACCESS_TOKEN.message));
                 return false;
             } else {
@@ -185,7 +185,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
             if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
                 //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
                 channel.attr(EncoderHandler.ORIGIN).set(origin);
-                channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Got no transports for request."));
+                channel.writeAndFlush(SocketIoUtil.createHttpErrorMessage(0, "Got no transports for request."));
             } else {
                 //返回response并且关闭连接.
                 HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
@@ -197,7 +197,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
         Transport transport = Transport.byName(transportValue.get(0));
         if (!configuration.getTransports().contains(transport)) {
             channel.attr(EncoderHandler.ORIGIN).set(origin);
-            channel.writeAndFlush(NettyContextHelper.createHttpErrorMessage(0, "Transport unknown"));
+            channel.writeAndFlush(SocketIoUtil.createHttpErrorMessage(0, "Transport unknown"));
             return false;
         }
         //channel.remoteAddress().toString(): 为了不持有此channel的属性对象，导致后续不释放。

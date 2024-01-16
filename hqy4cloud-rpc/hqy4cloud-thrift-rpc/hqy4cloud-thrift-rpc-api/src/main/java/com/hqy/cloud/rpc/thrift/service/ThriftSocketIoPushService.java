@@ -43,9 +43,19 @@ public interface ThriftSocketIoPushService extends RPCService {
      * 根据不同用法分发不同的消息
      * @param eventName  事件名
      * @param messageMap 消息map, key -> bizId, value -> 消息体
+     * @return           结果
      */
     @ThriftMethod
-    void syncPushMultiples(@ThriftField(1)String eventName, @ThriftField(2) Map<String, String> messageMap);
+    boolean syncPushMultiples(@ThriftField(1)String eventName, @ThriftField(2) Map<String, String> messageMap);
+
+    /**
+     * 同步广播, 推送事件给所有客户端
+     * @param eventName      事件名
+     * @param wsMessageJson  事件内容json
+     * @return               是否广播成功
+     */
+    @ThriftMethod
+    boolean syncBroadcast(@ThriftField(1)String eventName, @ThriftField(2) String wsMessageJson);
 
 
     /**
@@ -79,5 +89,15 @@ public interface ThriftSocketIoPushService extends RPCService {
      */
     @ThriftMethod(oneway = true)
     void asyncPushMultiples(@ThriftField(1)String eventName, @ThriftField(2) Map<String, String> messageMap);
+
+
+    /**
+     * 异步广播, 推送事件给所有客户端
+     * @param eventName      事件名
+     * @param wsMessageJson  事件内容json
+     * @return               是否广播成功
+     */
+    @ThriftMethod(oneway = true)
+    void asyncBroadcast(@ThriftField(1)String eventName, @ThriftField(2) String wsMessageJson);
 
 }

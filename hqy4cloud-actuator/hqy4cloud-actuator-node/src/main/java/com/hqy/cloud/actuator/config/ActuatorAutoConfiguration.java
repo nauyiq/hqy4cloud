@@ -12,7 +12,7 @@ import com.hqy.cloud.actuator.service.MicroServiceGradeManageService;
 import com.hqy.cloud.actuator.service.impl.BasicAuthorizationServiceImpl;
 import com.hqy.cloud.actuator.service.impl.MicroServiceGradeManageServiceImpl;
 import com.hqy.cloud.common.swticher.AbstractSwitcher;
-import com.hqy.cloud.rpc.nacos.discovery.NacosDiscovery;
+import com.hqy.cloud.registry.api.Registry;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
@@ -25,7 +25,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -44,8 +43,8 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
     private final SwitcherConfigProperties switcherConfigProperties;
 
     @Bean
-    public MicroServiceGradeManageService microServiceGradeManageService(NacosDiscovery nacosDiscovery) {
-        return new MicroServiceGradeManageServiceImpl(nacosDiscovery);
+    public MicroServiceGradeManageService microServiceGradeManageService(Registry registry) {
+        return new MicroServiceGradeManageServiceImpl(registry);
     }
 
     @Bean

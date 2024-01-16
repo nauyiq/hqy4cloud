@@ -1,6 +1,7 @@
 package com.hqy.cloud.registry.context;
 
 import com.hqy.cloud.registry.api.Registry;
+import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
 import com.hqy.cloud.registry.cluster.MasterElectionService;
 import com.hqy.cloud.registry.cluster.support.ClusterServiceNotifyListener;
 import com.hqy.cloud.registry.common.context.Lifecycle;
@@ -29,7 +30,7 @@ public class RegistryContext implements Lifecycle {
     private final ApplicationModel model;
     private final Registry registry;
     private final MasterElectionService masterElectionService;
-    private final Map<String, DeployModel> childDeployModels = new ConcurrentHashMap<>();
+    private static final Map<String, DeployModel> CHILD_DEPLOY_MODELS = new ConcurrentHashMap<>();
 
 
     public RegistryContext(ApplicationModel model, Registry registry, MasterElectionService masterElectionService) {
@@ -38,9 +39,9 @@ public class RegistryContext implements Lifecycle {
         this.masterElectionService = masterElectionService;
     }
 
-    public void addDeployModel(DeployModel deployModel) {
+    public static void addDeployModel(DeployModel deployModel) {
         AssertUtil.notNull(deployModel, "Deploy model should not be null.");
-        childDeployModels.put(deployModel.getModelName(), deployModel);
+        CHILD_DEPLOY_MODELS.put(deployModel.getModelName(), deployModel);
     }
 
     @Override
@@ -52,8 +53,8 @@ public class RegistryContext implements Lifecycle {
     public void destroy() {
         try {
             this.registry.destroy();
-            if (!this.childDeployModels.isEmpty()) {
-                childDeployModels.values().forEach(DeployModel::destroy);
+            if (!CHILD_DEPLOY_MODELS.isEmpty()) {
+                CHILD_DEPLOY_MODELS.values().forEach(DeployModel::destroy);
             }
         } catch (Exception e) {
             log.error("Failed execute to destroy Registry lifecycle, cause: {}", e.getMessage(), e);
@@ -62,9 +63,9 @@ public class RegistryContext implements Lifecycle {
 
     @Override
     public void initialize() {
-        List<DeployModel> models = childDeployModels.values().stream().sorted(Comparator.comparingInt(s -> s.getMetaDataClaim().getPriority())).toList();
+        List<DeployModel> models = CHILD_DEPLOY_MODELS.values().stream().sorted(Comparator.comparingInt(s -> s.getMetaDataClaim().getPriority())).toList();
         // init all models
-        if (!this.childDeployModels.isEmpty()) {
+        if (!CHILD_DEPLOY_MODELS.isEmpty()) {
             models.forEach(DeployModel::initialize);
         }
         // init all models metadata
@@ -79,9 +80,9 @@ public class RegistryContext implements Lifecycle {
     @Override
     public void start() {
         // register master listener.
-        registry.subscribe(registry.getInstance(), new ClusterServiceNotifyListener(masterElectionService));
+        registry.subscribe(new ApplicationServiceInstance(model), new ClusterServiceNotifyListener(masterElectionService));
         // start models
-        childDeployModels.values().forEach(DeployModel::start);
+        CHILD_DEPLOY_MODELS.values().forEach(DeployModel::start);
     }
 
     @Override

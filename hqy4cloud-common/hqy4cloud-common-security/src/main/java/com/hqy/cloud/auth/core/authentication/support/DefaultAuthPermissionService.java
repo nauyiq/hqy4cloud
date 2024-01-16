@@ -5,7 +5,6 @@ import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import java.util.List;
  * @version 1.0
  * @date 2022/10/10 14:28
  */
-@RefreshScope
 public class DefaultAuthPermissionService extends AbstractAuthPermissionService {
 
     private final ManualWhiteIpService manualWhiteIpService;

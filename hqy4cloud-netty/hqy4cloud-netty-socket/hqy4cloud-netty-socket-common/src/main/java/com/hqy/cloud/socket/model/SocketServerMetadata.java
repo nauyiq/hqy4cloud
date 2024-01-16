@@ -20,6 +20,11 @@ public class SocketServerMetadata implements MetadataService {
     private int port;
 
     /**
+     * cluster type
+     */
+    private String clusterType;
+
+    /**
      * socketIo namespace contextPath.
      */
     private String contextPath;
@@ -29,11 +34,14 @@ public class SocketServerMetadata implements MetadataService {
      */
     private boolean cluster;
 
+
+
     public SocketServerMetadata() {
     }
 
-    public SocketServerMetadata(int port, String contextPath, boolean cluster) {
+    public SocketServerMetadata(int port, String clusterType, String contextPath, boolean cluster) {
         this.port = port;
+        this.clusterType = clusterType;
         this.contextPath = contextPath;
         this.cluster = cluster;
     }
@@ -45,6 +53,10 @@ public class SocketServerMetadata implements MetadataService {
                 ", contextPath='" + contextPath + '\'' +
                 ", cluster=" + cluster +
                 '}';
+    }
+
+    public String getClusterType() {
+        return clusterType;
     }
 
     public int getPort() {

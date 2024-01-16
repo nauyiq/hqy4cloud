@@ -16,13 +16,14 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-auth-core</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>org.apache.bval</groupId>
-                    <artifactId>bval-jsr303</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.springframework.security</groupId>
                     <artifactId>spring-security-oauth2-authorization-server</artifactId>
@@ -39,11 +40,6 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-web-service</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
         <dependency>

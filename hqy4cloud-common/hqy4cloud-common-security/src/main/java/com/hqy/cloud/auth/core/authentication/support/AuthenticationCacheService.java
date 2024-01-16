@@ -6,10 +6,10 @@ import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.auth.base.dto.ResourceConfigDTO;
 import com.hqy.cloud.auth.base.dto.RoleAuthenticationDTO;
 import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;
-import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.foundation.cache.service.RedisCacheDataService;
 import com.hqy.cloud.foundation.cache.service.RedisHashCacheDataService;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ public class AuthenticationCacheService extends RedisHashCacheDataService<Authen
 
     @Override
     protected List<AuthenticationStruct> getDataBySource(List<String> roles) {
-        RemoteAuthService remoteAuthService = RPCClient.getRemoteService(RemoteAuthService.class);
+        RemoteAuthService remoteAuthService = RpcClient.getRemoteService(RemoteAuthService.class);
         List<AuthenticationStruct> resources = remoteAuthService.getAuthoritiesResourcesByRoles(roles);
         if (CollectionUtils.isEmpty(resources)) {
             return Collections.emptyList();
@@ -49,7 +49,7 @@ public class AuthenticationCacheService extends RedisHashCacheDataService<Authen
         if (StringUtils.isBlank(role) || Objects.isNull(cache)) {
             return false;
         }
-        RemoteAuthService remoteAuthService = RPCClient.getRemoteService(RemoteAuthService.class);
+        RemoteAuthService remoteAuthService = RpcClient.getRemoteService(RemoteAuthService.class);
         remoteAuthService.updateAuthoritiesResource(role, cache.resources);
         return true;
     }

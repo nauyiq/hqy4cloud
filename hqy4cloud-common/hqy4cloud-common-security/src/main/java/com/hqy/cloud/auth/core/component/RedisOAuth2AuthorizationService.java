@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.ProjectExecutors;
 import lombok.RequiredArgsConstructor;
@@ -199,7 +200,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
     }
 
     private String buildKey(String type, String id) {
-        return String.format("%s::%s::%s::%s", AUTHORIZATION, Environment.getInstance().getEnvironment(), type, id);
+        return String.format("%s::%s::%s::%s", AUTHORIZATION, ProjectContext.getContextInfo().getEnv(), type, id);
     }
 
     private static boolean isCode(OAuth2Authorization authorization) {

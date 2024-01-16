@@ -1,17 +1,12 @@
 package com.hqy.cloud.netty.websocket.session;
 
-import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.netty.http.FullHttpRequestProcessor;
 import com.hqy.cloud.netty.websocket.base.HandshakeData;
 import com.hqy.cloud.netty.websocket.base.enums.WsMessageType;
-import com.hqy.cloud.netty.websocket.handler.WebsocketHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
@@ -57,7 +52,7 @@ public abstract class BaseWsSession implements WsSession {
 
     @Override
     public boolean initHandshakeData(FullHttpRequest httpRequest, SocketAddress address) {
-        try {
+       /* try {
             FullHttpRequestProcessor processor = new FullHttpRequestProcessor(httpRequest);
             //获取客户端连接ip
             String remoteIp = processor.getRemoteIp();
@@ -89,7 +84,7 @@ public abstract class BaseWsSession implements WsSession {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-        }
+        }*/
         return false;
     }
 

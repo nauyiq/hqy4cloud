@@ -3,7 +3,7 @@ package com.hqy.cloud.foundation.event.collector.support.sql;
 import com.hqy.cloud.coll.service.RemoteSqlLogCollectionService;
 import com.hqy.cloud.coll.struct.SqlRecordStruct;
 import com.hqy.cloud.foundation.event.collector.AbstractCollector;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.foundation.common.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class SqlCollector extends AbstractCollector<SqlRecordStruct> {
         if (StringUtils.isNotBlank(sql) && sql.length() > maxLength) {
             struct.sql = sql.substring(0, maxLength);
         }
-        RemoteSqlLogCollectionService collectionService = RPCClient.getRemoteService(RemoteSqlLogCollectionService.class);
+        RemoteSqlLogCollectionService collectionService = RpcClient.getRemoteService(RemoteSqlLogCollectionService.class);
         collectionService.addSqlRecord(struct);
     }
 }

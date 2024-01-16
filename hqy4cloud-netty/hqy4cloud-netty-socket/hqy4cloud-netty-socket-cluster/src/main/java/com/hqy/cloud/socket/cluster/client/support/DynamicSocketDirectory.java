@@ -6,7 +6,7 @@ import com.hqy.cloud.registry.api.ServiceNotifyListener;
 import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.socket.cluster.client.AbstractSocketDirectory;
-import com.hqy.cloud.socket.cluster.server.InstanceSocketServer;
+import com.hqy.cloud.socket.cluster.support.InstanceSocketServer;
 import com.hqy.cloud.socket.api.SocketServer;
 
 import java.util.ArrayList;

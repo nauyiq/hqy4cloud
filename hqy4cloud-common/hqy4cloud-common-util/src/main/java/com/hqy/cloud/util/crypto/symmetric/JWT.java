@@ -76,7 +76,7 @@ public class JWT extends AbstractSymmetricSymmetric {
                 dataStr = objectMapper.writeValueAsString(data);
             }
             claims.put(JWT_PAYLOAD_KEY, dataStr);
-            claims.put(JWT_EXP, System.currentTimeMillis() + expiredSeconds * 1000);
+            claims.put(JWT_EXP, System.currentTimeMillis() + (expiredSeconds * 1000));
             return signer.sign(claims);
         } catch (Throwable cause) {
             log.warn("Failed execute to jwt sign, cause: {}", cause.getMessage());
@@ -110,16 +110,16 @@ public class JWT extends AbstractSymmetricSymmetric {
         try {
             Map<String, Object> claims = verifier.verify(encryptContent);
             if (MapUtil.isEmpty(claims)) {
-                return false;
+                return true;
             }
             if (claims.containsKey(JWT_EXP) && claims.containsKey(JWT_PAYLOAD_KEY)) {
                 long exp = (Long) claims.get(JWT_EXP);
-                return exp < System.currentTimeMillis();
+                return System.currentTimeMillis() > exp;
             }
         } catch (Throwable cause) {
             log.error(cause.getMessage(), cause);
         }
 
-        return false;
+        return true;
     }
 }

@@ -18,12 +18,10 @@ import com.hqy.cloud.web.upload.support.UploadContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -43,7 +41,6 @@ import static com.hqy.cloud.web.upload.support.UploadContext.DEFAULT_STATE;
  * @date 2022/9/29 11:13
  */
 @Slf4j
-@RefreshScope
 public abstract class AbstractUploadFileService implements UploadFileService {
     private final UploadFileProperties properties;
     protected ExecutorService threadPool;

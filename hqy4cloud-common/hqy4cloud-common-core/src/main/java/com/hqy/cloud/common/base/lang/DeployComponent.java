@@ -11,7 +11,7 @@ public enum DeployComponent {
     /**
      * socketIO
      */
-    SOCKET_IO(Constants.SOCKET_IO_COMPONENT),
+    SOCKETIO(Constants.SOCKETIO_COMPONENT),
 
     /**
      * RpcClient
@@ -34,9 +34,9 @@ public enum DeployComponent {
     }
 
     public static class Constants {
-        public static final String RPC_SERVER_COMPONENT = "rpc-sever-component";
-        public static final String RPC_CLIENT_COMPONENT = "rpc-client-component";
-        public static final String SOCKET_IO_COMPONENT = "socket-io-component";
+        public static final String RPC_SERVER_COMPONENT = "rpc-server";
+        public static final String RPC_CLIENT_COMPONENT = "rpc-client";
+        public static final String SOCKETIO_COMPONENT = "socketio";
     }
 
 }

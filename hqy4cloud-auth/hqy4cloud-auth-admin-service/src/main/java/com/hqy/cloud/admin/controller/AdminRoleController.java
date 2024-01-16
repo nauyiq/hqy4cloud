@@ -9,7 +9,7 @@ import com.hqy.cloud.auth.entity.Role;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.PageResult;
-import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

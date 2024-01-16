@@ -13,46 +13,35 @@
     <artifactId>hqy4cloud-base-id-service</artifactId>
     <description>hqy4cloud-基于leaf的分布式id服务</description>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-id-service-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-db-datasource</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-nacos-springboot-server-starter</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-foundation-service</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

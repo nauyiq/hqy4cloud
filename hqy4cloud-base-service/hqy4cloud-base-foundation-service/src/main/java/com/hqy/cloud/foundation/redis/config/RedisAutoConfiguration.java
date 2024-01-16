@@ -9,7 +9,6 @@ import com.hqy.cloud.foundation.cache.service.RedissonLockService;
 import com.hqy.foundation.lock.LockService;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -80,7 +79,6 @@ public class RedisAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean({RedissonClient.class})
     public LockService lockService(RedissonClient redissonClient) {
         return new RedissonLockService(redissonClient);
     }

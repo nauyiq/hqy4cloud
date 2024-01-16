@@ -39,11 +39,6 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-rpc-registry-nacos</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
 
     </dependencies>
 

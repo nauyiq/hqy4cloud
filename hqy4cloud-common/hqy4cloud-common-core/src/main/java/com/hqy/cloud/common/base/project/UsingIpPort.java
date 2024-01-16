@@ -3,16 +3,18 @@ package com.hqy.cloud.common.base.project;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * 进程服务的ip端口, 进程号信息
  * @author qy
- * @date  2021-08-13 10:02
+ * @date  2021-08-13
  */
 @Data
 public class UsingIpPort implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5671807921455826403L;
 
     /**
@@ -39,6 +41,18 @@ public class UsingIpPort implements Serializable {
      * socket端口 -1表示没有注册socket服务
      */
     private int socketPort;
+
+    public UsingIpPort() {
+    }
+
+    public UsingIpPort(int pid) {
+        this.pid = pid;
+    }
+
+    public UsingIpPort(String hostAddr, int port) {
+        this.hostAddr = hostAddr;
+        this.port = port;
+    }
 
     public UsingIpPort(String hostAddr, int port, int rpcPort, int pid) {
         this.hostAddr = hostAddr;

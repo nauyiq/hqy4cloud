@@ -4,7 +4,7 @@ import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.registry.common.Constants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProperties.PREFIX;
+import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX;
 
 
 /**
@@ -12,9 +12,8 @@ import static com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProper
  * @version 1.0
  * @date 2024/1/8
  */
-@ConfigurationProperties(PREFIX)
+@ConfigurationProperties(CONFIGURATION_PREFIX)
 public class AutoApplicationDeployerProperties {
-    public static final String PREFIX = "hqy4cloud.application.deploy";
 
     private boolean enabled = true;
 

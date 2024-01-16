@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hqy4cloud-netty-socket-socketio</artifactId>
+        <groupId>com.hqy.cloud</groupId>
+        <relativePath>../pom.xml</relativePath>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hqy4cloud-netty-socket-socketio-cluster</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-netty-socket-cluster</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- rpc support. -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-thrift-rpc-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+
+</project>

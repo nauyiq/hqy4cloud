@@ -78,8 +78,8 @@ public interface Constants {
     int DEFAULT_WEIGHT = 100;
 
 
-
-
+    String CONFIGURATION_PREFIX = "hqy4cloud.application.deploy";
+    String CONFIGURATION_PREFIX_COMPONENTS = "hqy4cloud.application.deploy.components";
 
 
 

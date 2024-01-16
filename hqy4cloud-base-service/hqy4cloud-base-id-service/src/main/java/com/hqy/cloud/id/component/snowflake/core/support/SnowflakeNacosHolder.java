@@ -10,7 +10,7 @@ import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.id.component.snowflake.core.AbstractSnowflakeHolder;
 import com.hqy.cloud.id.component.snowflake.exception.InitWorkerIdException;
-import com.hqy.cloud.util.spring.SpringContextHolder;
+import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,7 +53,7 @@ public class SnowflakeNacosHolder extends AbstractSnowflakeHolder {
             throw new NacosException(ResultCode.FAILED.code, "Id service instances should not be empty.");
         }
 
-        UsingIpPort ipPort = SpringContextHolder.getProjectContextInfo().getUip();
+        UsingIpPort ipPort = ProjectContext.getContextInfo().getUip();
         String serviceAddr = concatAddr(ipPort.getHostAddr(), ipPort.getPort());
 
         //遍历实例列表获取当前服务的worker id.

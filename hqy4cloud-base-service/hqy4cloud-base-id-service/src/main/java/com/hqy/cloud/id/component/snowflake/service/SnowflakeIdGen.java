@@ -7,6 +7,7 @@ import com.hqy.cloud.id.component.snowflake.exception.InitWorkerIdException;
 import com.hqy.cloud.id.service.IdGen;
 import com.hqy.cloud.id.struct.ResultStruct;
 import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 
@@ -64,7 +65,7 @@ public class SnowflakeIdGen implements IdGen {
     public SnowflakeIdGen(long twepoch, RedissonClient redissonClient) {
         this.twepoch = twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
-        SnowflakeRedisHolder redisHolder = new SnowflakeRedisHolder(Environment.getInstance(), redissonClient);
+        SnowflakeRedisHolder redisHolder = new SnowflakeRedisHolder(ProjectContext.getEnvironment(), redissonClient);
         boolean initFlag = redisHolder.initWorkerId(MicroServiceConstants.ID_SERVICE);
         if (initFlag) {
             this.workerId = redisHolder.getWorkerId();

@@ -3,7 +3,7 @@ package com.hqy.cloud.foundation.event.collector.support.execption;
 import com.hqy.cloud.coll.service.ExceptionCollectionService;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.cloud.foundation.event.collector.AbstractCollector;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.foundation.common.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ExceptionCollector extends AbstractCollector<PfExceptionStruct> {
         if (struct == null) {
             return;
         }
-        ExceptionCollectionService exceptionCollectionService = RPCClient.getRemoteService(ExceptionCollectionService.class);
+        ExceptionCollectionService exceptionCollectionService = RpcClient.getRemoteService(ExceptionCollectionService.class);
         exceptionCollectionService.collect(struct);
     }
 

@@ -2,7 +2,9 @@ package com.hqy.cloud.gateway.loadbalance.support;
 
 import com.hqy.cloud.foundation.common.route.LoadBalanceHashFactorManager;
 import com.hqy.cloud.gateway.loadbalance.WebsocketRouter;
+import com.hqy.foundation.router.HashRouterService;
 import com.hqy.foundation.util.SocketHashFactorUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cloud.client.ServiceInstance;
@@ -15,7 +17,9 @@ import java.util.List;
  * @date 2023/7/26
  */
 @Slf4j
+@RequiredArgsConstructor
 public class WebsocketHashRouter implements WebsocketRouter {
+//    private final HashRouterService hashRouterService;
 
     @Override
     public ServiceInstance router(String serviceName, int hash, List<ServiceInstance> instances) {
@@ -23,13 +27,6 @@ public class WebsocketHashRouter implements WebsocketRouter {
             log.warn("WebsocketHashRouter service instances is empty.");
             return null;
         }
-
-
-
-
-
-
-
         if (instances.size() == 1) {
             ServiceInstance instance = instances.get(0);
             LoadBalanceHashFactorManager.registry(serviceName, hash, SocketHashFactorUtils.genHashFactor(instance.getHost(), instance.getPort()));

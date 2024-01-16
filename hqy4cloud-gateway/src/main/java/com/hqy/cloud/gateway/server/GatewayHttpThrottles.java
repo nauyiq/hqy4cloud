@@ -2,18 +2,18 @@ package com.hqy.cloud.gateway.server;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
-import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
-import com.hqy.cloud.foundation.limiter.FlowResult;
 import com.hqy.cloud.auth.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
+import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
+import com.hqy.cloud.foundation.limiter.FlowResult;
 import com.hqy.cloud.gateway.util.RequestUtil;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.foundation.common.EventType;
-import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.common.HttpRequestInfo;
+import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
 import lombok.RequiredArgsConstructor;
@@ -232,7 +232,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 .accessJson(accessParamJson)
                 .blockedSeconds(blockSeconds)
                 .url(url)
-                .env(Environment.getInstance().getEnvironment())
+                .env(ProjectContext.getContextInfo().getEnv())
                 .throttleBy(createdBy).build();
         // 调用采集器进行采集
         Collector<Object> collector = CollectorCenter.getInstance().getCollector(EventType.THROTTLES);

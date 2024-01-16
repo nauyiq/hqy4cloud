@@ -4,8 +4,8 @@ import cn.hutool.core.date.SystemClock;
 import com.hqy.cloud.coll.struct.SqlRecordStruct;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.foundation.event.collector.support.execption.ExceptionCollectorUtils;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,7 +34,7 @@ public class CollectionModelUtil {
         try {
             sql = toSimpleSelectSql(sql);
             sqlTime = sqlTime == null ? SystemClock.now() : sqlTime;
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+            ProjectContextInfo info = ProjectContext.getContextInfo();
             return CollectionModel.builder()
                     .env(info.getEnv())
                     .sqlTime(sqlTime)
@@ -64,7 +64,7 @@ public class CollectionModelUtil {
         try {
             sql = toSimpleSelectSql(sql);
             sqlTime = sqlTime == null ? SystemClock.now() : sqlTime;
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+            ProjectContextInfo info = ProjectContext.getContextInfo();
             return SqlRecordStruct.builder()
                     .env(info.getEnv())
                     .startTime(sqlTime)
@@ -94,7 +94,7 @@ public class CollectionModelUtil {
         }
         try {
             sqlTime = sqlTime == null ? SystemClock.now() : sqlTime;
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+            ProjectContextInfo info = ProjectContext.getContextInfo();
             return CollectionModel.builder()
                     .env(info.getEnv())
                     .sqlTime(sqlTime)
@@ -125,7 +125,7 @@ public class CollectionModelUtil {
         try {
             sql = toSimpleSelectSql(sql);
             sqlTime = sqlTime == null ? SystemClock.now() : sqlTime;
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+            ProjectContextInfo info = ProjectContext.getContextInfo();
             return SqlRecordStruct.builder()
                     .env(info.getEnv())
                     .startTime(sqlTime)

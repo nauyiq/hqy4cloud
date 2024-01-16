@@ -66,7 +66,7 @@ public class ApplicationLifecycleDeployer extends AbstractDeployer<ApplicationDe
                 // started -> starting : re-start app
                 onStarting();
 
-                initialize();
+//                initialize();
 
                 onStarted();
             } catch (Throwable cause) {

@@ -27,7 +27,6 @@ import java.util.Random;
 
 import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_INSTANCE_METADATA_PORT_KEY;
 import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_MULTI_PARAM_KEY;
-import static com.hqy.cloud.gateway.loadbalance.support.GatewayLoadBalanceStrategyContext.copy;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 

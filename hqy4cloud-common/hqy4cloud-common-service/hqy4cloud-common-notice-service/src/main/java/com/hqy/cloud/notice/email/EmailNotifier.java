@@ -3,7 +3,7 @@ package com.hqy.cloud.notice.email;
 import cn.hutool.core.date.SystemClock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.service.EmailRemoteService;
 import com.hqy.foundation.common.EventContent;
 import com.hqy.foundation.event.notice.AbstractNotifier;
@@ -50,7 +50,7 @@ public class EmailNotifier extends AbstractNotifier {
                 cache.put(id, now);
             }
             // RPC发邮件.
-            EmailRemoteService remoteService = RPCClient.getRemoteService(EmailRemoteService.class);
+            EmailRemoteService remoteService = RpcClient.getRemoteService(EmailRemoteService.class);
             remoteService.senderHtmlEmails(
                     StringUtils.isAllBlank(emailContent.getSender()) ? config.getSender() : emailContent.getSender(),
                     targets.stream().map(NoticeTarget::getTarget).collect(Collectors.toSet()),

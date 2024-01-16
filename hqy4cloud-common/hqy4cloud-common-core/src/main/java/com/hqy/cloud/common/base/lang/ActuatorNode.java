@@ -27,7 +27,7 @@ public enum ActuatorNode {
     /**
      * socketIo服务
      */
-    SOCKET_IO_SERVER("SocketIo服务", new DeployComponent[]{ RPC_CLIENT, RPC_SERVER, SOCKET_IO }),
+    SOCKETIO_SERVER("SocketIo服务", new DeployComponent[]{ RPC_CLIENT, RPC_SERVER, SOCKETIO}),
 
     ;
 
@@ -40,7 +40,7 @@ public enum ActuatorNode {
     public final DeployComponent[] components;
 
     public boolean isProvider() {
-        return this == PROVIDER || this == SOCKET_IO_SERVER;
+        return this == PROVIDER || this == SOCKETIO_SERVER;
     }
 
 }

@@ -3,7 +3,7 @@ package com.hqy.cloud.foundation.event.collector.support.throttles;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.foundation.event.collector.AbstractCollector;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.foundation.common.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class ThrottledCollector extends AbstractCollector<ThrottledBlockStruct> 
 
     @Override
     protected void doCollect(ThrottledBlockStruct struct) {
-        CollPersistService remoteService = RPCClient.getRemoteService(CollPersistService.class);
+        CollPersistService remoteService = RpcClient.getRemoteService(CollPersistService.class);
         remoteService.saveThrottledBlockHistory(struct);
     }
 }

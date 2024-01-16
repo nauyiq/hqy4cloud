@@ -5,7 +5,6 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.threadpool.DefaultExecutorRepository;
 import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ public class ThriftRpcModelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean({ApplicationModel.class})
     public RpcModel rpcModel(ApplicationModel model) {
         RpcModel rpcModel = new RpcModel(model);
         // create executor repository bean

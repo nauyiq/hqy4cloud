@@ -2,6 +2,7 @@ package com.hqy.cloud.foundation.cache;
 
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.interceptor.KeyGenerator;
 
@@ -25,7 +26,7 @@ public class IKeyGenerator implements KeyGenerator {
     @Override
     public Object generate(Object target, Method method, Object... params) {
         // 环境
-        String env = Environment.getInstance().getEnvironment();
+        String env = ProjectContext.getContextInfo().getEnv();
         // 分类
         String simpleName = target.getClass().getSimpleName();
         StringBuilder sb = new StringBuilder();

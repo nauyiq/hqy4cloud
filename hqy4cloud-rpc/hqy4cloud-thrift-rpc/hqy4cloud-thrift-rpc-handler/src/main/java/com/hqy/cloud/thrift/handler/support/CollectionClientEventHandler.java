@@ -2,6 +2,7 @@ package com.hqy.cloud.thrift.handler.support;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.monitor.CollectionData;
 import com.hqy.cloud.rpc.monitor.Monitor;
@@ -67,7 +68,7 @@ public class CollectionClientEventHandler implements ThriftContextClientHandleSe
             return provider;
         }
         String prefix;
-        switch (Environment.getInstance().getEnvironment()) {
+        switch (ProjectContext.getContextInfo().getEnv()) {
             case Environment.ENV_TEST:
                 prefix = TEST_PROVIDER_PREFIX;
                 break;

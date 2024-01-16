@@ -5,7 +5,7 @@ import com.hqy.cloud.account.service.RemoteAccountProfileService;
 import com.hqy.cloud.account.service.RemoteAccountService;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
 import com.hqy.cloud.account.struct.AccountStruct;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
+import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +28,7 @@ public class AccountRpcUtil {
         if (id == null) {
             return null;
         }
-        RemoteAccountService remoteAccountService = RPCClient.getRemoteService(RemoteAccountService.class);
+        RemoteAccountService remoteAccountService = RpcClient.getRemoteService(RemoteAccountService.class);
         String accountInfoJson = remoteAccountService.getAccountInfoJson(id);
         return StringUtils.isBlank(accountInfoJson) ? null : JsonUtil.toBean(accountInfoJson, AccountInfoDTO.class);
     }
@@ -37,7 +37,7 @@ public class AccountRpcUtil {
         if (id == null) {
             return null;
         }
-        RemoteAccountService remoteAccountService = RPCClient.getRemoteService(RemoteAccountService.class);
+        RemoteAccountService remoteAccountService = RpcClient.getRemoteService(RemoteAccountService.class);
         return remoteAccountService.getAccountById(id);
     }
 
@@ -45,7 +45,7 @@ public class AccountRpcUtil {
         if (id == null) {
             return null;
         }
-        RemoteAccountProfileService profileService = RPCClient.getRemoteService(RemoteAccountProfileService.class);
+        RemoteAccountProfileService profileService = RpcClient.getRemoteService(RemoteAccountProfileService.class);
         return profileService.getAccountProfile(id);
     }
 
@@ -53,7 +53,7 @@ public class AccountRpcUtil {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
-        RemoteAccountProfileService profileService = RPCClient.getRemoteService(RemoteAccountProfileService.class);
+        RemoteAccountProfileService profileService = RpcClient.getRemoteService(RemoteAccountProfileService.class);
         return profileService.getAccountProfiles(ids);
     }
 
@@ -61,7 +61,7 @@ public class AccountRpcUtil {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
-        RemoteAccountService remoteAccountService = RPCClient.getRemoteService(RemoteAccountService.class);
+        RemoteAccountService remoteAccountService = RpcClient.getRemoteService(RemoteAccountService.class);
         return remoteAccountService.getAccountByIds(ids);
     }
 

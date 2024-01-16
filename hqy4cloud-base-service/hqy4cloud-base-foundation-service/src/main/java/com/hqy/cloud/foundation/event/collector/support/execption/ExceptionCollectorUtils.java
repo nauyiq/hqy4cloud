@@ -3,12 +3,10 @@ package com.hqy.cloud.foundation.event.collector.support.execption;
 import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.coll.struct.PfExceptionStruct;
 import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.foundation.common.EventType;
-import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.event.ExceptionCollActionEvent;
-import com.hqy.cloud.registry.common.context.Environment;
-import com.hqy.cloud.rpc.nacos.client.RPCClient;
-import com.hqy.cloud.util.spring.SpringContextHolder;
+import com.hqy.foundation.event.collection.Collector;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -55,9 +53,9 @@ public class ExceptionCollectorUtils {
         // 构造异常堆栈
         String exceptionStackTrace = getExceptionStackTrace(event.getException());
         // 环境
-        String env = Environment.getInstance().getEnvironment();
+        String env = ProjectContext.getContextInfo().getEnv();
         // 服务名
-        String nameEn = SpringContextHolder.getProjectContextInfo().getNameWithIpPort();
+        String nameEn = ProjectContext.getContextInfo().getNameWithIpPort();
         // 构建异常rpc对象
         PfExceptionStruct struct = buildStruct(env, nameEn, exceptionStackTrace, event);
         // 调用采集器采集异常

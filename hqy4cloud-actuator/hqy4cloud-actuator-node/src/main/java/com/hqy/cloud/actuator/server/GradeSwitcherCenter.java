@@ -6,6 +6,7 @@ import com.hqy.cloud.common.swticher.AbstractSwitcher;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class GradeSwitcherCenter {
         }
         try {
             // 获取当前节点上下文信息
-            ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+            ProjectContextInfo info = ProjectContext.getContextInfo();
             String applicationName = info.getNameEn();
             AbstractSwitcher[] allSwitchers = ServerSwitcher.allValues(ServerSwitcher.class);
             for (AbstractSwitcher switcher : allSwitchers) {
@@ -91,7 +92,7 @@ public class GradeSwitcherCenter {
      * 初始化某些开关
      */
     public void initializeSwitchers() {
-        if (Environment.getInstance().isDevEnvironment()) {
+        if (ProjectContext.getEnvironment().isDevEnvironment()) {
             CommonSwitcher.ENABLE_THRIFT_RPC_COLLECT.setStatus(false);
             CommonSwitcher.ENABLE_DATABASE_SLOW_SQL_COLLECTION.setStatus(false);
             CommonSwitcher.ENABLE_DATABASE_ERROR_SQL_COLLECTION.setStatus(false);

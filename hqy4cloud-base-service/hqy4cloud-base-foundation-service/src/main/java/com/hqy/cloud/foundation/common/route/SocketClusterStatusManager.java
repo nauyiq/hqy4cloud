@@ -20,6 +20,7 @@ import static com.hqy.cloud.common.base.project.MicroServiceConstants.FOUNDATION
  * @version 1.0
  * @date 2022/3/24 11:44
  */
+@Deprecated
 public class SocketClusterStatusManager {
     private static final Logger log = LoggerFactory.getLogger(SocketClusterStatusManager.class);
 

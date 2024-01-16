@@ -180,9 +180,9 @@ public class CommonSwitcher extends AbstractSwitcher {
 
 
     /**
-     * 节点 - 是否当socket路由策略获取不到服务时采用随机路由机制
+     * 节点 - 是否当hash地址不存在时允许再次选择更新路由表
      */
-    public static final CommonSwitcher ENABLE_WHEN_SOCKET_ROUTER_NOT_USING_RANDOM = new CommonSwitcher(238, "节点-是否当socket路由策略获取不到服务时采用随机路由机制", true);
+    public static final CommonSwitcher ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN = new CommonSwitcher(238, "节点-是否当hash地址不存在时允许再次选择更新路由表", true);
 
 
     /**

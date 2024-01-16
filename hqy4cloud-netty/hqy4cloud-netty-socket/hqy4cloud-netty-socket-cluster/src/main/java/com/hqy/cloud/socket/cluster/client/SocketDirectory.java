@@ -19,6 +19,11 @@ public interface SocketDirectory  {
      */
     String applicationName();
 
+    /**
+     * 获取集群类型
+     * @return cluster type
+     */
+    String getClusterType();
 
     /**
      * 获取当前socket服务全部健康实例.

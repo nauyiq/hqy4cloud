@@ -5,8 +5,7 @@ import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
-import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.NetUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,12 +30,12 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 系统启动时间
      */
-    public static long startupTimeMillis = System.currentTimeMillis();
+    private long startupTimeMillis = System.currentTimeMillis();
 
     /**
      * 判断系统是不是刚启动
      */
-    private static boolean justStarted = true;
+    private boolean justStarted = true;
 
     /**
      * 是否使用Linux服务器支持的Epoll机制
@@ -61,7 +60,7 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 端口等信息
      */
-    private UsingIpPort uip;
+    private UsingIpPort uip = new UsingIpPort(NetUtils.getProgramId());
 
     /**
      * 节点类型
@@ -75,18 +74,12 @@ public class ProjectContextInfo implements Serializable {
 
 
     /**
-     * 全局上下文属性定义
+     * metadata
      */
-    private Map<String, Object> attributes = new ConcurrentHashMap<>();
+    private Map<String, String> metadata = new ConcurrentHashMap<>();
 
 
     private static Map<Class<?>, Object> beansMap = new ConcurrentHashMap<>();
-
-
-    /**
-     * nacos的注册元数据key
-     */
-    public static final transient String NODE_INFO = "nodeInfo";
 
     /**
      * white白名单ip
@@ -115,23 +108,11 @@ public class ProjectContextInfo implements Serializable {
         this.nodeType = nodeType;
     }
 
-    /**
-     * 判断系统是否刚启动不久
-     * @return
-     */
-    public static boolean isJustStarted() {
+    public boolean isJustStarted() {
         return isJustStarted(null);
     }
 
-
-
-
-    /**
-     * 判断系统是否刚启动不久
-     * @param ignoreMinutes 启动耗时分钟数，多少分钟算是刚启动....
-     * @return
-     */
-    public static boolean isJustStarted(Integer ignoreMinutes) {
+    public boolean isJustStarted(Integer ignoreMinutes) {
         if (justStarted) {
             if (ignoreMinutes == null || ignoreMinutes < 0) {
                 ignoreMinutes = 3;
@@ -157,46 +138,12 @@ public class ProjectContextInfo implements Serializable {
         return isUseLinuxNativeEpoll;
     }
 
-    @JsonIgnore
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
 
     public String getNameWithIpPort() {
         return nameEn.concat(StringConstants.Symbol.AT)
                 .concat(this.getUip().getHostAddr())
                 .concat(StringConstants.Symbol.COLON)
                 .concat(this.getUip().getPort() + "");
-    }
-
-
-    public static void startPrintf() {
-        if (CommonSwitcher.ENABLE_SPRING_BOOT_RESTART_DEVTOOLS.isOn()) {
-              /*
-        必须禁用springboot热部署 否则会导致 thrift rpc 调用时thriftMethodManager 进行codec 编码struct类时 抛出类转换异常。
-        原因就是springboot 热部署会破坏类加载器的双亲委派机制 即springboot通过强行干预-- “截获”了用户自定义类的加载。
-        （由jvm的加载器AppClassLoader变为springboot自定义的加载器RestartClassLoader，一旦发现类路径下有文件的修改，
-        springboot中的spring-boot-devtools模块会立马丢弃原来的类文件及类加载器，重新生成新的类加载器来加载新的类文件，从而实现热部署。
-        导致需要两个类对象的类全称虽然一致 但是类加载器不一致
-         */
-            System.setProperty("spring.devtools.restart.enabled", "false");
-        }
-        ProjectContextInfo projectContextInfo = SpringContextHolder.getProjectContextInfo();
-        log.info("############################## ############### ############### ###############");
-        log.info("##### Server Started OK : uip = {} ", JsonUtil.toJson(projectContextInfo.getUip()));
-        log.info("##### Server Started OK. serviceName = {}", projectContextInfo.getNameEn());
-        log.info("############################## ############### ############### ###############");
-    }
-
-
-
-
-
-
-
-    public void setProperties(String key, Object data) {
-        this.attributes.put(key, data);
     }
 
 

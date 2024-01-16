@@ -133,10 +133,6 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
 
-	public static ProjectContextInfo getProjectContextInfo(){
-		return contextInfo;
-	}
-
     public static void registerContextInfo(ProjectContextInfo info) {
         if (Objects.nonNull(info)) {
             contextInfo = info;

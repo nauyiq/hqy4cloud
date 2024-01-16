@@ -1,11 +1,13 @@
 package com.hqy.cloud.rpc.starter.model;
 
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.model.RpcMetadata;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.model.RpcServiceInfo;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.starter.server.RpcServer;
 import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.spring.ProjectContextInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,9 @@ public class RpcProviderDeployModel extends RpcDeployModel {
     @Override
     protected void doInit() {
         rpcServer.initialize();
+        // init projectInfo
+        ProjectContextInfo contextInfo = ProjectContext.getContextInfo();
+        contextInfo.getUip().setRpcPort(rpcServer.getModel().getServerAddress().getPort());
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.hqy.cloud.actuator.endpoint;
 import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class MicroServiceInfoContributorEndpoint implements InfoContributor {
 
     @Override
     public void contribute(Info.Builder builder) {
-        ProjectContextInfo info = SpringContextHolder.getProjectContextInfo();
+        ProjectContextInfo info = ProjectContext.getContextInfo();
         builder.withDetail("服务名", MicroServiceConstants.ALIAS_MAP.get(info.getNameEn()))
                 .withDetail("环境", info.getEnv())
                 .withDetail("节点类型", info.getNodeType().alias);
@@ -28,6 +28,6 @@ public class MicroServiceInfoContributorEndpoint implements InfoContributor {
         if (uip != null && info.getNodeType() == ActuatorNode.PROVIDER) {
             builder.withDetail("RPC端口", uip.getRpcPort());
         }
-        builder.withDetail("元数据", info.getAttributes());
+        builder.withDetail("元数据", info.getMetadata());
     }
 }

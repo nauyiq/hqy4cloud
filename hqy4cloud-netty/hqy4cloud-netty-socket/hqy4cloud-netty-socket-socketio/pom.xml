@@ -15,8 +15,9 @@
 
     <modules>
         <module>hqy4cloud-netty-socket-socketio-core</module>
-        <module>hqy4cloud-netty-socket-socketio-api</module>
+        <module>hqy4cloud-netty-socket-socketio-server</module>
         <module>hqy4cloud-netty-socket-socketio-springboot</module>
+        <module>hqy4cloud-netty-socket-socketio-cluster</module>
     </modules>
 
 

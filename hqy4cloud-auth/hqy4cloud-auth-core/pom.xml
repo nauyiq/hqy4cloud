@@ -13,11 +13,6 @@
     <description>hqy4cloud-common spring security.</description>
     <artifactId>hqy4cloud-auth-core</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>

@@ -1,9 +1,7 @@
 package com.hqy.cloud.registry.common.context;
 
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 系统初始化的时候 记录下当前环境信息<br>
@@ -44,26 +42,14 @@ public class Environment {
      */
     public static boolean FLAG_IO_INTENSIVE_RPC_SERVICE = false;
 
-//    @Value("${spring.profiles.active:dev}")
     private String env;
 
+    public Environment() {
+    }
 
-
-
-    private static final Environment NONE_SPRING_BEAN_INSTANCE = new Environment();
-
-
-   /* public static Environment getInstance() {
-        try {
-            return SpringContextHolder.getBean(Environment.class);
-        } catch (Exception e) {
-            log.warn("### 当前节点上下文没有配置EnvironmentConfig 作为Spring Bean:{}", e.getMessage());
-            if (StringUtils.isBlank(NONE_SPRING_BEAN_INSTANCE.env)) {
-                NONE_SPRING_BEAN_INSTANCE.env = ENV_DEV;
-            }
-            return NONE_SPRING_BEAN_INSTANCE;
-        }
-    }*/
+    public Environment(String env) {
+        this.env = env;
+    }
 
     public String getEnvironment() {
         if (StringUtils.isBlank(env)) {

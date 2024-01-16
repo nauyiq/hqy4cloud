@@ -1,7 +1,7 @@
 package com.hqy.cloud.socket.model;
 
-import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.Parameters;
+import com.hqy.cloud.socket.api.ClientConnection;
 
 /**
  * @author qiyuan.hong
@@ -9,50 +9,32 @@ import com.hqy.cloud.common.base.Parameters;
  * @date 2024/1/11
  */
 public class SocketConnectionInfo extends Parameters {
-    private String connectUrl;
-    private String authorization;
-    private String context;
+    private final ClientConnection connection;
 
-    public SocketConnectionInfo() {
+    public SocketConnectionInfo(ClientConnection connection) {
+        this.connection = connection;
     }
 
-    public SocketConnectionInfo(String connectUrl, String authorization, String context, String host) {
-        this.connectUrl = connectUrl;
-        this.authorization = authorization;
-        this.context = context;
+    public static SocketConnectionInfo of(ClientConnection connectUrl) {
+        return new SocketConnectionInfo(connectUrl);
     }
 
-    public static SocketConnectionInfo of(String connectUrl, String authorization) {
-        return of(connectUrl, authorization, StrUtil.EMPTY);
+    public ClientConnection getConnection() {
+        return connection;
     }
 
-    public static SocketConnectionInfo of(String connectUrl, String authorization, String context) {
-        return new SocketConnectionInfo(connectUrl, authorization, context, null);
-    }
-
-
-    public String getConnectUrl() {
-        return connectUrl;
-    }
-
-    public void setConnectUrl(String connectUrl) {
-        this.connectUrl = connectUrl;
+    public String getConnectionUrl() {
+        return connection.getConnectUrl();
     }
 
     public String getAuthorization() {
-        return authorization;
-    }
-
-    public void setAuthorization(String authorization) {
-        this.authorization = authorization;
+        return connection.getAuthorization();
     }
 
     public String getContext() {
-        return context;
+        return connection.getContextPath();
     }
 
-    public void setContext(String context) {
-        this.context = context;
-    }
+
 
 }

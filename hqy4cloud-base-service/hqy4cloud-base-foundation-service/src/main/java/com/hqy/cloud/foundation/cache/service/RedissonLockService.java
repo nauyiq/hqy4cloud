@@ -1,7 +1,6 @@
 package com.hqy.cloud.foundation.cache.service;
 
 import com.hqy.foundation.lock.LockService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
@@ -16,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @date 2024/1/2
  */
 @Slf4j
-@RequiredArgsConstructor
 public record RedissonLockService(RedissonClient redissonClient) implements LockService {
 
     @Override

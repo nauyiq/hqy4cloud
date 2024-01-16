@@ -2,6 +2,7 @@ package com.hqy.cloud.registry.context;
 
 import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
@@ -13,8 +14,9 @@ import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.Future;
 
 
@@ -24,21 +26,30 @@ import java.util.concurrent.Future;
  * @version 1.0
  * @date 2024/1/5
  */
-@SuppressWarnings("unchecked")
 public record ProjectContext(RegistryContext registryContext,
-                             ApplicationLifecycleDeployer deployer) implements CommandLineRunner {
+                             ApplicationLifecycleDeployer deployer) implements SmartInitializingSingleton {
     private static final Logger log = LoggerFactory.getLogger(ProjectContext.class);
 
     private final static ProjectContextInfo CONTEXT_INFO = new ProjectContextInfo();
     private final static Environment ENVIRONMENT = new Environment();
 
+    @PostConstruct()
+    public void init() {
+        AssertUtil.notNull(deployer, "Application deployer should not be null.");
+        this.deployer.initialize();
+        BeanRepository.getInstance().register(ProjectContext.class, this);
+        // init project info
+        initProjectContext();
+    }
+
     @Override
-    public void run(String... args) throws Exception {
+    @SuppressWarnings("unchecked")
+    public void afterSingletonsInstantiated() {
         AssertUtil.notNull(deployer, "Application deployer should not be null.");
         Future<Boolean> future = (Future<Boolean>) this.deployer.start();
         try {
             if (future.get()) {
-                initProjectContext();
+                // print project info
                 printProjectInfo();
             }
         } catch (Throwable cause) {
@@ -53,8 +64,6 @@ public record ProjectContext(RegistryContext registryContext,
         log.info("############################## ############### ############### ###############");
     }
 
-
-
     private void initProjectContext() {
         if (CommonSwitcher.ENABLE_SPRING_BOOT_RESTART_DEVTOOLS.isOn()) {
             System.setProperty("spring.devtools.restart.enabled", "false");
@@ -68,14 +77,17 @@ public record ProjectContext(RegistryContext registryContext,
         String revision = metadataInfo.getRevision();
 
         // Set project info
+        CONTEXT_INFO.setStartupTimeMillis(System.currentTimeMillis());
         CONTEXT_INFO.setNameEn(model.getApplicationName());
         CONTEXT_INFO.setEnv(env);
         CONTEXT_INFO.setPubValue(pubMode.value);
         CONTEXT_INFO.setNodeType(actuatorNode);
         CONTEXT_INFO.setRevision(revision);
+        CONTEXT_INFO.getUip().setHostAddr(model.getIp());
+        CONTEXT_INFO.getUip().setPort(model.getPort());
+        CONTEXT_INFO.setMetadata(metadataInfo.getMetadataMap());
         // Set environment.
         ENVIRONMENT.setEnvironment(env);
-
     }
 
     public static ProjectContextInfo getContextInfo() {
@@ -85,6 +97,9 @@ public record ProjectContext(RegistryContext registryContext,
     public static Environment getEnvironment() {
         return ENVIRONMENT;
     }
+
+
+
 
 
 }

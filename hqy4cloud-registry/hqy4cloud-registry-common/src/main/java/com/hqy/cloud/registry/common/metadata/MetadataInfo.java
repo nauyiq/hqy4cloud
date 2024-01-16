@@ -30,13 +30,14 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
         this.application = application;
     }
 
-    public MetadataInfo(String application, String env, ActuatorNode actuatorNode, PubMode pubMode, String revision, boolean master) {
+    public MetadataInfo(String application, String env, ActuatorNode actuatorNode, PubMode pubMode, String revision, boolean master, int weight) {
         this.application = application;
-        this.env = env;
-        this.actuatorNode = actuatorNode;
-        this.pubMode = pubMode;
-        this.revision = revision;
-        this.master = master;
+        setEnv(env);
+        setActuatorNode(actuatorNode);
+        setPubMode(pubMode);
+        setRevision(revision);
+        setMaster(master);
+        setWeight(weight);
     }
 
     private ConcurrentHashMap<String, SortedSet<RegistryInfo>> subscribeServiceInfos;
@@ -60,6 +61,7 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setEnv(String env) {
         this.env = env;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_ENV, env);
     }
 
     public ActuatorNode getActuatorNode() {
@@ -68,6 +70,7 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setActuatorNode(ActuatorNode actuatorNode) {
         this.actuatorNode = actuatorNode;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_ACTUATOR_TYPE, actuatorNode.name());
     }
 
     public int getWeight() {
@@ -76,6 +79,7 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setWeight(int weight) {
         this.weight = weight;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_WEIGHT, String.valueOf(weight));
     }
 
     public String getRevision() {
@@ -84,6 +88,7 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setRevision(String revision) {
         this.revision = revision;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_REVISION, revision);
     }
 
     public boolean isMaster() {
@@ -92,6 +97,7 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setMaster(boolean master) {
         this.master = master;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_MASTER_NODE, String.valueOf(master));
     }
 
     public ConcurrentHashMap<String, SortedSet<RegistryInfo>> getSubscribeServiceInfos() {
@@ -108,5 +114,6 @@ public class MetadataInfo extends Parameters implements DeployMetaDataService {
 
     public void setPubMode(PubMode pubMode) {
         this.pubMode = pubMode;
+        this.parameters.put(MetadataPropertyKeyConstants.APPLICATION_PUB_MODE, String.valueOf(pubMode.value));
     }
 }

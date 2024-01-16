@@ -7,7 +7,7 @@ import com.hqy.cloud.auth.core.authentication.AuthenticationRequest;
 import com.hqy.cloud.auth.core.authentication.RoleAuthenticationService;
 import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.cloud.common.base.AuthenticationInfo;
-import com.hqy.cloud.foundation.common.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

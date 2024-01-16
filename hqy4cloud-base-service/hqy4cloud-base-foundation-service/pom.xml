@@ -17,14 +17,26 @@
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-collection-service-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-id-service-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -35,12 +47,6 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>

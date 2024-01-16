@@ -1,9 +1,7 @@
 package com.hqy.cloud.rpc.model;
 
-import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.NetUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
@@ -30,39 +28,27 @@ public class RpcServerAddress implements Serializable {
      */
     private String hostAddr;
 
-    /**
-     * program id
-     */
-    private transient int pid;
 
     public static RpcServerAddress createConsumerRpcServer() {
-        return new RpcServerAddress(IpUtil.getHostAddress(), NetUtils.getProgramId());
+        return new RpcServerAddress(IpUtil.getHostAddress());
     }
 
     public static RpcServerAddress of(String ip) {
-        return StringUtils.isBlank(ip) ?  createConsumerRpcServer() : new RpcServerAddress(ip, NetUtils.getProgramId());
+        return StringUtils.isBlank(ip) ?  createConsumerRpcServer() : new RpcServerAddress(ip);
     }
 
     public RpcServerAddress() {
     }
 
-    public RpcServerAddress(int port, String hostAddr, int pid) {
+    public RpcServerAddress(String hostAddr) {
+        this.hostAddr = hostAddr;
+    }
+
+    public RpcServerAddress(int port, String hostAddr) {
         this.port = port;
         this.hostAddr = hostAddr;
-        this.pid = pid;
     }
 
-    public RpcServerAddress(String hostAddr, int pid) {
-        this.hostAddr = hostAddr;
-        this.pid = pid;
-        this.port = 0;
-    }
-
-    public RpcServerAddress(UsingIpPort uip) {
-        this.hostAddr = uip.getHostAddr();
-        this.pid = uip.getPid();
-        this.port = uip.getRpcPort();
-    }
 
     public int getPort() {
         return port;
@@ -72,10 +58,6 @@ public class RpcServerAddress implements Serializable {
         return hostAddr;
     }
 
-
-    public int getPid() {
-        return pid;
-    }
 
     public void setPort(int port) {
         this.port = port;
@@ -95,11 +77,11 @@ public class RpcServerAddress implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RpcServerAddress that = (RpcServerAddress) o;
-        return port == that.port && hostAddr.equals(that.hostAddr) &&  pid == that.pid;
+        return port == that.port && hostAddr.equals(that.hostAddr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(port, hostAddr, pid);
+        return Objects.hash(port, hostAddr);
     }
 }

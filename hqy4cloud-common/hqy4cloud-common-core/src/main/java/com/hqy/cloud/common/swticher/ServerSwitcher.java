@@ -78,5 +78,5 @@ public class ServerSwitcher extends CommonSwitcher {
     /**
      * 节点-是否开启用户token生成次数限制，即当用于重复生成token时，将旧token移除
      */
-    public static final ServerSwitcher ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT = new ServerSwitcher(237, "是否开启用户token生成次数限制", true, MicroServiceConstants.ACCOUNT_SERVICE);
+    public static final ServerSwitcher ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT = new ServerSwitcher(160, "是否开启用户token生成次数限制", true, MicroServiceConstants.ACCOUNT_SERVICE);
 }
