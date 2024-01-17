@@ -28,8 +28,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-rpc-common</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>hqy4cloud-registry-api</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

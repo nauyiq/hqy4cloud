@@ -6,7 +6,6 @@ import com.hqy.cloud.id.component.snowflake.core.support.SnowflakeRedisHolder;
 import com.hqy.cloud.id.component.snowflake.exception.InitWorkerIdException;
 import com.hqy.cloud.id.service.IdGen;
 import com.hqy.cloud.id.struct.ResultStruct;
-import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;

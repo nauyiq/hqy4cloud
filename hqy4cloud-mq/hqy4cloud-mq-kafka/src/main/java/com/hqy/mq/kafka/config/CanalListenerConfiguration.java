@@ -4,7 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.canal.core.CanalGlue;
 import com.hqy.cloud.canal.core.processor.BaseCanalBinlogEventProcessor;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.api.Environment;
+import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.mq.kafka.canal.CanalListener;
 import com.hqy.mq.kafka.canal.DefaultCanalListener;
 import com.hqy.mq.kafka.lang.KafkaConstants;
@@ -31,7 +32,6 @@ public class CanalListenerConfiguration {
     @Value("${spring.application.name}")
     private String application;
     private final DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory;
-    private final Environment environment;
     private final CanalGlue canalGlue;
 
     @Bean
@@ -39,6 +39,7 @@ public class CanalListenerConfiguration {
     public KafkaMessageListenerContainer<String, String> kafkaMessageListenerContainer() {
         // 消费主题
         String topic;
+        Environment environment = ProjectContext.getEnvironment();
         if (CommonSwitcher.ENABLE_CANAL_ENV_ISO.isOn()) {
             topic = environment.isDevEnvironment() ? KafkaConstants.DEV_CANAL_KAFKA_TOPIC : KafkaConstants.TEST_CANAL_KAFKA_TOPIC;
         } else {

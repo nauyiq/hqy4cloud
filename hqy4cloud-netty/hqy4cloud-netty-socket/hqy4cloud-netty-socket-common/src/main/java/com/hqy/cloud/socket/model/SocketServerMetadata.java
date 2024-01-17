@@ -1,5 +1,6 @@
 package com.hqy.cloud.socket.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.cloud.registry.common.metadata.MetadataService;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.socket.SocketConstants;
@@ -84,6 +85,7 @@ public class SocketServerMetadata implements MetadataService {
     }
 
     @Override
+    @JsonIgnore
     public Map<String, String> getMetadataMap() {
         Map<String, String> metadataMap = new HashMap<>(2);
         metadataMap.put(SocketConstants.SOCKET_SERVER_DEPLOY_METADATA_KEY, JsonUtil.toJson(this));

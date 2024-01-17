@@ -3,7 +3,7 @@ package com.hqy.cloud.registry.context;
 import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;

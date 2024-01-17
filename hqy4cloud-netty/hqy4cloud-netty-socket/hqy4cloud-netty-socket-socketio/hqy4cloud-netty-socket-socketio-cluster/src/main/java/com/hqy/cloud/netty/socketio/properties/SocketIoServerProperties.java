@@ -18,6 +18,6 @@ public class SocketIoServerProperties {
 
     private int port;
     private String context = "/socketio";
-    private Boolean cluster;
+    private boolean cluster;
 
 }

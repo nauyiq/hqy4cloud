@@ -46,7 +46,7 @@ public class SocketIoModelConfigAutoConfiguration implements BeanFactoryAware {
         SocketIoServerModel model = new SocketIoServerModel(applicationModel.getApplicationName());
         model.setPort(properties.getPort() == 0 ? port + 100 : properties.getPort());
         model.setContext(properties.getContext());
-        model.setCluster(properties.getCluster());
+        model.setCluster(properties.isCluster());
         model.setAuthorizationService(authorizationService);
         Map<String, SocketIoEventListener> eventListeners = factory.getBeansOfType(SocketIoEventListener.class);
         model.setSocketIoEventListeners(new HashSet<>(eventListeners.values()));

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 public class JwtAuthorizationService implements AuthorizationService {
 
-    @Value("${hqy4cloud.authorization.jwt.secret}")
+    @Value("${hqy4cloud.authorization.jwt.secret:''}")
     private String secret;
     @Value("${hqy4cloud.authorization.jwt.expired-seconds:10000}")
     private int expiredSeconds;

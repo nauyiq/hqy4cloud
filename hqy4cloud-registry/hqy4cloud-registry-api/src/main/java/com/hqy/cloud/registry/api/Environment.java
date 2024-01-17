@@ -1,4 +1,4 @@
-package com.hqy.cloud.registry.common.context;
+package com.hqy.cloud.registry.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

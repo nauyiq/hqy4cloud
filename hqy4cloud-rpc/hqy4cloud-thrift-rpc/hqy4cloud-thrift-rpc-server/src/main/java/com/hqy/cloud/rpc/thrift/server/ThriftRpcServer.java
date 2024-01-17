@@ -7,7 +7,7 @@ import com.facebook.swift.service.ThriftServer;
 import com.facebook.swift.service.ThriftServiceProcessor;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.rpc.model.RpcServerAddress;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.model.RpcServiceInfo;

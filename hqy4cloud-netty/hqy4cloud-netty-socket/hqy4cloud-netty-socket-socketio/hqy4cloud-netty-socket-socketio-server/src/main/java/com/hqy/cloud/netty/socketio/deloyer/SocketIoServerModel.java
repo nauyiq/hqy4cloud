@@ -1,6 +1,5 @@
 package com.hqy.cloud.netty.socketio.deloyer;
 
-import com.corundumstudio.socketio.AuthorizationListener;
 import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
 import com.hqy.foundation.authorization.AuthorizationService;
@@ -88,7 +87,7 @@ public class SocketIoServerModel extends Parameters {
         return cluster;
     }
 
-    public void setCluster(Boolean cluster) {
+    public void setCluster(boolean cluster) {
         this.cluster = cluster;
     }
 
@@ -106,5 +105,6 @@ public class SocketIoServerModel extends Parameters {
 
     public void setPort(int port) {
         this.port = port;
+
     }
 }

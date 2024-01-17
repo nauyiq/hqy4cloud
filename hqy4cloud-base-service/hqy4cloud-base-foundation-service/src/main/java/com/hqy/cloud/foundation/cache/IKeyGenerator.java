@@ -1,7 +1,6 @@
 package com.hqy.cloud.foundation.cache;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.interceptor.KeyGenerator;

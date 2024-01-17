@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
-import com.hqy.cloud.registry.common.context.Environment;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.ProjectExecutors;

@@ -7,7 +7,7 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.RegistryFactory;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.PubMode;

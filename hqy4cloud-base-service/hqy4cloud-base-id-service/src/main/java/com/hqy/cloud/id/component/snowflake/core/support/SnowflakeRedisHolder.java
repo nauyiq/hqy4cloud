@@ -7,7 +7,7 @@ import com.hqy.cloud.foundation.redis.key.RedisKey;
 import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.id.component.snowflake.core.AbstractSnowflakeHolder;
 import com.hqy.cloud.id.component.snowflake.exception.InitWorkerIdException;
-import com.hqy.cloud.registry.common.context.Environment;
+import com.hqy.cloud.registry.api.Environment;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RMap;
