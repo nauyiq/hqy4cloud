@@ -44,7 +44,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     private volatile Invoker<T> stickyInvoker = null;
 
-    private volatile Map<String, Object> attachments;
+    private final Map<String, Object> attachments;
 
     private int reselectCount = 10;
 
@@ -56,6 +56,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         AssertUtil.notNull(directory, "Directory should not be null.");
         this.directory = directory;
         this.availableCheck = getModel().getParameter(RPC_CLUSTER_AVAILABLE_CHECK, DEFAULT_RPC_CLUSTER_AVAILABLE_CHECK);
+        this.attachments = attachments;
     }
 
 
@@ -303,6 +304,10 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         }
     }
 
+    public Map<String, Object> getAttachments() {
+        return attachments;
+    }
+
     public void setDirectory(Directory<T> directory) {
         this.directory = directory;
     }
@@ -346,5 +351,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         }
         return new RandomLoadBalance();
     }
+
+
 
 }

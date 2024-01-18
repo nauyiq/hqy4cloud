@@ -41,7 +41,7 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
     public GrayModeRouter(RpcModel rpcModel) {
         this.rpcModel = rpcModel;
         this.priority = rpcModel.getParameter(GRAY_PRIORITY_KEY, DEFAULT_PRIORITY);
-        this.force = Boolean.parseBoolean(rpcModel.getParameter(FORCE_KEY, "false"));
+        this.force = Boolean.parseBoolean(rpcModel.getParameter(FORCE_KEY, "true"));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class GrayModeRouter<T> extends AbstractRouter<T> {
                 return new RouterResult<>(chooseInvokers, true);
             } else if (force) {
                 log.warn("The route result is empty and force execute. consumer: " + getRpcModel() + ", service: " + rpcModel.getName());
-                new RouterResult<>(chooseInvokers, true);
+                return new RouterResult<>(chooseInvokers, false);
             }
         } catch (Throwable t) {
             log.error("Failed to execute GrayMode router rule: " + getRpcModel() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);

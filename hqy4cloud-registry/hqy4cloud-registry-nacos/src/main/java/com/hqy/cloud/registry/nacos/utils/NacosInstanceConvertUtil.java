@@ -1,10 +1,12 @@
 package com.hqy.cloud.registry.nacos.utils;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.nacos.Constants;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -32,7 +34,7 @@ public class NacosInstanceConvertUtil {
     }
 
     public static ApplicationModel convert(Instance instance, String group, RegistryInfo registryInfo, MetadataInfo metadataInfo) {
-        ApplicationModel model = ApplicationModel.of(instance.getServiceName(), metadataInfo.getEnv(), group);
+        ApplicationModel model = ApplicationModel.of(getInstanceServiceName(instance), metadataInfo.getEnv(), group);
         model.setId(instance.getInstanceId());
         model.setHealthy(instance.isHealthy());
         model.setPort(instance.getPort());
@@ -49,5 +51,16 @@ public class NacosInstanceConvertUtil {
         double weight = model.getParameter(Constants.WEIGHT, Constants.DEFAULT_WEIGHT);
         instance.setWeight(weight);
         instance.setMetadata(metadataMap);
+    }
+
+
+    public static String getInstanceServiceName(Instance instance) {
+        AssertUtil.notNull(instance, "Instance should not be null.");
+        String serviceName = instance.getServiceName();
+        String[] split = serviceName.split(StringConstants.Symbol.AT_AT);
+        if (split.length != 1) {
+            return split[1];
+        }
+        return serviceName;
     }
 }

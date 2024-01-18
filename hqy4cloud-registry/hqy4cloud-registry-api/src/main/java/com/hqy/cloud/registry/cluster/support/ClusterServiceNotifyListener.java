@@ -31,7 +31,7 @@ public record ClusterServiceNotifyListener(MasterElectionService electionService
             DeployState state = context.deployer().getState();
             if (state != DeployState.STARTED) {
                 // just not started, ignore event.
-                log.warn("Ignore cluster notify, deploy state {}.", state);
+                log.info("Ignore cluster notify, deploy state {}.", state);
                 return;
             }
         }

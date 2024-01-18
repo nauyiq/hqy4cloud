@@ -56,7 +56,7 @@ public class GatewayLoadBalanceStrategyContext {
         /**
          * 根据hash值进行负载均衡
          */
-        SOCKET("hash", WebSocketHashLoadBalanceStrategy.class),
+        WS_HASH("hash", WebSocketHashLoadBalanceStrategy.class),
 
 
         ;

@@ -4,6 +4,7 @@ import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.metadata.MetadataService;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.util.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +51,13 @@ public class RpcMetadata implements MetadataService {
 
     public static RpcMetadata of(ApplicationModel model) {
         String hashFactor = model.getParameter(RPC_HASH_FACTOR, DEFAULT_HASH_FACTOR);
-        RpcServerAddress serverAddress = RpcServerAddress.of(model.getIp());
+        String addressJson = model.getMetadataInfo().getParameter(RPC_SERVER_METADATA_ADDRESS);
+        RpcServerAddress serverAddress;
+        if (StringUtils.isNotBlank(addressJson)) {
+            serverAddress = JsonUtil.toBean(addressJson, RpcServerAddress.class);
+        } else {
+            serverAddress = RpcServerAddress.of(model.getIp());
+        }
         return RpcMetadata.of(hashFactor, serverAddress, Collections.emptyList());
     }
 

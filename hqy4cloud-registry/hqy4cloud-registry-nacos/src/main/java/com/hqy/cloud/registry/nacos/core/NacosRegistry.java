@@ -193,6 +193,18 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
+    public List<ServiceInstance> lookupAll(ApplicationModel model) throws RegisterDiscoverException {
+        AssertUtil.notNull(model, "Application model of lookUp should not be null.");
+        try {
+            RegistryInfo registryInfo = getRegistryInfo();
+            List<Instance> instances = namingService.getAllInstances(model.getApplicationName(), model.getGroup());
+            return getServiceInstances(instances, registryInfo, model.getGroup());
+        } catch (Throwable t) {
+            throw new RegisterDiscoverException("Failed to lookup " + model + " from nacos " + getRegistryInfo() + ", cause: " + t.getMessage(), t);
+        }
+    }
+
+    @Override
     public List<ApplicationModel> lookupModels(ApplicationModel model) {
         AssertUtil.notNull(model, "Application model of lookUp should not be null.");
         try {

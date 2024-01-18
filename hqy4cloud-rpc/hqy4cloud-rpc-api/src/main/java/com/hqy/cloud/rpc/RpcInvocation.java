@@ -50,11 +50,11 @@ public class RpcInvocation implements Invocation, Serializable {
 
 
     public RpcInvocation(Invoker<?> invoker, Method method, Object[] args) {
-        this(invoker, null, method, args, InvokeMode.SYNC, null);
+        this(invoker, null, method, args, InvokeMode.SYNC, new HashMap<>());
     }
 
     public RpcInvocation(Invoker<?> invoker, InvocationCallback invocationCallback, Method method, Object[] args) {
-        this(invoker, invocationCallback, method, args, InvokeMode.SYNC, null);
+        this(invoker, invocationCallback, method, args, InvokeMode.SYNC, new HashMap<>());
     }
 
     public RpcInvocation(Invoker<?> invoker, InvocationCallback invocationCallback, Method method, Object[] args, InvokeMode invokeMode, Map<String, Object> attachments) {

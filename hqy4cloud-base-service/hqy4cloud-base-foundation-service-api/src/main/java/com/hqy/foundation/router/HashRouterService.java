@@ -36,6 +36,14 @@ public interface HashRouterService {
     Map<Integer, String> getAddress(String application, Set<Integer> hashSet);
 
 
+    /**
+     * 获取hash表中所有的路由地址
+     * @param application 应用名
+     * @return            所有的路由地址
+     */
+    Map<Integer, String> getAllAddress(String application);
+
+
 
 
 }

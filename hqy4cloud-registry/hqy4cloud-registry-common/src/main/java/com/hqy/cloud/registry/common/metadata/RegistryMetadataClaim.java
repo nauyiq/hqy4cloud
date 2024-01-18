@@ -8,8 +8,8 @@ import java.util.Map;
  * @version 1.0
  * @date 2024/1/8
  */
-public interface RegistryMetadataClaim extends Comparable<RegistryMetadataClaim> {
-    int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+public interface RegistryMetadataClaim {
+    int DEFAULT_PRIORITY = 0;
 
     /**
      * claim metadata to registry.
@@ -19,12 +19,5 @@ public interface RegistryMetadataClaim extends Comparable<RegistryMetadataClaim>
      */
     MetadataInfo claim(MetadataInfo metadata, Map<String, String> metadataMap);
 
-    /**
-     * claim priority
-     * @return priority value
-     */
-    default int getPriority() {
-        return DEFAULT_PRIORITY;
-    }
 
 }

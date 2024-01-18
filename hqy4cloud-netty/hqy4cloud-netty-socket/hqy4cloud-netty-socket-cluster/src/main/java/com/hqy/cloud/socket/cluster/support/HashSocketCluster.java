@@ -10,6 +10,8 @@ import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.foundation.router.HashRouterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -26,12 +28,34 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HashSocketCluster extends AbstractSocketCluster {
     public static final String NAME = "HashCluster";
-    private static final String HASH_PARAM = "?hash=";
+    private static final String HASH_PARAM = "&hash=";
+    private static final int MAX_HASH_TABLE_LENGTH = 64;
 
     private final HashRouterService hashRouterService;
 
     public HashSocketCluster(HashRouterService hashRouterService) {
         this.hashRouterService = hashRouterService;
+    }
+
+    @Override
+    public void update(SocketServer localServer, List<SocketServer> socketServers) {
+        String applicationName = localServer.getInfo().getApplicationName();
+        Map<Integer, String> allAddress = hashRouterService.getAllAddress(applicationName);
+        if (MapUtils.isEmpty(allAddress) || CollectionUtils.isEmpty(socketServers)) {
+            hashRouterService.updateHashRoute(applicationName, 0, localServer.getAddress());
+        } else {
+            socketServers.add(localServer);
+            List<String> addressList = socketServers.stream().map(SocketServer::getAddress).toList();
+            for (int hash = 0; hash < addressList.size(); hash++) {
+                String address = allAddress.get(hash);
+                if (StringUtils.isBlank(address) || !addressList.contains(address)) {
+                    // 更新路由表.
+                    hashRouterService.updateHashRoute(applicationName, hash, localServer.getAddress());
+                    return;
+                }
+            }
+
+        }
     }
 
     @Override
@@ -103,7 +127,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     }
 
     @Override
-    protected ConnectBindModel chooseClientBindServer(String bizId, List<SocketServer> socketServers) {
+    protected ConnectBindModel chooseClientBindServer(String bizId, SocketServer localServer, List<SocketServer> socketServers) {
         int hash = getHash(bizId, socketServers);
         SocketServer socketServer = findUpdated(socketServers.get(0).getInfo().getApplicationName(), socketServers, hash);
         SocketServerInfo info = socketServer.getInfo();
@@ -129,39 +153,59 @@ public class HashSocketCluster extends AbstractSocketCluster {
     private SocketServer getSocketServer(String applicationName, List<SocketServer> socketServers, int hash, String address) {
         boolean update = false;
         SocketServer foundServer = null;
-        if (StringUtils.isBlank(address)) {
-            if (CommonSwitcher.ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN.isOn()) {
-                update = true;
-                foundServer = socketServers.get(ThreadLocalRandom.current().nextInt(socketServers.size()));
-                address = foundServer.getAddress();
-            } else {
-                return null;
-            }
-        } else {
+        List<SocketServer> reChooseServers = new ArrayList<>(socketServers.size());
+
+        if (StringUtils.isNotBlank(address)) {
             for (SocketServer socketServer : socketServers) {
                 String serverAddress = socketServer.getAddress();
                 if (address.equals(serverAddress)) {
                     foundServer = socketServer;
                     break;
-                }
-            }
-
-            if (foundServer == null) {
-                if (CommonSwitcher.ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN.isOn()) {
-                    update = true;
-                    foundServer = socketServers.get(ThreadLocalRandom.current().nextInt(socketServers.size()));
-                    address = foundServer.getAddress();
                 } else {
-                    return null;
+                    if (socketServer.isAvailable()) {
+                        reChooseServers.add(socketServer);
+                    }
+                }
+            }
+            // 如果服务可用 直接返回服务实例即可.
+            if (foundServer != null && foundServer.isAvailable()) {
+                return foundServer;
+            }
+        }
+
+        // 如果允许再次进行hash选择. 开关默认关闭,
+        // 如果允许再分配hash，会造成某些服务永远不会被hash到，因为对应的hash值已经被占用。
+        // 除非允许重平衡发生，重新路由整个hash表，但是重平衡的前提要断开所有客户端连接，再进行重新分配，代价太大。
+        // 而当前hash值如果找不到对应服务， 说明对应服务已经下线或不可用，该hash值已经没有意义，业务层要重新获取socket连接，重新获取新的hash值。
+        if (CommonSwitcher.ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN.isOn() && CollectionUtils.isNotEmpty(reChooseServers)) {
+            // 将hash值绑定一个新的地址, 新的地址优先为hash表中未分配的
+            Map<Integer, String> allAddress = hashRouterService.getAllAddress(applicationName);
+            Collection<String> values = allAddress.values();
+            if (values.size() > MAX_HASH_TABLE_LENGTH) {
+                // 如果超过hash表允许的最大长度, 则不在进行hash更新， 直接随机选取，并且发出警告..
+                log.warn("Socket router hash table too long, application: {}, length: {}.", applicationName, values.size());
+                // TODO ALERT NOTICE
+                // 随机选取一个节点返回.
+                return reChooseServers.get(ThreadLocalRandom.current().nextInt(values.size()));
+            }
+            // 打乱服务列表顺序
+            Collections.shuffle(reChooseServers);
+            for (int i = 0; i < reChooseServers.size(); i++) {
+                SocketServer socketServer = reChooseServers.get(i);
+                String serverAddress = socketServer.getAddress();
+                // 判断在hash表中是否存在该服务地址，并且还有其他服务没有选择到的话 则重新选取
+                if (values.contains(serverAddress) && i != reChooseServers.size() - 1) {
+                    break;
+                } else {
+                    foundServer = socketServer;
                 }
             }
 
+            if (foundServer != null) {
+                // 更新一下服务
+                hashRouterService.updateHashRoute(applicationName, hash, foundServer.getAddress());
+            }
         }
-
-        if (update) {
-            hashRouterService.updateHashRoute(applicationName, hash, address);
-        }
-
         return foundServer;
     }
 

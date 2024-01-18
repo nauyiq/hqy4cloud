@@ -42,6 +42,12 @@ public class HashRouterServiceImpl implements HashRouterService {
         return hashAddressCache.getAll(hashSet);
     }
 
+    @Override
+    public Map<Integer, String> getAllAddress(String application) {
+        RMapCache<Integer, String> hashAddressCache = getHashAddressCache(application);
+        return hashAddressCache.readAllMap();
+    }
+
     private RMapCache<Integer, String> getHashAddressCache(String application) {
         AssertUtil.notEmpty(application, "Application name should not be empty.");
         String key = application + StringConstants.Symbol.UNION + ProjectContext.getContextInfo().getEnv() +

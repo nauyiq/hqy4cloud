@@ -6,6 +6,8 @@ import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.foundation.common.route.support.SocketPortRouterManager;
 import com.hqy.cloud.gateway.loadbalance.ServiceInstanceLoadBalancer;
 import com.hqy.cloud.gateway.loadbalance.WebsocketRouter;
+import com.hqy.cloud.socket.model.SocketServerMetadata;
+import com.hqy.cloud.util.JsonUtil;
 import com.hqy.foundation.util.SocketHashFactorUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_INSTANCE_METADATA_PORT_KEY;
 import static com.hqy.cloud.common.base.config.ConfigConstants.SOCKET_MULTI_PARAM_KEY;
+import static com.hqy.cloud.socket.SocketConstants.SOCKET_SERVER_DEPLOY_METADATA_KEY;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 
@@ -76,7 +78,6 @@ public class WebSocketHashLoadBalanceStrategy extends ServiceInstanceLoadBalance
             if (ServerSwitcher.ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER.isOn()) {
                 // 获取实例服务的socket端口
                 int socketPort = getSocketPort(instance);
-                //  instance = copy(socketPort, instance);
                 instance = new WebsocketServiceInstanceWrapper(socketPort, instance);
             }
             return new DefaultResponse(instance);
@@ -87,9 +88,10 @@ public class WebSocketHashLoadBalanceStrategy extends ServiceInstanceLoadBalance
 
     private int getSocketPort(ServiceInstance serviceInstance) {
         // 优先从metadata中获取socket端口
-        String portStr = serviceInstance.getMetadata().get(SOCKET_INSTANCE_METADATA_PORT_KEY);
-        if (StringUtils.isNotBlank(portStr)) {
-            return Integer.parseInt(portStr);
+        String metadataStr = serviceInstance.getMetadata().get(SOCKET_SERVER_DEPLOY_METADATA_KEY);
+        if (StringUtils.isNotBlank(metadataStr)) {
+            SocketServerMetadata metadata = JsonUtil.toBean(metadataStr, SocketServerMetadata.class);
+            return metadata.getPort();
         }
         // 从Socket端口路由器中获取服务端口
         String host = serviceInstance.getHost();

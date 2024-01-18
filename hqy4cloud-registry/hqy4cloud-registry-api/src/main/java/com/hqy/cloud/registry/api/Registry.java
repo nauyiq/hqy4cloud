@@ -45,6 +45,15 @@ public interface Registry extends ServerDiscovery, CloseableService {
      * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link ServiceNotifyListener#notify(List)}.
      * @throws RegisterDiscoverException e.
      */
+    List<ServiceInstance> lookupAll(ApplicationModel model) throws RegisterDiscoverException;
+
+
+    /**
+     * Query the registered data that matches the conditions. Corresponding to the push mode of the subscription, this is the pull mode and returns only one result.
+     * @param model Query condition
+     * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link ServiceNotifyListener#notify(List)}.
+     * @throws RegisterDiscoverException e.
+     */
     List<ApplicationModel> lookupModels(ApplicationModel model) throws RegisterDiscoverException;
 
     /**

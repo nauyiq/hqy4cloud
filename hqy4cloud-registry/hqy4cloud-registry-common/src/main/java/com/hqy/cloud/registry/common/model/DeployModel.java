@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version 1.0
  * @date 2023/12/29
  */
-public abstract class DeployModel implements ModelService, DeployMetaDataService {
+public abstract class DeployModel implements ModelService, DeployMetaDataService, Comparable<DeployModel> {
     private static final Logger log = LoggerFactory.getLogger(DeployModel.class);
 
     private final ApplicationModel model;
@@ -61,6 +61,10 @@ public abstract class DeployModel implements ModelService, DeployMetaDataService
 
     }
 
+    @Override
+    public int compareTo(DeployModel o) {
+        return Integer.compare(this.getPriority(), o.getPriority());
+    }
 
     public boolean isDestroy() {
         return destroyed.get();

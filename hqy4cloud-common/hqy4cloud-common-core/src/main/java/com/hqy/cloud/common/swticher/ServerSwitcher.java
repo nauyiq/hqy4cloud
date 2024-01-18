@@ -65,7 +65,7 @@ public class ServerSwitcher extends CommonSwitcher {
     /**
      * 节点-网关负载均衡websocket项目时是否重新路由端口
      */
-    public static final ServerSwitcher ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER = new ServerSwitcher(155, "节点-网关负载均衡websocket项目时是否重新路由端口", false, MicroServiceConstants.GATEWAY);
+    public static final ServerSwitcher ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER = new ServerSwitcher(155, "节点-网关负载均衡websocket项目时是否重新路由端口", true, MicroServiceConstants.GATEWAY);
 
 
     /**

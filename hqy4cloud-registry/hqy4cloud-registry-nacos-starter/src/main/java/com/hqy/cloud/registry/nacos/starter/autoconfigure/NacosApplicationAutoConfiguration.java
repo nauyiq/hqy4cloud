@@ -76,7 +76,9 @@ public class NacosApplicationAutoConfiguration {
     @ConditionalOnBean({ApplicationModel.class})
     public Registry registry(ApplicationModel applicationModel) {
         RegistryFactory registryFactory = new NacosRegistryFactory();
-        return registryFactory.getRegistry(applicationModel);
+        Registry registry = registryFactory.getRegistry(applicationModel);
+        BeanRepository.getInstance().register(Registry.class, registry);
+        return registry;
     }
 
     private MetadataInfo buildMetadataInfoByProperties(NacosDiscoveryProperties properties, AutoApplicationDeployerProperties applicationDeployerProperties, Environment environment) {

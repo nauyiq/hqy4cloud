@@ -8,7 +8,6 @@ package com.hqy.cloud.common.base.config;
 public interface ConfigConstants {
 
     String SOCKET_MULTI_PARAM_KEY = "hash";
-    String SOCKET_INSTANCE_METADATA_PORT_KEY = "socketServerPort";
     String SOCKET_AUTHORIZATION_SECRET = "socket.authorization.secret";
     String SOCKET_SSL_KEYSTORE_KEY = "socket.ssl.keystore";
     String SOCKET_SSL_KEYSTORE_PASSWORD = "socket.ssl.keystore.password";

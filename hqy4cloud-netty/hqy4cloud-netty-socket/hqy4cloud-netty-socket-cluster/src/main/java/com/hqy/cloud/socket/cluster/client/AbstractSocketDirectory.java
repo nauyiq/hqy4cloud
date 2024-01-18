@@ -29,7 +29,7 @@ public abstract class AbstractSocketDirectory implements SocketDirectory {
 
     public void setSocketServers(List<SocketServer> socketServers) {
         this.socketServers = socketServers;
-        if (CollectionUtils.isNotEmpty(socketServers) && StringUtils.isNotBlank(clusterType)) {
+        if (CollectionUtils.isNotEmpty(socketServers) && StringUtils.isBlank(clusterType)) {
             // 初始化集群类型
             SocketServer socketServer = socketServers.get(0);
             // TODO 暂时先取默认第一个服务的集群类型作为当前的服务的集群类型, 因为理论上集群中所有的节点的集群类型都是同一个

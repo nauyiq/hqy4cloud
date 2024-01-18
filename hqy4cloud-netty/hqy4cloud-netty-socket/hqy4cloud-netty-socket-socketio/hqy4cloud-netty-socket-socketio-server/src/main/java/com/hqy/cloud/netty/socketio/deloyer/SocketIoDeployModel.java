@@ -1,10 +1,13 @@
 package com.hqy.cloud.netty.socketio.deloyer;
 
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.DeployComponent;
 import com.hqy.cloud.netty.socketio.SocketIoSocketServer;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 import com.hqy.cloud.registry.context.ProjectContext;
+import com.hqy.cloud.rpc.cluster.ClusterJoinConstants;
+import com.hqy.cloud.socket.model.SocketServerMetadata;
 import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +47,20 @@ public class SocketIoDeployModel extends DeployModel {
 
     @Override
     public Map<String, String> getMetadataMap() {
-        return this.server.getInfo().getMetadata().getMetadataMap();
+        Map<String, String> metadataMap = this.server.getInfo().getMetadata().getMetadataMap();
+        SocketServerMetadata metadata = server.getMetadata();
+        // 判断是否集群启动.
+        if (metadata.isCluster()) {
+            // 初始化hashFactor
+            String hashFactor = getModel().getIp() + StrUtil.COLON + metadata.getPort();
+            metadataMap.put(ClusterJoinConstants.HASH_FACTOR,  hashFactor);
+        }
+        return metadataMap;
+    }
+
+    @Override
+    public int getPriority() {
+        return Integer.MAX_VALUE;
     }
 
     @Override

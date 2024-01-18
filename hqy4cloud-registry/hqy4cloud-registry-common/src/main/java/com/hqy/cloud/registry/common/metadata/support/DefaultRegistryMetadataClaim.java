@@ -1,6 +1,5 @@
 package com.hqy.cloud.registry.common.metadata.support;
 
-import com.hqy.cloud.registry.common.metadata.AbstractRegistryMetadataClaim;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.metadata.RegistryMetadataClaim;
 
@@ -12,7 +11,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2024/1/8
  */
-public class DefaultRegistryMetadataClaim extends AbstractRegistryMetadataClaim {
+public class DefaultRegistryMetadataClaim implements RegistryMetadataClaim {
     private DefaultRegistryMetadataClaim() {
 
     }

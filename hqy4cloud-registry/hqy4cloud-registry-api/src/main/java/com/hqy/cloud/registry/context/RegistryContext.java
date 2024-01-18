@@ -13,7 +13,8 @@ import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,7 +64,8 @@ public class RegistryContext implements Lifecycle {
 
     @Override
     public void initialize() {
-        List<DeployModel> models = CHILD_DEPLOY_MODELS.values().stream().sorted(Comparator.comparingInt(s -> s.getMetaDataClaim().getPriority())).toList();
+        List<DeployModel> models = new ArrayList<>(CHILD_DEPLOY_MODELS.values());
+        Collections.sort(models);
         // init all models
         if (!CHILD_DEPLOY_MODELS.isEmpty()) {
             models.forEach(DeployModel::initialize);

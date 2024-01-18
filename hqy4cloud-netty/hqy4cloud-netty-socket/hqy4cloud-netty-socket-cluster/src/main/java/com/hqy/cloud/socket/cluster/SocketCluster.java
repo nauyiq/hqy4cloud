@@ -17,6 +17,16 @@ import java.util.Set;
  */
 public interface SocketCluster {
 
+
+    /**
+     * 初始化cluster
+     * @param localServer   本地socket服务， 即自身
+     * @param socketServers 当前socket服务列表
+     */
+    default void update(SocketServer localServer, List<SocketServer> socketServers) {
+
+    }
+
     /**
      * 获取路由器名称
      * @return 路由器名
@@ -26,10 +36,11 @@ public interface SocketCluster {
     /**
      * 生成建立建立的url. 有对应的路由类型生成相关的请求连接,
      * @param bizId         客户端业务唯一id
+     * @param localServer   本地socket服务， 即自身
      * @param socketServers 当前socket服务列表
      * @return              {@link ClientConnection}
      */
-    ClientConnection getClientConnection(String bizId, List<SocketServer> socketServers);
+    ClientConnection getClientConnection(String bizId, SocketServer localServer, List<SocketServer> socketServers);
 
 
     /**

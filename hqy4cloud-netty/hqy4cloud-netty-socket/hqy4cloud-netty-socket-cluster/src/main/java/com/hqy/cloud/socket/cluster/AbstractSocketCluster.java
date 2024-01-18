@@ -24,23 +24,25 @@ import java.util.List;
  * @date 2024/1/11
  */
 public abstract class AbstractSocketCluster implements SocketCluster {
+    protected static final String AUTHORIZATION_REQUEST_KEY = "?Authorization=";
+
 
     @Override
-    public ClientConnection getClientConnection(String bizId, List<SocketServer> socketServers) {
+    public ClientConnection getClientConnection(String bizId, SocketServer localServer, List<SocketServer> socketServers) {
         AssertUtil.notEmpty(bizId, "Socket Client request bizId should not be empty.");
         AssertUtil.notEmpty(socketServers, "Socket servers should not be empty.");
 
         // 由子类根据策略选择客户端连接到哪个服务.
-        ConnectBindModel routerModel = chooseClientBindServer(bizId, socketServers);
+        ConnectBindModel routerModel = chooseClientBindServer(bizId, localServer, socketServers);
         SocketServer socketServer = routerModel.getSocketServer();
         SocketServerInfo serverInfo = socketServer.getInfo();
         // 获取验证token.
-        String authorization = socketServer.getAuthorizationService().encryptAuthorization(SocketAuthorization.of(serverInfo.getApplicationName(), bizId));
+        String authorization = localServer.getAuthorizationService().encryptAuthorization(SocketAuthorization.of(serverInfo.getApplicationName(), bizId));
         // 获取建立连接的url
-        String connectUrl = getClientConnectionUrl(socketServer);
+        String connectUrl = getClientConnectionUrl(socketServer, authorization);
 
         // 由子类去构造客户端连接实现类
-        return genConnection(routerModel, connectUrl, authorization, serverInfo.getMetadata().getContextPath());
+        return genConnection(routerModel, connectUrl, authorization, localServer.getMetadata().getContextPath());
     }
 
     @Override
@@ -65,7 +67,7 @@ public abstract class AbstractSocketCluster implements SocketCluster {
         return doFind(socketServers, connectionInfos);
     }
 
-    protected String getClientConnectionUrl(SocketServer socketServer) {
+    protected String getClientConnectionUrl(SocketServer socketServer, String authorization) {
         String connectUrl;
         if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
             // 如果允许gateway路由socket服务.
@@ -75,10 +77,11 @@ public abstract class AbstractSocketCluster implements SocketCluster {
         } else {
             connectUrl = socketServer.getAddress();
         }
+        connectUrl = connectUrl + AUTHORIZATION_REQUEST_KEY + authorization;
         return connectUrl;
     }
 
-    protected abstract ConnectBindModel chooseClientBindServer(String bizId, List<SocketServer> socketServers);
+    protected abstract ConnectBindModel chooseClientBindServer(String bizId, SocketServer localServer, List<SocketServer> socketServers);
     protected abstract ClientConnection genConnection(ConnectBindModel routerModel, String connectUrl, String authorization, String contextPath);
     protected abstract SocketServer doFind(List<SocketServer> socketServers, SocketConnectionInfo connectionInfo);
     protected abstract List<SocketServer> doFind(List<SocketServer> socketServers, List<SocketConnectionInfo> connectionInfos);

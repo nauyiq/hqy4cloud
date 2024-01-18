@@ -11,6 +11,7 @@ import com.hqy.cloud.registry.common.metadata.support.DefaultRegistryMetadataCla
  * @date 2024/1/8
  */
 public interface DeployMetaDataService extends MetadataService {
+    int DEFAULT_PRIORITY = 0;
 
     /**
      * get this deploy model bind claim, enable is null
@@ -20,6 +21,12 @@ public interface DeployMetaDataService extends MetadataService {
         return DefaultRegistryMetadataClaim.DEFAULT;
     }
 
-
+    /**
+     * setting priority
+     * @return priority
+     */
+    default int getPriority() {
+        return DEFAULT_PRIORITY;
+    }
 
 }

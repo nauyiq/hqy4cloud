@@ -51,6 +51,7 @@ public class DynamicInvokerInvocationHandler<T> implements InvocationHandler {
             return invoker.equals(args[0]);
         }
 
+
         RpcInvocation rpcInvocation = new RpcInvocation(invoker, invocationCallback, method, args);
         return invoker.invoke(rpcInvocation);
     }

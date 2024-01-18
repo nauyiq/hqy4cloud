@@ -31,7 +31,7 @@ public class SocketIoServerModel extends Parameters {
     /**
      * cluster?
      */
-    private Boolean cluster;
+    private Boolean cluster = true;
 
     /**
      * get socketIo server lister eventListeners.

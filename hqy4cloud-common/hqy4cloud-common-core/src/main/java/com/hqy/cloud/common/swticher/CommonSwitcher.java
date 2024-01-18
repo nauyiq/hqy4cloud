@@ -182,7 +182,7 @@ public class CommonSwitcher extends AbstractSwitcher {
     /**
      * 节点 - 是否当hash地址不存在时允许再次选择更新路由表
      */
-    public static final CommonSwitcher ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN = new CommonSwitcher(238, "节点-是否当hash地址不存在时允许再次选择更新路由表", true);
+    public static final CommonSwitcher ENABLE_SOCKET_HASH_NOT_FOUND_CHOOSE_AGAIN = new CommonSwitcher(238, "节点-是否当hash地址不存在时允许再次选择更新路由表", false);
 
 
     /**

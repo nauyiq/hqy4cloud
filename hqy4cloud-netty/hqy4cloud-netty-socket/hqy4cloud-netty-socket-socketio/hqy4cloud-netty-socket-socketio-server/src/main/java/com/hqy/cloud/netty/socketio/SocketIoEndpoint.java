@@ -39,7 +39,7 @@ public abstract class SocketIoEndpoint {
         SocketIOServer socketIOServer = ioSocketServer.getSocketIOServer();
         String clusterType = ioSocketServer.getMetadata().getClusterType();
         SocketCluster cluster = SocketClusters.cluster(clusterType);
-        ClientConnection clientConnection = cluster.getClientConnection(bizId, client.getAllSocketServer(applicationName));
+        ClientConnection clientConnection = cluster.getClientConnection(bizId, ioSocketServer, client.getAllSocketServer(applicationName));
         if (clientConnection == null) {
             log.warn("Failed execute to get socket connection, applicationL {}, bizId {}, clusterType: {}.", applicationName, bizId, clusterType);
             return R.failed();
