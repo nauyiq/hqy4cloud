@@ -97,6 +97,7 @@ public abstract class AbstractCollector<T> implements Collector<T> {
 
 
     public AbstractCollector() {
+        this(CollectorConfig.DEFAULT);
     }
 
     public AbstractCollector(CollectorConfig config) {

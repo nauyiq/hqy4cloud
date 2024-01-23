@@ -4,6 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import com.facebook.ThriftRequestPram;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author qiyuan.hong
@@ -28,7 +29,7 @@ public abstract class Context {
 
     private ThriftRequestPram requestPram;
 
-    private Map<String, Object> attachments;
+    private Map<String, Object> attachments = new ConcurrentHashMap<>();
 
 
     public Context() {
@@ -108,10 +109,6 @@ public abstract class Context {
     }
 
     public synchronized Map<String, Object> setAttachment(String key, Object value) {
-        if (MapUtil.isEmpty(this.attachments)) {
-            // must be use hashmap, concurrentHashMap not support store 'null' value.
-            attachments = MapUtil.newHashMap(4);
-        }
         this.attachments.put(key, value);
         return this.attachments;
     }

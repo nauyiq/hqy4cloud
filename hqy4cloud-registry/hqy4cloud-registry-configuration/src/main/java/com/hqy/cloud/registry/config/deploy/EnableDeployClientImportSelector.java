@@ -23,6 +23,7 @@ import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX_COMPO
  * @date 2024/1/8
  */
 public class EnableDeployClientImportSelector extends SpringFactoryImportSelector<EnableDeployClient> {
+    private static final String ENABLED = ".enabled";
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
@@ -44,12 +45,12 @@ public class EnableDeployClientImportSelector extends SpringFactoryImportSelecto
 
             ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) getEnvironment();
             LinkedHashMap<String, Object> map = new LinkedHashMap<>(8);
-            map.put("hqy4cloud.application.deploy.enabled", true);
+            map.put(CONFIGURATION_PREFIX + ENABLED, true);
 
             // get deploy actuator type and setting deploy components.
             ActuatorNode actuatorType = attributes.getEnum("actuatorType");
             for (DeployComponent component : actuatorType.components) {
-                map.put(CONFIGURATION_PREFIX_COMPONENTS + StrUtil.DOT + component.name + ".enabled", true);
+                map.put(CONFIGURATION_PREFIX_COMPONENTS + StrUtil.DOT + component.name + ENABLED, true);
             }
             map.put(CONFIGURATION_PREFIX + ".actuatorType", actuatorType);
             // get application revision
@@ -69,7 +70,7 @@ public class EnableDeployClientImportSelector extends SpringFactoryImportSelecto
 
     @Override
     protected boolean isEnabled() {
-        return getEnvironment().getProperty("hqy4cloud.application.deploy.enabled", Boolean.class, Boolean.TRUE);
+        return getEnvironment().getProperty(CONFIGURATION_PREFIX + ENABLED, Boolean.class, Boolean.TRUE);
     }
 
     @Override

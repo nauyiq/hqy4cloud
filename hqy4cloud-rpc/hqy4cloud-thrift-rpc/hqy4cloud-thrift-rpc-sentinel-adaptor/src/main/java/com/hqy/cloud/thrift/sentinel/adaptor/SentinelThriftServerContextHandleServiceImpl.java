@@ -59,12 +59,16 @@ public class SentinelThriftServerContextHandleServiceImpl implements ThriftServe
     @Override
     public void doDone(ThriftServerContext thriftServerContext, String methodName) {
         if (CommonSwitcher.ENABLE_RPC_SENTINEL_ADAPTOR_HANDLER.isOn()) {
-            Entry methodEntry = (Entry) thriftServerContext.getAttachment(SENTINEL_THRIFT_METHOD_ENTRY);
-            Entry interfaceEntry = (Entry) thriftServerContext.getAttachment(SENTINEL_THRIFT_INTERFACE_RESOURCE_ENTRY);
-            if (Objects.isNull(methodEntry) && Objects.isNull(interfaceEntry)) {
+            Object methodEntryObj = thriftServerContext.getAttachment(SENTINEL_THRIFT_METHOD_ENTRY);
+            Object interfaceEntryObj = thriftServerContext.getAttachment(SENTINEL_THRIFT_INTERFACE_RESOURCE_ENTRY);
+            if (Objects.isNull(methodEntryObj) && Objects.isNull(interfaceEntryObj)) {
                 log.warn("methodEntry should not be null.");
                 return;
             }
+
+            Entry methodEntry = (Entry) methodEntryObj;
+            Entry interfaceEntry = (Entry) interfaceEntryObj;
+
             Object[] args;
             Object attachment = thriftServerContext.getAttachment(THRIFT_SERVER_HANDLER_REQUEST_ARGS);
             if (Objects.isNull(attachment)) {
