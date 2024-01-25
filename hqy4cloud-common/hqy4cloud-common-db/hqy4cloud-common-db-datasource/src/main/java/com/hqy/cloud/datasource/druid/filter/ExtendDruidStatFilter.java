@@ -4,7 +4,9 @@ import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.proxy.jdbc.StatementProxy;
+import com.alibaba.druid.stat.DruidStatManagerFacade;
 import com.hqy.cloud.coll.struct.SqlRecordStruct;
+import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
@@ -14,27 +16,57 @@ import com.hqy.cloud.foundation.event.alerter.AlerterHolder;
 import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
 import com.hqy.cloud.notice.email.EmailContent;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.util.concurrent.IExecutorsRepository;
 import com.hqy.foundation.common.EventType;
 import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.event.notice.NotificationType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * 拓展 {@link com.alibaba.druid.filter.stat.StatFilter}
  * 新增处理慢sql/错sql事件
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/12/8 16:31
+ * @date 2023/12/8
  */
 @Slf4j
 public class ExtendDruidStatFilter extends StatFilter {
+    private static final String SCHEDULE_NAME = "druid-states-reset";
+    private static final AtomicLong COUNTER = new AtomicLong(1);
+    private static final int FREQUENCY = 60;
 
     public ExtendDruidStatFilter(StatFilterConfig statFilterConfig) {
         super.setSlowSqlMillis(statFilterConfig.slowSqlMillis());
         super.setLogSlowSql(statFilterConfig.logSlowSql());
         super.setMergeSql(statFilterConfig.mergeSql());
+        // 启动重置druid stat数据job 防止记录的sql数据太多导致oom.
+        startResetStatDataJob();
+    }
+
+    private void startResetStatDataJob() {
+        ScheduledExecutorService service = IExecutorsRepository.newSingleScheduledExecutor(SCHEDULE_NAME);
+        service.scheduleAtFixedRate(this::doResetStatData, DateMeasureConstants.FIVE_MINUTES.toMillis(), DateMeasureConstants.ONE_MINUTES.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    private void doResetStatData() {
+        long count = COUNTER.incrementAndGet();
+        try {
+            if (CommonSwitcher.ENABLE_SCHEDULE_RESET_DRUID_STATES.isOff()) {
+                log.info("Switcher enable reset druid state is off.");
+            } else {
+                if (count % FREQUENCY == 0) {
+                    // 重置所有数据.
+                    DruidStatManagerFacade.getInstance().resetAll();
+                }
+            }
+        } catch (Throwable cause) {
+            log.error(cause.getMessage(), cause);
+        }
     }
 
     @Override

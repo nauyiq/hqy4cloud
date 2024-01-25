@@ -43,7 +43,7 @@ JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
 JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=400"
 
 # gc日志打印
-JAVA_OPT="${JAVA_OPT} -Xlog:gc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log:time,level"
+JAVA_OPT="${JAVA_OPT} -Xlog:gc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log:time,level,tags:filecount=30,filesize=50m"
 #JAVA_OPT="${JAVA_OPT} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCApplicationConcurrentTime -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 
 # 发生内存溢出时打印堆栈快照
