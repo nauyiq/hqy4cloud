@@ -8,7 +8,7 @@ package com.hqy.cloud.notice;
  */
 public interface NoticeConstants {
 
-    String DEFAULT_SYSTEM_EMAIL = "759428167@qq.com";
+    String DEFAULT_SYSTEM_EMAIL = "hongqy1024@163.com";
     String SYSTEM_EMAIL_TO_PREFIX = "hqy4cloud.notice.email";
 
 }

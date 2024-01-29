@@ -63,13 +63,12 @@ public class MultiplexThriftClientTargetPooled<T> {
      * @param invokers refresh to pool invokes.
      */
     public void refreshObjectPooled(List<Invoker<T>> invokers) {
-        if (closed.compareAndSet(true, false)) {
+        if (pool.isClosed() || closed.compareAndSet(true, false)) {
             // pool already close. rebuild pool and initialize pool.
             pool = new GenericKeyedObjectPool<>(factory, config);
             initializeObjectPooled(invokers);
             return;
         }
-
         //all objectInfo.
         Map<String, List<DefaultPooledObjectInfo>> allObjects = pool.listAllObjects();
         Set<String> keySet = allObjects.keySet();
@@ -153,6 +152,7 @@ public class MultiplexThriftClientTargetPooled<T> {
     public void returnTargetClient(RpcServerAddress address, T target) {
         pool.returnObject(address, target);
     }
+
 
 
     public void close() {

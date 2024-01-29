@@ -89,7 +89,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
             this.forbidden = true;
             routerChain.setInvokers(Collections.emptyList());
             destroyInvokers();
-            pooled.close();
+            pooled.refreshObjectPooled(Collections.emptyList());
         } else {
             this.forbidden = false;
             List<Invoker<T>> invokers = toInvokers(rpcModels);

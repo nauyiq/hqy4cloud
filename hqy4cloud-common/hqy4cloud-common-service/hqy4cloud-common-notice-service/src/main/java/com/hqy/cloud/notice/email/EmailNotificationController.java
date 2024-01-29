@@ -16,7 +16,7 @@ import static com.hqy.cloud.notice.NoticeConstants.SYSTEM_EMAIL_TO_PREFIX;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/12/19 17:10
+ * @date 2023/12/19
  */
 public class EmailNotificationController extends AbstractNotificationController {
 
@@ -30,7 +30,7 @@ public class EmailNotificationController extends AbstractNotificationController 
     public List<NoticeTarget> target(Environment environment, EventType eventType) {
         String key = SYSTEM_EMAIL_TO_PREFIX + StrUtil.DOT + eventType.name;
         List<String> emails = environment.getProperty(key, List.class, List.of(DEFAULT_SYSTEM_EMAIL));
-        return emails.stream().map(NoticeTarget::of).collect(Collectors.toList());
+        return emails.stream().map(NoticeTarget::of).toList();
     }
 
 }
