@@ -1,6 +1,5 @@
 package com.hqy.cloud.id.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.id.component.segment.service.SegmentService;
 import com.hqy.cloud.id.component.snowflake.service.SnowflakeService;
 import com.hqy.cloud.id.service.RemoteLeafService;
@@ -29,7 +28,7 @@ public class RemoteLeafServiceImpl extends AbstractRPCService implements RemoteL
     }
 
     @Override
-    public ResultStruct getSnowflakeNextId() {
-        return snowflakeService.get(StrUtil.EMPTY);
+    public ResultStruct getSnowflakeNextId(String key) {
+        return snowflakeService.get(key);
     }
 }

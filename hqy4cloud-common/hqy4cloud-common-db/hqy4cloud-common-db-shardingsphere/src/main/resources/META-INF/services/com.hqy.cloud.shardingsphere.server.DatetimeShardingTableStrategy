@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-#org.apache.shardingsphere.spring.boot.datasource.HikariDataSourcePropertiesSetter
-#org.apache.shardingsphere.spring.boot.datasource.CommonDbcp2DataSourcePropertiesSetter
-#org.apache.shardingsphere.spring.boot.datasource.TomcatDbcp2DataSourcePropertiesSetter
-com.hqy.cloud.shardingsphere.autoconfigure.DruidDataSourcePropertiesSetter
+com.hqy.cloud.shardingsphere.server.support.DayOfDatetimeShardingTableStrategy
+com.hqy.cloud.shardingsphere.server.support.MonthOfDatetimeShardingTableStrategy
+com.hqy.cloud.shardingsphere.server.support.YearOfDatetimeShardingTableStrategy

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hqy.cloud.db.mapper.CommonMapper">
+
+    <resultMap id="selectTableCreateSqlResultMap" type="com.hqy.cloud.db.common.CreateTableSql">
+        <result column="Table" property="table"/>
+        <result column="Create Table" property="createTable"/>
+    </resultMap>
+
+    <select id="getAllTableNameBySchema" resultType="java.lang.String">
+        SELECT TABLES.TABLE_NAME
+        FROM information_schema.TABLES
+        WHERE TABLES.TABLE_SCHEMA = #{schema}
+    </select>
+
+
+    <select id="selectTableCreateSql" resultMap="selectTableCreateSqlResultMap">
+        SHOW CREATE TABLE ${tableName}
+    </select>
+
+
+    <update id="executeSql">
+        ${sql}
+    </update>
+
+</mapper>

@@ -1,4 +1,4 @@
-package com.hqy.cloud.shardingsphere.config;
+package com.hqy.cloud.shardingsphere.autoconfigure;
 
 import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.filter.logging.Slf4jLogFilter;

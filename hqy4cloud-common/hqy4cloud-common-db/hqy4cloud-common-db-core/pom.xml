@@ -12,11 +12,6 @@
 
     <artifactId>hqy4cloud-common-db-core</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
 
     <dependencies>
         <dependency>

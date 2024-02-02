@@ -17,13 +17,12 @@ import java.util.Set;
  */
 public interface SocketCluster {
 
-
     /**
      * 初始化cluster
      * @param localServer   本地socket服务， 即自身
      * @param socketServers 当前socket服务列表
      */
-    default void update(SocketServer localServer, List<SocketServer> socketServers) {
+    default void init(SocketServer localServer, List<SocketServer> socketServers) {
 
     }
 

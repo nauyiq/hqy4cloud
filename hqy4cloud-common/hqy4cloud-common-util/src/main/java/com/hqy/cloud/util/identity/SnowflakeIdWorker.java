@@ -1,8 +1,11 @@
 package com.hqy.cloud.util.identity;
 
+import com.google.common.base.Preconditions;
+import com.hqy.cloud.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
+import java.util.Random;
 
 /**
  * Twitter_Snowflake<br>
@@ -15,38 +18,40 @@ import java.lang.management.ManagementFactory;
  * 12位序列，毫秒内的计数，12位的计数顺序号支持每个节点每毫秒(同一机器，同一时间截)产生4096个ID序号<br>
  * 加起来刚好64位，为一个Long型。<br>
  * SnowFlake的优点是，整体上按照时间自增排序，并且整个分布式系统内不会产生ID碰撞(由数据中心ID和机器ID作区分)，并且效率较高，经测试，SnowFlake每秒能够产生26万ID左右。
- *
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/4/22 14:05
+ * @date 2022/4/22
  */
 @Slf4j
 public class SnowflakeIdWorker {
 
+    private static final Random RANDOM = new Random();
+
+    /**
+     * 起始的时间戳
+     */
+    private final long twepoch;
+
     /**
      * 机器id所占的位数
      */
-    private final long workerIdBits = 5L;
+    private final long workerIdBits = 10L;
 
-    /**
-     * 数据标识id所占的位数
-     */
-    private final long datacenterIdBits = 5L;
 
-    /**
-     * 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数)
-     */
     private final long maxWorkerId = ~(-1L << workerIdBits);
+
+    private final long sequenceBits = 12L;
+
+    private final long workerIdShift = sequenceBits;
+
+    private final long timestampLeftShift = sequenceBits + workerIdBits;
+
+    private final long sequenceMask = ~(-1L << sequenceBits);
 
     /**
      * 工作机器ID(0~31)
      */
     private final long workerId;
-
-    /**
-     * 数据中心ID(0~31)
-     */
-    private final long datacenterId;
 
     /**
      * 毫秒内序列(0~4095)
@@ -72,32 +77,26 @@ public class SnowflakeIdWorker {
             pid = pid % maxWorkerId;
         }
         this.workerId = pid;
-        this.datacenterId = pid;
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
+        this.twepoch = 1288834974657L;
     }
+
+    public SnowflakeIdWorker(long workerId) {
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
+        this(workerId, 1288834974657L);
+    }
+
 
     /**
      * 构造函数
      * @param workerId     工作ID (0~31)
-     * @param datacenterId 数据中心ID (0~31)
+     * @param twepoch      起始的时间戳
      */
-    public SnowflakeIdWorker(long workerId, long datacenterId) {
-        if (workerId > maxWorkerId) {
-            workerId = workerId % maxWorkerId;
-        }
-
-        //支持的最大数据标识id，结果是31
-        long maxDatacenterId = ~(-1L << datacenterIdBits);
-        if (datacenterId > maxDatacenterId) {
-            datacenterId = datacenterId % maxDatacenterId;
-        }
-        if (workerId < 0) {
-            throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
-        }
-        if (datacenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
-        }
+    public SnowflakeIdWorker(long workerId, long twepoch) {
+        this.twepoch = twepoch;
+        Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
+        Preconditions.checkArgument(workerId >= 0 && workerId <= maxWorkerId, "workerID must gte 0 and lte 1023");
         this.workerId = workerId;
-        this.datacenterId = datacenterId;
     }
 
 
@@ -108,50 +107,47 @@ public class SnowflakeIdWorker {
      */
     public synchronized long nextId() {
         long timestamp = timeGen();
-        //如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+        //如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过
         if (timestamp < lastTimestamp) {
-            throw new RuntimeException(
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException(
                     String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+            long offset = lastTimestamp - timestamp;
+            if (offset <= 5) {
+                try {
+                    wait(offset << 1);
+                    timestamp = timeGen();
+                    if (timestamp < lastTimestamp) {
+                       throw illegalArgumentException;
+                    }
+                } catch (InterruptedException e) {
+                    log.error("wait interrupted");
+                    throw illegalArgumentException;
+                }
+            } else {
+                throw illegalArgumentException;
+            }
         }
 
         //如果是同一时间生成的，则进行毫秒内序列 序列在id中占的位数
-        long sequenceBits = 12L;
         if (lastTimestamp == timestamp) {
              //生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
-            long sequenceMask = ~(-1L << sequenceBits);
             sequence = (sequence + 1) & sequenceMask;
-            //毫秒内序列溢出
             if (sequence == 0) {
-                //阻塞到下一个毫秒,获得新的时间戳
+                //seq 为0的时候表示是下一毫秒时间开始对seq做随机
+                sequence = RANDOM.nextInt(100);
                 timestamp = tilNextMillis(lastTimestamp);
             }
+        } else {
+            //如果是新的ms开始
+            sequence = RANDOM.nextInt(100);
         }
-        //时间戳改变，毫秒内序列重置
-        else {
-            sequence = 0L;
-        }
-
         //上次生成ID的时间截
         lastTimestamp = timestamp;
-
-        //移位并通过或运算拼到一起组成64位的ID
-        //数据标识id向左移17位(12+5)
-        long datacenterIdShift = sequenceBits + workerIdBits;
-        //时间截向左移22位(5+5+12)
-        long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-        //机器ID向左移12位
-        long workerIdShift = 12L;
-        //开始时间截 (2015-01-01)
-        long twepoch = 1420041600000L;
-        return ((timestamp - twepoch) << timestampLeftShift)
-                | (datacenterId << datacenterIdShift)
-                | (workerId << workerIdShift)
-                | sequence;
+        return ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
     }
 
     /**
      * 阻塞到下一个毫秒，直到获得新的时间戳
-     *
      * @param lastTimestamp 上次生成ID的时间截
      * @return 当前时间戳
      */
@@ -165,29 +161,12 @@ public class SnowflakeIdWorker {
 
     /**
      * 返回以毫秒为单位的当前时间
-     *
      * @return 当前时间(毫秒)
      */
     protected long timeGen() {
         return System.currentTimeMillis();
     }
 
-    /**
-     * 将二进制转换为10进制
-     * @param binStr
-     * @return
-     */
-    public static long binary2Decimal(String binStr) {
-        //String binStr = bi+"";
-        long sum = 0;
-        int len = binStr.length();
-        for (int i = 1; i <= len; i++) {
-            //第i位 的数字为：
-            long dt = Integer.parseInt(binStr.substring(i - 1, i));
-            sum += Math.pow(2, len - i) * dt;
-        }
-        return sum;
-    }
 
 
 }

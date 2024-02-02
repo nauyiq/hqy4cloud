@@ -26,6 +26,18 @@ public interface DateMeasureConstants {
     Duration ONE_HOUR = Duration.ofMillis(NumberConstants.ONE_HOUR_4MILLISECONDS);
 
 
+    /**
+     * 1天
+     */
+    Duration ONE_DAY = Duration.ofDays(1);
+
+
+    /**
+     * 1个月 30天
+     */
+    Duration ONE_MONTH = Duration.ofDays(30);
+
+
 
 
 }

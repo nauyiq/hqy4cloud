@@ -77,7 +77,7 @@ public class SocketIoSocketServer extends ClusterSocketServer {
         instances.forEach(i -> socketServers.add(new InstanceSocketServer(i)));
         // 更新数据
         SocketCluster cluster = SocketClusters.cluster(getMetadata().getClusterType());
-        cluster.update(this, socketServers);
+        cluster.init(this, socketServers);
     }
 
     public SocketIOServer getSocketIOServer() {

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.cloud.shardingsphere.config.DruidShardingJdbcAutoConfiguration
+com.hqy.cloud.shardingsphere.autoconfigure.DruidShardingJdbcAutoConfiguration

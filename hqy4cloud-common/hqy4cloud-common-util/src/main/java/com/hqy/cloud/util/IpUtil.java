@@ -207,11 +207,6 @@ public class IpUtil {
                     InetAddress inetAddr = inetAddrs.nextElement();
                     // 排除loopback类型地址
                     if (!inetAddr.isLoopbackAddress()) {
-                        // 排除 虚拟地址
-                        if (inetAddr.getHostAddress().endsWith(VIRTUAL_IP_ENDING)) {
-                            log.warn("IGNORE :{}", inetAddr);
-                            continue;
-                        }
                         if (inetAddr.isSiteLocalAddress()) {
                             return inetAddr.getHostAddress();
                         } else if (candidateAddress == null) {

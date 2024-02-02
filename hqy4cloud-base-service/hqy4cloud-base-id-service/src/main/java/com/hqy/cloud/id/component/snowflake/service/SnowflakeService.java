@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class SnowflakeService implements IdGenService {
 
+
     private final IdGen idGen;
+
 
     @SneakyThrows
     public SnowflakeService(RedissonClient redissonClient) {

@@ -5,12 +5,14 @@ import com.hqy.cloud.id.service.RemoteLeafService;
 import com.hqy.cloud.id.struct.ResultStruct;
 import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.util.identity.ProjectSnowflakeIdWorker;
+import com.hqy.cloud.util.spring.SpringContextHolder;
+import com.hqy.foundation.id.SnowflakeIdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RedissonClient;
 
 /**
  * 分布式id成器
- * 主要调用rpc - id service获取分布式id
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/3/22 15:18
@@ -18,9 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class DistributedIdGen {
 
-    /**
-     * 获取分布式leaf分段id
-     */
     public static long getSegmentId(String key) {
         if (StringUtils.isBlank(key)) {
             throw new UnsupportedOperationException("BizTag key should not be empty.");
@@ -32,16 +31,29 @@ public class DistributedIdGen {
         }
         return struct.id;
     }
-    
-    
+
+    private volatile static SnowflakeIdGen snowflakeIdGen;
+
     /**
      * 获取分布式雪花id
+     * @param key request key.
      * @return id.
      */
-    public static long getSnowflakeId() {
+    public static long getSnowflakeId(String key) {
+        if (CommonSwitcher.ENABLE_USING_REDIS_SNOWFLAKE_WORKER_ID.isOn()) {
+            if (snowflakeIdGen == null) {
+                synchronized (DistributedIdGen.class) {
+                    if (snowflakeIdGen == null) {
+                        snowflakeIdGen = new RedisSnowflakeIdGen(SpringContextHolder.getBean(RedissonClient.class));
+                    }
+                }
+            }
+            return snowflakeIdGen.nextId();
+        }
+
         try {
             RemoteLeafService leafService = RpcClient.getRemoteService(RemoteLeafService.class);
-            ResultStruct struct = leafService.getSnowflakeNextId();
+            ResultStruct struct = leafService.getSnowflakeNextId(key);
             if (!struct.result) {
                 log.warn("Failed execute to get id by rpc, error code: {}.", struct.id);
             } else {
@@ -49,10 +61,6 @@ public class DistributedIdGen {
             }
         } catch (Throwable exception) {
             log.warn("Failed execute to get id by rpc, cause: {}.", exception.getMessage(), exception);
-        }
-
-        if (CommonSwitcher.ENABLE_USING_PID_SNOWFLAKE_WORKER_ID.isOn()) {
-            return ProjectSnowflakeIdWorker.getInstance().nextId();
         }
 
         throw new UnsupportedOperationException("No supported distributed id.");

@@ -28,10 +28,11 @@ public interface RemoteLeafService extends RPCService {
 
     /**
      * 获取雪花算法的id.
+     * @param key 业务key
      * @return {@link ResultStruct}
      */
     @ThriftMethod
-    ResultStruct getSnowflakeNextId();
+    ResultStruct getSnowflakeNextId(@ThriftField(1) String key);
 
 
 }

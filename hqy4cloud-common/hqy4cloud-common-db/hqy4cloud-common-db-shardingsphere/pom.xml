@@ -12,11 +12,6 @@
 
     <artifactId>hqy4cloud-common-db-shardingsphere</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
@@ -26,6 +21,11 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-db-datasource</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-base-id-service-api</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

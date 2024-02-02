@@ -13,6 +13,7 @@ import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
 import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
+import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.foundation.id.DistributedIdGen;
@@ -141,7 +142,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     private Account buildAccount(UserDTO userDTO, List<Role> roles) {
         List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
         String role = StrUtil.join(COMMA, roleNames);
-        Account account = new Account(DistributedIdGen.getSnowflakeId(), userDTO.getUsername(), passwordEncoder.encode(userDTO.getPassword()), userDTO.getEmail(), role, userDTO.getPhone());
+        Account account = new Account(DistributedIdGen.getSnowflakeId(MicroServiceConstants.ACCOUNT_SERVICE), userDTO.getUsername(), passwordEncoder.encode(userDTO.getPassword()), userDTO.getEmail(), role, userDTO.getPhone());
         if (Objects.nonNull(userDTO.getStatus())) {
             account.setStatus(userDTO.getStatus());
         }

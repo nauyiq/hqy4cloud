@@ -111,9 +111,9 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_SHARED_BLOCK_IP_LIST = new CommonSwitcher(224,"节点-是否启用共享的BIBlockIP清单（Redis）",true);
 
     /**
-     * 节点-是否采用基于本地pid进行计算的值作为雪花算法的workerId 默认true
+     * 节点-是否采用基于redis进行计算的值作为雪花算法的workerId 默认true
      */
-    public static final CommonSwitcher ENABLE_USING_PID_SNOWFLAKE_WORKER_ID = new CommonSwitcher(225, "节点-是否采用基于本地pid进行计算的值作为雪花算法的workerId", true);
+    public static final CommonSwitcher ENABLE_USING_REDIS_SNOWFLAKE_WORKER_ID = new CommonSwitcher(225, "节点-是否采用基于redis进行计算的值作为雪花算法的workerId", true);
 
     /**
      * 节点-是否基于环境进行canal的隔离

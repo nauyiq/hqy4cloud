@@ -1,4 +1,4 @@
-package com.hqy.cloud.shardingsphere.config;
+package com.hqy.cloud.shardingsphere.autoconfigure;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;

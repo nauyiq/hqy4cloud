@@ -31,6 +31,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     private static final String HASH_PARAM = "&hash=";
     private static final int MAX_HASH_TABLE_LENGTH = 64;
 
+
     private final HashRouterService hashRouterService;
 
     public HashSocketCluster(HashRouterService hashRouterService) {
@@ -38,7 +39,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     }
 
     @Override
-    public void update(SocketServer localServer, List<SocketServer> socketServers) {
+    public void init(SocketServer localServer, List<SocketServer> socketServers) {
         String applicationName = localServer.getInfo().getApplicationName();
         Map<Integer, String> allAddress = hashRouterService.getAllAddress(applicationName);
         if (MapUtils.isEmpty(allAddress) || CollectionUtils.isEmpty(socketServers)) {
