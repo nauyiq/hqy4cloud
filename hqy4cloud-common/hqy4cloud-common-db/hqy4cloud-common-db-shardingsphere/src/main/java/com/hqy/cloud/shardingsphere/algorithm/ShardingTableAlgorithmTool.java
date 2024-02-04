@@ -2,6 +2,7 @@ package com.hqy.cloud.shardingsphere.algorithm;
 
 import com.hqy.cloud.db.common.CreateTableSql;
 import com.hqy.cloud.db.mapper.CommonMapper;
+import com.hqy.cloud.db.service.CommonDbService;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implements PreciseShardingAlgorithm<T>, RangeShardingAlgorithm<T> {
 
-    private CommonMapper commonMapper;
+    private CommonDbService commonDbService;
     private volatile boolean init = false;
     private final Set<String> tableNames = new CopyOnWriteArraySet<>();
 
@@ -52,16 +53,17 @@ public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implem
         // 搜索当前逻辑表的创建表语句
         synchronized (logicTableName.intern()) {
             if (!checkShardingTableExist(actualTableName)) {
-                CreateTableSql tableSql = commonMapper.selectTableCreateSql(logicTableName);
-                if (tableSql == null) {
+                CreateTableSql createTableSql = commonDbService.selectTableCreateSql(logicTableName);
+                if (createTableSql == null) {
                     throw new ShardingSphereException("Failed execute to auto create table: "
                             + actualTableName + ", because not found " + logicTableName + " ddl");
                 }
                 // 创建表
-                String createTable = tableSql.getCreateTable();
+                String createTable = createTableSql.getCreateTable();
                 createTable = createTable.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
                                          .replace(logicTableName, actualTableName);
-                commonMapper.executeSql(createTable);
+                // TODO 分库的情况下, 这条sql shardingsphere无法确定去哪个库执行... 结果就是每个库都执行一次
+                commonDbService.execute(createTable);
                 tableNames.add(actualTableName);
             }
         }
@@ -77,8 +79,8 @@ public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implem
         String defaultDbName = getDefaultDbName();
         AssertUtil.notEmpty(defaultDbName, "Default db name should not be empty.");
         // 从容器中获取commentMapper
-        this.commonMapper = SpringContextHolder.getBean(CommonMapper.class);
-        AssertUtil.notNull(this.commonMapper, "Common mapper is null from spring context.");
+        this.commonDbService = SpringContextHolder.getBean(CommonDbService.class);
+        AssertUtil.notNull(this.commonDbService, "Common db service is null from spring context.");
         // 加载所有的数据表到缓存中.
         loadTableNamesByScheme(defaultDbName);
         this.init = true;
@@ -86,7 +88,7 @@ public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implem
 
 
     public void loadTableNamesByScheme(String scheme) {
-        List<String> allTableNameBySchema = commonMapper.getAllTableNameBySchema(scheme);
+        List<String> allTableNameBySchema = commonDbService.selectAllTableNameByDb(scheme);
         log.info("Load {} tables: {}.", scheme, allTableNameBySchema);
         this.tableNames.addAll(allTableNameBySchema);
     }
