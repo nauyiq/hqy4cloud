@@ -1,6 +1,7 @@
 package com.hqy.cloud.util;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -14,9 +15,22 @@ import java.util.concurrent.ConcurrentHashMap;
  * 反射工具类
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/4/21 15:19
+ * @date 2022/4/21
  */
+@Slf4j
 public class ReflectUtils {
+
+    @SuppressWarnings({"unchecked"})
+    public static <T> T getObjectField(Object obj, String fieldName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (T) field.get(obj);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
 
     /**

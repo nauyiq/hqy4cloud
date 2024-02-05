@@ -58,7 +58,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
         setRouterFactories(routerFactories);
         this.registry = registry;
         AssertUtil.notNull(getRegistry(), "Registry is null, please check status of Directory.");
-        shouldFailFast = true;
+        shouldFailFast = false;
     }
 
     @Override
@@ -69,6 +69,10 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
                     getRegistry().getRegistryInfo() + " for service " + getProviderServiceName() + " on consumer " +
                     IpUtil.getHostAddress() +
                     ", please check status of providers(disabled, not registered or in blacklist).");
+        }
+
+        if (CollectionUtils.isEmpty(availableInvokers)) {
+            return availableInvokers;
         }
 
         try {

@@ -1,7 +1,10 @@
 package com.hqy.cloud.shardingsphere.algorithm;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Range;
 import com.hqy.cloud.shardingsphere.server.DatetimeShardingTableStrategy;
+import com.hqy.cloud.shardingsphere.server.ShardingsphereContext;
 import com.hqy.cloud.shardingsphere.server.support.DatetimeShardingTableContext;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
@@ -19,9 +22,31 @@ import java.util.Date;
  * @version 1.0
  * @date 2024/2/1
  */
-public abstract class DateShardingTableStandardAlgorithm extends ShardingTableAlgorithmTool<Date> {
+public abstract class DateShardingTableStandardAlgorithm extends ShardingTableAlgorithmTool<Date> implements NodeNameMatchingFunction {
     private static final String PREFIX = "spring.shardingsphere.sharding.tables.";
     private static final String SUFFIX = ".table-strategy.standard.type";
+
+
+    public DateShardingTableStandardAlgorithm() {
+        ShardingsphereContext.INITIALIZE_TABLES.put(getLogicTableName(), this);
+    }
+
+    private volatile DatetimeShardingTableStrategy strategy = null;
+
+
+    @Override
+    public boolean isMatching(String name) {
+        String logicTableName = getLogicTableName();
+        DatetimeShardingTableStrategy strategy = getShardingDatetimeStrategy(logicTableName);
+        String pattern = strategy.getPattern();
+        String dateStr = name.substring(name.lastIndexOf(StrUtil.UNDERLINE) + 1);
+        try {
+            DateUtil.parse(dateStr, pattern);
+            return true;
+        } catch (Throwable cause) {
+            return false;
+        }
+    }
 
     @Override
     public String doSharding(Collection<String> collection, PreciseShardingValue<Date> preciseShardingValue) {
@@ -38,17 +63,21 @@ public abstract class DateShardingTableStandardAlgorithm extends ShardingTableAl
         DatetimeShardingTableStrategy strategy = getShardingDatetimeStrategy(logicTableName);
         // 范围分表
         Range<Date> range = rangeShardingValue.getValueRange();
-        return strategy.sharding(range.lowerEndpoint(), range.upperEndpoint(), logicTableName, availableTargetNames);
+        Date lowerEndpoint =  range.hasLowerBound() ? range.lowerEndpoint() : null;
+        Date upperEndpoint =  range.hasUpperBound() ? range.upperEndpoint() : null;
+        return strategy.sharding(lowerEndpoint, upperEndpoint, logicTableName, availableTargetNames);
     }
 
     private DatetimeShardingTableStrategy getShardingDatetimeStrategy(String logicTableName) {
-        // 获取分表的类型.
-        Environment environment = SpringContextHolder.getBean(Environment.class);
-        String shardingType = environment.getProperty(PREFIX + logicTableName + SUFFIX);
-        AssertUtil.notEmpty(shardingType, "Sharding type should not be empty, please check your environment configuration.");
-        // 根据分表类型获取分表策略
-        DatetimeShardingTableStrategy strategy = DatetimeShardingTableContext.getDatetimeShardingTableStrategy(shardingType);
-        AssertUtil.notNull(strategy, "Unknown sharding datetime type " + shardingType);
+        if (strategy == null) {
+            // 获取分表的类型.
+            Environment environment = SpringContextHolder.getBean(Environment.class);
+            String shardingType = environment.getProperty(PREFIX + logicTableName + SUFFIX);
+            AssertUtil.notEmpty(shardingType, "Sharding type should not be empty, please check your environment configuration.");
+            // 根据分表类型获取分表策略
+            strategy = DatetimeShardingTableContext.getDatetimeShardingTableStrategy(shardingType);
+            AssertUtil.notNull(strategy, "Unknown sharding datetime type " + shardingType);
+        }
         return strategy;
     }
 

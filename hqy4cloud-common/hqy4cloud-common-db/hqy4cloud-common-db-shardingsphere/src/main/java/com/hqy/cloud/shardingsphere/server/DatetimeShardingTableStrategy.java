@@ -18,6 +18,13 @@ public interface DatetimeShardingTableStrategy {
      */
     String shardingType();
 
+
+    /**
+     * 返回时间格式的pattern
+     * @return 根据时间分表的pattern
+     */
+    String getPattern();
+
     /**
      * 精确分表.
      * @param shardingValue        用于分表的时间值

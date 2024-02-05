@@ -4,13 +4,13 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author qiyuan.hong
@@ -29,7 +29,10 @@ public abstract class AbstractDatetimeShardingTableStrategy implements DatetimeS
 
     @Override
     public List<String> sharding(Date lowerEndpointDate, Date upperEndpointDate, String logicTableName, Collection<String> availableTargetNames) {
-        List<Date> dates = availableTargetNames.stream().map(this::getDateFromTableName).sorted().toList();
+        List<Date> dates = availableTargetNames.stream().map(this::getDateFromTableName).filter(Objects::nonNull).sorted().toList();
+        if (CollectionUtils.isEmpty(availableTargetNames) || CollectionUtils.isEmpty(dates)) {
+            return CommonSwitcher.ENABLE_SUING_LOGIC_TABLE_WHEN_ACTUAL_NODES_EMPTY.isOn() ? List.of(logicTableName) : Collections.emptyList();
+        }
         lowerEndpointDate = lowerEndpointDate == null ? dates.get(0) : lowerEndpointDate;
         upperEndpointDate = upperEndpointDate == null ? dates.get(dates.size() - 1) : upperEndpointDate;
 
@@ -48,18 +51,15 @@ public abstract class AbstractDatetimeShardingTableStrategy implements DatetimeS
     private Date getDateFromTableName(String tableName) {
         String pattern = getPattern();
         AssertUtil.notEmpty(pattern, "Sharding table data pattern should not be empty.");
-        // 默认分表表名规则为logicTableName_pattern
-        int index = tableName.lastIndexOf(StrUtil.UNDERLINE);
-        AssertUtil.isTrue(index != -1, "Not support table sharding name " + tableName);
-        String dataValue = tableName.substring(index);
-        return DateUtil.parse(dataValue, pattern);
+        try {
+            // 默认分表表名规则为logicTableName_pattern
+            String dataValue = tableName.substring(tableName.lastIndexOf(StrUtil.UNDERLINE) + 1);
+            return DateUtil.parse(dataValue, pattern);
+        } catch (Throwable cause) {
+            return null;
+        }
     }
 
-    /**
-     * 返回时间格式的pattern
-     * @return 根据时间分表的pattern
-     */
-    protected abstract String getPattern();
 
     /**
      * 返回时间的步长

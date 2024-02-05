@@ -9,7 +9,9 @@ import com.alibaba.druid.spring.boot.autoconfigure.stat.DruidWebStatFilterConfig
 import com.hqy.cloud.datasource.druid.config.DruidAutoConfiguration;
 import com.hqy.cloud.db.service.CommonDbService;
 import com.hqy.cloud.shardingsphere.server.ShardingJdbcContext;
+import com.hqy.cloud.shardingsphere.server.ShardingsphereContext;
 import com.hqy.cloud.shardingsphere.server.support.DefaultShardingJdbcContext;
+import com.hqy.cloud.shardingsphere.server.support.DefaultShardingsphereContext;
 import com.hqy.cloud.shardingsphere.service.ShardingCommonDbService;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -53,6 +55,14 @@ public class DruidShardingJdbcAutoConfiguration {
     public CommonDbService commonDbService(ShardingJdbcContext context) {
         return new ShardingCommonDbService(context);
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ShardingsphereContext shardingsphereContext(ShardingJdbcContext shardingJdbcContext, CommonDbService commonDbService) {
+        return new DefaultShardingsphereContext(shardingJdbcContext, commonDbService);
+    }
+
+
 
 
 }

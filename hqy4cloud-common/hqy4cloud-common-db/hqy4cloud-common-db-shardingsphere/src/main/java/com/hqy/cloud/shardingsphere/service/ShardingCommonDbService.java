@@ -1,7 +1,7 @@
 package com.hqy.cloud.shardingsphere.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.db.common.CreateTableSql;
+import com.hqy.cloud.db.common.SqlConstants;
 import com.hqy.cloud.db.service.CommonDbService;
 import com.hqy.cloud.shardingsphere.server.ShardingJdbcContext;
 import com.hqy.cloud.util.AssertUtil;
@@ -27,23 +27,19 @@ public class ShardingCommonDbService implements CommonDbService {
     @Value("${spring.shardingsphere.sharding.default-data-source-name:master}")
     private String dataSourceName;
 
-    private static final String SELECT_ALL = "SELECT TABLES.TABLE_NAME FROM information_schema.TABLES WHERE TABLES.TABLE_SCHEMA = ";
-    private static final String SELECT_TABLE_CREATED = "SHOW CREATE TABLE ";
-
 
     @Override
     public List<String> selectAllTableNameByDb(String db) {
         AssertUtil.notEmpty(db, "Db name should not be empty.");
         JdbcTemplate jdbcTemplate = shardingJdbcContext.getJdbcTemplate(dataSourceName);
-        String sql = SELECT_ALL + "'" + db + "'";
-        return jdbcTemplate.queryForList(sql, String.class);
+        return jdbcTemplate.queryForList(SqlConstants.getSelectAllTableNameByDbName(db), String.class);
     }
 
     @Override
     public CreateTableSql selectTableCreateSql(String tableName) {
         AssertUtil.notEmpty(tableName, "Table name should not be empty.");
         JdbcTemplate jdbcTemplate = shardingJdbcContext.getJdbcTemplate(dataSourceName);
-        Map<String, Object> map = jdbcTemplate.queryForMap(SELECT_TABLE_CREATED + tableName);
+        Map<String, Object> map = jdbcTemplate.queryForMap(SqlConstants.getSelectCreateTableDdl(tableName));
         if (MapUtils.isNotEmpty(map)) {
             String table = (String) map.get("Table");
             String createTable = (String) map.get("Create Table");

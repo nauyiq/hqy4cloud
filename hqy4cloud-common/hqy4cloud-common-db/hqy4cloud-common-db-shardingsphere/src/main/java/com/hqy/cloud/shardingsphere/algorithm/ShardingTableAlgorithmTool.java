@@ -1,18 +1,14 @@
 package com.hqy.cloud.shardingsphere.algorithm;
 
-import com.hqy.cloud.db.common.CreateTableSql;
-import com.hqy.cloud.db.mapper.CommonMapper;
-import com.hqy.cloud.db.service.CommonDbService;
+import com.hqy.cloud.shardingsphere.server.ShardingsphereContext;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
-import org.apache.shardingsphere.underlying.common.exception.ShardingSphereException;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 分表算法工具, 提供自动建表的能力, 用于数据归档等需要自动建表的情况 </br>
@@ -25,10 +21,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implements PreciseShardingAlgorithm<T>, RangeShardingAlgorithm<T> {
-
-    private CommonDbService commonDbService;
-    private volatile boolean init = false;
-    private final Set<String> tableNames = new CopyOnWriteArraySet<>();
+    private volatile ShardingsphereContext context = null;
+    private final Object lock = new Object();
 
 
     /**
@@ -40,66 +34,42 @@ public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implem
     public String checkAndCreateShardingTableName(String logicTableName, String actualTableName) {
         AssertUtil.notEmpty(logicTableName, "Logic table name should not be empty.");
         AssertUtil.notEmpty(actualTableName, "Actual table name should not be empty.");
-        // 是否初始化了
-        if (!init) {
-            // 初始化.
-            doInitialize();
-        }
+        // 检查shardingContext是否可用
+        checkContextEnabled();
         // 存在则直接返回
         if (checkShardingTableExist(actualTableName)) {
             return actualTableName;
         }
-        // 不存在则创建表.
-        // 搜索当前逻辑表的创建表语句
         synchronized (logicTableName.intern()) {
             if (!checkShardingTableExist(actualTableName)) {
-                CreateTableSql createTableSql = commonDbService.selectTableCreateSql(logicTableName);
-                if (createTableSql == null) {
-                    throw new ShardingSphereException("Failed execute to auto create table: "
-                            + actualTableName + ", because not found " + logicTableName + " ddl");
-                }
-                // 创建表
-                String createTable = createTableSql.getCreateTable();
-                createTable = createTable.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
-                                         .replace(logicTableName, actualTableName);
-                // TODO 分库的情况下, 这条sql shardingsphere无法确定去哪个库执行... 结果就是每个库都执行一次
-                commonDbService.execute(createTable);
-                tableNames.add(actualTableName);
+                context.addTableActualNode(logicTableName, actualTableName);
             }
         }
         return actualTableName;
     }
 
+    private void checkContextEnabled() {
+        if (context == null) {
+            synchronized (lock) {
+                if (context == null) {
+                    context = SpringContextHolder.getBean(ShardingsphereContext.class);
+                }
+            }
+        }
+
+    }
+
     protected boolean checkShardingTableExist(String actualTableName) {
-        return tableNames.contains(actualTableName);
-    }
-
-
-    private synchronized void doInitialize() {
-        String defaultDbName = getDefaultDbName();
-        AssertUtil.notEmpty(defaultDbName, "Default db name should not be empty.");
-        // 从容器中获取commentMapper
-        this.commonDbService = SpringContextHolder.getBean(CommonDbService.class);
-        AssertUtil.notNull(this.commonDbService, "Common db service is null from spring context.");
-        // 加载所有的数据表到缓存中.
-        loadTableNamesByScheme(defaultDbName);
-        this.init = true;
-    }
-
-
-    public void loadTableNamesByScheme(String scheme) {
-        List<String> allTableNameBySchema = commonDbService.selectAllTableNameByDb(scheme);
-        log.info("Load {} tables: {}.", scheme, allTableNameBySchema);
-        this.tableNames.addAll(allTableNameBySchema);
+        Map<String, Set<String>> allTables = this.context.getJdbcContext().getAllTables();
+        return allTables.values().stream().anyMatch(set -> set.contains(actualTableName));
     }
 
 
     /**
-     * 获取默认数据库的名字
-     * @return 数据库名, 查询对应逻辑表的建表sql
+     * 获取当前分表的逻辑表名
+     * @return 逻辑表名
      */
-    protected abstract String getDefaultDbName();
-
+    protected abstract String getLogicTableName();
 
 
 }

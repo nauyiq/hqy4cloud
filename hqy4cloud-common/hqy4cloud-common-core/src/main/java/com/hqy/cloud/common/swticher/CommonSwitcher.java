@@ -195,10 +195,14 @@ public class CommonSwitcher extends AbstractSwitcher {
     public static final CommonSwitcher ENABLE_SPRING_BOOT_RESTART_DEVTOOLS = new CommonSwitcher(240, "节点-是否禁用Springboot热部署", true);
 
     /**
-     * 节点-节点-是否懒加载shardingsphere-jdbcTemplate
+     * 节点-是否懒加载shardingsphere上下文类
      */
-    public static final CommonSwitcher ENABLE_DELAY_LOADING_SHARDINGSPHERE_JDBC_TEMPLATE = new CommonSwitcher(241, "节点-是否懒加载shardingsphere-jdbcTemplate", true);
+    public static final CommonSwitcher ENABLE_DELAY_LOADING_SHARDINGSPHERE_JDBC_CONTEXT = new CommonSwitcher(241, "节点-是否懒加载shardingsphere上下文类", false);
 
+    /**
+     * 节点-是否启用当shardingsphere配置的真实节点列表为空时，兜底使用逻辑表
+     */
+    public static final CommonSwitcher ENABLE_SUING_LOGIC_TABLE_WHEN_ACTUAL_NODES_EMPTY = new CommonSwitcher(242, "节点-是否启用当shardingsphere配置的真实节点列表为空时，兜底使用逻辑表", true);
 
     /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）

@@ -15,7 +15,7 @@ public class MonthOfDatetimeShardingTableStrategy extends AbstractDatetimeShardi
     private static final String PATTERN = DatePattern.SIMPLE_MONTH_PATTERN;
 
     @Override
-    protected String getPattern() {
+    public String getPattern() {
         return PATTERN;
     }
 

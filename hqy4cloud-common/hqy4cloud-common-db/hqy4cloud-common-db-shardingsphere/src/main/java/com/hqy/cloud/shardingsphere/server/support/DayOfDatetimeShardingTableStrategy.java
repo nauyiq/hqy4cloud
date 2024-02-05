@@ -21,7 +21,7 @@ public class DayOfDatetimeShardingTableStrategy extends AbstractDatetimeSharding
     }
 
     @Override
-    protected String getPattern() {
+    public String getPattern() {
         return PATTERN;
     }
 

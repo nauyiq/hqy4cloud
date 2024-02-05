@@ -13,7 +13,7 @@ public class YearOfDatetimeShardingTableStrategy extends AbstractDatetimeShardin
     private static final String PATTERN = "yyyy";
 
     @Override
-    protected String getPattern() {
+    public String getPattern() {
         return PATTERN;
     }
 
