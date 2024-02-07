@@ -1,6 +1,5 @@
 package com.hqy.cloud.shardingsphere.server;
 
-import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -49,11 +48,18 @@ public interface ShardingJdbcContext {
      */
     JdbcTemplate getJdbcTemplate(String dbAlias);
 
+
     /**
-     * 获取 {@link org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource}的 jdbcTemplate
+     * 获取所有的真实节点对应数据源的jdbcTemplate
      * @return {@link JdbcTemplate}
      */
-    JdbcTemplate getShardingJdbcTemplate();
+    Set<JdbcTemplate> getActualJdbcTemplates();
+
+    /**
+     * 获取注册到容器的jdbc templates
+     * @return {@link JdbcTemplate}
+     */
+    Set<JdbcTemplate> getContextTemplates();
 
     /**
      * 获取数据库别名对应的数据库连接池
@@ -62,10 +68,5 @@ public interface ShardingJdbcContext {
      */
     DataSource getDataSource(String dbAlias);
 
-    /**
-     * 返回sharding jdbc数据库连接池
-     * @return  shardingsphere数据库连接池
-     */
-    ShardingDataSource getShardingDateSource();
 
 }

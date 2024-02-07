@@ -1,22 +1,20 @@
 package com.hqy.cloud.shardingsphere.server.support;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.db.common.SqlConstants;
 import com.hqy.cloud.shardingsphere.server.ShardingJdbcContext;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
-import org.apache.shardingsphere.underlying.common.exception.ShardingSphereException;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.shardingsphere.shardingjdbc.jdbc.adapter.AbstractDataSourceAdapter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author qiyuan.hong
@@ -25,14 +23,14 @@ import java.util.Set;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultShardingJdbcContext implements ShardingJdbcContext {
+public class DefaultShardingJdbcContext implements ShardingJdbcContext, InitializingBean {
 
     private volatile boolean init = false;
 
     /**
-     * sharding jdbcTemplate.
+     * context jdbc templates.
      */
-    private final JdbcTemplate jdbcTemplate;
+    private final List<JdbcTemplate> jdbcTemplates = new ArrayList<>();
 
     /**
      * 已配置数据源对应的jdbcTemplate.
@@ -49,26 +47,25 @@ public class DefaultShardingJdbcContext implements ShardingJdbcContext {
     private final Map<String, Set<String>> actualTablesCache = MapUtil.newConcurrentHashMap(4);
 
 
-
-    @PostConstruct
-    public void init() {
-        AssertUtil.notNull(jdbcTemplate, "sharding jdbc template should not be null.");
-        if (jdbcTemplate.getDataSource() instanceof ShardingDataSource shardingDataSource) {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Map<String, JdbcTemplate> beans = SpringUtil.getBeansOfType(JdbcTemplate.class);
+        if (MapUtils.isNotEmpty(beans)) {
+            Collection<JdbcTemplate> templates = beans.values();
+            this.jdbcTemplates.addAll(templates);
             if (CommonSwitcher.ENABLE_DELAY_LOADING_SHARDINGSPHERE_JDBC_CONTEXT.isOff()) {
                 log.info("Loading shardingsphere jdbc template on spring context start.");
-                // 加载所有的元数据到缓存中.
-                loadMetadataToCaches(shardingDataSource);
+                initialize();
             }
         } else {
-            throw new ShardingSphereException("Not found sharding jdbc template.");
+            log.warn("Not found jdbc templates.");
         }
     }
-
 
     @Override
     public Set<String> getTables(String datasource) {
         if (!init) {
-            loadMetadataToCaches(getShardingDateSource());
+            initialize();
         }
         return actualTablesCache.get(datasource);
     }
@@ -87,7 +84,7 @@ public class DefaultShardingJdbcContext implements ShardingJdbcContext {
     @Override
     public Map<String, Set<String>> getAllTables() {
         if (!init) {
-            loadMetadataToCaches(getShardingDateSource());
+            initialize();
         }
         return actualTablesCache;
     }
@@ -97,9 +94,15 @@ public class DefaultShardingJdbcContext implements ShardingJdbcContext {
         return getJdbcTemplateByCache(dbAlias);
     }
 
+
     @Override
-    public JdbcTemplate getShardingJdbcTemplate() {
-        return jdbcTemplate;
+    public Set<JdbcTemplate> getActualJdbcTemplates() {
+        return new HashSet<>(jdbcTemplateMap.values());
+    }
+
+    @Override
+    public Set<JdbcTemplate> getContextTemplates() {
+        return new HashSet<>(this.jdbcTemplates);
     }
 
     @Override
@@ -108,40 +111,46 @@ public class DefaultShardingJdbcContext implements ShardingJdbcContext {
         return template == null ? null : template.getDataSource();
     }
 
-    @Override
-    public ShardingDataSource getShardingDateSource() {
-        return (ShardingDataSource) jdbcTemplate.getDataSource();
-    }
 
-    private void loadMetadataToCaches(ShardingDataSource shardingDataSource) {
-        Map<String, DataSource> dataSourceMap = shardingDataSource.getDataSourceMap();
-        for (Map.Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
-            String datasource = entry.getKey();
-            // 创建Jdbc Template
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(entry.getValue());
-            jdbcTemplateMap.put(datasource, jdbcTemplate);
-            // 加载每个数据源的真实表到内存中.
-            String database = jdbcTemplate.queryForObject(SqlConstants.GET_USING_DATABASE_NAME, String.class);
-            List<String> tables = jdbcTemplate.queryForList(SqlConstants.getSelectAllTableNameByDbName(database), String.class);
-            actualTablesCache.put(datasource, new HashSet<>(tables));
+    private void initialize() {
+        for (JdbcTemplate template : this.jdbcTemplates) {
+            DataSource dataSource = template.getDataSource();
+            if (dataSource instanceof AbstractDataSourceAdapter adapter) {
+                Map<String, DataSource> dataSourceMap = adapter.getDataSourceMap();
+                for (Map.Entry<String, DataSource> entry : dataSourceMap.entrySet()) {
+                    String datasource = entry.getKey();
+                    if (!jdbcTemplateMap.containsKey(datasource)) {
+                        // 创建Jdbc Template
+                        JdbcTemplate jdbcTemplate = new JdbcTemplate(entry.getValue());
+                        jdbcTemplateMap.put(datasource, jdbcTemplate);
+                        // 加载每个数据源的真实表到内存中.
+                        String database = jdbcTemplate.queryForObject(SqlConstants.GET_USING_DATABASE_NAME, String.class);
+                        List<String> tables = jdbcTemplate.queryForList(SqlConstants.getSelectAllTableNameByDbName(database), String.class);
+                        actualTablesCache.put(datasource, new HashSet<>(tables));
+                    }
+                }
+            }
         }
         init = true;
     }
 
 
-    private JdbcTemplate getJdbcTemplateByCache(String dbAlias) {
-        AssertUtil.notEmpty(dbAlias, "Datasource alias should not be empty.");
-        return this.jdbcTemplateMap.computeIfAbsent(dbAlias, v -> {
-            DataSource dataSource = this.jdbcTemplate.getDataSource();
-            if (dataSource instanceof ShardingDataSource shardingDataSource) {
-                Map<String, DataSource> dataSourceMap = shardingDataSource.getDataSourceMap();
-                if (dataSourceMap.containsKey(dbAlias)) {
-                    return new JdbcTemplate(dataSourceMap.get(dbAlias));
+    private JdbcTemplate getJdbcTemplateByCache(String datasource) {
+        AssertUtil.notEmpty(datasource, "Datasource alias should not be empty.");
+        return this.jdbcTemplateMap.computeIfAbsent(datasource, v -> {
+            for (JdbcTemplate jdbcTemplate : this.jdbcTemplates) {
+                DataSource dataSource = jdbcTemplate.getDataSource();
+                if (dataSource instanceof AbstractDataSourceAdapter adapter) {
+                    Map<String, DataSource> dataSourceMap = adapter.getDataSourceMap();
+                    if (dataSourceMap.containsKey(datasource)) {
+                        return new JdbcTemplate(dataSourceMap.get(datasource));
+                    }
                 }
             }
-            log.warn("Not found datasource {} from shardingDatasource.", dbAlias);
+            log.warn("Not found datasource {} from shardingDatasource.", datasource);
             return null;
         });
     }
+
 
 }

@@ -24,7 +24,7 @@ import java.util.Map;
 public class ShardingCommonDbService implements CommonDbService {
     private final ShardingJdbcContext shardingJdbcContext;
 
-    @Value("${spring.shardingsphere.sharding.default-data-source-name:master}")
+    @Value("${spring.shardingsphere.sharding.default-data-source-name:master0}")
     private String dataSourceName;
 
 
@@ -50,6 +50,6 @@ public class ShardingCommonDbService implements CommonDbService {
 
     @Override
     public void execute(String sql) {
-        shardingJdbcContext.getShardingJdbcTemplate().execute(sql);
+        shardingJdbcContext.getActualJdbcTemplates().forEach(jdbcTemplate -> execute(sql));
     }
 }

@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.shardingsphere.core.rule.MasterSlaveRule;
 import org.apache.shardingsphere.core.rule.ShardingRule;
 import org.apache.shardingsphere.core.rule.TableRule;
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.context.ShardingRuntimeContext;
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import org.apache.shardingsphere.underlying.common.exception.ShardingSphereException;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import javax.sql.DataSource;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -40,43 +40,28 @@ public class DefaultShardingsphereContext implements ShardingsphereContext, Comm
 
     @Override
     public void loadTableActualNodes(String logicTableName) {
-        modifierTableActualNodeLock.lock();
-        try {
-            // 获取分表规则对象
-            TableRule tableRule = getTableRule(logicTableName);
-            // 真实数据库节点.
-            Collection<String> actualDatasourceNames = tableRule.getActualDatasourceNames();
-            for (String datasourceName : actualDatasourceNames) {
-                Collection<String> actualTableNames = tableRule.getActualTableNames(datasourceName);
-                // 获取数据库中所有真实的表
-                Set<String> actualNodes = getStartWithLogicTableNameActualNodes(datasourceName, logicTableName);
-                if ((CollectionUtils.isEmpty(actualNodes) && CommonSwitcher.ENABLE_SUING_LOGIC_TABLE_WHEN_ACTUAL_NODES_EMPTY.isOff()) ||
-                        !actualTableNames.containsAll(actualNodes)) {
-                    // 刷新所有节点表
-                    reloadDatasourceActualTables(tableRule, datasourceName, actualNodes);
-                }
-            }
-        } finally {
-            modifierTableActualNodeLock.unlock();
-        }
+        this.loadTableActualNodes(logicTableName, (name) -> true);
     }
-
 
 
     @Override
     public void loadTableActualNodes(String logicTableName, NodeNameMatchingFunction matching) {
         modifierTableActualNodeLock.lock();
         try {
-            // 获取分表规则对象
-            TableRule tableRule = getTableRule(logicTableName);
+            ShardingRule shardingRule = getShardingRule();
+            if (shardingRule == null) {
+                // 如果分表规则为空, 说明没有配置分表规则，因此不需要加载分表的真实节点列表. 直接return
+                log.warn("Not found sharding rule, logic table name {}.", logicTableName);
+                return;
+            }
+            Map<String, String> namesMap = shardingRule.getMasterSlaveRules().stream().collect(Collectors.toMap(MasterSlaveRule::getName, MasterSlaveRule::getMasterDataSourceName));
+            TableRule tableRule = shardingRule.getTableRule(logicTableName);
             // 真实数据库节点.
             Collection<String> actualDatasourceNames = tableRule.getActualDatasourceNames();
             for (String datasourceName : actualDatasourceNames) {
                 // shardingsphere上下文中加载的所有真实节点数据表.
                 Collection<String> actualTableNames = tableRule.getActualTableNames(datasourceName);
-                // 获取数据库中所有真实的表, 并且matching函数匹配的表
-                Set<String> actualNodes = jdbcContext.getTables(datasourceName).stream().
-                        filter(table -> table.startsWith(logicTableName) && matching.isMatching(table)).collect(Collectors.toSet());
+                Set<String> actualNodes = getActualNodes(logicTableName, matching, namesMap, datasourceName);
                 if ((CollectionUtils.isEmpty(actualNodes) && CommonSwitcher.ENABLE_SUING_LOGIC_TABLE_WHEN_ACTUAL_NODES_EMPTY.isOff()) ||
                         !actualTableNames.containsAll(actualNodes)) {
                     // 刷新所有节点表
@@ -88,22 +73,42 @@ public class DefaultShardingsphereContext implements ShardingsphereContext, Comm
         }
     }
 
+
+
     @Override
     public void addTableActualNode(String logicTableName, String actualTableName) {
         modifierTableActualNodeLock.lock();
         try {
+            ShardingRule shardingRule = getShardingRule();
+            if (shardingRule == null) {
+                // 如果分表规则为空, 说明没有配置分表规则，因此不需要加载分表的真实节点列表. 直接return
+                log.warn("Not found sharding rule, logic table name {}.", logicTableName);
+                return;
+            }
             CreateTableSql createTableSql = commonDbService.selectTableCreateSql(logicTableName);
             if (createTableSql == null) {
                 throw new ShardingSphereException("Failed execute to auto create table: "
                         + actualTableName + ", because not found " + logicTableName + " ddl");
             }
-            // 创建表
+            // 生成创建表语句
             String createTable = createTableSql.getCreateTable()
                     .replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
                     .replace(logicTableName, actualTableName);
-            commonDbService.execute(createTable);
-            // 获取分表规则对象
-            TableRule tableRule = getTableRule(logicTableName);
+
+            Collection<MasterSlaveRule> rules = shardingRule.getMasterSlaveRules();
+            if (CollectionUtils.isNotEmpty(rules)) {
+                // 只需在主库上运行创建表DDL
+                for (MasterSlaveRule masterSlaveRule : rules) {
+                    String dataSourceName = masterSlaveRule.getMasterDataSourceName();
+                    JdbcTemplate jdbcTemplate = jdbcContext.getJdbcTemplate(dataSourceName);
+                    jdbcTemplate.execute(createTable);
+                }
+            } else {
+                // 在所有配置的数据源上运行创建表DDL
+                jdbcContext.getActualJdbcTemplates().forEach(jdbcContext -> jdbcContext.execute(createTable));
+            }
+
+            TableRule tableRule = shardingRule.getTableRule(logicTableName);
             // 真实数据库节点.
             Collection<String> actualDatasourceNames = tableRule.getActualDatasourceNames();
             for (String datasourceName : actualDatasourceNames) {
@@ -118,18 +123,36 @@ public class DefaultShardingsphereContext implements ShardingsphereContext, Comm
 
 
 
+
+    /**
+     * 获取shardingsphere 分表的表规则
+     * @param logicTableName 逻辑表明
+     * @return               {@link TableRule} 分表规则.
+     */
     private TableRule getTableRule(String logicTableName) {
-        ShardingDataSource shardingDataSource = jdbcContext.getShardingDateSource();
-        ShardingRuntimeContext runtimeContext = shardingDataSource.getRuntimeContext();
-        ShardingRule shardingRule = runtimeContext.getRule();
-        return shardingRule.getTableRule(logicTableName);
-
+        ShardingRule shardingRule = getShardingRule();
+        return shardingRule == null ? null : shardingRule.getTableRule(logicTableName);
     }
 
-    private Set<String> getStartWithLogicTableNameActualNodes(String datasourceName, String logicTableName) {
-        return jdbcContext.getTables(datasourceName).stream().
-                filter(table -> table.startsWith(logicTableName)).collect(Collectors.toSet());
+    private ShardingRule getShardingRule() {
+        Set<JdbcTemplate> templates = jdbcContext.getContextTemplates();
+        List<DataSource> dataSources = templates.stream().map(JdbcTemplate::getDataSource).toList();
+        for (DataSource dataSource : dataSources) {
+            if (dataSource instanceof ShardingDataSource shardingDataSource) {
+                ShardingRuntimeContext runtimeContext = shardingDataSource.getRuntimeContext();
+                return runtimeContext.getRule();
+            }
+        }
+        return null;
     }
+
+    private Set<String> getActualNodes(String logicTableName, NodeNameMatchingFunction matching, Map<String, String> namesMap, String datasourceName) {
+        Set<String> tables = namesMap.containsKey(datasourceName) ? jdbcContext.getTables(namesMap.get(datasourceName)) : jdbcContext.getTables(datasourceName);
+        // 获取数据库中所有真实的表, 并且matching函数匹配的表
+        return tables.stream().
+                filter(table -> table.startsWith(logicTableName) && matching.isMatching(table)).collect(Collectors.toSet());
+    }
+
 
     private void reloadDatasourceActualTables(TableRule tableRule, String datasourceName, Set<String> allTables) {
         Map<String, Set<String>> tablesMap = getReflectTableRuleDataSourceToTablesMap(tableRule);

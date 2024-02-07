@@ -46,7 +46,7 @@ public class DruidShardingJdbcAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ShardingJdbcContext shardingJdbcContext(JdbcTemplate jdbcTemplate) {
-        return new DefaultShardingJdbcContext(jdbcTemplate);
+        return new DefaultShardingJdbcContext();
     }
 
     @Bean
