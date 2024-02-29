@@ -9,7 +9,7 @@ import com.hqy.foundation.timer.Timeout;
  * @author qiyuan.hong
  * @version 1.0
  */
-public final class FailedRegisteredTask extends AbstractRetryTask{
+public final class FailedRegisteredTask extends AbstractRetryTask {
     private static final String NAME = "retry register task";
 
     public FailedRegisteredTask(ApplicationModel model, FailedBackRegistry registry) {

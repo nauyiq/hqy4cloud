@@ -24,6 +24,8 @@ public class ThriftRpcModelAutoConfiguration {
         // create executor repository bean
         ExecutorRepository repository = new DefaultExecutorRepository(rpcModel);
         BeanRepository.getInstance().register(ExecutorRepository.class, repository);
+        // registry rpc model to repository
+        BeanRepository.getInstance().register(RpcModel.class, rpcModel);
         return rpcModel;
     }
 

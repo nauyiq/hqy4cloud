@@ -84,7 +84,6 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
     }
 
     private void refreshInvoker(List<RpcModel> rpcModels) {
-        AssertUtil.notNull(rpcModels, "rpcContexts should not be null.");
         if (CollectionUtils.isEmpty(rpcModels)) {
             this.forbidden = true;
             routerChain.setInvokers(Collections.emptyList());

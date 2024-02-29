@@ -7,6 +7,7 @@ import com.hqy.foundation.router.HashRouterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
+import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class HashRouterServiceImpl implements HashRouterService {
     @Override
     public String getAddress(String application, int hash) {
         RMapCache<Integer, String> hashAddressCache = getHashAddressCache(application);
+        RSortedSet<Object> sortedSet = redissonClient.getSortedSet(application);
+
         return hashAddressCache.get(hash);
     }
 

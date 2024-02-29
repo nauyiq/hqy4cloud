@@ -22,14 +22,14 @@ JAVA_OPT="${JAVA_OPT} -Xmx${JVM_XMX} -Xms${JVM_XMS}"
 # 采用G1垃圾回收器
 JAVA_OPT="${JAVA_OPT} -XX:+UseG1GC"
 # Region size  heapSize/2048 Region size必须是2的指数 取值范围从1M到32M
-JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=2m"
+#JAVA_OPT="${JAVA_OPT} -XX:G1HeapRegionSize=2m"
 JAVA_OPT="${JAVA_OPT} -XX:+ParallelRefProcEnabled"
 # 用于控制对象经过GC多少次仍然存活后晋升到老年代的最大阈值 默认15
 JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 # 元数据空间, 默认为20M
-JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=${JVM_MS}"
+#JAVA_OPT="${JAVA_OPT} -XX:MetaspaceSize=${JVM_MS}"
 # 最大元数据空间 注意：metaspace太小会引起full gc
-JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=${JVM_MMS}"
+#JAVA_OPT="${JAVA_OPT} -XX:MaxMetaspaceSize=${JVM_MMS}"
 # 最大的可使用的直接内存
 #JAVA_OPT="${JAVA_OPT} -XX:MaxDirectMemorySize=40M"
 # MaxTenuringThreshold设置垃圾的最大年龄. 默认为15 年轻代经历gc进入年老代的年龄
@@ -38,7 +38,7 @@ JAVA_OPT="${JAVA_OPT} -XX:MaxTenuringThreshold=10"
 JAVA_OPT="${JAVA_OPT} -XX:+AlwaysPreTouch"
 
 # 当堆内存的使用率达到45%之后就会自动启动G1的并发垃圾回收 默认为45
-JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=45"
+JAVA_OPT="${JAVA_OPT} -XX:InitiatingHeapOccupancyPercent=60"
 # 每次GC最大的停顿毫秒数
 JAVA_OPT="${JAVA_OPT} -XX:MaxGCPauseMillis=400"
 
@@ -48,7 +48,7 @@ JAVA_OPT="${JAVA_OPT} -Xlog:gc:${BASE_DIR}/logs/gc-$(date +%Y%m%d-%H%M).log:time
 
 # 发生内存溢出时打印堆栈快照
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError"
-JAVA_OPT="${JAVA_OPT} -XX:HeapDumpPath=${BASE_DIR}/heap-dump.hprof"
+JAVA_OPT="${JAVA_OPT} -XX:HeapDumpPath=${BASE_DIR}/logs/heap-dump.hprof"
 JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 # 虚拟机启动的时候以UTF-8字符集编码来解析class字节码
 JAVA_OPT="${JAVA_OPT} -Dfile.encoding=UTF-8"

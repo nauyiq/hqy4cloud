@@ -1,6 +1,5 @@
 package com.hqy.cloud.util.spring;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
@@ -79,7 +78,7 @@ public class ProjectContextInfo implements Serializable {
     private Map<String, String> metadata = new ConcurrentHashMap<>();
 
 
-    private static Map<Class<?>, Object> beansMap = new ConcurrentHashMap<>();
+//    private static Map<Class<?>, Object> beansMap = new ConcurrentHashMap<>();
 
     /**
      * white白名单ip
@@ -147,26 +146,26 @@ public class ProjectContextInfo implements Serializable {
     }
 
 
-    public static Map<Class<?>, Object> getBeansMap(){
+    /*public static Map<Class<?>, Object> getBeansMap(){
         return beansMap;
-    }
+    }*/
 
-    @JsonIgnore
+    /*@JsonIgnore
     @SuppressWarnings("unchecked")
     public static <T> T getBean(Class<T> clazz) {
         if(beansMap.containsKey(clazz)) {
             return (T) beansMap.get(clazz);
         }
         return null;
-    }
+    }*/
 
-    public static void setBean(Object bean) {
+    /*public static void setBean(Object bean) {
         setBean(bean.getClass(), bean);
-    }
+    }*/
 
-    public static void setBean(Class<?> clazz ,Object bean) {
+    /*public static void setBean(Class<?> clazz ,Object bean) {
         beansMap.put(clazz, bean);
-    }
+    }*/
 
     public void registrySocketIoPort(int port) {
         if (this.getUip() != null) {

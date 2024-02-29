@@ -38,6 +38,7 @@
         <springcloud.version>2021.0.5</springcloud.version>
         <spring.authorization.version>0.4.0</spring.authorization.version>
         <springboot.security.version>2.6.11</springboot.security.version>
+        <spring.ai.version>0.7.1-SNAPSHOT</spring.ai.version>
 
         <!-- alibaba -->
         <nacos.version>2.0.3</nacos.version>
@@ -416,6 +417,13 @@
                 <artifactId>caffeine</artifactId>
                 <version>${caffeine.cache.version}</version>
             </dependency>
+
+            <!-- spring-ai -->
+            <!--<dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+                <version>${spring.ai.version}</version>
+            </dependency>-->
 
         </dependencies>
     </dependencyManagement>

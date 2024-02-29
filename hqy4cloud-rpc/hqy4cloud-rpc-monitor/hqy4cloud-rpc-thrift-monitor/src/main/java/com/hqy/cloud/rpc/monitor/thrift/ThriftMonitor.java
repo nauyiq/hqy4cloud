@@ -2,6 +2,7 @@ package com.hqy.cloud.rpc.monitor.thrift;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.monitor.CollectionData;
@@ -12,7 +13,6 @@ import com.hqy.cloud.rpc.threadpool.FrameworkExecutorRepository;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcExceptionStruct;
 import com.hqy.cloud.rpc.thrift.struct.ThriftRpcFlowStruct;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,7 +208,7 @@ public class ThriftMonitor implements Monitor {
         String eventType = data.isRpcResult() ? StringConstants.EMPTY : ERROR_RPC;
         if (StringUtils.isBlank(eventType)) {
             long slowRpcTimeMillis = CommonConstants.DEFAULT_RPC_SLOW_TIME_MILLIS;
-            RpcModel rpcModel = ProjectContextInfo.getBean(RpcModel.class);
+            RpcModel rpcModel = BeanRepository.getInstance().getBean(RpcModel.class);
             if (rpcModel != null) {
                 slowRpcTimeMillis = rpcModel.getParameter(RPC_SLOW_TIME_KEY, slowRpcTimeMillis);
             }

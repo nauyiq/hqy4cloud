@@ -36,7 +36,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     public FailedBackRegistry(ApplicationModel model) {
         super(model);
         this.retryPeriod = model.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
-        this.retryTimer = new HashedWheelTimer(new DefaultThreadFactory("FailedBackRegistryTimer"), retryPeriod, TimeUnit.MINUTES, 128);
+        this.retryTimer = new HashedWheelTimer(new DefaultThreadFactory("FailedBackRegistryTimer"), retryPeriod, TimeUnit.MILLISECONDS, 128);
     }
 
     public void addFailedRegistered(ApplicationModel model) {

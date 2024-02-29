@@ -63,6 +63,12 @@ public class MultiplexThriftClientTargetPooled<T> {
      * @param invokers refresh to pool invokes.
      */
     public void refreshObjectPooled(List<Invoker<T>> invokers) {
+        if (CollectionUtils.isEmpty(invokers)) {
+            // clear pool
+            clear();
+            return;
+        }
+
         if (pool.isClosed() || closed.compareAndSet(true, false)) {
             // pool already close. rebuild pool and initialize pool.
             pool = new GenericKeyedObjectPool<>(factory, config);
@@ -154,6 +160,26 @@ public class MultiplexThriftClientTargetPooled<T> {
     }
 
 
+
+    public void clear() {
+        try {
+            if (pool != null && !closed.get()) {
+                // 获取所有的连接对象
+                Map<String, List<DefaultPooledObjectInfo>> map = pool.listAllObjects();
+                if (MapUtils.isNotEmpty(map)) {
+                    if (log.isInfoEnabled()) {
+                        log.info("Clear {} thrift client pool, size: {}", serviceName, map.size());
+                    }
+                    if (MapUtils.isNotEmpty(map)) {
+                        pool.clear();
+                    }
+                    factory.closeConnectionCache(serviceName);
+                }
+            }
+        } catch (Throwable cause) {
+            log.error("Failed execute to clear thrift client obj pool, cause: {}", cause.getMessage(), cause);
+        }
+    }
 
     public void close() {
         try {

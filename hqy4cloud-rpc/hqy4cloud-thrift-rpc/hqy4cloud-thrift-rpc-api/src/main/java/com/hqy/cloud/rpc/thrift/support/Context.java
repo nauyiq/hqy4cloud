@@ -1,6 +1,5 @@
 package com.hqy.cloud.rpc.thrift.support;
 
-import cn.hutool.core.map.MapUtil;
 import com.facebook.ThriftRequestPram;
 
 import java.util.Map;

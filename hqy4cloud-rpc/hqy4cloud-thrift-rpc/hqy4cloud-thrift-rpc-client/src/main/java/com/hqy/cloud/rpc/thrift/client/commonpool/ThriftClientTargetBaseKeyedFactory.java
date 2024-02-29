@@ -76,6 +76,9 @@ public class ThriftClientTargetBaseKeyedFactory<T> extends BaseKeyedPooledObject
     }
 
     public void refreshFramedClientConnectorMap(List<Invoker<T>> invokers) {
+        if (log.isInfoEnabled()) {
+            log.info("Refresh frame {} client invokers, size: {}", serviceName, invokers.size());
+        }
         iniFramedClientConnectorMap(invokers);
     }
 
