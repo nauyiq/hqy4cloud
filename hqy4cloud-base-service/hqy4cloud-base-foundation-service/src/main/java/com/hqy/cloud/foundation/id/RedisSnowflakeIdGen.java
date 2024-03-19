@@ -1,5 +1,6 @@
 package com.hqy.cloud.foundation.id;
 
+import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.context.ProjectContext;
@@ -29,12 +30,13 @@ public class RedisSnowflakeIdGen extends AbstractSnowflakeIdGen {
     private final RedissonClient redissonClient;
     private final long workerId;
 
-    public RedisSnowflakeIdGen(RedissonClient redissonClient) {
+    public RedisSnowflakeIdGen(String scene, RedissonClient redissonClient) {
         ProjectContextInfo contextInfo = ProjectContext.getContextInfo();
-        KEY = contextInfo.getNameEn() + StringConstants.Symbol.UNION + contextInfo.getEnv() + StringConstants.Symbol.UNION + "workerId";
+        String name = "workerId:" + scene;
+        KEY = contextInfo.getNameEn() + StrUtil.COLON + contextInfo.getEnv() + StrUtil.COLON + name;
         this.redissonClient = redissonClient;
         this.workerId = calculateWorkerId();
-        IExecutorsRepository.newSingleScheduledExecutor("workerId")
+        IExecutorsRepository.newSingleScheduledExecutor(name)
                 .scheduleWithFixedDelay(this::updateTimestamps, DateMeasureConstants.ONE_MINUTES.toMillis(), DateMeasureConstants.FIVE_MINUTES.toMillis(), TimeUnit.MILLISECONDS);
     }
 

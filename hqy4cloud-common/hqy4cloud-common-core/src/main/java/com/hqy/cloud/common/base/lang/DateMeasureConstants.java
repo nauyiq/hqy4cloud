@@ -16,6 +16,11 @@ public interface DateMeasureConstants {
     Duration ONE_MINUTES = Duration.ofMillis(NumberConstants.ONE_MINUTES_4MILLISECONDS);
 
     /**
+     * 2分钟
+     */
+    Duration TWO_MINUTES = Duration.ofMillis(NumberConstants.ONE_MINUTES_4MILLISECONDS * 2);
+
+    /**
      * 5分钟
      */
     Duration FIVE_MINUTES = Duration.ofMillis(NumberConstants.FIVE_MINUTES_4MILLISECONDS);

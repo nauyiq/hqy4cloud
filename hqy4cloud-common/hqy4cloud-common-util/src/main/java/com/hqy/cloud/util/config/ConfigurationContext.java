@@ -2,7 +2,7 @@ package com.hqy.cloud.util.config;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.system.SystemUtil;
-import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,22 +23,30 @@ public class ConfigurationContext {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContext.class);
 
     private ConfigurationContext() {}
-    public static Map<PropertiesEnum, PropertyStrategy> propertiesMap = new ConcurrentHashMap<>();
-    public static Map<YamlEnum, YamlStrategy> yamlMap = new ConcurrentHashMap<>();
+
+    public static Map<String, PropertyStrategy> propertiesMap = new ConcurrentHashMap<>();
+    public static Map<String, YamlStrategy> yamlMap = new ConcurrentHashMap<>();
     private static String baseUploadFilesDirectory = null;
 
-
-    public static Properties getProperties(PropertiesEnum propertiesEnum) {
-        PropertyStrategy propertyStrategy = propertiesMap.get(propertiesEnum);
+    public static Properties getProperties(String filename) {
+        // 获取.properties策略类
+        PropertyStrategy propertyStrategy = propertiesMap.get(filename);
         if (Objects.isNull(propertyStrategy)) {
-            propertyStrategy = new PropertyStrategy(propertiesEnum.fineName);
+            // 尝试加载properties
+            propertyStrategy = new PropertyStrategy(filename);
             Properties properties = propertyStrategy.getProperties();
             if (properties == null) {
                 propertyStrategy.setProperties(new Properties());
             }
-            propertiesMap.put(propertiesEnum, propertyStrategy);
+            propertiesMap.put(filename, propertyStrategy);
         }
         return propertyStrategy.getProperties();
+    }
+
+    public static Properties getProperties(PropertiesEnum propertiesEnum) {
+        AssertUtil.notNull(propertiesEnum, "Properties enum should not be null.");
+        String fineName = propertiesEnum.fineName;
+        return getProperties(fineName);
     }
 
     public static String getProperty(PropertiesEnum propertiesEnum, String key) {
@@ -51,29 +59,40 @@ public class ConfigurationContext {
         return properties.getProperty(key, defaultValue);
     }
 
+    public static String getProperty(String filename, String key) {
+        Properties properties = getProperties(filename);
+        return properties.getProperty(key);
+    }
+
+    public static String getProperty(String filename, String key, String defaultValue) {
+        Properties properties = getProperties(filename);
+        return properties.getProperty(key, defaultValue);
+    }
+
 
     public static Map<String, String> getYaml(YamlEnum yamlEnum) {
-        YamlStrategy strategy = yamlMap.get(yamlEnum);
+        return getYaml(yamlEnum.fineName);
+    }
+
+    public static Map<String, String> getYaml(String filename) {
+        YamlStrategy strategy = yamlMap.get(filename);
         if (Objects.isNull(strategy)) {
-            strategy = new YamlStrategy(yamlEnum.fineName);
-            yamlMap.put(yamlEnum, strategy);
+            strategy = new YamlStrategy(filename);
+            yamlMap.put(filename, strategy);
         }
         return strategy.getData();
     }
 
+
     public static String getString(String filename, String key) {
-        YamlEnum yamlEnum = YamlEnum.getYaml(filename);
-        YamlStrategy strategy = yamlMap.get(yamlEnum);
+        YamlStrategy strategy = yamlMap.get(filename);
         if (strategy != null) {
             return strategy.getData().get(key);
         }
-
-        PropertiesEnum propertiesEnum = PropertiesEnum.valueOf(filename);
-        PropertyStrategy propertyStrategy = propertiesMap.get(propertiesEnum);
+        PropertyStrategy propertyStrategy = propertiesMap.get(filename);
         if (propertyStrategy != null) {
             return propertyStrategy.getProperties().getProperty(key);
         }
-
         return StrUtil.EMPTY;
     }
 

@@ -53,11 +53,12 @@
 <!--        <mysql.version>5.1.47</mysql.version>-->
         <mysql.version>8.0.27</mysql.version>
         <tk.mybatis.version>2.1.2</tk.mybatis.version>
+        <mybatis.plus.version>3.5.2</mybatis.plus.version>
         <org.redisson.version>3.13.6</org.redisson.version>
         <elasticsearch.version>7.17.3</elasticsearch.version>
         <jakarta-json.version>2.0.1</jakarta-json.version>
         <dynamic.ds.version>3.6.0</dynamic.ds.version>
-        <mybatis.spring.boot.version>1.3.2</mybatis.spring.boot.version>
+        <mybatis.spring.boot.version>2.1.1</mybatis.spring.boot.version>
         <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
         <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
 
@@ -88,6 +89,7 @@
         <caffeine.cache.version>3.1.6</caffeine.cache.version>
         <javassist.version>3.28.0-GA</javassist.version>
         <common.collection4.version>4.4</common.collection4.version>
+        <sensitive.word.version>0.13.1</sensitive.word.version>
     </properties>
 
 
@@ -246,6 +248,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
+                <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding.jdbc.version}</version>
@@ -268,6 +276,13 @@
                 <groupId>tk.mybatis</groupId>
                 <artifactId>mapper-spring-boot-starter</artifactId>
                 <version>${tk.mybatis.version}</version>
+            </dependency>
+
+            <!-- mybatis plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis.plus.version}</version>
             </dependency>
 
             <!-- tx oss api -->
@@ -418,6 +433,13 @@
                 <version>${caffeine.cache.version}</version>
             </dependency>
 
+            <!-- github 敏感词过滤 DFA - https://github.com/houbb/sensitive-word -->
+            <dependency>
+                <groupId>com.github.houbb</groupId>
+                <artifactId>sensitive-word</artifactId>
+                <version>${sensitive.word.version}</version>
+            </dependency>
+
             <!-- spring-ai -->
             <!--<dependency>
                 <groupId>org.springframework.ai</groupId>
@@ -442,6 +464,7 @@
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
+
         <!--mapstruct编译-->
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -513,8 +536,28 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-word</artifactId>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>${mybatis.plus.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
 

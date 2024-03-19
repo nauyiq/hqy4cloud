@@ -11,6 +11,7 @@ import com.hqy.foundation.event.ExceptionCollActionEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -73,12 +74,14 @@ public class WebMvcGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public R<Boolean> handler(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        String message = "["+ Objects.requireNonNull(e.getBindingResult().getFieldError()).getField()+"] ";
-        String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+        String message;
+        FieldError fieldError = e.getBindingResult().getFieldError();
+        String defaultMessage = fieldError != null ? fieldError.getDefaultMessage() : null;
         if (StringUtils.isNotBlank(defaultMessage)) {
-            message = message + defaultMessage;
+            message = defaultMessage;
         } else {
-            message = message + "should not be empty.";
+            String filed =  "["+ Objects.requireNonNull(fieldError).getField()+"] ";
+            message = "Invalid params by " + filed + ", please check params again.";
         }
         return R.failed(message, ResultCode.ERROR_PARAM.code);
     }
