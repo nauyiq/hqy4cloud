@@ -42,7 +42,7 @@
 
         <!-- alibaba -->
         <nacos.version>2.0.3</nacos.version>
-        <seata.version>1.5.2</seata.version>
+        <seata.version>1.8.0</seata.version>
         <druid.version>1.1.18</druid.version>
         <sentinel.version>1.8.5</sentinel.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
@@ -146,6 +146,13 @@
             <dependency>
                 <groupId>io.seata</groupId>
                 <artifactId>seata-core</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/io.seata/seata-spring-boot-starter -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
                 <version>${seata.version}</version>
             </dependency>
 
@@ -256,6 +263,12 @@
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+                <version>${sharding.jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-transaction-base-seata-at</artifactId>
                 <version>${sharding.jdbc.version}</version>
             </dependency>
 

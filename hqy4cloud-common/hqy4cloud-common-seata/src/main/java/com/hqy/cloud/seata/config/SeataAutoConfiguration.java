@@ -2,6 +2,7 @@ package com.hqy.cloud.seata.config;
 
 import com.hqy.cloud.util.config.YamlPropertySourceFactory;
 import io.seata.spring.annotation.datasource.EnableAutoDataSourceProxy;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -14,4 +15,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableAutoDataSourceProxy
 @PropertySource(value = "classpath:seata-config.yml", factory = YamlPropertySourceFactory.class)
 public class SeataAutoConfiguration {
+
+
+
 }

@@ -8,6 +8,31 @@ nacos:
 server:
   port: 8088
 
+#seata:
+#  registry:
+#    type: nacos
+#    nacos:
+#      server-addr: ${nacos.server}
+#      group: ${nacos.group}
+#      namespace: ${nacos.namespace}
+#      application: seata-server
+#      cluster: default
+#      username: ${nacos.username}
+#      password: ${nacos.password}
+#  config:
+#    type: nacos
+#    nacos:
+#      server-addr: ${nacos.server}
+#      group: ${nacos.group}
+#      namespace: ${nacos.namespace}
+#      username: ${nacos.username}
+#      password: ${nacos.password}
+#      data-id: seataServer.properties
+#  tx-service-group: hongqy4cloud-tx-group
+#  service:
+#    vgroup-mapping:
+#      hongqy4cloud-tx-group: default
+
 spring:
   application:
     name: @artifactId@

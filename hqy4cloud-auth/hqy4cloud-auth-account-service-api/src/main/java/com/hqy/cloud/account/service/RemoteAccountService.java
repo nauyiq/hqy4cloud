@@ -8,6 +8,7 @@ import com.hqy.cloud.account.struct.RegistryAccountStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
+import com.hqy.cloud.rpc.transaction.GlobalRemoteTransactional;
 
 import java.util.List;
 
@@ -76,6 +77,15 @@ public interface RemoteAccountService extends RPCService {
      */
     @ThriftMethod
     CommonResultStruct registryAccount(@ThriftField(1) RegistryAccountStruct struct);
+
+    /**
+     * tcc的账号注册rpc， tc端
+     * @param struct {@link  RegistryAccountStruct}.
+     * @return       执行结果
+     */
+    @ThriftMethod
+    @GlobalRemoteTransactional
+    CommonResultStruct tccRegistryAccount(@ThriftField(1) RegistryAccountStruct struct);
 
     /**
      * 修改用户密码

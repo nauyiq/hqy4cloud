@@ -6,6 +6,7 @@ import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
+import com.hqy.cloud.rpc.transaction.GlobalRemoteTransactional;
 
 import java.util.List;
 
@@ -60,6 +61,7 @@ public interface RemoteAccountProfileService extends RPCService {
     @ThriftMethod
     boolean uploadAccountProfile(@ThriftField(1)AccountProfileStruct profileStruct);
 
+
     /**
      * async update account avatar by id.
      * @param id     user id.
@@ -68,4 +70,13 @@ public interface RemoteAccountProfileService extends RPCService {
     @ThriftMethod(oneway = true)
     void updateAccountAvatar(@ThriftField(1)Long id, @ThriftField(2) String avatar);
 
+
+    /**
+     * 全局事务更新账号profile表数据
+     * @param profileStruct 账号profile参数
+     * @return              是否更新成功
+     */
+    @ThriftMethod
+    @GlobalRemoteTransactional
+    boolean transactionalUploadAccountProfile(@ThriftField(1)AccountProfileStruct profileStruct);
 }

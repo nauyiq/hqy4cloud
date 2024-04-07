@@ -50,19 +50,20 @@ seata:
   registry:
     type: nacos
     nacos:
-      server-addr: @nacos.host@:@nacos.port@
-      username: @nacos.username@
-      password: @nacos.password@
-      # 微服务必须在一个组，否则服务发现不了，但Seata-server 可以在不同的组中
-      namespace: @nacos.namespace@
-      group: @nacos.group@
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      application: seata-server
+      namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
+      group: ${NACOS_GROUP:DEV_GROUP}
       dataId: seataServer.properties
   config:
     type: nacos
     nacos:
-      application: seata-server
-      server-addr: @nacos.host@:@nacos.port@
-      group: @nacos.group@
-      namespace: @nacos.namespace@
-      username: @nacos.username@
-      password: @nacos.password@
+      data-id: seataServer.properties
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      group: ${NACOS_GROUP:DEV_GROUP}
+      namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+

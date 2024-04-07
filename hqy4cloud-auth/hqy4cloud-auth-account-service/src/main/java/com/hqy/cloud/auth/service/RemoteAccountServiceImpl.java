@@ -10,6 +10,7 @@ import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.Account;
 import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
 import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.common.base.lang.StringConstants;
@@ -47,6 +48,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     private final AccountTkService accountTkService;
     private final RoleTkService roleTkService;
     private final AccountCacheService accountCacheService;
+    private final TccRegistryAccountService tccRegistryAccountService;
 
     @Override
     public String getAccountInfoJson(Long id) {
@@ -136,6 +138,27 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
             log.error("Failed execute to registry account. struct: {}, cause: {}.", JsonUtil.toJson(struct), cause.getMessage());
             throw new UpdateDbException(ResultCode.SYSTEM_ERROR_INSERT_FAIL.message, cause);
         }
+    }
+
+    @Override
+    public CommonResultStruct tccRegistryAccount(RegistryAccountStruct struct) {
+        if (StringUtils.isAnyBlank(struct.username, struct.email, struct.password)) {
+            return new CommonResultStruct(ResultCode.ERROR_PARAM);
+        }
+        if (accountOperationService.checkParamExist(struct.username, struct.email, struct.phone)) {
+            return new CommonResultStruct(ResultCode.USER_EXIST);
+        }
+        struct.password = passwordEncoder.encode(struct.password);
+        // 获取角色
+        if (CollectionUtils.isEmpty(struct.roles)) {
+            struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
+        }
+        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
+        // 构造用户对象
+        UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
+                struct.password, struct.avatar, true, struct.roles);
+        Account account = Account.of(userDTO, roles);
+        return tccRegistryAccountService.register(account, userDTO, roles) ? new CommonResultStruct(true, ResultCode.SUCCESS.code, account.getId().toString()) : new CommonResultStruct(ResultCode.REGISTRY_ACCOUNT_ERROR);
     }
 
     @Override

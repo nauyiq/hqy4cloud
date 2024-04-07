@@ -58,8 +58,11 @@ public class SeataGlobalTransactionEventHandler implements ThriftServerContextHa
         ThriftServerContextHandleService.super.doDone(thriftServerContext, methodName);
 
         try {
+            // Provider: 调用完成后, 对XID的清理
             if (thriftServerContext.isBind()) {
+                // 当前RPC上下文绑定的XID
                 String rpcXid = thriftServerContext.getRequestPram().getParameter(CommonConstants.SEATA_XID);
+                // 解绑的XID
                 String unbindXid = RootContext.unbind();
                 if (log.isDebugEnabled()) {
                     log.debug("unbind[" + unbindXid + "] from RootContext");
@@ -75,7 +78,7 @@ public class SeataGlobalTransactionEventHandler implements ThriftServerContextHa
                 }
             }
         } catch (Throwable t) {
-
+            log.error(t.getMessage(), t);
         }
 
 

@@ -12,10 +12,6 @@
     <description>hqy4cloud-thrift rpc 集成seata</description>
     <artifactId>hqy4cloud-thrift-rpc-seata-adaptor</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

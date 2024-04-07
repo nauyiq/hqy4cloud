@@ -48,8 +48,7 @@ public class EndpointAuthorizationManager {
                 //Oauth2 Endpoint
                 "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/error", "/css/**", "/doc.html",
                 // 开放springboot actuator端口
-                "/actuator/**", "/druid/**",
-                "/*/websocket"
+                "/actuator/**", "/druid/**"
                 //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
 //                "/**/v2/api-docs/**", "/**/swagger-ui.html", "/**/swagger-resources/**", "/**/webjars/**",
@@ -59,7 +58,7 @@ public class EndpointAuthorizationManager {
 
         //必须admin-service的endpoint.
         ADMIN_ENDPOINTS.addAll(Arrays.asList(
-                "/admin/**", "/admin/*"
+                "/admin/**", "/admin/*", "/**/websocket"
         ));
 
         //文件上传endpoint.

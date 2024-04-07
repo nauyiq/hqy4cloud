@@ -98,6 +98,32 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         }
     }
 
+    @Override
+    public boolean transactionalUploadAccountProfile(AccountProfileStruct profile) {
+        if (profile == null || profile.id == null) {
+            return false;
+        }
+        AccountProfile accountProfile = accountProfileTkService.queryById(profile.id);
+        if (accountProfile == null) {
+            return false;
+        }
+        // 设置参数
+        if (StringUtils.isNotBlank(profile.nickname)) {
+            accountProfile.setNickname(profile.nickname);
+        }
+        if (StringUtils.isNotBlank(profile.avatar)) {
+            accountProfile.setAvatar(profile.avatar);
+        }
+        if (StringUtils.isNotBlank(profile.birthday)) {
+            accountProfile.setBirthday(DateUtil.parseDateTime(profile.birthday));
+        }
+        if (profile.sex != null) {
+            accountProfile.setSex(profile.sex);
+        }
+        accountProfile.setIntro(profile.intro);
+        return accountProfileTkService.update(accountProfile);
+    }
+
     private AccountProfileStruct buildAccountProfileStruct(AccountInfoDTO accountInfo) {
         return AccountProfileStruct.builder()
                 .id(accountInfo.getId())

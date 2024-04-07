@@ -121,7 +121,8 @@ public class AccountOperationServiceImpl implements AccountOperationService {
 
     @Override
     public boolean registryAccount(UserDTO userDTO, List<Role> roles) {
-        Account account = buildAccount(userDTO, roles);
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        Account account = Account.of(userDTO, roles);
         List<AccountRole> accountRoles = buildAccountRole(account, roles);
         AccountProfile accountProfile = buildAccountProfile(account, userDTO);
         Boolean result = transactionTemplate.execute(status -> {
@@ -139,15 +140,6 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         return Boolean.TRUE.equals(result);
     }
 
-    private Account buildAccount(UserDTO userDTO, List<Role> roles) {
-        List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
-        String role = StrUtil.join(COMMA, roleNames);
-        Account account = new Account(DistributedIdGen.getSnowflakeId(MicroServiceConstants.ACCOUNT_SERVICE), userDTO.getUsername(), passwordEncoder.encode(userDTO.getPassword()), userDTO.getEmail(), role, userDTO.getPhone());
-        if (Objects.nonNull(userDTO.getStatus())) {
-            account.setStatus(userDTO.getStatus());
-        }
-        return account;
-    }
 
     private List<AccountRole> buildAccountRole(Account account, List<Role> roles) {
         return roles.stream().map(e -> new AccountRole(account.getId(), e.getId(), e.getLevel())).collect(Collectors.toList());
