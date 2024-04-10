@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.base.vo;
 
 import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.account.dto.AccountInfoDTO;
-import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,7 +45,7 @@ public class AdminUserInfoVO {
             this.id = accountInfo.getId().toString();
             this.username = accountInfo.getUsername();
             this.nickname = accountInfo.getNickname();
-            this.avatar = AvatarHostUtil.settingAvatar(accountInfo.getAvatar());
+            this.avatar = AccountAvatarUtil.getAvatar(accountInfo.getAvatar());
             this.email = accountInfo.getEmail();
             this.phone = accountInfo.getPhone();
             this.intro = accountInfo.getIntro();

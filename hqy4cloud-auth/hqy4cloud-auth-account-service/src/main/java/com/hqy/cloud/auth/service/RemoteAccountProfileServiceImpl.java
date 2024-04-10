@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.entity.AccountProfile;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
-import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,8 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             return new AccountProfileStruct();
         }
         // return host avatar.
-        profile.setAvatar(AvatarHostUtil.settingAvatar(profile.getAvatar()));
+        String avatar = AccountAvatarUtil.getAvatar(profile.getAvatar());
+        profile.setAvatar(avatar);
         AccountProfileStruct struct = AccountConverter.CONVERTER.convert(profile);
         struct.username = account.getUsername();
         return struct;
@@ -83,6 +84,8 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
 
     @Override
     public boolean uploadAccountProfile(AccountProfileStruct struct) {
+        // 存储相对路径的头像.
+        struct.avatar = AccountAvatarUtil.extractAvatar(struct.avatar);
         AccountProfile profile = new AccountProfile();
         AccountConverter.CONVERTER.update(profile, struct);
         return accountProfileTkService.updateSelective(profile);
@@ -91,6 +94,11 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
 
     @Override
     public void updateAccountAvatar(Long id, String avatar) {
+        avatar = AccountAvatarUtil.extractAvatar(avatar);
+        if (StringUtils.isBlank(avatar)) {
+            // 采用默认头像.
+            avatar = AccountAvatarUtil.DEFAULT_AVATAR;
+        }
         AccountProfile profile = new AccountProfile(id, null, avatar);
         boolean result = accountProfileTkService.updateSelective(profile);
         if (!result) {
@@ -112,7 +120,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             accountProfile.setNickname(profile.nickname);
         }
         if (StringUtils.isNotBlank(profile.avatar)) {
-            accountProfile.setAvatar(profile.avatar);
+            accountProfile.setAvatar(AccountAvatarUtil.extractAvatar(profile.avatar));
         }
         if (StringUtils.isNotBlank(profile.birthday)) {
             accountProfile.setBirthday(DateUtil.parseDateTime(profile.birthday));
@@ -129,7 +137,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
                 .id(accountInfo.getId())
                 .username(accountInfo.getUsername())
                 .nickname(accountInfo.getNickname())
-                .avatar(AvatarHostUtil.settingAvatar(accountInfo.getAvatar()))
+                .avatar(AccountAvatarUtil.getAvatar(accountInfo.getAvatar()))
                 .intro(accountInfo.getIntro())
                 .birthday(DateUtil.format(accountInfo.getBirthday(), DatePattern.NORM_DATETIME_MINUTE_PATTERN))
                 .sex(accountInfo.getSex()).build();

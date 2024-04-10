@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
 import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
 import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.util.AssertUtil;
 import io.seata.core.context.RootContext;
 import io.seata.rm.tcc.api.BusinessActionContext;
@@ -70,7 +70,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         queryAccount.setStatus(true);
         AccountProfile profile = new AccountProfile(id,
                 StringUtils.isBlank(user.getNickname()) ? user.getUsername() : user.getNickname(),
-                StringUtils.isBlank(user.getAvatar()) ? AvatarHostUtil.DEFAULT_AVATAR: user.getAvatar());
+                StringUtils.isBlank(user.getAvatar()) ? AccountAvatarUtil.DEFAULT_AVATAR: user.getAvatar());
 
         List<AccountRole> accountRoles = roleJsonObjects.stream().map(r -> {
             Role role = r.toJavaObject(Role.class);

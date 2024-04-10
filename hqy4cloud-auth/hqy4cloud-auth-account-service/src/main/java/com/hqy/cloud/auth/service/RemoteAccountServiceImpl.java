@@ -16,6 +16,7 @@ import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UpdateDbException;
 import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 import com.hqy.cloud.util.JsonUtil;
@@ -127,6 +128,11 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (struct.createBy != null && !authOperationService.checkEnableModifyRoles(struct.createBy, roles)) {
             return new CommonResultStruct(ResultCode.LIMITED_SETTING_ROLE_LEVEL);
         }
+        // 校验一下头像
+        if (StringUtils.isNotBlank(struct.avatar) && AccountAvatarUtil.availableAvatar(struct.avatar)) {
+            return new CommonResultStruct(ResultCode.ERROR_PARAM);
+        }
+
         try {
             UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
                     struct.password, struct.avatar, true, struct.roles);

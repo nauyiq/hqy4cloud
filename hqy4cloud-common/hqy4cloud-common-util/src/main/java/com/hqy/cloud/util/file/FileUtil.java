@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * FileUtil.
@@ -59,6 +61,18 @@ public class FileUtil {
         }
     }
 
+    public static String extractPathByUrl(String url) {
+        if (StringUtils.isNotBlank(url) && url.startsWith(StringConstants.HTTP)) {
+            String regex = "^https?://[^/]+(.*)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.find()) {
+                // 返回匹配到的域名之后的部分（不包括域名）
+                return matcher.group(1);
+            }
+        }
+        return url;
+    }
 
     /**
      * 生成uuid类型的文件名

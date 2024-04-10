@@ -168,7 +168,6 @@ public class ImageUtil {
         if (imageFile == null || !imageFile.exists()) {
             throw new IOException("Not found the images:" + sourcePath);
         }
-
         String format = sourcePath.substring(sourcePath.lastIndexOf(".") + 1);
         BufferedImage image = ImageIO.read(imageFile);
         image = zoom(image, width, height);
@@ -225,6 +224,8 @@ public class ImageUtil {
         File outFile = new File(outPath + StrUtil.SLASH + outFilename);
         ImageIO.write(ImageNew, "png", outFile);
     }
+
+
 
 
 

@@ -2,8 +2,8 @@ package com.hqy.cloud.auth.base.vo;
 
 import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.account.dto.AccountInfoDTO;
-import com.hqy.cloud.foundation.common.account.AvatarHostUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,7 +40,7 @@ public class AccountInfoVO {
         this.phone = accountInfo.getPhone();
         this.email = accountInfo.getEmail();
         this.birthday =  DateUtil.formatDateTime(accountInfo.getBirthday());
-        this.avatar = AvatarHostUtil.settingAvatar(accountInfo.getAvatar());
+        this.avatar = AccountAvatarUtil.getAvatar(accountInfo.getAvatar());
         this.status = accountInfo.getStatus().toString();
         this.created = DateUtil.formatDateTime(accountInfo.getCreated());
         this.roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), StringConstants.Symbol.COMMA));
