@@ -54,7 +54,7 @@ public abstract class ExecutorTask<T, V> implements Supplier<V> {
     }
 
     public WorkerResult<V> actionResult() {
-        WorkerResult<V> result = null;
+        WorkerResult<V> result;
         try {
             V actionResult = action(this.param);
             result = WorkerResult.ofSuccess(actionResult);

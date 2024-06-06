@@ -14,29 +14,30 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ResolvableType;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 
 /**
- * spring容器加强类
+ * spring容器加强类 <br/>
+ * 通过spring生命周期，在spring bean初始化之前会通过BeanFactoryPostProcessor#postProcessBeanFactory对工工厂进行处理，
+ * 因此可以依赖此特性，提前初始化我们需要的Bean
  * @author qiyuan.hong
- * @date 2021-07-22 16:25
+ * @date 2021-07-22
  **/
 @Slf4j
 public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    private volatile static ProjectContextInfo contextInfo;
-
-
     @Override
     @SneakyThrows
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
+    public void setApplicationContext(@Nonnull ApplicationContext context) throws BeansException {
         SpringContextHolder.applicationContext = context;
     }
+
+
 
     /**
      * 取得存储在静态变量中的ApplicationContext.
@@ -69,8 +70,9 @@ public class SpringContextHolder implements ApplicationContextAware {
         } catch (Exception e) {
             return defaultObjWhenException;
         }
-
     }
+
+
 
     @SuppressWarnings("unchecked")
     public static <T> T getBean(TypeReference<T> reference) {
@@ -119,8 +121,8 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     /**
      * * 往spring ioc容器动态注入一个bean
-     * @param beanId
-     * @param clazz
+     * @param beanId spring bean id
+     * @param clazz  bean class类型
      */
     public static void registryDynamicBean(String beanId, Class<?> clazz) {
         // 获取BeanFactory
@@ -130,13 +132,6 @@ public class SpringContextHolder implements ApplicationContextAware {
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
         // 动态注册bean.
         defaultListableBeanFactory.registerBeanDefinition(beanId, beanDefinitionBuilder.getBeanDefinition());
-    }
-
-
-    public static void registerContextInfo(ProjectContextInfo info) {
-        if (Objects.nonNull(info)) {
-            contextInfo = info;
-        }
     }
 
     public static String[] getActiveProfiles() {
@@ -178,4 +173,11 @@ public class SpringContextHolder implements ApplicationContextAware {
         }
     }
 
+    @Override
+    public String toString() {
+        if (applicationContext == null) {
+            return "Application context not prepare.";
+        }
+        return "Application context ready available.";
+    }
 }

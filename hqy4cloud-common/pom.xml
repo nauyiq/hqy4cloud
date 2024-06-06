@@ -27,6 +27,7 @@
         <module>hqy4cloud-common-canal</module>
         <module>hqy4cloud-common-ai</module>
         <module>hqy4cloud-common-db</module>
+        <module>hqy4cloud-common-stream</module>
 
     </modules>
 

@@ -6,12 +6,23 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hqy.cloud.foundation.cache.service.RedissonLockService;
+import com.hqy.cloud.foundation.redis.RedisConstants;
+import com.hqy.cloud.foundation.redis.stream.RedisStreamMessageListener;
+import com.hqy.cloud.foundation.redis.stream.RedisStreamService;
+import com.hqy.cloud.foundation.redis.stream.support.*;
+import com.hqy.cloud.stream.api.StreamConsumer;
+import com.hqy.cloud.stream.api.StreamConsumerFactory;
+import com.hqy.cloud.stream.api.StreamProducerFactory;
+import com.hqy.cloud.stream.api.StreamProducer;
 import com.hqy.foundation.lock.LockService;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -82,5 +93,39 @@ public class RedisAutoConfiguration {
     public LockService lockService(RedissonClient redissonClient) {
         return new RedissonLockService(redissonClient);
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RedisStreamService redisStreamService(RedisTemplate<String, Object> redisTemplate) {
+        return new RedisStreamServiceImpl(redisTemplate);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RedisStreamMessageProducer redisStreamMessageProducer(RedisStreamService redisStreamService) {
+        StreamProducer.Config config = StreamProducer.Config.builder()
+                .supportAsyncApi(false)
+                .build();
+        StreamProducerFactory<String> streamProducerFactory = new RedisStreamStreamProducerFactory(redisStreamService);
+        return (RedisStreamMessageProducer) streamProducerFactory.create(config);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = RedisConstants.REDIS_STREAM_CONSUMER_ENABLED, havingValue = "true")
+    @ConditionalOnMissingBean
+    public StreamConsumer.Config consumerConfig() {
+        return StreamConsumer.Config.builder()
+                .build();
+    }
+
+    @Bean
+    @Lazy
+    @ConditionalOnBean(RedisStreamMessageListener.class)
+    @ConditionalOnMissingBean
+    public RedisStreamConsumer redisStreamConsumer(RedisStreamService redisStreamService, RedisStreamMessageListener listener, StreamConsumer.Config config) {
+        StreamConsumerFactory factory = new RedisStreamConsumerFactory(redisStreamService, listener);
+        return (RedisStreamConsumer) factory.create(config);
+    }
+
 
 }

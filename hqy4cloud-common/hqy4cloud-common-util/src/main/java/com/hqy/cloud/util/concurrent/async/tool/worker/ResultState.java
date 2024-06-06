@@ -26,5 +26,6 @@ public enum ResultState {
     /**
      * 默认
      */
-    DEFAULT
+    DEFAULT,
+
 }

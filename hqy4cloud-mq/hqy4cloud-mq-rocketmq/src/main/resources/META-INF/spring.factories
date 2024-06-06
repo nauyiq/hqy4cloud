@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.mq.rocketmq.config.RocketmqAutoConfiguration
+com.hqy.cloud.mq.rocket.config.RocketmqAutoConfiguration

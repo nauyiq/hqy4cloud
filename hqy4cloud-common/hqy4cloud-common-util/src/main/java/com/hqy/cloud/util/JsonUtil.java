@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -23,7 +25,7 @@ import java.util.*;
 @Slf4j
 public class JsonUtil {
 
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    public final static ObjectMapper MAPPER = new ObjectMapper();
     private static final String EMPTY_STR_OBJ = "{}";
 
     static {
@@ -55,6 +57,22 @@ public class JsonUtil {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> toMap(Object obj) {
+        try {
+            if (obj == null) {
+                return Maps.newHashMapWithExpectedSize(0);
+            }
+            return MAPPER.convertValue(obj, Map.class);
+        } catch (Exception e) {
+            log.error("Failed execute to Map: {}.", obj);
+            throw  new RuntimeException(e);
+        }
+    }
+
+
+
 
     public static byte[] toJsonBytes(Object bean) {
         try {
@@ -105,8 +123,20 @@ public class JsonUtil {
         try {
             return MAPPER.readValue(json, clazz);
         } catch (Exception e) {
-            log.error("Failed execute to toJson, json: {}", json);
+            log.error("Failed execute to toBean, json: {}", json);
             throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public static <T> T toBean(Map<String, Object> map, Class<T> clazz) {
+        try {
+            if (MapUtils.isEmpty(map) || clazz == null) {
+                return null;
+            }
+            return MAPPER.convertValue(map, clazz);
+        } catch (Exception e) {
+            log.error("Failed execute to bean by map, class name: {}, map: {}.", clazz.getName(), JsonUtil.toJson(map));
+            throw new RuntimeException(e);
         }
     }
 
@@ -125,9 +155,12 @@ public class JsonUtil {
         }
     }
 
+
+
+
+
     @SuppressWarnings("rawtypes")
     public static Map jsonToMap(String str) {
-
         JsonFactory factory = new JsonFactory();
         ObjectMapper mapper = new ObjectMapper(factory);
         TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};

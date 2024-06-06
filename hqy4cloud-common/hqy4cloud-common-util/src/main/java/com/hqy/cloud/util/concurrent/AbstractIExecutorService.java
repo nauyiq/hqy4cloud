@@ -26,6 +26,10 @@ public abstract class AbstractIExecutorService implements IExecutorService {
         this(DEFAULT_CORE_SIZE, DEFAULT_MAX_SIZE, DEFAULT_QUEUE_SIZE, DEFAULT_KEEP_ALIVE_MILLS, name);
     }
 
+    public AbstractIExecutorService(String name, int codeSize, int maxSize) {
+        this(codeSize, maxSize, DEFAULT_QUEUE_SIZE, DEFAULT_KEEP_ALIVE_MILLS, name);
+    }
+
     public AbstractIExecutorService(int codeSize, int maxSize, int capacity, long keepAliveMills, String name) {
         this(codeSize, maxSize, capacity, keepAliveMills, name, new NamedThreadFactory(name), DEFAULT_REJECTED_EXECUTION_HANDLER);
     }

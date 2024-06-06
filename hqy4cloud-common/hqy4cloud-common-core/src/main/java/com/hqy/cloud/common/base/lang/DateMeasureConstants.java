@@ -11,6 +11,11 @@ import java.time.Duration;
 public interface DateMeasureConstants {
 
     /**
+     * 1秒钟
+     */
+    Duration ONE_SECONDS = Duration.ofMillis(NumberConstants.ONE_SECONDS_4MILLISECONDS);
+
+    /**
      * 1分钟
      */
     Duration ONE_MINUTES = Duration.ofMillis(NumberConstants.ONE_MINUTES_4MILLISECONDS);

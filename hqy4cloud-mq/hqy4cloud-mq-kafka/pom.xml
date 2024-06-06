@@ -22,12 +22,6 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-canal</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-api</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -42,9 +36,6 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-
     </dependencies>
 
 </project>

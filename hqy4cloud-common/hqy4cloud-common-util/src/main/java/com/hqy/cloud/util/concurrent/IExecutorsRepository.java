@@ -49,6 +49,17 @@ public class IExecutorsRepository extends Thread {
         return iExecutorService;
     }
 
+    public static IExecutorService newExecutor(String name, int coreSize, int maxSize) {
+        AssertUtil.notEmpty(name, "Executor name should not be empty.");
+        if (I_EXECUTOR_SERVICE_MAP.containsKey(name)) {
+            return I_EXECUTOR_SERVICE_MAP.get(name);
+        }
+        IExecutorService iExecutorService = new AbstractIExecutorService(name, coreSize, maxSize) {};
+        I_EXECUTOR_SERVICE_MAP.put(name, iExecutorService);
+        return iExecutorService;
+    }
+
+
     public static ScheduledExecutorService newScheduledExecutor(String name) {
         AssertUtil.notEmpty(name, "Executor name should not be empty.");
         if (SCHEDULED_EXECUTOR_SERVICE_MAP.containsKey(name)) {
