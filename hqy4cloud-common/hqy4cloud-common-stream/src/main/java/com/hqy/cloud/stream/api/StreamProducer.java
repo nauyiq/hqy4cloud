@@ -3,6 +3,7 @@ package com.hqy.cloud.stream.api;
 import com.hqy.cloud.stream.core.StreamResult;
 import com.hqy.cloud.stream.core.CompletableFutureResult;
 import com.hqy.cloud.util.concurrent.IExecutorService;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 /**
@@ -70,6 +71,7 @@ public interface StreamProducer<R> extends StreamService {
 
 
     @Builder
+    @AllArgsConstructor
     class Config {
 
         /**
@@ -91,7 +93,7 @@ public interface StreamProducer<R> extends StreamService {
         public Config() {
         }
 
-        private Config(IExecutorService executorService) {
+        public Config(IExecutorService executorService) {
             this.executorService = executorService;
         }
 
