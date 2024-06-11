@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.quartz.*;
 import org.quartz.impl.DirectSchedulerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -23,6 +22,7 @@ import java.util.Date;
  */
 @Slf4j
 @Service
+@Deprecated
 public class QuartzTimerServiceImpl implements TimerFoundationService {
 
     private Scheduler scheduler = null;

@@ -17,6 +17,7 @@
         <module>hqy4cloud-mq-rabbitmq</module>
         <module>hqy4cloud-mq-kafka</module>
         <module>hqy4cloud-mq-rocketmq</module>
+        <module>hqy4cloud-mq-api</module>
     </modules>
     <packaging>pom</packaging>
 

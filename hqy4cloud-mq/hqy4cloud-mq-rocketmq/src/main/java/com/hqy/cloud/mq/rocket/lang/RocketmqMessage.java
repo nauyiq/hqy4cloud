@@ -3,6 +3,7 @@ package com.hqy.cloud.mq.rocket.lang;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.stream.api.MessageId;
 import com.hqy.cloud.stream.common.AbstractStreamMessage;
+import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -14,6 +15,7 @@ public class RocketmqMessage extends AbstractStreamMessage<String, Object> {
 
     private final String topic;
     private final String tags;
+    private boolean transactional = false;
 
     public RocketmqMessage(String topic, Object value) {
         this(null, topic, null, value);
@@ -46,7 +48,17 @@ public class RocketmqMessage extends AbstractStreamMessage<String, Object> {
         return this.topic;
     }
 
+    public RocketmqMessage addOrderlyHash(String hashkey) {
+        AssertUtil.notEmpty(hashkey, "orderly hashkey should not be empty.");
+        addProperty(RocketmqConstants.ORDERLY_HASH, hashkey);
+        return this;
+    }
 
+    public boolean isTransactional() {
+        return transactional;
+    }
 
-
+    public void setTransactional(boolean transactional) {
+        this.transactional = transactional;
+    }
 }

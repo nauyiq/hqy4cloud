@@ -16,9 +16,19 @@ public interface RocketmqConstants {
      */
     long TIMEOUT = 3000;
 
+    /**
+     * rocketmq
+     */
     String ROCKER_MQ = "rocketmq";
 
+    /**
+     * orderly hash
+     */
     String ORDERLY_HASH = "hashkey";
+
+
+
+
 
 
 

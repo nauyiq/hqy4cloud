@@ -33,6 +33,11 @@ public class RocketmqProducer extends AbstractStreamProducerTemplate<SendResult>
             String destination = rocketmqMessage.getDestination();
             Message<Object> payload = getMessagePayload(rocketmqMessage);
             String hashkey = rocketmqMessage.getProperty(RocketmqConstants.ORDERLY_HASH);
+
+            if (rocketmqMessage.isTransactional()) {
+                // 如果是事务消息, 这里发送事务半消息，后续逻辑应该实现RocketMQLocalTransactionListener， 去判断该事务消息是否可以提交或回滚
+                return rocketMQTemplate.sendMessageInTransaction(destination, payload, null);
+            }
             return StringUtils.isBlank(hashkey) ? rocketMQTemplate.syncSend(destination, payload) : rocketMQTemplate.syncSendOrderly(destination, payload, hashkey);
         }
         throw new MessageQueueException("Un support message type by rocketmq.");
@@ -80,6 +85,9 @@ public class RocketmqProducer extends AbstractStreamProducerTemplate<SendResult>
     }
 
 
+    public RocketMQTemplate getRocketMQTemplate() {
+        return this.rocketMQTemplate;
+    }
 
     @Override
     public String getType() {

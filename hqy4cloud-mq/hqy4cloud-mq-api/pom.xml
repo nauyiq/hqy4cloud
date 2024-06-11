@@ -9,21 +9,35 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>hqy4cloud-mq-rocketmq</artifactId>
+
+    <artifactId>hqy4cloud-mq-api</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-mq-api</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>hqy4cloud-mq-common</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-stream</artifactId>
+            <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-canal</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-timer-service</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
 </project>

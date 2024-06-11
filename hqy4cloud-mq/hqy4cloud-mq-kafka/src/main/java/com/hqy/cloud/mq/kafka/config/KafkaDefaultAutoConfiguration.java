@@ -1,11 +1,15 @@
 package com.hqy.cloud.mq.kafka.config;
 
+import com.hqy.cloud.mq.api.transactional.service.MqMessageOperations;
+import com.hqy.cloud.mq.api.transactional.service.MqTransactionalService;
+import com.hqy.cloud.mq.kafka.server.KafkaTransactionalService;
 import com.hqy.cloud.stream.api.StreamProducer;
 import com.hqy.cloud.mq.kafka.server.KafkaProducer;
 import com.hqy.cloud.mq.kafka.server.KafkaProducerFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
@@ -166,9 +170,12 @@ public class KafkaDefaultAutoConfiguration {
 
 
 
-
-
-
+    @Bean
+    @ConditionalOnBean
+    @ConditionalOnMissingBean
+    public MqTransactionalService mqTransactionalService(MqMessageOperations operations, KafkaProducer kafkaProducer) {
+        return new KafkaTransactionalService(operations, kafkaProducer);
+    }
 
 
 

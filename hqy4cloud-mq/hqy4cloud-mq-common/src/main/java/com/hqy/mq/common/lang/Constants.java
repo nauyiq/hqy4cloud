@@ -22,6 +22,11 @@ public interface Constants {
      */
     long DEFAULT_TIMEOUT = 3000;
 
+    /**
+     * 事务消息场景
+     */
+    String MQ_TRANSACTION_SCENE = "mq-transactional-scene";
+
 
 
 }

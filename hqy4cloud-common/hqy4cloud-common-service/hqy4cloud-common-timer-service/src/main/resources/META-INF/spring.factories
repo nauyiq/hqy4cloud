@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.cloud.timer.service.impl.QuartzTimerServiceImpl
+com.hqy.cloud.timer.service.configure.QuartzAutoConfiguration
