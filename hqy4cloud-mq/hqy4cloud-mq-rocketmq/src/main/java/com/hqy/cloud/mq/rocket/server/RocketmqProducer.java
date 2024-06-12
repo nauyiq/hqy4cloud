@@ -79,7 +79,7 @@ public class RocketmqProducer extends AbstractStreamProducerTemplate<SendResult>
         MessageBuilder<Object> builder = MessageBuilder
                 .withPayload(message.gerValue());
         if (message.getId() != null) {
-            builder.setHeader(RocketMQHeaders.KEYS, message.getId().get());
+            builder.setHeader(RocketMQHeaders.MESSAGE_ID, message.getId().get());
         }
         return builder.build();
     }
