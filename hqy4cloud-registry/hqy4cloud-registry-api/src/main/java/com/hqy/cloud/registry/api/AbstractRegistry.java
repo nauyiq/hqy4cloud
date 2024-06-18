@@ -4,7 +4,7 @@ import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.registry.api.support.RegistryManager;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,7 +32,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * current service model.
      */
-    private ApplicationModel model;
+    private ProjectInfoModel model;
 
     /**
      * current service instance.
@@ -57,9 +57,9 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * notify list
      */
-    private final Map<ApplicationModel, List<ServiceInstance>> notified = new ConcurrentHashMap<>();
+    private final Map<ProjectInfoModel, List<ServiceInstance>> notified = new ConcurrentHashMap<>();
 
-    public AbstractRegistry(ApplicationModel model) {
+    public AbstractRegistry(ProjectInfoModel model) {
         AssertUtil.notNull(model, "Registry application model should not be null.");
         this.model = model;
         this.registryInfo = model.getRegistryInfo();
@@ -76,11 +76,11 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return this.model;
     }
 
-    public void setModel(ApplicationModel model) {
+    public void setModel(ProjectInfoModel model) {
         this.model = model;
     }
 
@@ -213,24 +213,24 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
-    protected <T> void notify(ApplicationModel applicationModel, ServiceNotifyListener listener, List<ServiceInstance> serviceInstances) {
-        AssertUtil.notNull(applicationModel, "notify instance should not be null.");
+    protected <T> void notify(ProjectInfoModel projectInfoModel, ServiceNotifyListener listener, List<ServiceInstance> serviceInstances) {
+        AssertUtil.notNull(projectInfoModel, "notify instance should not be null.");
         AssertUtil.notNull(listener, "notify listener should not be null.");
         if (CollectionUtils.isEmpty(serviceInstances)) {
             log.warn("Ignore empty notify instance for subscribe url {}", serviceInstances);
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("Notify urls for subscribe instance {}, url size {}", applicationModel, serviceInstances.size());
+            log.info("Notify urls for subscribe instance {}, url size {}", projectInfoModel, serviceInstances.size());
         }
         listener.notify(serviceInstances);
-        notified.put(applicationModel, serviceInstances);
+        notified.put(projectInfoModel, serviceInstances);
     }
 
     private Map<ServiceInstance, Set<ServiceNotifyListener>> getSubscribed() {
         return subscribed;
     }
 
-    public Map<ApplicationModel, List<ServiceInstance>> getNotified() {
+    public Map<ProjectInfoModel, List<ServiceInstance>> getNotified() {
         return notified;
     }
 

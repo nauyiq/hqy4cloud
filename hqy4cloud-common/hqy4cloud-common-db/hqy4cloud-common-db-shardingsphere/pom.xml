@@ -12,25 +12,42 @@
 
     <artifactId>hqy4cloud-common-db-shardingsphere</artifactId>
 
+    <properties>
+        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
+    </properties>
+
     <dependencies>
+        <!-- shardingsphere  -->
+        <!-- 后后续整合是否要修改为 shardingsphere-jdbc-core-spring-boot-starter  -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shardingsphere</groupId>-->
+<!--            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>-->
+<!--            <version>${sharding.jdbc.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
-            <version>5.1.0</version>
-        </dependency>-->
+            <version>5.2.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-db-datasource</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-id-service-api</artifactId>
             <version>${revision}</version>
+        </dependency>
+
+        <!--    shardingsphere和2.2不兼容，需要使用1.33，但是1.33和springboot 3.2.2 不兼容，所以自定义了 TagInspector和 UnTrustedTagInspector  -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.33</version>
         </dependency>
     </dependencies>
 

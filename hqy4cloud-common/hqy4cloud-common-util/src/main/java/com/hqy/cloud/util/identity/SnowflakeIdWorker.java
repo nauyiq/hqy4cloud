@@ -1,7 +1,6 @@
 package com.hqy.cloud.util.identity;
 
 import com.google.common.base.Preconditions;
-import com.hqy.cloud.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;

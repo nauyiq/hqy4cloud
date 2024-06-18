@@ -21,15 +21,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-util</artifactId>
-            <version>${revision}</version>
-        </dependency
-        >
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-collection-service-api</artifactId>
+            <artifactId>hqy4cloud-common-business-collection</artifactId>
             <version>${revision}</version>
         </dependency>
-
     </dependencies>
 </project>

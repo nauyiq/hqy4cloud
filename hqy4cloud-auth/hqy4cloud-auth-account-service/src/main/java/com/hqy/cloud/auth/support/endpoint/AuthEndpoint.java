@@ -1,15 +1,26 @@
 package com.hqy.cloud.auth.support.endpoint;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.lang.Oauth2ErrorCodesExpand;
-import com.hqy.cloud.auth.entity.SysOauthClient;
-import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
+import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
+import com.hqy.cloud.auth.account.entity.SysOauthClient;
+import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
-import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
+import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.communication.request.PhoneMsgParams;
+import com.hqy.cloud.communication.request.SmsType;
+import com.hqy.cloud.communication.service.CommunicationFacadeService;
+import com.hqy.cloud.infrastructure.random.RandomCodeScene;
+import com.hqy.cloud.infrastructure.random.RandomCodeService;
+import com.hqy.cloud.rpc.dubbo.DubboConstants;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,12 +39,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 令牌端点
@@ -46,10 +56,15 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthEndpoint {
 
-    private final SysOauthClientTkService sysOauthClientTkService;
+    private final SysOauthClientService sysOauthClientService;
     private final OAuth2AuthorizationService oAuth2AuthorizationService;
     private final AuthenticationFailureHandler authenticationFailureHandler = new DefaultAuthenticationFailureHandler();
     private final HttpMessageConverter<OAuth2AccessTokenResponse> accessTokenHttpResponseConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
+
+    private final RandomCodeService randomCodeService;
+
+    @DubboReference(version = DubboConstants.DEFAULT_DUBBO_SERVICE_VERSION)
+    private CommunicationFacadeService communicationFacadeService;
 
     /**
      * 认证页面
@@ -65,13 +80,27 @@ public class AuthEndpoint {
     }
 
 
+    /**
+     * 发送手机验证码
+     * @param telephone 手机号码
+     * @return          验证码
+     */
+    @GetMapping("/sendCaptcha")
+    public R<Boolean> sendCaptcha(@NotBlank @RequestParam String telephone) {
+        // 生成验证码
+        String code = randomCodeService.randomNumber((int) DateMeasureConstants.FIVE_MINUTES.getSeconds(),
+                TimeUnit.SECONDS, RandomCodeScene.SMS_AUTH, telephone);
+        return communicationFacadeService.sendAuthSms(new PhoneMsgParams(telephone, code, SmsType.SMS_AUTH));
+    }
+
+
     @GetMapping("/confirm")
     public ModelAndView confirm(Principal principal, ModelAndView modelAndView,
                                 @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
                                 @RequestParam(OAuth2ParameterNames.STATE) String state) {
 
-        SysOauthClient clientDetails = sysOauthClientTkService.queryById(clientId);
+        SysOauthClient clientDetails = sysOauthClientService.findByClientId(clientId);
         if (Objects.isNull(clientDetails)) {
             throw new NotAuthenticationException("clientId 不合法");
         }
@@ -145,6 +174,8 @@ public class AuthEndpoint {
         this.accessTokenHttpResponseConverter.write(sendAccessTokenResponse, MediaType.APPLICATION_JSON, httpResponse);
 
     }
+
+
 
 
 

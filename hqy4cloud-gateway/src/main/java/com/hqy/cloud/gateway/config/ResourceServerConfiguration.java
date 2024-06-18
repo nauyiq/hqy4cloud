@@ -1,9 +1,10 @@
 package com.hqy.cloud.gateway.config;
 
-import com.hqy.cloud.auth.core.authentication.AuthPermissionService;
-import com.hqy.cloud.auth.core.component.DefaultReactiveOpaqueTokenIntrospector;
-import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
-import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
+import com.hqy.cloud.auth.api.AuthPermissionService;
+import com.hqy.cloud.auth.common.UserRole;
+import com.hqy.cloud.auth.security.core.DefaultReactiveOpaqueTokenIntrospector;
+import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
@@ -36,6 +37,8 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * 网关承担资源服务器
  * @author qiyuan.hong
@@ -50,6 +53,7 @@ public class ResourceServerConfiguration {
 
     private final MessageSource securityMessageSource;
     private final AuthPermissionService authPermissionService;
+    private final AuthorizationManager authorizationManager;
 
     @Bean
     public OAuth2AuthorizationService oAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
@@ -74,27 +78,42 @@ public class ResourceServerConfiguration {
     }
 
     @Bean
-    public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http, AuthorizationManager authorizationManager,  ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector) {
-        http.authorizeExchange()
+    public SecurityWebFilterChain webFluxFilterChain(ServerHttpSecurity http,  ReactiveOpaqueTokenIntrospector opaqueTokenIntrospector) {
+        http
+            .authorizeExchange(exchange -> exchange
+                // 放行所有option请求
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers(EndpointAuthorizationManager.ENDPOINTS.toArray(new String[0])).permitAll()
-                .pathMatchers(authPermissionService.getWhites().toArray(new String[0])).permitAll();
+                // 白名单uri
+                .pathMatchers(getWhiteUriPatterns()).permitAll()
+                // 默认所有请求都需要登录
+                .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())
+            )
 
-
-        http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());
-        http.oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer  ->
-                        httpSecurityOAuth2ResourceServerConfigurer.opaqueToken()
-                                .introspector(opaqueTokenIntrospector))
-                .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST);
-
-        http.authorizeExchange().anyExchange().access(authorizationManager)
-                .and().exceptionHandling()
-                //处理未授权
-                .accessDeniedHandler(accessDeniedHandler())
-                //处理未认证
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .and().cors().and().httpBasic().authenticationManager(new ClientSecretReactiveAuthenticationManager()).and().csrf().disable();
+            .oauth2ResourceServer(oauth2ResourceServerCustomizer -> oauth2ResourceServerCustomizer
+                    // token认证失败
+                    .authenticationEntryPoint(authenticationEntryPoint())
+                    // 开放式token
+                    .opaqueToken(c -> c.introspector(opaqueTokenIntrospector)))
+            // 通用的请求授权走AuthorizationManager
+            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
+            .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST)
+            .exceptionHandling(handler -> handler
+                    // 拒绝策略
+                    .accessDeniedHandler(accessDeniedHandler())
+                    .authenticationEntryPoint(authenticationEntryPoint()))
+                // basic 认证
+            .httpBasic(b -> b.authenticationManager(new ClientSecretReactiveAuthenticationManager()))
+            .csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();
+    }
+
+    private String[] getWhiteUriPatterns() {
+        // 业务白名单， 不需要登录即可访问的.
+        List<String> businessWhiteUris = authPermissionService.getBusinessWhiteUris();
+        // 获取静态白名单
+        List<String> endpointsPatterns = StaticEndpointAuthorizationManager.getInstance().getWhiteEndpointsPatterns();
+        endpointsPatterns.addAll(businessWhiteUris);
+        return endpointsPatterns.toArray(new String[0]);
     }
 
 
@@ -107,6 +126,7 @@ public class ResourceServerConfiguration {
                 DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
+
         };
     }
 

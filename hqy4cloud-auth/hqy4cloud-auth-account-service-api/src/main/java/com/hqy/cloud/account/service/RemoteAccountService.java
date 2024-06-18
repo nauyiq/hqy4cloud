@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * thrift rpc for account
  * @author qiyuan.hong
- * @date 2022-03-16 11:17
+ * @date 2022-03-16
  */
 @ThriftService(MicroServiceConstants.ACCOUNT_SERVICE)
 public interface RemoteAccountService extends RPCService {
@@ -51,7 +51,6 @@ public interface RemoteAccountService extends RPCService {
      */
     @ThriftMethod
     List<AccountStruct> getAccountByIds(@ThriftField(1) List<Long> ids);
-
 
     /**
      * 根据用户名或者邮箱获取账号信息

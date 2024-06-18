@@ -19,44 +19,52 @@
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- dubbo -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
+            <artifactId>hqy4cloud-rpc-dubbo-autoconfigure</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- 自研rpc -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service</artifactId>
+            <artifactId>hqy4cloud-thrift-rpc-springboot-autoconfigure</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- 认证核心模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
+            <artifactId>hqy4cloud-auth-account-operations</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+
+        <!-- spring security鉴权模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-sentinel</artifactId>
+            <artifactId>hqy4cloud-auth-spring-security</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- 基础设施模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-infrastructure</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-seata</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

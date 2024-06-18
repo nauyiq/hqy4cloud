@@ -1,6 +1,7 @@
 package com.hqy.cloud.rpc.cluster.support;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
@@ -10,9 +11,7 @@ import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
 import com.hqy.cloud.rpc.cluster.loadbalance.RandomLoadBalance;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -291,7 +290,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     protected void checkWhetherDestroyed() {
         if (destroyed.get()) {
-            throw new RpcException("Rpc cluster invoker for " + getInterface() + " on consumer " + IpUtil.getHostAddress()
+            throw new RpcException("Rpc cluster invoker for " + getInterface() + " on consumer " + NetUtil.getLocalhostStr()
                     + " is now destroyed! Can not invoke any more.");
         }
     }

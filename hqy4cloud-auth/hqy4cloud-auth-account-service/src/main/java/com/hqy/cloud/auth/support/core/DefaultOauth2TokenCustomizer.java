@@ -1,13 +1,10 @@
 package com.hqy.cloud.auth.support.core;
 
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
-import com.hqy.cloud.auth.core.SecurityUser;
-import org.springframework.security.core.GrantedAuthority;
+import com.hqy.cloud.auth.common.SecurityConstants;
+import com.hqy.cloud.auth.security.core.SecurityAuthUser;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-
-import java.util.stream.Collectors;
 
 /**
  * token 输出增强
@@ -30,9 +27,10 @@ public class DefaultOauth2TokenCustomizer implements OAuth2TokenCustomizer<OAuth
         if (SecurityConstants.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType().getValue())) {
             return;
         }
-        SecurityUser securityUser = (SecurityUser) context.getPrincipal().getPrincipal();
+        SecurityAuthUser securityUser = (SecurityAuthUser) context.getPrincipal().getPrincipal();
         claims.claim(SecurityConstants.USERNAME, securityUser.getName());
-        claims.claim(SecurityConstants.ROLES, securityUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+//        claims.claim(SecurityConstants.ROLES, securityUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        claims.claim(SecurityConstants.ROLES, securityUser.getUserRole().name());
         claims.claim(SecurityConstants.ID, securityUser.getId());
     }
 }

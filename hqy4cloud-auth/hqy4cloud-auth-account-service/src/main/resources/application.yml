@@ -1,57 +1,27 @@
-nacos:
-  username: ${NACOS_USERNAME:nacos}
-  password: ${NACOS_PASSWORD:nacos}
-  group: ${NACOS_GROUP:DEV_GROUP}
-  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
-  server: ${NACOS_SERVER:127.0.0.1:8848}
-
 server:
   port: 8088
-
-#seata:
-#  registry:
-#    type: nacos
-#    nacos:
-#      server-addr: ${nacos.server}
-#      group: ${nacos.group}
-#      namespace: ${nacos.namespace}
-#      application: seata-server
-#      cluster: default
-#      username: ${nacos.username}
-#      password: ${nacos.password}
-#  config:
-#    type: nacos
-#    nacos:
-#      server-addr: ${nacos.server}
-#      group: ${nacos.group}
-#      namespace: ${nacos.namespace}
-#      username: ${nacos.username}
-#      password: ${nacos.password}
-#      data-id: seataServer.properties
-#  tx-service-group: hongqy4cloud-tx-group
-#  service:
-#    vgroup-mapping:
-#      hongqy4cloud-tx-group: default
 
 spring:
   application:
     name: @artifactId@
-  cloud:
-    nacos:
-      username: ${nacos.username}
-      password: ${nacos.password}
-      discovery:
-        server-addr: ${nacos.server}
-        group: ${nacos.group}
-        namespace: ${nacos.namespace}
-      config:
-        server-addr: ${nacos.server}
-        group: ${nacos.group}
-        namespace: ${nacos.namespace}
+  main:
+    allow-bean-definition-overriding: true
+
   config:
     import:
-      - nacos:application-@profiles.active@.yaml
-      - nacos:@artifactId@.yaml
+      - classpath:nacos_config.yml
+      - nacos:dubbo.yml
+      - nacos:@profiles.active@.yaml
+      - nacos:redis.yaml
+      - nacos:datasource-app.yaml
       - nacos:shardingshpere-app.yaml
+
+  freemarker:
+    template-loader-path:
+      - classpath:/template/
+    suffix: .ftl
+  mvc:
+    static-path-pattern: /static/*
+
 
 

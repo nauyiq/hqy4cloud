@@ -1,0 +1,2 @@
+com.hqy.cloud.limiter.autoconfigure.LimiterAutoConfiguration
+com.hqy.cloud.limiter.autoconfigure.SentinelAutoConfiguration

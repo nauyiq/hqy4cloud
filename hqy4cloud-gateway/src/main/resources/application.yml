@@ -1,66 +1,52 @@
-nacos:
-  username: ${NACOS_USERNAME:nacos}
-  password: ${NACOS_PASSWORD:nacos}
-  group: ${NACOS_GROUP:DEV_GROUP}
-  namespace: ${NACOS_NAMESPACE:9cd8de3b-030a-49f1-9256-f04de35cdb9e}
-  server: ${NACOS_SERVER:127.0.0.1:8848}
-
-#hqy4cloud:
-#  application:
-#    deploy:
-#      components:
-#        rpc-client:
-#          enabled: true
-
 server:
   port: 9527
 
 spring:
   application:
     name: @artifactId@
+
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+
   config:
     import:
-      # 环境变量通用配置文件
-      - nacos:application-@profiles.active@.yaml
-      # 当前服务主要配置文件
-      - nacos:@artifactId@.yaml
-  cloud:
-    nacos:
-      username: ${nacos.username}
-      password: ${nacos.password}
-      discovery:
-        server-addr: ${nacos.server}
-        group: ${nacos.group}
-        namespace: ${nacos.namespace}
-      config:
-        server-addr: ${nacos.server}
-        group: ${nacos.group}
-        namespace: ${nacos.namespace}
+      - classpath:nacos_config.yml
+      - nacos:dubbo.yml
+      - nacos:@profiles.active@.yaml
+      - nacos:redis.yaml
 
+  cloud:
+    gateway:
+      #default-filters:
+        #- DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      discovery:
+        locator:
+          enabled: true
     sentinel:
-      enabled: true # 启用sentinel
-      eager: true  # 取消懒加载
-      transport: # sentinel控制台
-        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8080} #sentinel控制台访问路径
-        port: ${SENTINEL_PORT:8719} # sentinel控制台和服务端的交互端口 默认8719
-      datasource: # sentinel加载nacos远程配置规则
-        gw-flow:
+      datasource:
+        ds:
           nacos:
-            username: ${nacos.username}
-            password: ${nacos.password}
-            serverAddr: ${nacos.server}
-            namespace: ${nacos.namespace}
-            groupId: ${nacos.group}
-            dataId: @artifactId@-gw-flow
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD:nacos}
+            serverAddr: ${NACOS_SERVER:127.0.0.1:8848}
+            namespace: ${NACOS_NAMESPACE:6ff9c59b-f5a4-4d65-a4f3-2d32eb0fa70d}
+            groupId: ${NACOS_GROUP:DEFAULT_GROUP}
+            dataId: gateway-sentinel-flow
             data-type: json
-            ruleType: gw-flow
-        gw-api-flow:
-          nacos:
-            username: ${nacos.username}
-            password: ${nacos.password}
-            serverAddr: ${nacos.server}
-            namespace: ${nacos.namespace}
-            groupId: ${nacos.group}
-            dataId: @artifactId@-gw-api-flow
-            data-type: json
-            ruleType: gw-api-group
+            ruleType: flow
+
+# 动态路由配置
+gateway:
+  dynamicRoute:
+    dataId: gateway-routing.json
+    group: ${NACOS_GROUP:DEFAULT_GROUP}
+    enabled: true
+    type: nacos
+
+# 业务uris白名单配置
+hqy4cloud:
+  auth:
+    white:
+      uris: /blog/**, /nft/user/register, /nft/collection/list
+

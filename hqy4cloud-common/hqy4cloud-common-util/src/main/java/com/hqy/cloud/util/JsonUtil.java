@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
@@ -18,7 +17,6 @@ import java.util.*;
 
 /**
  * JSON实用类
- *
  * @author hongqy
  * @date 2021-07-08 17:10
  */
@@ -62,7 +60,7 @@ public class JsonUtil {
     public static Map<String, Object> toMap(Object obj) {
         try {
             if (obj == null) {
-                return Maps.newHashMapWithExpectedSize(0);
+                return new HashMap<>();
             }
             return MAPPER.convertValue(obj, Map.class);
         } catch (Exception e) {
@@ -70,8 +68,6 @@ public class JsonUtil {
             throw  new RuntimeException(e);
         }
     }
-
-
 
 
     public static byte[] toJsonBytes(Object bean) {

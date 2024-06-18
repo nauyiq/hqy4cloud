@@ -2,7 +2,7 @@ package com.hqy.cloud.gateway.util;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.foundation.limit.RoutingRule;
+import com.hqy.cloud.limiter.core.RoutingRule;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.web.server.ServerWebExchange;

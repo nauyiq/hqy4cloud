@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.support.core.email;
 
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -42,7 +42,7 @@ public class Oauth2ResourceOwnerEmailAuthenticationProvider extends Oauth2Resour
     @Override
     public boolean supports(Class<?> authentication) {
         boolean supports = Oauth2ResourceOwnerEmailAuthenticationToken.class.isAssignableFrom(authentication);
-        log.debug("supports authentication=" + authentication + " returning " + supports);
+        log.debug("supports authentication={} returning {}", authentication, supports);
         return supports;
     }
 

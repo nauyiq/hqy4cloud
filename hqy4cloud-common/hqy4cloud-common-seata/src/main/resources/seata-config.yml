@@ -1,4 +1,6 @@
 seata:
+  use-jdk-proxy: true
+  enable-auto-data-source-proxy: false
   application-id: ${spring.application.name}
   enabled: true
   data-source-proxy-mode: AT

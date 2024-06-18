@@ -8,13 +8,14 @@ import com.hqy.cloud.socket.cluster.SocketCluster;
 import com.hqy.cloud.socket.cluster.client.support.SocketClient;
 import com.hqy.cloud.socket.cluster.support.HashSocketCluster;
 import com.hqy.cloud.socket.cluster.support.SocketClusters;
-import com.hqy.foundation.router.HashRouterService;
+import com.hqy.cloud.socket.cluster.HashRouterService;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +46,7 @@ public class SocketIoClusterStarterAutoConfiguration implements SmartInitializin
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnBean(Client.class)
     public SocketIoThriftDiscovery socketIoThriftDiscovery(Client client, SocketClient socketClient) {
         return new DefaultSocketIoThriftDiscovery(client, socketClient);
     }

@@ -1,13 +1,13 @@
 package com.hqy.cloud.rpc.protocol;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +91,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
     @Override
     public Object invoke(Invocation invocation) throws RpcException {
         if (isDestroyed()) {
-           log.warn("Invoker for service " + this + " on consumer " + IpUtil.getHostAddress() + " is destroyed, this invoker should not be used any longer");
+           log.warn("Invoker for service " + this + " on consumer " + NetUtil.getLocalhostStr() + " is destroyed, this invoker should not be used any longer");
         }
         // prepare rpc invocation
         prepareInvocation(invocation);

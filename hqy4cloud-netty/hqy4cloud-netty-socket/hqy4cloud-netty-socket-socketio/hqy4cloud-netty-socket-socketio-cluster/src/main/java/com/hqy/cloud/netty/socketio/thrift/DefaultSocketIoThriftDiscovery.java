@@ -1,5 +1,6 @@
 package com.hqy.cloud.netty.socketio.thrift;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.starter.client.Client;
@@ -7,7 +8,6 @@ import com.hqy.cloud.rpc.thrift.service.ThriftSocketIoPushService;
 import com.hqy.cloud.socket.api.SocketServer;
 import com.hqy.cloud.socket.cluster.client.support.SocketClient;
 import com.hqy.cloud.util.ProjectExecutors;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -116,7 +116,7 @@ public class DefaultSocketIoThriftDiscovery implements SocketIoThriftDiscovery {
         }
         String socketServerAddress = socketServer.getAddress();
         if (ProjectContext.getContextInfo().isLocalFactor(socketServerAddress, applicationName)) {
-            return SpringContextHolder.getBean(serviceClass);
+            return SpringUtil.getBean(serviceClass);
         }
         return client.getRemoteService(serviceClass, socketServerAddress);
     }

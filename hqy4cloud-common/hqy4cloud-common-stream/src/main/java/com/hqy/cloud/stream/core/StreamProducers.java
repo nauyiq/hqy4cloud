@@ -1,8 +1,8 @@
 package com.hqy.cloud.stream.core;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.google.common.collect.Maps;
 import com.hqy.cloud.stream.api.StreamProducer;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -25,7 +25,7 @@ public class StreamProducers implements InitializingBean {
     @SuppressWarnings("rawtypes")
     public void afterPropertiesSet() throws Exception {
         // 获取注册到容器的producer类, 注入到当前上下文中
-        Map<String, StreamProducer> producerMap = SpringContextHolder.getBeansOfType(StreamProducer.class);
+        Map<String, StreamProducer> producerMap = SpringUtil.getBeansOfType(StreamProducer.class);
         if (MapUtils.isNotEmpty(producerMap)) {
             producerMap.values().forEach(producer -> MAP.put(producer.getType(), producer));
         }

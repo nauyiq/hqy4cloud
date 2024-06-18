@@ -1,0 +1,3 @@
+com.hqy.cloud.rpc.thrift.starter.autoconfigure.ThriftRpcClientAutoConfiguration
+com.hqy.cloud.rpc.thrift.starter.autoconfigure.ThriftRpcModelAutoConfiguration
+com.hqy.cloud.rpc.thrift.starter.autoconfigure.ThriftServerConfigAutoConfiguration

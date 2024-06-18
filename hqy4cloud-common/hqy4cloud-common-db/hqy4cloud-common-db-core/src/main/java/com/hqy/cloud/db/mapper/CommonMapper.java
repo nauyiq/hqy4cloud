@@ -1,8 +1,8 @@
 package com.hqy.cloud.db.mapper;
 
 import com.hqy.cloud.db.common.CreateTableSql;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @version 1.0
  * @date 2024/1/31
  */
-@Repository
+@Mapper
 public interface CommonMapper {
 
     /**

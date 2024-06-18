@@ -35,7 +35,7 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-timer-service</artifactId>
+            <artifactId>hqy4cloud-common-quartz</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

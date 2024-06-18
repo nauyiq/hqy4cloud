@@ -2,27 +2,47 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <artifactId>hqy4cloud-common-db</artifactId>
         <groupId>com.hqy.cloud</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
-
+    <description>db核心模块，封装mybatis、tk、mybatis-plus</description>
     <artifactId>hqy4cloud-common-db-core</artifactId>
+    <packaging>jar</packaging>
 
+    <properties>
+        <mysql.version>8.0.27</mysql.version>
+        <mybatis.spring.boot.version>3.0.3</mybatis.spring.boot.version>
+        <mybatis.plus.version>3.5.5</mybatis.plus.version>
+        <tk.mybatis.version>2.1.2</tk.mybatis.version>
+        <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
+    </properties>
 
     <dependencies>
+        <!-- mysql驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <!-- mybatis -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.spring.boot.version}</version>
         </dependency>
 
         <!-- 排除org.mybatis 兼容TK Mapper 和 mybatis-plus -->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>${tk.mybatis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mybatis</groupId>
@@ -35,20 +55,26 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
-        </dependency>
-
+        <!-- mybatis plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.version}</version>
+        </dependency>
+
+        <!-- mybatis plus generator-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>${mybatis.plus.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- 排除org.mybatis 兼容TK Mapper 和 mybatis-plus -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper-spring-boot-starter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mybatis.spring.boot</groupId>
@@ -60,9 +86,11 @@
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
+
+
 
 
 </project>

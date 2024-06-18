@@ -6,14 +6,14 @@ import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.socket.SocketConstants;
 import com.hqy.cloud.socket.api.SocketServer;
 import com.hqy.cloud.socket.cluster.ClusterSocketServer;
 import com.hqy.cloud.socket.cluster.SocketCluster;
 import com.hqy.cloud.socket.cluster.support.InstanceSocketServer;
 import com.hqy.cloud.socket.cluster.support.SocketClusters;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class SocketIoSocketServer extends ClusterSocketServer {
     private final SocketIoServerModel socketIoServerModel;
     private volatile boolean destroy = false;
 
-    public SocketIoSocketServer(ApplicationModel model, SocketIOServer socketIOServer, SocketIoServerModel socketIoServerModel) {
+    public SocketIoSocketServer(ProjectInfoModel model, SocketIOServer socketIOServer, SocketIoServerModel socketIoServerModel) {
         super(model, socketIoServerModel.getPort());
         this.socketIOServer = socketIOServer;
         this.socketIoServerModel = socketIoServerModel;

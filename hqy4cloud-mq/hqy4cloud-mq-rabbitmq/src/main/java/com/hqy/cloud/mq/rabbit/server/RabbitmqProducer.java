@@ -2,20 +2,17 @@ package com.hqy.cloud.mq.rabbit.server;
 
 import cn.hutool.core.convert.Convert;
 import com.hqy.cloud.common.base.lang.exception.MessageQueueException;
+import com.hqy.cloud.mq.rabbit.lang.RabbitConstants;
 import com.hqy.cloud.mq.rabbit.lang.RabbitMessage;
 import com.hqy.cloud.stream.api.AbstractStreamProducerTemplate;
 import com.hqy.cloud.stream.api.MessageId;
 import com.hqy.cloud.stream.api.StreamCallback;
 import com.hqy.cloud.stream.api.StreamMessage;
-import com.hqy.cloud.stream.core.CompletableFutureResult;
-import com.hqy.cloud.mq.rabbit.lang.RabbitConstants;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -46,7 +43,14 @@ public class RabbitmqProducer extends AbstractStreamProducerTemplate<Void> {
             MessagePostProcessor processor = getProcessor(rabbitMessage);
             CorrelationData correlationData = rabbitMessage.getCorrelationData();
             if (callback != null) {
-                correlationData.getFuture().addCallback(new ListenableFutureCallback<>() {
+                correlationData.getFuture().whenComplete((o, e) -> {
+                    if (e != null) {
+                        callback.onFailed(e);
+                    } else {
+                        callback.onSuccess(null);
+                    }
+                });
+                /*correlationData.getFuture().addCallback(new ListenableFutureCallback<>() {
                     @Override
                     public void onFailure(@Nonnull Throwable ex) {
                         callback.onFailed(ex);
@@ -55,7 +59,7 @@ public class RabbitmqProducer extends AbstractStreamProducerTemplate<Void> {
                     public void onSuccess(CorrelationData.Confirm result) {
                         callback.onSuccess(null);
                     }
-                });
+                });*/
             }
             rabbitTemplate.convertAndSend(rabbitMessage.getExchange(), rabbitMessage.getRoutingKey(), rabbitMessage, processor, correlationData);
         }

@@ -1,22 +1,23 @@
 package com.hqy.cloud.auth.service;
 
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hqy.cloud.account.service.RemoteAccountService;
 import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.account.struct.RegistryAccountStruct;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheDelayRemoveService;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
+import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.AccountProfile;
+import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
-import com.hqy.cloud.auth.base.dto.AccountDTO;
-import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.auth.cache.support.AccountCacheService;
-import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.account.response.AccountResultCode;
+import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.base.lang.exception.UpdateDbException;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 import com.hqy.cloud.util.JsonUtil;
@@ -31,8 +32,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
-import static com.hqy.cloud.auth.base.Constants.DEFAULT_COMMON_ROLE;
-import static com.hqy.cloud.common.result.ResultCode.USER_NOT_FOUND;
 
 /**
  * remote account rpc service.
@@ -46,10 +45,9 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     private final PasswordEncoder passwordEncoder;
     private final AccountOperationService accountOperationService;
     private final AuthOperationService authOperationService;
-    private final AccountTkService accountTkService;
-    private final RoleTkService roleTkService;
-    private final AccountCacheService accountCacheService;
+    private final AccountService accountService;
     private final TccRegistryAccountService tccRegistryAccountService;
+    private final AccountAuthCacheDelayRemoveService accountAuthCacheDelayRemoveService;
 
     @Override
     public String getAccountInfoJson(Long id) {
@@ -59,25 +57,21 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
     @Override
     public Long getAccountIdByUsernameOrEmail(String usernameOrEmail) {
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
-        if (account == null) {
-            return null;
-        }
-        return account.getId();
+        return accountService.getAccountIdByUsernameOrEmail(usernameOrEmail);
     }
 
     @Override
     public AccountStruct getAccountById(Long id) {
-        AccountDTO data = accountCacheService.getData(id);
-        if (data == null) {
-            return new AccountStruct();
+        AccountInfoDTO accountInfo = accountOperationService.getAccountInfo(id);
+        if (accountInfo == null) {
+            return null;
         }
-        return AccountConverter.CONVERTER.convert(data);
+        return AccountConverter.CONVERTER.convert(accountInfo);
     }
 
     @Override
     public List<AccountStruct> getAccountByIds(List<Long> ids) {
-        List<AccountDTO> accounts = accountCacheService.getData(ids);
+        List<AccountInfoDTO> accounts = accountOperationService.getAccountInfo(ids);
         if (CollectionUtils.isEmpty(accounts)) {
             return Collections.emptyList();
         }
@@ -87,12 +81,13 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     @Override
     public AccountStruct getAccountByUsernameOrEmail(String usernameOrEmail) {
         if (StringUtils.isBlank(usernameOrEmail)) {
-            return new AccountStruct();
+            return null;
         }
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
-        if (account == null) {
-            return new AccountStruct();
+        Long id = accountService.getAccountIdByUsernameOrEmail(usernameOrEmail);
+        if (id == null) {
+            return null;
         }
+        AccountInfoDTO account = accountService.getAccountInfo(id);
         return AccountConverter.CONVERTER.convert(account);
     }
 
@@ -100,71 +95,56 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     @Override
     public CommonResultStruct checkRegistryInfo(String username, String email) {
         if (!ValidationUtil.validateEmail(email)) {
-            return new CommonResultStruct(ResultCode.INVALID_EMAIL);
+            return CommonResultStruct.of(AccountResultCode.INVALID_EMAIL);
         }
         if (accountOperationService.checkParamExist(null, email, null)) {
-            return new CommonResultStruct(ResultCode.EMAIL_EXIST);
+            return CommonResultStruct.of(AccountResultCode.EMAIL_EXIST);
         }
         if (accountOperationService.checkParamExist(username, null, null)) {
-            return new CommonResultStruct(ResultCode.USERNAME_EXIST);
+            return CommonResultStruct.of(AccountResultCode.USERNAME_EXIST);
         }
-        return new CommonResultStruct();
+        return CommonResultStruct.of();
     }
 
     @Override
     public CommonResultStruct registryAccount(RegistryAccountStruct struct) {
-        if (StringUtils.isAnyBlank(struct.username, struct.email, struct.password)) {
-            return new CommonResultStruct(ResultCode.ERROR_PARAM);
+        // 检查一下参数是否可用.
+        CommonResultStruct result = checkRegisterAccountParamsEnabled(struct);
+        if (!result.isResult()) {
+            return result;
         }
-        // check username and email params
-        if (accountOperationService.checkParamExist(struct.username, struct.email, struct.phone)) {
-            return new CommonResultStruct(ResultCode.USER_EXIST);
-        }
-        if (CollectionUtils.isEmpty(struct.roles)) {
-            struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
-        }
-        //check roles.
-        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
-        if (struct.createBy != null && !authOperationService.checkEnableModifyRoles(struct.createBy, roles)) {
-            return new CommonResultStruct(ResultCode.LIMITED_SETTING_ROLE_LEVEL);
-        }
-        // 校验一下头像
-        if (StringUtils.isNotBlank(struct.avatar) && AccountAvatarUtil.availableAvatar(struct.avatar)) {
-            return new CommonResultStruct(ResultCode.ERROR_PARAM);
-        }
-
-        try {
-            UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
-                    struct.password, struct.avatar, true, struct.roles);
-            if (!accountOperationService.registryAccount(userDTO, roles)) {
-                return new CommonResultStruct(ResultCode.SYSTEM_ERROR_INSERT_FAIL);
-            }
-            return new CommonResultStruct();
-        } catch (Throwable cause) {
-            log.error("Failed execute to registry account. struct: {}, cause: {}.", JsonUtil.toJson(struct), cause.getMessage());
-            throw new UpdateDbException(ResultCode.SYSTEM_ERROR_INSERT_FAIL.message, cause);
-        }
+        Account account = Account.register(struct.username, struct.password, struct.email, struct.phone,
+                StringUtils.isNotBlank(struct.role) ? UserRole.valueOf(struct.role) : null, struct.authorities);
+        AccountProfile accountProfile = AccountProfile.register(account.getId(), struct.nickname, struct.username, struct.phone, struct.avatar);
+        return accountOperationService.registryAccount(account, accountProfile) ? CommonResultStruct.of() : CommonResultStruct.of(AccountResultCode.REGISTER_ACCOUNT_FAILED);
     }
+
 
     @Override
     public CommonResultStruct tccRegistryAccount(RegistryAccountStruct struct) {
-        if (StringUtils.isAnyBlank(struct.username, struct.email, struct.password)) {
-            return new CommonResultStruct(ResultCode.ERROR_PARAM);
+        // 检查一下参数是否可用.
+        CommonResultStruct result = checkRegisterAccountParamsEnabled(struct);
+        if (!result.isResult()) {
+            return result;
+        }
+        Account account = Account.register(struct.username, passwordEncoder.encode(struct.password), struct.email, struct.phone,
+                StringUtils.isNotBlank(struct.role) ? UserRole.valueOf(struct.role) : null, struct.authorities);
+        AccountProfile accountProfile = AccountProfile.register(account.getId(), struct.nickname, struct.username, struct.phone, struct.avatar);
+        return tccRegistryAccountService.register(account, accountProfile) ? new CommonResultStruct(true, ResultCode.SUCCESS.code, account.getId().toString()) : CommonResultStruct.of(AccountResultCode.REGISTER_ACCOUNT_FAILED);
+    }
+
+    private CommonResultStruct checkRegisterAccountParamsEnabled(RegistryAccountStruct struct) {
+        if (StringUtils.isAnyBlank(struct.username, struct.password) || StringUtils.isAllBlank(struct.email, struct.phone)) {
+            return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
         if (accountOperationService.checkParamExist(struct.username, struct.email, struct.phone)) {
-            return new CommonResultStruct(ResultCode.USER_EXIST);
+            return CommonResultStruct.of(AccountResultCode.USER_EXIST);
         }
-        struct.password = passwordEncoder.encode(struct.password);
-        // 获取角色
-        if (CollectionUtils.isEmpty(struct.roles)) {
-            struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
+        // 如果头像存在、校验头像是否可用
+        if (StringUtils.isNotBlank(struct.avatar) && AccountAvatarUtil.availableAvatar(struct.avatar)) {
+            return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
-        // 构造用户对象
-        UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
-                struct.password, struct.avatar, true, struct.roles);
-        Account account = Account.of(userDTO, roles);
-        return tccRegistryAccountService.register(account, userDTO, roles) ? new CommonResultStruct(true, ResultCode.SUCCESS.code, account.getId().toString()) : new CommonResultStruct(ResultCode.REGISTRY_ACCOUNT_ERROR);
+        return CommonResultStruct.of();
     }
 
     @Override
@@ -172,15 +152,20 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
             return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
+        Account account = accountService.queryAccountByUniqueIndex(usernameOrEmail);
         if (account == null) {
-            return CommonResultStruct.of(USER_NOT_FOUND);
+            return CommonResultStruct.of(AccountResultCode.USER_NOT_FOUND);
         }
-        AccountDTO data = accountCacheService.getData(account.getId());
-        data.setPassword(passwordEncoder.encode(newPassword));
-        //update cache and db.
-        accountCacheService.update(account.getId(), data);
-        return new CommonResultStruct();
+        account.setPassword(passwordEncoder.encode(newPassword));
+        // 删除缓存
+        AccountAuthCacheManager.getInstance().remove(account.getId());
+        boolean result = accountService.updateById(account);
+        if (result) {
+            // 第二次删除缓存
+            accountAuthCacheDelayRemoveService.removeAccountAuthCache(account.getId());
+            return CommonResultStruct.of();
+        }
+        return CommonResultStruct.of(ResultCode.SYSTEM_BUSY);
     }
 
     @Override
@@ -188,18 +173,26 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (accountId == null || StringUtils.isAnyBlank(oldPassword, newPassword)) {
             return new CommonResultStruct(ResultCode.ERROR_PARAM_UNDEFINED);
         }
-        AccountDTO account = accountCacheService.getData(accountId);
+        AccountInfoDTO account = accountService.getAccountInfo(accountId);
         if (account == null) {
-            return CommonResultStruct.of(USER_NOT_FOUND);
+            return CommonResultStruct.of(AccountResultCode.USER_NOT_FOUND);
         }
         //check password.
         if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
-            return CommonResultStruct.of(ResultCode.PASSWORD_ERROR);
+            return CommonResultStruct.of(AccountResultCode.PASSWORD_ERROR);
         }
-        account.setPassword(passwordEncoder.encode(newPassword));
-        //update cache and db.
-        accountCacheService.update(account.getId(), account);
-        return new CommonResultStruct();
+
+        UpdateWrapper<Account> wrapper = Wrappers.update();
+        wrapper.set("password", passwordEncoder.encode(newPassword));
+        wrapper.eq("id", accountId);
+        // 第一次删除缓存
+        AccountAuthCacheManager.getInstance().remove(accountId);
+        if (accountService.update(wrapper)) {
+            // 第二次删除缓存
+            accountAuthCacheDelayRemoveService.removeAccountAuthCache(accountId);
+            return CommonResultStruct.of();
+        }
+        return CommonResultStruct.of(ResultCode.SYSTEM_BUSY);
     }
 
 

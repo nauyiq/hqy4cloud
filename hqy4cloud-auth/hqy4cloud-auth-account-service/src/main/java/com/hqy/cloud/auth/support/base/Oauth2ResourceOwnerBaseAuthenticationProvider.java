@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.base;
 
-import com.hqy.cloud.auth.base.exception.ScopeException;
-import com.hqy.cloud.auth.base.lang.Oauth2ErrorCodesExpand;
+import com.hqy.cloud.auth.security.common.ScopeException;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -138,10 +138,8 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = buildToken(reqParameters);
 
-            log.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
-
-            Authentication usernamePasswordAuthentication = authenticationManager
-                    .authenticate(usernamePasswordAuthenticationToken);
+            Authentication usernamePasswordAuthentication = authenticationManager == null ? usernamePasswordAuthenticationToken :
+                    authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
             // @formatter:off
             DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
@@ -241,6 +239,7 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
                     new OAuth2Error(Oauth2ErrorCodesExpand.BAD_CREDENTIALS, this.messages.getMessage(
                             "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), ""));
         }
+
         if (authenticationException instanceof LockedException) {
             return new OAuth2AuthenticationException(new OAuth2Error(Oauth2ErrorCodesExpand.USER_LOCKED, this.messages
                     .getMessage("AbstractUserDetailsAuthenticationProvider.locked", "User account is locked"), ""));
@@ -264,6 +263,11 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
             return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_SCOPE,
                     this.messages.getMessage("AbstractAccessDecisionManager.accessDenied", "invalid_scope"), ""));
         }
+
+        if (authenticationException instanceof OAuth2AuthenticationException) {
+            return (OAuth2AuthenticationException) authenticationException;
+        }
+
 
         log.error(authenticationException.getLocalizedMessage());
         return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR),

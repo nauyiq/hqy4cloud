@@ -3,7 +3,7 @@ package com.hqy.cloud.registry.api.support;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.common.Constants;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
  * @date 2024/1/9
  */
 public record ApplicationServiceInstance(
-        ApplicationModel model) implements ServiceInstance {
+        ProjectInfoModel model) implements ServiceInstance {
 
     @Override
     public String gerServiceName() {
@@ -47,7 +47,7 @@ public record ApplicationServiceInstance(
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public ProjectInfoModel getApplicationModel() {
         return model;
     }
 

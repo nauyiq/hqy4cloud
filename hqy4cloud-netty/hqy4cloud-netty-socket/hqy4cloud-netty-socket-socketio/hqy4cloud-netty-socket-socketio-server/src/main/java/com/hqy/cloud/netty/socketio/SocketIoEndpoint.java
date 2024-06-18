@@ -1,20 +1,18 @@
 package com.hqy.cloud.netty.socketio;
 
 import com.corundumstudio.socketio.SocketIOServer;
-import com.hqy.cloud.common.base.AuthenticationInfo;
+import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.socket.api.ClientConnection;
 import com.hqy.cloud.socket.cluster.SocketCluster;
-import com.hqy.cloud.socket.cluster.support.SocketClusters;
 import com.hqy.cloud.socket.cluster.client.support.SocketClient;
-import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
+import com.hqy.cloud.socket.cluster.support.SocketClusters;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author qiyuan.hong
@@ -30,12 +28,9 @@ public abstract class SocketIoEndpoint {
     @ResponseBody
     @GetMapping("/connection")
     public R<ClientConnection> getSocketIoConnection(HttpServletRequest request) {
-        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication(request);
-        if (authentication == null) {
-            return R.failed(ResultCode.NOT_LOGIN);
-        }
+        Long currentUserId = AuthUtils.getCurrentUserId();
         String applicationName = ioSocketServer.getInfo().getApplicationName();
-        String bizId = authentication.getId().toString();
+        String bizId = currentUserId.toString();
         SocketIOServer socketIOServer = ioSocketServer.getSocketIOServer();
         String clusterType = ioSocketServer.getMetadata().getClusterType();
         SocketCluster cluster = SocketClusters.cluster(clusterType);

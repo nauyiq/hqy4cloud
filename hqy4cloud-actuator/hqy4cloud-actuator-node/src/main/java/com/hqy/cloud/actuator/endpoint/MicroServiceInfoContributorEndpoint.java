@@ -2,12 +2,11 @@ package com.hqy.cloud.actuator.endpoint;
 
 import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
 
 /**
  * info端点指标控制
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2023/12/8 14:29
  */
-@Component
 public class MicroServiceInfoContributorEndpoint implements InfoContributor {
 
     @Override

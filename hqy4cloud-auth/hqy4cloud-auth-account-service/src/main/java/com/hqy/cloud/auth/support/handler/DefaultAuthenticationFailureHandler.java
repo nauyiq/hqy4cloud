@@ -1,10 +1,14 @@
 package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.account.response.AccountResultCode;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -14,9 +18,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -34,8 +35,7 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
         httpResponse.setStatusCode(HttpStatus.OK);
 
         String errorMessage;
-        if (exception instanceof OAuth2AuthenticationException) {
-            OAuth2AuthenticationException authorizationException = (OAuth2AuthenticationException) exception;
+        if (exception instanceof OAuth2AuthenticationException authorizationException) {
             String errorCode = authorizationException.getError().getErrorCode();
             errorMessage = StrUtil.isBlank(authorizationException.getError().getDescription())
                     ? errorCode
@@ -51,24 +51,31 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
     }
 
     private Result getResult(String errorMessage, String errorCode) {
-        Result result  = new Result() {
-            @Override
-            public String getMessage() {
-                return errorMessage;
-            }
-            @Override
-            public int getCode() {
-                return ResultCode.FAILED.code;
-            }
-        };
+        Result result = null;
 
         if (StrUtil.isNotBlank(errorCode)) {
-            if (errorCode.equals(OAuth2ErrorCodes.INVALID_REQUEST)) {
-                result = ResultCode.ERROR_PARAM;
-            } else if (errorCode.equals(SecurityConstants.INVALID_REQUEST_CODE)) {
-                result = ResultCode.VERIFY_CODE_ERROR;
-            }
+            result = switch (errorCode) {
+                case OAuth2ErrorCodes.INVALID_REQUEST -> ResultCode.ERROR_PARAM;
+                case Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE -> AccountResultCode.VERIFY_CODE_ERROR;
+                case Oauth2ErrorCodesExpand.USERNAME_NOT_FOUND -> AccountResultCode.USER_NOT_FOUND;
+                default -> null;
+            };
         }
+
+        if (result == null) {
+            result = new Result() {
+                @Override
+                public String getMessage() {
+                    return errorMessage;
+                }
+                @Override
+                public int getCode() {
+                    return ResultCode.FAILED.code;
+                }
+            };
+        }
+
+
         return result;
     }
 }

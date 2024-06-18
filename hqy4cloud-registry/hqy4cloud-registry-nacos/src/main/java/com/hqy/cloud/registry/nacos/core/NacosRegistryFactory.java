@@ -4,7 +4,7 @@ import com.hqy.cloud.registry.api.AbstractRegistryFactory;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.common.metadata.support.DefaultMetadataConverter;
 import com.hqy.cloud.registry.common.metadata.MetadataConverter;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.nacos.utils.NacosNamingServiceUtil;
 
 /**
@@ -25,7 +25,7 @@ public class NacosRegistryFactory extends AbstractRegistryFactory {
     }
 
     @Override
-    protected Registry createRegistry(ApplicationModel model) {
+    protected Registry createRegistry(ProjectInfoModel model) {
         return new NacosRegistry(model, NacosNamingServiceUtil.getNamingService(model), metadataConverter);
     }
 }

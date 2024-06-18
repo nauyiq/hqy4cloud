@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.model;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.metadata.MetadataService;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,7 +49,7 @@ public class RpcMetadata implements MetadataService {
         return new RpcMetadata(hashFactor, rpcServerAddress, serviceInfos);
     }
 
-    public static RpcMetadata of(ApplicationModel model) {
+    public static RpcMetadata of(ProjectInfoModel model) {
         String hashFactor = model.getParameter(RPC_HASH_FACTOR, DEFAULT_HASH_FACTOR);
         String addressJson = model.getMetadataInfo().getParameter(RPC_SERVER_METADATA_ADDRESS);
         RpcServerAddress serverAddress;

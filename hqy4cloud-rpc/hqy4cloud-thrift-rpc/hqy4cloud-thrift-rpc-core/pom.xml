@@ -13,17 +13,30 @@
     <packaging>jar</packaging>
 
     <artifactId>hqy4cloud-thrift-rpc-core</artifactId>
+    <properties>
+        <swift.version>0.14.2</swift.version>
+        <thrift.version>0.9.3</thrift.version>
+        <nifty.version>0.23.0</nifty.version>
+    </properties>
 
     <dependencies>
+        <!-- 高版本的依赖源码暂未支持 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>22.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-rpc-common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.facebook.nifty</groupId>
             <artifactId>nifty-core</artifactId>
+            <version>${nifty.version}</version>
         </dependency>
 
         <dependency>
@@ -47,11 +60,26 @@
         <dependency>
             <groupId>com.facebook.swift</groupId>
             <artifactId>swift-codec</artifactId>
+            <version>${swift.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.facebook.swift</groupId>
             <artifactId>swift-annotations</artifactId>
+            <version>${swift.version}</version>
+        </dependency>
+
+        <!-- facebook.thrift -->
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${thrift.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

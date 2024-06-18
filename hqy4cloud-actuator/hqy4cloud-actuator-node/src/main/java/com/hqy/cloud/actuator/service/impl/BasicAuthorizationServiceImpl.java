@@ -2,16 +2,15 @@ package com.hqy.cloud.actuator.service.impl;
 
 import com.hqy.cloud.account.service.RemoteAuthService;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
+import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
+import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
-import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
-import com.hqy.cloud.util.authentication.UsernamePasswordAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 /**
  * @author qiyuan.hong
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
  * @date 2023/12/7 13:48
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class BasicAuthorizationServiceImpl implements BasicAuthorizationService {
     @Value("${spring.boot.admin.client.username}")
@@ -29,7 +27,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
     @Override
     public boolean isAuth(String authorizationHeader) {
-        UsernamePasswordAuthentication basicAuthorization = AuthenticationRequestContext.getBasicAuthorization(authorizationHeader);
+        UsernamePasswordAuthentication basicAuthorization = AuthUtils.getBasicAuthorization(authorizationHeader);
         if (basicAuthorization == null) {
             return false;
         }

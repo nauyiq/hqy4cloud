@@ -10,20 +10,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>db模块</description>
     <artifactId>hqy4cloud-common-db</artifactId>
     <packaging>pom</packaging>
-
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
     <modules>
         <module>hqy4cloud-common-db-core</module>
         <module>hqy4cloud-common-db-datasource</module>
         <module>hqy4cloud-common-db-shardingsphere</module>
-        <module>hqy4cloud-common-db-dynamics</module>
     </modules>
+
 
 </project>

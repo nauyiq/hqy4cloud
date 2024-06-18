@@ -1,7 +1,7 @@
 package com.hqy.cloud.registry.api;
 
 import com.hqy.cloud.registry.cluster.MasterService;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 
 /**
@@ -16,9 +16,9 @@ public interface ServerDiscovery extends RegistryService, MasterService {
 
     /**
      * return self rpc model
-     * @return server application model {@link ApplicationModel}
+     * @return server application model {@link ProjectInfoModel}
      */
-    ApplicationModel getModel();
+    ProjectInfoModel getModel();
 
     /**
      * return self metadata
@@ -49,7 +49,7 @@ public interface ServerDiscovery extends RegistryService, MasterService {
      * @param model update model
      * @throws RuntimeException not try it
      */
-    void update(ApplicationModel model) throws  RuntimeException;
+    void update(ProjectInfoModel model) throws  RuntimeException;
 
 
 

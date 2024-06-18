@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.cluster.directory;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.registry.common.context.CloseableService;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.RouterChain;
@@ -57,13 +57,13 @@ public interface Directory<T> extends CloseableService {
      * get application model
      * @return application model
      */
-    ApplicationModel getModel();
+    ProjectInfoModel getModel();
 
     /**
      * get remote rpc provider application model
      * @return remote rpc provider application model
      */
-    ApplicationModel getProviderModel();
+    ProjectInfoModel getProviderModel();
 
 
     /**

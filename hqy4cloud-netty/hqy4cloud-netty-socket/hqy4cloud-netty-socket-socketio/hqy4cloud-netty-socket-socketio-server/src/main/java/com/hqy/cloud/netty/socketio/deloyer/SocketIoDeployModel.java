@@ -3,12 +3,12 @@ package com.hqy.cloud.netty.socketio.deloyer;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.DeployComponent;
 import com.hqy.cloud.netty.socketio.SocketIoSocketServer;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.cluster.ClusterJoinConstants;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class SocketIoDeployModel extends DeployModel {
     private final static Logger log = LoggerFactory.getLogger(SocketIoDeployModel.class);
     private final SocketIoSocketServer server;
 
-    public SocketIoDeployModel(ApplicationModel model, SocketIoSocketServer server) {
+    public SocketIoDeployModel(ProjectInfoModel model, SocketIoSocketServer server) {
         super(model);
         this.server = server;
     }

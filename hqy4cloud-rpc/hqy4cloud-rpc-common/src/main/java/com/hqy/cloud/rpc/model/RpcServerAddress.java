@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.model;
 
-import com.hqy.cloud.util.IpUtil;
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +30,7 @@ public class RpcServerAddress implements Serializable {
 
 
     public static RpcServerAddress createConsumerRpcServer() {
-        return new RpcServerAddress(IpUtil.getHostAddress());
+        return new RpcServerAddress(NetUtil.getLocalhostStr());
     }
 
     public static RpcServerAddress of(String ip) {

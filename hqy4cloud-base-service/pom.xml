@@ -10,12 +10,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>框架层基础微服务模块</description>
     <artifactId>hqy4cloud-base-service</artifactId>
 
     <packaging>pom</packaging>
     <modules>
-        <module>hqy4cloud-base-foundation-service</module>
-        <module>hqy4cloud-base-foundation-service-api</module>
         <module>hqy4cloud-base-collection-service-api</module>
         <module>hqy4cloud-base-collection-service</module>
         <module>hqy4cloud-base-communication-service-api</module>

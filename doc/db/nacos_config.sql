@@ -166,9 +166,9 @@ DROP TABLE IF EXISTS `permissions`;
 
 CREATE TABLE `permissions` (
   `role` varchar(50) NOT NULL,
-  `resource` varchar(255) NOT NULL,
+  `permissions` varchar(255) NOT NULL,
   `action` varchar(8) NOT NULL,
-  UNIQUE KEY `uk_role_permission` (`role`,`resource`,`action`) USING BTREE
+  UNIQUE KEY `uk_role_permission` (`role`,`permissions`,`action`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Table structure for table `roles` */

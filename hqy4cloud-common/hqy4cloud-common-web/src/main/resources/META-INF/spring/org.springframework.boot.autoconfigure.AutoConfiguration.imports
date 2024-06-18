@@ -1,0 +1,2 @@
+com.hqy.cloud.web.handler.WebMvcGlobalExceptionHandler
+com.hqy.cloud.web.config.WebAutoConfiguration

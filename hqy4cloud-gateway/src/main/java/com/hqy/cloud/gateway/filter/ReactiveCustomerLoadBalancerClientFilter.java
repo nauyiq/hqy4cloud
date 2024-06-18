@@ -3,8 +3,8 @@ package com.hqy.cloud.gateway.filter;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.Constants;
-import com.hqy.cloud.gateway.loadbalance.support.GatewayLoadBalanceStrategyContext;
 import com.hqy.cloud.gateway.loadbalance.LoadBalancer;
+import com.hqy.cloud.gateway.loadbalance.support.GatewayLoadBalanceStrategyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
 import java.net.URI;
 
 import static org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools.reconstructURI;
@@ -39,11 +38,8 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 public class ReactiveCustomerLoadBalancerClientFilter implements GlobalFilter, Ordered {
 
     private static final Logger log = LoggerFactory.getLogger(ReactiveCustomerLoadBalancerClientFilter.class);
-    @Resource
-    private GatewayLoadBalancerProperties properties;
-
-    @Resource
-    private DiscoveryClient discoveryClient;
+    private final GatewayLoadBalancerProperties properties;
+    private final DiscoveryClient discoveryClient;
 
     public ReactiveCustomerLoadBalancerClientFilter(DiscoveryClient discoveryClient, GatewayLoadBalancerProperties properties) {
         this.properties = properties;

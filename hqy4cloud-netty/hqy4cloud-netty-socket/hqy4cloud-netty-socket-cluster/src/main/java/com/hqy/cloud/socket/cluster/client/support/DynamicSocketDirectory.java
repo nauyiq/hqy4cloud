@@ -4,7 +4,7 @@ import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.api.ServiceNotifyListener;
 import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.socket.cluster.client.AbstractSocketDirectory;
 import com.hqy.cloud.socket.cluster.support.InstanceSocketServer;
 import com.hqy.cloud.socket.api.SocketServer;
@@ -28,8 +28,8 @@ public class DynamicSocketDirectory extends AbstractSocketDirectory implements S
 
     private void notifyAndSubscribed() {
         // 获取socketServer实例列表.
-        ApplicationModel model = registry.getModel();
-        ApplicationModel lockupModel = ApplicationModel.of(applicationName(), model.getNamespace(), model.getGroup());
+        ProjectInfoModel model = registry.getModel();
+        ProjectInfoModel lockupModel = ProjectInfoModel.of(applicationName(), model.getNamespace(), model.getGroup());
         List<ServiceInstance> instances = registry.lookup(lockupModel);
         // 设置socket server.
         notify(instances);

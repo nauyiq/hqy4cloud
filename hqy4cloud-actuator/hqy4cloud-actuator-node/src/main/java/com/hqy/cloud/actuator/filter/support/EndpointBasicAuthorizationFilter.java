@@ -1,11 +1,15 @@
 package com.hqy.cloud.actuator.filter.support;
 
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.util.IpUtil;
-import com.hqy.cloud.util.web.ResponseUtil;
+import com.hqy.cloud.web.utils.IpUtil;
+import com.hqy.cloud.web.utils.ResponseUtil;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,9 +17,6 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -42,7 +43,7 @@ public class EndpointBasicAuthorizationFilter implements Filter {
         String authorization = getBasicAuth(req);
         if (!basicAuthorizationService.isAuth(authorization)) {
             log.warn("Failed basic auth, authorization: {}, ip:{}", authorization, IpUtil.getRequestIp(req));
-            ResponseUtil.out((HttpServletResponse) response, HttpStatus.UNAUTHORIZED.value(), R.failed(ResultCode.INVALID_CLIENT_OR_SECRET));
+            ResponseUtil.out((HttpServletResponse) response, HttpStatus.UNAUTHORIZED.value(), R.failed(AccountResultCode.INVALID_CLIENT_OR_SECRET));
             return;
         }
         chain.doFilter(request, response);

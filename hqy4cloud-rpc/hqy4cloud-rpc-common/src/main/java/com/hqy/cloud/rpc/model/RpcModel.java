@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.model;
 
 import com.hqy.cloud.common.base.Parameters;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class RpcModel extends Parameters implements Serializable {
     @Serial
-    private transient static final long serialVersionUID = -1724139538145932293L;
+    private static final long serialVersionUID = -1724139538145932293L;
     private static final Logger log = LoggerFactory.getLogger(RpcModel.class);
 
     /**
@@ -35,7 +35,7 @@ public class RpcModel extends Parameters implements Serializable {
     /**
      * application model
      */
-    private final ApplicationModel model;
+    private final ProjectInfoModel model;
 
     /**
      * rpc metadata.
@@ -55,7 +55,7 @@ public class RpcModel extends Parameters implements Serializable {
     private final Set<String> invokedServiceClassCache = new CopyOnWriteArraySet<>();
 
 
-    public RpcModel(ApplicationModel model) {
+    public RpcModel(ProjectInfoModel model) {
         AssertUtil.notNull(model, "Application model should not be null.");
         this.name = model.getApplicationName();
         this.model = model;
@@ -65,8 +65,8 @@ public class RpcModel extends Parameters implements Serializable {
 
     private RpcModel(String application, RpcModel copyModel) {
         this.name = application;
-        ApplicationModel copyApplicationModel = copyModel.getModel();
-        this.model = ApplicationModel.of(application, copyApplicationModel.getNamespace(), copyApplicationModel.getGroup());
+        ProjectInfoModel copyProjectInfoModel = copyModel.getModel();
+        this.model = ProjectInfoModel.of(application, copyProjectInfoModel.getNamespace(), copyProjectInfoModel.getGroup());
         this.parameters = copyModel.parameters;
         this.createTimestamp = System.currentTimeMillis();
     }
@@ -86,7 +86,7 @@ public class RpcModel extends Parameters implements Serializable {
         return metadata.getRpcServerAddress();
     }
 
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return model;
     }
 

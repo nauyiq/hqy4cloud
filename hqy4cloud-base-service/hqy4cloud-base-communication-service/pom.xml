@@ -15,32 +15,24 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- nacos -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
 
+        <!-- dubbo -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-dubbo-autoconfigure</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- api模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-base-communication-service-api</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-sentinel</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -56,16 +48,10 @@
         </dependency>
 
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-sentinel</artifactId>
+            <artifactId>hqy4cloud-common-infrastructure</artifactId>
             <version>${revision}</version>
         </dependency>
-
     </dependencies>
 
     <build>

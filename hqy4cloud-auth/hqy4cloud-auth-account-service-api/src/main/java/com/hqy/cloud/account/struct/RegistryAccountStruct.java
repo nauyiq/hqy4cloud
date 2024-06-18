@@ -31,11 +31,13 @@ public final class RegistryAccountStruct {
     @ThriftField(5)
     public String avatar;
     @ThriftField(6)
-    public List<String> roles;
+    public String role;
     @ThriftField(7)
     public Long createBy;
     @ThriftField(8)
     public String phone;
+    @ThriftField(9)
+    public List<String> authorities;
 
     public RegistryAccountStruct(String username, String email, String password) {
         this.username = username;

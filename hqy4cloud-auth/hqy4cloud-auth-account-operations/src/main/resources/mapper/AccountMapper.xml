@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hqy.cloud.auth.account.mapper.AccountMapper">
+
+    <resultMap id="baseResultMap" type="com.hqy.cloud.auth.account.entity.Account">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone" />
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="role" column="role"/>
+        <result property="authorities" column="authorities"/>
+        <result property="status" column="status"/>
+        <result property="certification" column="certification"/>
+        <result property="deleted" column="deleted"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <resultMap id="accountInfoResultMap" type="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email" />
+        <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="role" column="role"/>
+        <result property="authorities" column="authorities"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="intro" column="intro"/>
+        <result property="birthday" column="birthday"/>
+        <result property="sex" column="sex"/>
+    </resultMap>
+
+    <select id="getAccountIdByUsernameOrEmail" resultType="java.lang.Long">
+        SELECT id FROM t_account WHERE DELETED = 0 AND ( username = #{value} OR email = #{value})
+    </select>
+
+    <select id="findById" resultMap="baseResultMap">
+        SELECT * FROM t_account WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="queryAccountByUniqueIndex" resultMap="baseResultMap">
+        SELECT *
+        from t_account
+        WHERE phone = #{value} or username = #{value} or email = #{value} AND deleted = 0
+    </select>
+
+    <select id="getAccountInfo" resultMap="accountInfoResultMap">
+        SELECT
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,a.certificatin
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM
+        (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
+        t_account a
+        WHERE a.id = #{id} AND a.deleted = 0
+    </select>
+
+    <select id="getAccountInfoByPhoneOrEmail" resultMap="accountInfoResultMap">
+        SELECT
+            a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
+            p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM
+                (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
+                t_account a
+        WHERE a.phone = #{value} or a.email = #{value} AND a.deleted = 0
+    </select>
+
+
+    <select id="getAccountInfos" resultMap="accountInfoResultMap">
+        SELECT
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM t_account a
+        LEFT JOIN t_account_profile p ON a.id = p.id
+        WHERE a.deleted = 0 AND a.id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getAccountProfilesByName" resultMap="accountInfoResultMap">
+        SELECT  a.id,a.username
+                p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM `t_account` a
+        LEFT JOIN `t_account_profile` p ON a.`id` = p.`id`
+        WHERE a.`username` = #{name} OR p.nickname LIKE concat('%', #{name}, '%')
+    </select>
+
+    <select id="getAccountInfoByUsernameOrEmail" resultMap="accountInfoResultMap">
+        SELECT
+            a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
+        p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM t_account a
+        LEFT JOIN t_account_profile p
+        ON a.id = p.id
+        WHERE a.deleted = 0 AND (a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail})
+    </select>
+
+
+    <select id="getPageAccountInfos" resultMap="accountInfoResultMap">
+        SELECT
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
+        p.avatar,p.nickname,p.intro,p.birthday
+        FROM t_account a
+        LEFT JOIN t_account_profile p ON a.id = p.id
+        WHERE a.deleted = 0
+        <if test="username != null and username != ''">
+            AND a.username like concat('%', #{username}, '%')
+        </if>
+        <if test="nickname != null and nickname != ''">
+            AND p.nickname like concat('%', #{nickname}, '%')
+        </if>
+        ORDER BY id DESC
+    </select>
+
+
+
+
+</mapper>

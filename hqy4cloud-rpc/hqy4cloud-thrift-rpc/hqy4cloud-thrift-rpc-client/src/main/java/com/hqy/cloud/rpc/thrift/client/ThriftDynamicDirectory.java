@@ -3,14 +3,13 @@ package com.hqy.cloud.rpc.thrift.client;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.directory.DynamicDirectory;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
 import com.hqy.cloud.rpc.thrift.client.commonpool.MultiplexThriftClientTargetPooled;
 import com.hqy.cloud.rpc.thrift.client.protocol.ThriftInvoker;
-import com.hqy.cloud.util.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +50,10 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
     }
 
     private void subscribeAndNotify(String providerServiceName, Registry registry) {
-        ApplicationModel model = getModel();
+        ProjectInfoModel model = getModel();
         //create provider rpc model.
         //does not represent a specific remote service
-        ApplicationModel lookUpModel = ApplicationModel.of(providerServiceName, model.getNamespace(), model.getGroup());
+        ProjectInfoModel lookUpModel = ProjectInfoModel.of(providerServiceName, model.getNamespace(), model.getGroup());
         //query rpc provider instance from registry.
         List<ServiceInstance> serviceInstances = registry.lookup(lookUpModel);
         //notify.
@@ -71,7 +70,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
         List<RpcModel> models = instances.stream().filter(Objects::nonNull)
                 .map(instance -> {
                     ApplicationServiceInstance serviceInstance = (ApplicationServiceInstance) instance;
-                    ApplicationModel model = serviceInstance.getApplicationModel();
+                    ProjectInfoModel model = serviceInstance.getApplicationModel();
                     return new RpcModel(model);
                 })
                 .collect(Collectors.toList());
@@ -113,7 +112,7 @@ public class ThriftDynamicDirectory<T> extends DynamicDirectory<T> {
 
     @Override
     protected ServiceInstance buildInstance(RpcModel rpcModel) {
-        ApplicationModel model = rpcModel.getModel();
+        ProjectInfoModel model = rpcModel.getModel();
         return new ApplicationServiceInstance(model);
     }
 

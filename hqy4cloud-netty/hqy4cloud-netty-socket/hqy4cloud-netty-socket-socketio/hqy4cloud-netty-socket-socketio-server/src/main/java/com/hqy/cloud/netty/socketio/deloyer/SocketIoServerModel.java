@@ -2,7 +2,7 @@ package com.hqy.cloud.netty.socketio.deloyer;
 
 import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 
 import java.util.Set;
 

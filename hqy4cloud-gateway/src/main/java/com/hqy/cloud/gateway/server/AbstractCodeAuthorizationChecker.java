@@ -1,6 +1,6 @@
 package com.hqy.cloud.gateway.server;
 
-import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,6 +38,6 @@ public abstract class AbstractCodeAuthorizationChecker implements CodeAuthorizat
         if (CollectionUtils.isEmpty(needCheckCodeUris)) {
             return false;
         }
-        return EndpointAuthorizationManager.getInstance().isMatch(needCheckCodeUris, resource);
+        return StaticEndpointAuthorizationManager.getInstance().isMatch(needCheckCodeUris, resource);
     }
 }

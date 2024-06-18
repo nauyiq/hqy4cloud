@@ -1,6 +1,8 @@
 package com.hqy.cloud.util;
 
 
+import com.hqy.cloud.common.base.exception.BizException;
+import com.hqy.cloud.common.result.Result;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -75,6 +77,11 @@ public class AssertUtil {
         isFalse(!expression, message);
     }
 
+    public static void isTrue(boolean expression, Result result) {
+        isFalse(!expression, result);
+    }
+
+
     /**
      * 断言 expression 是否为false
      * @param expression 表达式
@@ -85,6 +92,18 @@ public class AssertUtil {
             return;
         }
         throw new RuntimeException(message);
+    }
+
+    /**
+     * 断言 expression 是否为false
+     * @param expression 表达式
+     * @param result
+     */
+    public static void isFalse(boolean expression, Result result) {
+        if (!expression) {
+            return;
+        }
+        throw new BizException(result);
     }
 
     public static void isInstanceOf(Class<?> type, Object obj, String message) {

@@ -7,7 +7,7 @@ import com.hqy.cloud.registry.cluster.support.ClusterServiceNotifyListener;
 import com.hqy.cloud.registry.common.context.Lifecycle;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 import com.hqy.cloud.registry.common.metadata.RegistryMetadataClaim;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 import com.hqy.cloud.util.AssertUtil;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RegistryContext implements Lifecycle {
     private static final Logger log = LoggerFactory.getLogger(RegistryContext.class);
 
-    private final ApplicationModel model;
+    private final ProjectInfoModel model;
     private final Registry registry;
     private final MasterElectionService masterElectionService;
     private static final Map<String, DeployModel> CHILD_DEPLOY_MODELS = new ConcurrentHashMap<>();
 
 
-    public RegistryContext(ApplicationModel model, Registry registry, MasterElectionService masterElectionService) {
+    public RegistryContext(ProjectInfoModel model, Registry registry, MasterElectionService masterElectionService) {
         this.model = model;
         this.registry = registry;
         this.masterElectionService = masterElectionService;
@@ -88,7 +88,7 @@ public class RegistryContext implements Lifecycle {
     }
 
     @Override
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return this.model;
     }
 }

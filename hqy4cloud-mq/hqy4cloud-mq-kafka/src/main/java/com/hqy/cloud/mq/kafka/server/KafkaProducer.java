@@ -19,6 +19,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author qiyuan.hong
@@ -54,20 +55,14 @@ public class KafkaProducer extends AbstractStreamProducerTemplate<SendResult<Str
         if (message instanceof KafkaStreamMessage kafkaStreamMessage) {
             Message<?> convertMessage = convertMessage(kafkaStreamMessage);
             try {
-                ListenableFuture<SendResult<String, String>> future = this.kafkaTemplate.send(convertMessage);
-                if (callback != null) {
-                    future.addCallback(new ListenableFutureCallback<>() {
-                        @Override
-                        public void onFailure(@Nonnull Throwable ex) {
-                            callback.onFailed(ex);
-                        }
-
-                        @Override
-                        public void onSuccess(SendResult<String, String> result) {
-                            callback.onSuccess(result);
-                        }
-                    });
-                }
+                CompletableFuture<SendResult<String, String>> future = this.kafkaTemplate.send(convertMessage);
+                future.whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        callback.onFailed(ex);
+                    } else {
+                        callback.onSuccess(result);
+                    }
+                });
             } catch (Exception e) {
                 log.error("Failed execute to send kafka message, message: {}.", JsonUtil.toJson(convertMessage), e);
             }
@@ -96,7 +91,7 @@ public class KafkaProducer extends AbstractStreamProducerTemplate<SendResult<Str
         // 设置分区
         Integer partition = message.getPartition();
         if (partition != null) {
-            builder.setHeader(KafkaHeaders.PARTITION_ID, partition);
+            builder.setHeader(KafkaHeaders.PARTITION, partition);
         }
         return builder.build();
     }

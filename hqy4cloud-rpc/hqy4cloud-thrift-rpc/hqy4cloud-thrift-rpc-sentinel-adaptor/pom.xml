@@ -28,6 +28,7 @@
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-core</artifactId>
+            <version>1.8.5</version>
         </dependency>
     </dependencies>
 

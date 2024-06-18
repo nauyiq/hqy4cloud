@@ -2,13 +2,18 @@ package com.hqy.cloud.rpc.thrift.struct;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.codec.ThriftStruct;
+import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/10/14 18:08
+ * @date 2022/10/14
  */
+@Setter
+@Getter
 @ThriftStruct
 public final class CommonResultStruct {
 
@@ -27,12 +32,11 @@ public final class CommonResultStruct {
         this.message = ResultCode.SUCCESS.message;
     }
 
-    public CommonResultStruct(ResultCode resultCode) {
+    public CommonResultStruct(Result result) {
         this.result = false;
-        this.code = resultCode.code;
-        this.message = resultCode.message;
+        this.code = result.getCode();
+        this.message = result.getMessage();
     }
-
 
     public CommonResultStruct(boolean result, int code, String message) {
         this.result = result;
@@ -44,31 +48,8 @@ public final class CommonResultStruct {
         return new CommonResultStruct();
     }
 
-    public static CommonResultStruct of(ResultCode resultCode) {
+    public static CommonResultStruct of(Result resultCode) {
         return new CommonResultStruct(resultCode);
     }
 
-    public boolean isResult() {
-        return result;
-    }
-
-    public void setResult(boolean result) {
-        this.result = result;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

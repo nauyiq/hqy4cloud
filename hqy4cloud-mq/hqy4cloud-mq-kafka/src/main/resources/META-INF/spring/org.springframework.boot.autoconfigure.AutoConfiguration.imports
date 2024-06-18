@@ -1,0 +1,4 @@
+com.hqy.cloud.mq.kafka.dynamic.KafkaTopicsInitializer
+com.hqy.cloud.mq.kafka.config.KafkaDefaultAutoConfiguration
+com.hqy.cloud.mq.kafka.dynamic.KafkaTopicsProperties
+com.hqy.cloud.mq.kafka.config.CanalListenerConfiguration

@@ -2,9 +2,8 @@ package com.hqy.cloud.id.component.snowflake.core.support;
 
 import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.StrUtil;
+import com.hqy.cloud.cache.common.RedisKeyUtil;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
-import com.hqy.cloud.foundation.redis.key.RedisKey;
-import com.hqy.cloud.foundation.redis.key.support.RedisNamedKey;
 import com.hqy.cloud.id.component.snowflake.core.AbstractSnowflakeHolder;
 import com.hqy.cloud.id.component.snowflake.exception.InitWorkerIdException;
 import com.hqy.cloud.registry.api.Environment;
@@ -25,14 +24,13 @@ import java.util.Collections;
 public class SnowflakeRedisHolder extends AbstractSnowflakeHolder {
 
     private final Environment environment;
-    private final RedisKey redisKey = new RedisNamedKey(MicroServiceConstants.ID_SERVICE, "Snowflake");
     private final RedissonClient redissonClient;
 
     @Override
     protected void doInit(String serviceName) {
         String environment = this.environment.getEnvironment();
         String ipAddr = NetUtil.getLocalhostStr();
-        RMap<String, Integer> map = redissonClient.getMap(redisKey.getKey());
+        RMap<String, Integer> map = redissonClient.getMap(RedisKeyUtil.getCacheKey(MicroServiceConstants.ID_SERVICE, "Snowflake"));
         String key = ipAddr.concat(StrUtil.DOT).concat(environment);
         if (!map.containsKey(key)) {
             int workerId;

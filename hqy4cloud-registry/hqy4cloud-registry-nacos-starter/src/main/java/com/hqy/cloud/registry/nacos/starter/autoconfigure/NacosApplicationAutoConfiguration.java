@@ -9,21 +9,21 @@ import com.hqy.cloud.registry.api.RegistryFactory;
 import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.PubMode;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProperties;
 import com.hqy.cloud.registry.nacos.Constants;
 import com.hqy.cloud.registry.nacos.core.NacosRegistryFactory;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 
 import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX;
 
@@ -34,6 +34,7 @@ import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
+@EnableConfigurationProperties(AutoApplicationDeployerProperties.class)
 @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX, name = "enabled", matchIfMissing = true)
 public class NacosApplicationAutoConfiguration {
     private final NacosServiceManager nacosServiceManager;
@@ -55,9 +56,8 @@ public class NacosApplicationAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean({NacosDiscoveryProperties.class, AutoApplicationDeployerProperties.class})
-    public ApplicationModel applicationModel(NacosDiscoveryProperties properties, AutoApplicationDeployerProperties applicationDeployerProperties) {
-        ApplicationModel model = ApplicationModel.of(properties.getService(), properties.getNamespace(), properties.getGroup());
+    public ProjectInfoModel projectInfoModel(NacosDiscoveryProperties properties, AutoApplicationDeployerProperties applicationDeployerProperties) {
+        ProjectInfoModel model = ProjectInfoModel.of(properties.getService(), properties.getNamespace(), properties.getGroup());
         model.setIp(properties.getIp());
         model.setPort(port);
         model.setStartupTimeMillis(System.currentTimeMillis());
@@ -73,10 +73,9 @@ public class NacosApplicationAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean({ApplicationModel.class})
-    public Registry registry(ApplicationModel applicationModel) {
+    public Registry registry(ProjectInfoModel projectInfoModel) {
         RegistryFactory registryFactory = new NacosRegistryFactory();
-        Registry registry = registryFactory.getRegistry(applicationModel);
+        Registry registry = registryFactory.getRegistry(projectInfoModel);
         BeanRepository.getInstance().register(Registry.class, registry);
         return registry;
     }

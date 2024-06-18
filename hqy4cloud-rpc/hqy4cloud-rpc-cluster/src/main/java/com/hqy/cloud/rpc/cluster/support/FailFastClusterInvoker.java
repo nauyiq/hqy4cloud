@@ -1,12 +1,11 @@
 package com.hqy.cloud.rpc.cluster.support;
 
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
-import com.hqy.cloud.rpc.Result;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
-import com.hqy.cloud.util.IpUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class FailFastClusterInvoker<T> extends AbstractClusterInvoker<T> {
             throw new RpcException(e instanceof RpcException ? ((RpcException) e).getCode() : 0,
                     "FailFast invoke providers " + invoker.getModel() + " " + loadBalance.getClass().getSimpleName()
                             + " for service " + getInterface().getName()
-                            + " method " + invocation.getMethodName() + " on consumer " + IpUtil.getHostAddress()
+                            + " method " + invocation.getMethodName() + " on consumer " + NetUtil.getLocalhostStr()
                             + ", but no luck to perform the invocation. Last error is: " + e.getMessage(),
                     e.getCause() != null ? e.getCause() : e);
         }

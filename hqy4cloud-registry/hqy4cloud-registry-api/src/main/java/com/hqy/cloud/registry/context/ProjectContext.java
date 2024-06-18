@@ -6,17 +6,17 @@ import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.PubMode;
 import com.hqy.cloud.registry.deploy.ApplicationLifecycleDeployer;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.Future;
 
 
@@ -68,7 +68,7 @@ public record ProjectContext(RegistryContext registryContext,
         if (CommonSwitcher.ENABLE_SPRING_BOOT_RESTART_DEVTOOLS.isOn()) {
             System.setProperty("spring.devtools.restart.enabled", "false");
         }
-        ApplicationModel model = registryContext.getModel();
+        ProjectInfoModel model = registryContext.getModel();
         MetadataInfo metadataInfo = model.getMetadataInfo();
         // Get project metadata.
         String env = metadataInfo.getEnv();

@@ -19,16 +19,11 @@
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
-            <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.security</groupId>
-                    <artifactId>spring-security-oauth2-authorization-server</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hqy4cloud-auth-account-operations</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -38,8 +33,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-web-service</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>hqy4cloud-common-web</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -48,10 +43,6 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
     </dependencies>
 
 
@@ -66,7 +57,7 @@
                     <classesDirectory>target/classes/</classesDirectory>
                     <archive>
                         <manifest>
-                            <mainClass>com.hqy.cloud.admin.AdminServiceMain</mainClass>
+                            <mainClass>com.hqy.cloud.auth.AdminServiceMain</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>

@@ -1,0 +1,16 @@
+dubbo:
+  consumer:
+    timeout: 3000
+    check: false
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: nacos://${NACOS_SERVER:127.0.0.1:8848}
+    parameters:
+      namespace: ${NACOS_DUBBO_NAMESPACE:dc6be3bd-0250-44d0-a73e-c77631bf0d19}
+      group: DEFAULT_GROUP #首次启动前务必修改成你自己的
+  application:
+    name: ${spring.application.name}
+    qos-enable: false
+    qos-accept-foreign-ip: false

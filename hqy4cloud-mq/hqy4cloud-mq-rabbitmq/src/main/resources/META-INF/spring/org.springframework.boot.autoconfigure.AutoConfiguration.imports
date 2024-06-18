@@ -1,0 +1,2 @@
+com.hqy.cloud.mq.rabbit.config.RabbitmqAutoConfiguration
+com.hqy.cloud.mq.rabbit.dynamic.RabbitModuleProperties

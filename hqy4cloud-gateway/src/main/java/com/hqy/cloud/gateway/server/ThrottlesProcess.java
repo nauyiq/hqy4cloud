@@ -1,11 +1,11 @@
 package com.hqy.cloud.gateway.server;
 
-import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
-import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
-import com.hqy.foundation.limit.service.BlockedIpService;
-import com.hqy.foundation.limit.service.ManualWhiteIpService;
-import com.hqy.foundation.limit.service.ThrottlesServer;
-import com.hqy.cloud.util.web.HtmlCommonUtil;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
+import com.hqy.cloud.limiter.api.ManualWhiteIpService;
+import com.hqy.cloud.limiter.api.ThrottlesServer;
+import com.hqy.cloud.limiter.core.BiBlockedIpRedisService;
+import com.hqy.cloud.limiter.core.ManualBlockedIpService;
+import com.hqy.cloud.web.utils.HtmlCommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ThrottlesProcess implements ThrottlesServer {
 
-    private final BlockedIpService manualBlockedIpService;
-    private final BlockedIpService biBlockedIpService;
+    private final ManualBlockedIpService manualBlockedIpService;
+    private final BiBlockedIpRedisService biBlockedIpService;
     private final ManualWhiteIpService manualWhiteIpService;
 
     /**
@@ -67,7 +67,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isWhiteUri(String uri) {
-        return EndpointAuthorizationManager.getInstance().isAdminRequest(uri);
+        return StaticEndpointAuthorizationManager.getInstance().isStaticWhiteEndpoint(uri);
     }
 
     @Override

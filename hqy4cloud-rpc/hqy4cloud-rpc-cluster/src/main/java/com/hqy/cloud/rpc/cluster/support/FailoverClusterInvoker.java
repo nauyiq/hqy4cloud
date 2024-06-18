@@ -1,12 +1,12 @@
 package com.hqy.cloud.rpc.cluster.support;
 
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.CommonConstants;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;
 import com.hqy.cloud.rpc.cluster.loadbalance.LoadBalance;
-import com.hqy.cloud.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                             + ", but there have been failed providers " + providers
                             + " (" + providers.size() + "/" + copyInvokers.size()
                             + ") from the registry " + directory.getModel().getRegistryInfo()
-                            + " on the consumer " + IpUtil.getHostAddress()
+                            + " on the consumer " + NetUtil.getLocalhostStr()
                             + le.getMessage(), le);
                 }
                 success = true;
@@ -83,7 +83,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 + ". Tried " + len + " times of the providers " + providers
                 + " (" + providers.size() + "/" + copyInvokers.size()
                 + ") from the registry " + directory.getModel().getRegistryInfo()
-                + " on the consumer " + IpUtil.getHostAddress());
+                + " on the consumer " + NetUtil.getLocalhostStr());
     }
 
     private int calculateInvokeTimes() {

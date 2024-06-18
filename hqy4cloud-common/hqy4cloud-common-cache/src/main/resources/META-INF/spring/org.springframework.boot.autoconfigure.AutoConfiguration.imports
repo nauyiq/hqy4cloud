@@ -1,0 +1,2 @@
+com.hqy.cloud.cache.config.CacheAutoConfiguration
+com.hqy.cloud.cache.config.IRedisAutoConfiguration

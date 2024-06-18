@@ -2,6 +2,8 @@ package com.hqy.cloud.elasticsearch.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.easyes.starter.register.EsMapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +17,10 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
  */
 @Slf4j
 @Configuration
+@EsMapperScan("com.hqy.cloud.**.es.mapper")
 @RequiredArgsConstructor
 @EnableConfigurationProperties(ElasticsearchProperties.class)
+@ConditionalOnProperty(name = "spring.elasticsearch.enabled", havingValue = "true", matchIfMissing = true)
 public class ElasticsearchAutoConfiguration extends ElasticsearchConfiguration {
 
     private final ElasticsearchProperties properties;
