@@ -7,7 +7,7 @@ import com.hqy.cloud.rpc.model.RpcServiceInfo;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.starter.server.RpcServer;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 
 import java.util.List;
 import java.util.Map;

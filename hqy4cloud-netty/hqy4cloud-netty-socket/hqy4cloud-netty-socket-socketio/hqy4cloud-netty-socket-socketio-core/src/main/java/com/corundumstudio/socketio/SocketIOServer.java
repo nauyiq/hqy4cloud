@@ -18,7 +18,7 @@ package com.corundumstudio.socketio;
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.namespace.Namespace;
 import com.corundumstudio.socketio.namespace.NamespacesHub;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.util.thread.DefaultThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;

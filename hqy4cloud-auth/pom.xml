@@ -12,16 +12,19 @@
 
     <packaging>pom</packaging>
     <artifactId>hqy4cloud-auth</artifactId>
+    <description>认证组件</description>
+
+    <properties>
+        <spring.authorization.version>1.3.0</spring.authorization.version>
+    </properties>
 
     <modules>
         <module>hqy4cloud-auth-account-service</module>
         <module>hqy4cloud-auth-account-service-api</module>
         <module>hqy4cloud-auth-admin-service</module>
         <module>hqy4cloud-auth-core</module>
+        <module>hqy4cloud-auth-spring-security</module>
     </modules>
-
-
-
 
 
 </project>

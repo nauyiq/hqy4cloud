@@ -2,11 +2,9 @@ package com.hqy.cloud.rpc.starter.model;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.registry.common.model.DeployModel;
-import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.RpcStarter;
 import com.hqy.cloud.rpc.model.RpcMetadata;
 import com.hqy.cloud.rpc.model.RpcModel;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
 
 import java.util.Map;
 

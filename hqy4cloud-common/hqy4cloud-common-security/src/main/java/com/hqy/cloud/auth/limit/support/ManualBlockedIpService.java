@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.limit.support;
 
 import com.hqy.cloud.auth.limit.DefaultRedisBlockedAdaptor;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import org.redisson.api.RedissonClient;
 
 /**

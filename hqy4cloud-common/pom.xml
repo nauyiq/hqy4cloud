@@ -17,7 +17,8 @@
 
     <modules>
         <module>hqy4cloud-common-arithmetic</module>
-        <module>hqy4cloud-common-core</module>
+        <module>hqy4cloud-common-base</module>
+        <module>hqy4cloud-common-cache</module>
         <module>hqy4cloud-common-service</module>
         <module>hqy4cloud-common-util</module>
         <module>hqy4cloud-common-security</module>
@@ -28,9 +29,20 @@
         <module>hqy4cloud-common-ai</module>
         <module>hqy4cloud-common-db</module>
         <module>hqy4cloud-common-stream</module>
-
+        <module>hqy4cloud-common-lock</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+    </dependencies>
 
 
 </project>

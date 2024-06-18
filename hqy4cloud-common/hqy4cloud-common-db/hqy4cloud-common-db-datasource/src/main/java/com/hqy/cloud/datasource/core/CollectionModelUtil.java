@@ -5,7 +5,7 @@ import com.hqy.cloud.coll.struct.SqlRecordStruct;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.foundation.event.collector.support.execption.ExceptionCollectorUtils;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

@@ -8,6 +8,7 @@
     <artifactId>hqy4cloud</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
+    <description>A JAVA FRAMEWORK</description>
 
     <modules>
         <module>hqy4cloud-actuator</module>
@@ -22,39 +23,36 @@
     </modules>
 
     <properties>
-        <!-- project -->
+        <!-- 项目构建相关依赖 -->
         <revision>1.0.0</revision>
-        <jdk.version>17</jdk.version>
+        <jdk.version>21</jdk.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <source.plugin.version>3.0.1</source.plugin.version>
         <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
         <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
-        <!-- spring -->
-        <springboot.version>2.7.9</springboot.version>
-        <springcloud.version>2021.0.5</springcloud.version>
+        <!-- spring依赖版本 -->
+        <springboot.version>3.2.2</springboot.version>
+        <springcloud.version>2023.0.0</springcloud.version>
         <spring.authorization.version>0.4.0</spring.authorization.version>
-        <springboot.security.version>2.6.11</springboot.security.version>
-        <spring.ai.version>0.7.1-SNAPSHOT</spring.ai.version>
+        <spring.ai.version>0.7.1-SNAPSHOT</spring.ai.version> <!-- spring-ai暂时还未开放. -->
 
-        <!-- alibaba -->
-        <nacos.version>2.0.3</nacos.version>
+        <!-- alibaba技术栈先关依赖 -->
         <seata.version>1.8.0</seata.version>
         <druid.version>1.1.18</druid.version>
-        <sentinel.version>1.8.5</sentinel.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
+        <sentinel.version>1.8.5</sentinel.version>
         <springboot.druid.version>1.2.8</springboot.druid.version>
-        <springcloud.alibaba.version>2021.0.4.0</springcloud.alibaba.version>
+        <dubbo.version>3.2.10</dubbo.version>
+        <springcloud.alibaba.version>2022.0.0.0</springcloud.alibaba.version>
 
-        <!-- dao -->
-<!--        <mysql.version>5.1.47</mysql.version>-->
+        <!-- db相关操作依赖版本 -->
         <mysql.version>8.0.27</mysql.version>
         <tk.mybatis.version>2.1.2</tk.mybatis.version>
         <mybatis.plus.version>3.5.2</mybatis.plus.version>
-        <org.redisson.version>3.17.7</org.redisson.version>
         <elasticsearch.version>7.17.3</elasticsearch.version>
         <jakarta-json.version>2.0.1</jakarta-json.version>
         <dynamic.ds.version>3.6.0</dynamic.ds.version>
@@ -63,45 +61,31 @@
         <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
 
         <!-- log -->
-        <log4j.version>1.2.17</log4j.version>
-        <log4j2.version>2.1</log4j2.version>
-        <org.slf4j.version>1.7.30</org.slf4j.version>
         <logstash.logback.encoder.version>5.3</logstash.logback.encoder.version>
 
+        <!-- cache -->
+        <caffeine.cache.version>3.1.8</caffeine.cache.version>
+        <guava.version>32.1.3-jre</guava.version>
+
         <!-- common -->
-        <hutool.version>5.6.3</hutool.version>
-        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <sensitive.word.version>0.13.1</sensitive.word.version>
         <chatgtp.service.version>0.12.0</chatgtp.service.version>
         <retrofit2.converter.jackson.version>2.9.0</retrofit2.converter.jackson.version>
-        <auth.jwt.version>2.2.0</auth.jwt.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <servlet.version>3.1.0</servlet.version>
         <swift.version>0.14.2</swift.version>
         <thrift.version>0.9.3</thrift.version>
         <nifty.version>0.23.0</nifty.version>
-        <guava.version>22.0</guava.version>
+
         <lombok.version>1.18.12</lombok.version>
         <quartz.version>2.3.0</quartz.version>
-        <jsoup.version>1.13.1</jsoup.version>
-        <qcloud.api.version>5.6.133</qcloud.api.version>
-        <commons.beanutils.version>1.9.3</commons.beanutils.version>
-        <caffeine.cache.version>3.1.6</caffeine.cache.version>
         <javassist.version>3.28.0-GA</javassist.version>
-        <common.collection4.version>4.4</common.collection4.version>
-        <sensitive.word.version>0.13.1</sensitive.word.version>
     </properties>
 
 
     <dependencyManagement>
-        <!-- jdk8及以下jdk包里已经包含javax.annotation 8以上不包含.-->
         <dependencies>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-
             <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -160,18 +144,6 @@
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-core</artifactId>
                 <version>${sentinel.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-security</artifactId>
-                <version>${springboot.security.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-oauth2-authorization-server</artifactId>
-                <version>${spring.authorization.version}</version>
             </dependency>
 
             <dependency>
@@ -305,66 +277,6 @@
                 <version>${qcloud.api.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.belerweb</groupId>
-                <artifactId>pinyin4j</artifactId>
-                <version>${pinyin4j.version}</version>
-            </dependency>
-
-            <!--糊涂工具包-->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-core</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-crypto</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-cache</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-captcha</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-extra</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-http</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-system</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.auth0</groupId>
-                <artifactId>java-jwt</artifactId>
-                <version>${auth.jwt.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-            </dependency>
 
             <!-- facebook.thrift -->
             <dependency>
@@ -400,10 +312,16 @@
                 <version>${nifty.version}</version>
             </dependency>
 
+            <!-- 缓存相关-->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.cache.version}</version>
             </dependency>
 
             <!-- Quartz -->
@@ -411,19 +329,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons.beanutils.version}</version>
-            </dependency>
-
-            <!-- redisson client -->
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>${org.redisson.version}</version>
             </dependency>
 
 
@@ -440,12 +345,6 @@
                 <version>${logstash.logback.encoder.version}</version>
             </dependency>
 
-            <!-- 咖啡缓存 -->
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.cache.version}</version>
-            </dependency>
 
             <!-- github 敏感词过滤 DFA - https://github.com/houbb/sensitive-word -->
             <dependency>
@@ -454,6 +353,11 @@
                 <version>${sensitive.word.version}</version>
             </dependency>
 
+            <!--<dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
+            </dependency>-->
             <!-- spring-ai -->
             <!--<dependency>
                 <groupId>org.springframework.ai</groupId>
@@ -486,73 +390,28 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
+
+        <!--
+        fix deprecated.
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${common.collection4.version}</version>
-        </dependency>
+        -->
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.houbb</groupId>
-            <artifactId>sensitive-word</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- test -->
         <dependency>
@@ -611,6 +470,9 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <includes>
+                    <include>*/**</include>
+                </includes>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -671,7 +533,7 @@
                 </configuration>
             </plugin>
 
-
+            <!-- 全局采用flatten-maven-plugin统一版本号， 所有的pom和子项目版本只需要使用${revision}即可 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
@@ -701,8 +563,26 @@
         </plugins>
     </build>
 
-
-
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 
 </project>

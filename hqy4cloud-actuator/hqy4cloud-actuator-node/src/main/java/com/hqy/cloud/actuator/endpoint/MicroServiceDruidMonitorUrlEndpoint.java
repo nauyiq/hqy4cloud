@@ -9,7 +9,7 @@ import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.util.web.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

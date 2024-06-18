@@ -4,7 +4,7 @@ import com.hqy.cloud.netty.websocket.handler.WebsocketHandler;
 import com.hqy.cloud.netty.websocket.session.BaseWsSession;
 import com.hqy.cloud.netty.websocket.dto.SslKeystoreDTO;
 import com.hqy.cloud.netty.websocket.util.SslUtil;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.util.thread.DefaultThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;

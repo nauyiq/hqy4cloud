@@ -4,7 +4,7 @@ import com.hqy.cloud.common.base.lang.ActuatorNode;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Component;

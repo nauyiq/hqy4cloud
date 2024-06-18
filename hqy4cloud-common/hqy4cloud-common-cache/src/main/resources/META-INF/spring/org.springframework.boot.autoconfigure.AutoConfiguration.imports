@@ -1,0 +1,2 @@
+com.hqy.cloud.cache.autoconfigure.CacheAutoConfiguration
+com.hqy.cloud.redis.autoconfigure.RedisAutoConfiguration

@@ -2,10 +2,9 @@ package com.hqy.cloud.foundation.id;
 
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.concurrent.IExecutorsRepository;
-import com.hqy.cloud.util.spring.ProjectContextInfo;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.foundation.id.AbstractSnowflakeIdGen;
 import com.hqy.foundation.id.SnowFlakeDTO;
 import lombok.extern.slf4j.Slf4j;
