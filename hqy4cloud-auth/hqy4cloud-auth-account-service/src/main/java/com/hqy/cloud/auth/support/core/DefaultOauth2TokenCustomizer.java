@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.support.core;
 
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
 import com.hqy.cloud.auth.core.SecurityUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;

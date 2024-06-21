@@ -1,7 +1,6 @@
 package com.hqy.cloud.gateway.server;
 
 import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
-import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.foundation.limit.service.BlockedIpService;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;

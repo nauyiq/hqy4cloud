@@ -19,21 +19,29 @@
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- 认证核心模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
+            <artifactId>hqy4cloud-auth-account-operations</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- spring security鉴权模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service</artifactId>
+            <artifactId>hqy4cloud-auth-spring-security</artifactId>
             <version>${revision}</version>
         </dependency>
+
+
+        <!-- actuator端点模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -56,6 +64,7 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
+
 
     </dependencies>
 

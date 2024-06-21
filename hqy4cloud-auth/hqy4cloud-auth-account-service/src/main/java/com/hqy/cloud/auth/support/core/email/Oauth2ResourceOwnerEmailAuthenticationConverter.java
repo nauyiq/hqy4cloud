@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.core.email;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
 import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
 import com.hqy.cloud.foundation.common.account.AccountAuthRandomCodeServer;

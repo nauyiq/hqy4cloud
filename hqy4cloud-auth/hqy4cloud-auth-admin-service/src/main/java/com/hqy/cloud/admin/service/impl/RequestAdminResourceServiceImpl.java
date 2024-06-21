@@ -5,13 +5,13 @@ import com.hqy.cloud.auth.base.converter.ResourceConverter;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.base.dto.RoleResourcesDTO;
 import com.hqy.cloud.auth.core.authentication.support.AuthenticationCacheService;
-import com.hqy.cloud.auth.entity.Resource;
-import com.hqy.cloud.auth.entity.Role;
-import com.hqy.cloud.auth.entity.RoleResources;
+import com.hqy.cloud.auth.account.entity.Resource;
+import com.hqy.cloud.auth.account.entity.Role;
+import com.hqy.cloud.auth.account.entity.RoleResources;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
-import com.hqy.cloud.auth.service.tk.ResourceTkService;
-import com.hqy.cloud.auth.service.tk.RoleResourcesTkService;
+import com.hqy.cloud.auth.account.service.ResourceService;
+import com.hqy.cloud.auth.account.service.RoleResourcesService;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
@@ -92,21 +92,21 @@ public class RequestAdminResourceServiceImpl implements RequestAdminResourceServ
 
     @Override
     public R<Boolean> delResource(Integer resourceId) {
-        ResourceTkService resourceTkService = authOperationService.resourceTkService();
-        RoleResourcesTkService roleResourcesTkService = authOperationService.roleResourcesTkService();
+        ResourceService resourceService = authOperationService.resourceTkService();
+        RoleResourcesService roleResourcesService = authOperationService.roleResourcesTkService();
 
-        Resource resource = resourceTkService.queryById(resourceId);
+        Resource resource = resourceService.queryById(resourceId);
         if (Objects.isNull(resource)) {
             return R.failed(NOT_FOUND_RESOURCE);
         }
         resource.setDeleted(true);
-        List<RoleResources> roleResources = roleResourcesTkService.queryList(RoleResources.builder().resourceId(resourceId).build());
+        List<RoleResources> roleResources = roleResourcesService.queryList(RoleResources.builder().resourceId(resourceId).build());
 
         Boolean result = transactionTemplate.execute(status -> {
             try {
-                AssertUtil.isTrue(resourceTkService.update(resource), "Failed execute to delete resource.");
+                AssertUtil.isTrue(resourceService.update(resource), "Failed execute to delete resource.");
                 if (CollectionUtils.isNotEmpty(roleResources)) {
-                    AssertUtil.isTrue(roleResourcesTkService.deleteByResourceIdAndRoleIds(resourceId, roleResources.stream().map(RoleResources::getRoleId).collect(Collectors.toList())),
+                    AssertUtil.isTrue(roleResourcesService.deleteByResourceIdAndRoleIds(resourceId, roleResources.stream().map(RoleResources::getRoleId).collect(Collectors.toList())),
                             "Failed execute to delete role resources.");
                 }
                 return true;
@@ -127,17 +127,17 @@ public class RequestAdminResourceServiceImpl implements RequestAdminResourceServ
 
     @Override
     public R<Boolean> editRoleResources(RoleResourcesDTO roleResourcesDTO) {
-        ResourceTkService resourceTkService = authOperationService.resourceTkService();
-        RoleResourcesTkService roleResourcesTkService = authOperationService.roleResourcesTkService();
+        ResourceService resourceService = authOperationService.resourceTkService();
+        RoleResourcesService roleResourcesService = authOperationService.roleResourcesTkService();
 
         Integer resourceId = roleResourcesDTO.getResourceId();
-        Resource resource = resourceTkService.queryById(resourceId);
+        Resource resource = resourceService.queryById(resourceId);
         if (Objects.isNull(resource)) {
             return R.failed(NOT_FOUND_RESOURCE);
         }
 
         List<Integer> pauseRoleIds = roleResourcesDTO.pauseRoleIds();
-        List<RoleResources> resourcesList = roleResourcesTkService.queryList(RoleResources.builder().resourceId(resourceId).build());
+        List<RoleResources> resourcesList = roleResourcesService.queryList(RoleResources.builder().resourceId(resourceId).build());
         List<Integer> oldRoleIds = resourcesList.stream().map(RoleResources::getRoleId).collect(Collectors.toList());
         if (resourcesList.size() == pauseRoleIds.size() &&
                 pauseRoleIds.containsAll(oldRoleIds)) {
@@ -148,11 +148,11 @@ public class RequestAdminResourceServiceImpl implements RequestAdminResourceServ
         Boolean result = transactionTemplate.execute(status -> {
             try {
                 if (CollectionUtils.isNotEmpty(resourcesList)) {
-                    AssertUtil.isTrue(roleResourcesTkService.deleteByResourceIdAndRoleIds(resourceId, oldRoleIds), "Failed execute to delete role resource.");
+                    AssertUtil.isTrue(roleResourcesService.deleteByResourceIdAndRoleIds(resourceId, oldRoleIds), "Failed execute to delete role resource.");
                 }
                 if (CollectionUtils.isNotEmpty(pauseRoleIds)) {
                     List<RoleResources> resources = roles.stream().map(role -> new RoleResources(role.getId(), role.getName(), resourceId)).collect(Collectors.toList());
-                    AssertUtil.isTrue(roleResourcesTkService.insertList(resources), "Failed execute to insert role resource.");
+                    AssertUtil.isTrue(roleResourcesService.insertList(resources), "Failed execute to insert role resource.");
                 }
                 return true;
             } catch (Throwable cause) {

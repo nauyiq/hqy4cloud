@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth.service.tansactional;
 
 import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.Role;
 import io.seata.rm.tcc.api.BusinessActionContext;
 
 import java.util.List;

@@ -6,12 +6,12 @@ import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
 import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
-import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.Role;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.auth.service.tk.RoleTkService;
+import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.RoleService;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
@@ -41,12 +41,12 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
 
     private final AuthOperationService authOperationService;
     private final AccountOperationService accountOperationService;
-    private final AccountTkService accountTkService;
-    private final RoleTkService roleTkService;
+    private final AccountService accountService;
+    private final RoleService roleService;
 
     @Override
     public R<AdminUserInfoVO> getLoginUserInfo(Long id) {
-        AccountInfoDTO accountInfo = accountTkService.getAccountInfo(id);
+        AccountInfoDTO accountInfo = accountService.getAccountInfo(id);
         if (Objects.isNull(accountInfo)) {
             return R.failed(USER_NOT_FOUND);
         }
@@ -61,7 +61,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
     public R<PageResult<AccountInfoVO>> getPageUsers(String username, String nickname, Long id, Integer current, Integer size) {
         AssertUtil.notNull(id, "Account id should no be null.");
         Integer maxRoleLevel = authOperationService.getAccountMaxAuthorityRoleLevel(id);
-        PageResult<AccountInfoVO> result = accountTkService.getPageAccountInfos(username, nickname, maxRoleLevel, current, size);
+        PageResult<AccountInfoVO> result = accountService.getPageAccountInfos(username, nickname, maxRoleLevel, current, size);
         return R.ok(result);
     }
 
@@ -69,7 +69,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
     @Override
     public R<List<AccountRoleVO>> getUserRoles(Long id) {
         Integer maxRoleLevel = authOperationService.getAccountMaxAuthorityRoleLevel(id);
-        List<Role> roles = roleTkService.getRolesList(maxRoleLevel, null);
+        List<Role> roles = roleService.getRolesList(maxRoleLevel, null);
         if (CollectionUtils.isEmpty(roles)) {
             log.warn("Account Roles collections is empty.");
             return R.failed(DATA_EMPTY);
@@ -92,7 +92,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
         }
 
         //check roles
-        List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
+        List<Role> roles = roleService.queryRolesByNames(userDTO.getRole());
         if (!authOperationService.checkEnableModifyRoles(accessAccountId, roles)) {
             return R.failed(LIMITED_SETTING_ROLE_LEVEL);
         }
@@ -104,15 +104,15 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
     @Override
     public R<Boolean> editUser(Long accessAccountId, UserDTO userDTO) {
         //check user exist.
-        Account account = accountTkService.queryById(userDTO.getId());
+        Account account = accountService.queryById(userDTO.getId());
         if (Objects.isNull(account) || account.getDeleted()) {
             return R.failed(USER_NOT_FOUND);
         }
         //check roles
-        List<Role> roles = roleTkService.queryRolesByNames(userDTO.getRole());
+        List<Role> roles = roleService.queryRolesByNames(userDTO.getRole());
         String accountRoles = account.getRoles();
         List<String> oldRoleNames = Arrays.asList(StringUtils.tokenizeToStringArray(accountRoles, COMMA));
-        List<Role> oldRoles = roleTkService.queryRolesByNames(oldRoleNames);
+        List<Role> oldRoles = roleService.queryRolesByNames(oldRoleNames);
         boolean modifyRoles = true;
         if (CollectionUtils.isNotEmpty(roles) && oldRoles.size() == roles.size() && oldRoles.containsAll(roles)) {
             modifyRoles = false;
@@ -132,11 +132,11 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
 
     @Override
     public R<Boolean> deleteUser(Long accessId, Long id) {
-        Account account = accountTkService.queryById(id);
+        Account account = accountService.queryById(id);
         if (Objects.isNull(account)) {
             R.failed(USER_NOT_FOUND);
         }
-        List<Role> roles = roleTkService.queryRolesByNames(Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA)));
+        List<Role> roles = roleService.queryRolesByNames(Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA)));
         if (!authOperationService.checkEnableModifyRoles(accessId, roles)) {
             return R.failed(ERROR_PARAM);
         }

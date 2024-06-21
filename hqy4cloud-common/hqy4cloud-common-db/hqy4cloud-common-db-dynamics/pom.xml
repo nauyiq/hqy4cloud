@@ -13,15 +13,21 @@
     <artifactId>hqy4cloud-common-db-dynamics</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <dynamic.ds.version>3.6.0</dynamic.ds.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-db-datasource</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 动态多数据源 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>${dynamic.ds.version}</version>
         </dependency>
     </dependencies>
 

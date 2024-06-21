@@ -67,6 +67,11 @@ public class ServerSwitcher extends CommonSwitcher {
      */
     public static final ServerSwitcher ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER = new ServerSwitcher(155, "节点-网关负载均衡websocket项目时是否重新路由端口", true, MicroServiceConstants.GATEWAY);
 
+    /**
+     * 节点-是否基于http-restful判断请求是读请求还是写请求
+     */
+    public static final ServerSwitcher ENABLE_BASE_HTTP_RESTFUL_CHECK_REQUEST_PERMISSION = new ServerSwitcher(156, "是否开启基于http-restful判断请求的读写权限", true, MicroServiceConstants.GATEWAY);
+
 
     /**
      * 采集服务-是否采集来自采集服务本身的异常
@@ -79,4 +84,8 @@ public class ServerSwitcher extends CommonSwitcher {
      * 节点-是否开启用户token生成次数限制，即当用于重复生成token时，将旧token移除
      */
     public static final ServerSwitcher ENABLE_LIMIT_ACCESS_TOKEN_GENERATE_COUNT = new ServerSwitcher(160, "是否开启用户token生成次数限制", true, MicroServiceConstants.ACCOUNT_SERVICE);
+
+
+
+
 }

@@ -7,7 +7,6 @@ import com.hqy.cloud.auth.limit.support.BiBlockedIpRedisService;
 import com.hqy.cloud.auth.limit.support.ManualBlockedIpService;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.cloud.gateway.server.support.GlobalExceptionHandler;
-import com.hqy.foundation.limit.service.BlockedIpService;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -12,7 +12,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hqy4cloud-common</artifactId>
     <description>hqy4cloud-公共模块</description>
-
     <packaging>pom</packaging>
 
     <modules>
@@ -21,7 +20,6 @@
         <module>hqy4cloud-common-cache</module>
         <module>hqy4cloud-common-service</module>
         <module>hqy4cloud-common-util</module>
-        <module>hqy4cloud-common-security</module>
         <module>hqy4cloud-common-sentinel</module>
         <module>hqy4cloud-common-elasticsearch</module>
         <module>hqy4cloud-common-seata</module>
@@ -30,6 +28,7 @@
         <module>hqy4cloud-common-db</module>
         <module>hqy4cloud-common-stream</module>
         <module>hqy4cloud-common-lock</module>
+        <module>hqy4cloud-common-limit</module>
     </modules>
 
     <dependencies>

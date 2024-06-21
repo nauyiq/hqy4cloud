@@ -16,7 +16,7 @@
     <properties>
         <auth.jwt.version>2.2.0</auth.jwt.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
-        <hutool.version>5.6.3</hutool.version>
+        <hutool.version>5.8.22</hutool.version>
         <jsoup.version>1.13.1</jsoup.version>
     </properties>
 
@@ -101,7 +101,6 @@
         </dependency>
 
         <!-- common-collection4 -->
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -121,6 +120,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
+        <!-- jakarta servlet -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
     </dependencies>
 

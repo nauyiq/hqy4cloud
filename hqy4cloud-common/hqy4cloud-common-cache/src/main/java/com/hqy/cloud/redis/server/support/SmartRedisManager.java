@@ -1,16 +1,17 @@
 package com.hqy.cloud.redis.server.support;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.RedisException;
+import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.redis.server.AbstractTemplateOperations;
 import com.hqy.cloud.redis.server.RedisStringTemplateOperations;
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.util.JsonUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,22 @@ public class SmartRedisManager extends AbstractTemplateOperations implements Red
     public SmartRedisManager(StringRedisTemplate redisTemplate) {
         super((RedisTemplate) redisTemplate);
         this.redisTemplate = redisTemplate;
+    }
+
+    /**
+     * 单例
+     */
+    private static volatile SmartRedisManager instance = null;
+
+    public static SmartRedisManager getInstance() {
+        if (Objects.isNull(instance)) {
+            synchronized (SmartRedisManager.class) {
+                if (Objects.isNull(instance)) {
+                    instance = new SmartRedisManager(SpringUtil.getBean(StringRedisTemplate.class));
+                }
+            }
+        }
+        return instance;
     }
 
 

@@ -45,20 +45,19 @@
         <druid.version>1.1.18</druid.version>
         <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
         <sentinel.version>1.8.5</sentinel.version>
-        <springboot.druid.version>1.2.8</springboot.druid.version>
+
         <dubbo.version>3.2.10</dubbo.version>
         <springcloud.alibaba.version>2022.0.0.0</springcloud.alibaba.version>
 
         <!-- db相关操作依赖版本 -->
-        <mysql.version>8.0.27</mysql.version>
-        <tk.mybatis.version>2.1.2</tk.mybatis.version>
-        <mybatis.plus.version>3.5.2</mybatis.plus.version>
+
+
         <elasticsearch.version>7.17.3</elasticsearch.version>
         <jakarta-json.version>2.0.1</jakarta-json.version>
-        <dynamic.ds.version>3.6.0</dynamic.ds.version>
-        <mybatis.spring.boot.version>2.1.1</mybatis.spring.boot.version>
-        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
-        <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
+
+
+        <qcloud.api.version>5.6.133</qcloud.api.version>
+
 
         <!-- log -->
         <logstash.logback.encoder.version>5.3</logstash.logback.encoder.version>
@@ -146,24 +145,11 @@
                 <version>${sentinel.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper-spring-boot-starter.version}</version>
-            </dependency>
 
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
 
-            <!-- springboot-druid -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${springboot.druid.version}</version>
-            </dependency>
+
+
+
 
             <!-- elastic -->
             <dependency>
@@ -219,56 +205,6 @@
                 <version>${hibernate.validator.version}</version>
             </dependency>
 
-            <!-- mybatis整合springboot -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis.spring.boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
-                <version>${mybatis.spring.boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-                <version>${sharding.jdbc.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-transaction-base-seata-at</artifactId>
-                <version>${sharding.jdbc.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
-                <version>${dynamic.ds.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-               <version>${servlet.version}</version>
-            </dependency>
-
-            <!-- springboot-tk mapper -->
-            <dependency>
-                <groupId>tk.mybatis</groupId>
-                <artifactId>mapper-spring-boot-starter</artifactId>
-                <version>${tk.mybatis.version}</version>
-            </dependency>
-
-            <!-- mybatis plus -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis.plus.version}</version>
-            </dependency>
 
             <!-- tx oss api -->
             <dependency>
@@ -420,12 +356,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>${mybatis.plus.version}</version>
-            <scope>test</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>org.apache.velocity</groupId>

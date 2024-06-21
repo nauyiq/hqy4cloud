@@ -1,7 +1,5 @@
 package com.hqy.cloud.db.common;
 
-import lombok.Data;
-
 import javax.persistence.Column;
 import java.io.Serializable;
 

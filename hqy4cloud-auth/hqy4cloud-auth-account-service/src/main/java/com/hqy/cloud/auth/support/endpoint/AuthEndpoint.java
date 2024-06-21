@@ -1,9 +1,9 @@
 package com.hqy.cloud.auth.support.endpoint;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.lang.Oauth2ErrorCodesExpand;
-import com.hqy.cloud.auth.entity.SysOauthClient;
-import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
+import com.hqy.cloud.auth.account.entity.SysOauthClient;
+import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
@@ -46,7 +46,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthEndpoint {
 
-    private final SysOauthClientTkService sysOauthClientTkService;
+    private final SysOauthClientService sysOauthClientService;
     private final OAuth2AuthorizationService oAuth2AuthorizationService;
     private final AuthenticationFailureHandler authenticationFailureHandler = new DefaultAuthenticationFailureHandler();
     private final HttpMessageConverter<OAuth2AccessTokenResponse> accessTokenHttpResponseConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
@@ -71,7 +71,7 @@ public class AuthEndpoint {
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
                                 @RequestParam(OAuth2ParameterNames.STATE) String state) {
 
-        SysOauthClient clientDetails = sysOauthClientTkService.queryById(clientId);
+        SysOauthClient clientDetails = sysOauthClientService.queryById(clientId);
         if (Objects.isNull(clientDetails)) {
             throw new NotAuthenticationException("clientId 不合法");
         }

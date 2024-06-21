@@ -4,7 +4,6 @@ import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
 import com.hqy.cloud.account.struct.AuthenticationStruct;
-import com.hqy.cloud.account.struct.ResourceStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
@@ -34,14 +33,6 @@ public interface RemoteAuthService extends RPCService {
      */
     @ThriftMethod
     List<String> getPermissionsByRoles(@ThriftField(1)List<String> roles);
-
-    /**
-     * 根据角色更新资源信息
-     * @param role             角色
-     * @param resourceStructs  资源
-     */
-    @ThriftMethod(oneway = true)
-    void updateAuthoritiesResource(@ThriftField(1)String role, @ThriftField(2)List<ResourceStruct> resourceStructs);
 
     /**
      * basic认证

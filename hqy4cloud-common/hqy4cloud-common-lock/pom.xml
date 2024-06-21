@@ -13,8 +13,9 @@
     <description>分布式锁模块</description>
     <artifactId>hqy4cloud-common-lock</artifactId>
 
-    <!-- 缓存redis模块 -->
+
     <dependencies>
+        <!-- 缓存redis模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-cache</artifactId>

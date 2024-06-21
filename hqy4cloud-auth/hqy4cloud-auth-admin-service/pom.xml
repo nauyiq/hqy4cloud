@@ -19,16 +19,11 @@
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
-            <version>${project.parent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.security</groupId>
-                    <artifactId>spring-security-oauth2-authorization-server</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hqy4cloud-auth-account-operations</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

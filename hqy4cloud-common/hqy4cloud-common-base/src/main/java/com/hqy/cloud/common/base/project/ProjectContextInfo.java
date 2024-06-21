@@ -83,12 +83,12 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 手动黑名单列表
      */
-    public static final transient String MANUAL_BLOCKED_IP_KEY = "MANUAL_BLOCK_IP";
+    public static final String MANUAL_BLOCKED_IP_KEY = "MANUAL_BLOCK_IP";
 
     /**
      * bi分析黑名单列表
      */
-    public static final transient String BI_BLOCKED_IP_KEY = "BI_BLOCK_IP";
+    public static final String BI_BLOCKED_IP_KEY = "BI_BLOCK_IP";
 
 
     public ProjectContextInfo() {

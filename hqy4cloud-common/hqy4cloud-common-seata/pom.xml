@@ -11,19 +11,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy4cloud-common-seata</artifactId>
-
+    <properties>
+        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-util</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-thrift-rpc-seata-adaptor</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -45,7 +47,9 @@
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-transaction-base-seata-at</artifactId>
+            <version>${sharding.jdbc.version}</version>
         </dependency>
+
 
     </dependencies>
 

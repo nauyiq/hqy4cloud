@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.support.core.email;
 
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;

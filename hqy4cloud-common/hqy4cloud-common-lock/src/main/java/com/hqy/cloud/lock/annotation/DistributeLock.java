@@ -2,12 +2,19 @@ package com.hqy.cloud.lock.annotation;
 
 import com.hqy.cloud.lock.common.LockConstants;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * 分布式锁注解
  * @author qiyuan.hong
  * @version 1.0
  * @date 2024/6/18
  */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface DistributeLock {
 
     /**

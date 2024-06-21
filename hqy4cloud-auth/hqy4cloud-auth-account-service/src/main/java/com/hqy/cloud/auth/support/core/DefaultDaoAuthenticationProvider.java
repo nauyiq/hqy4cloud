@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.support.core;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
 import com.hqy.cloud.auth.core.CustomerUserDetailService;
 import com.hqy.cloud.util.web.WebUtils;
 import lombok.SneakyThrows;

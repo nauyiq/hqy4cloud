@@ -12,7 +12,7 @@
 
     <artifactId>hqy4cloud-gateway</artifactId>
     <packaging>jar</packaging>
-    <description>hqy4cloud-全局网关-采用oauth2,统一校验认证和鉴权,RPC的调用者视角</description>
+    <description>hqy4cloud-全局网关-负责鉴权、限流、负载等</description>
 
     <dependencies>
         <dependency>
@@ -34,7 +34,7 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-security</artifactId>
+            <artifactId>hqy4cloud-auth-spring-security</artifactId>
             <version>${revision}</version>
         </dependency>
 

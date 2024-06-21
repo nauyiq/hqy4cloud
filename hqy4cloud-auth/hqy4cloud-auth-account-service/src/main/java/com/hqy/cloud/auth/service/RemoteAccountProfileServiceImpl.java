@@ -5,11 +5,11 @@ import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.account.service.RemoteAccountProfileService;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
+import com.hqy.cloud.auth.account.service.AccountProfileService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.cache.support.AccountCacheService;
-import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
+import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +30,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RemoteAccountProfileServiceImpl extends AbstractRPCService implements RemoteAccountProfileService {
-    private final AccountProfileTkService accountProfileTkService;
+    private final AccountProfileService accountProfileService;
     private final AccountOperationService accountOperationService;
     private final AccountCacheService accountCacheService;
 
     @Override
     public AccountProfileStruct getAccountProfile(Long userId) {
         AccountDTO account = accountCacheService.getData(userId);
-        AccountProfile profile = accountProfileTkService.queryById(userId);
+        AccountProfile profile = accountProfileService.queryById(userId);
         if (account == null || profile == null) {
             return new AccountProfileStruct();
         }
@@ -88,7 +88,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         struct.avatar = AccountAvatarUtil.extractAvatar(struct.avatar);
         AccountProfile profile = new AccountProfile();
         AccountConverter.CONVERTER.update(profile, struct);
-        return accountProfileTkService.updateSelective(profile);
+        return accountProfileService.updateSelective(profile);
 
     }
 
@@ -100,7 +100,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             avatar = AccountAvatarUtil.DEFAULT_AVATAR;
         }
         AccountProfile profile = new AccountProfile(id, null, avatar);
-        boolean result = accountProfileTkService.updateSelective(profile);
+        boolean result = accountProfileService.updateSelective(profile);
         if (!result) {
             log.warn("Failed execute to updateAccountAvatar, id: {}, avatar:{}.", id, avatar);
         }
@@ -111,7 +111,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         if (profile == null || profile.id == null) {
             return false;
         }
-        AccountProfile accountProfile = accountProfileTkService.queryById(profile.id);
+        AccountProfile accountProfile = accountProfileService.queryById(profile.id);
         if (accountProfile == null) {
             return false;
         }
@@ -129,7 +129,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             accountProfile.setSex(profile.sex);
         }
         accountProfile.setIntro(profile.intro);
-        return accountProfileTkService.update(accountProfile);
+        return accountProfileService.update(accountProfile);
     }
 
     private AccountProfileStruct buildAccountProfileStruct(AccountInfoDTO accountInfo) {

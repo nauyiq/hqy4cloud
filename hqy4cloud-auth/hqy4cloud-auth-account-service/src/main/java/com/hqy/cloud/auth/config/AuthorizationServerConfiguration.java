@@ -1,12 +1,12 @@
 package com.hqy.cloud.auth.config;
 
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
-import com.hqy.cloud.auth.core.component.RedisOAuth2AuthorizationService;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
+import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.server.DefaultRegisteredClientRepository;
 import com.hqy.cloud.auth.service.security.support.CustomerUserDetailServiceImpl;
 import com.hqy.cloud.auth.service.security.support.RedisOAuth2AuthorizationConsentServiceImpl;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.auth.service.tk.SysOauthClientTkService;
+import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.DefaultOauth2TokenCustomizer;
 import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
@@ -53,12 +53,12 @@ import java.util.Arrays;
 public class AuthorizationServerConfiguration {
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(SysOauthClientTkService sysOauthClientTkService) {
-        return new DefaultRegisteredClientRepository(sysOauthClientTkService);
+    public RegisteredClientRepository registeredClientRepository(SysOauthClientService sysOauthClientService) {
+        return new DefaultRegisteredClientRepository(sysOauthClientService);
     }
     @Bean
-    public UserDetailsService userDetailsService(AccountTkService accountTkService) {
-        return new CustomerUserDetailServiceImpl(accountTkService);
+    public UserDetailsService userDetailsService(AccountService accountService) {
+        return new CustomerUserDetailServiceImpl(accountService);
     }
 
     @Bean

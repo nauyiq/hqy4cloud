@@ -2,14 +2,14 @@ package com.hqy.cloud.auth.service.tansactional.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.auth.entity.AccountProfile;
-import com.hqy.cloud.auth.entity.AccountRole;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.AccountProfile;
+import com.hqy.cloud.auth.account.entity.AccountRole;
+import com.hqy.cloud.auth.account.entity.Role;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
-import com.hqy.cloud.auth.service.tk.AccountProfileTkService;
-import com.hqy.cloud.auth.service.tk.AccountRoleTkService;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
+import com.hqy.cloud.auth.account.service.AccountProfileService;
+import com.hqy.cloud.auth.account.service.AccountRoleService;
+import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.util.AssertUtil;
 import io.seata.core.context.RootContext;
@@ -36,9 +36,9 @@ import java.util.List;
 @LocalTCC
 @RequiredArgsConstructor
 public class TccRegistryAccountServiceImpl implements TccRegistryAccountService {
-    private final AccountTkService accountTkService;
-    private final AccountRoleTkService accountRoleTkService;
-    private final AccountProfileTkService accountProfileTkService;
+    private final AccountService accountService;
+    private final AccountRoleService accountRoleService;
+    private final AccountProfileService accountProfileService;
     private final TransactionTemplate template;
 
     @Override
@@ -49,7 +49,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         // 新增用户，并且用户状态设置为不可用
         String xid = RootContext.getXID();
         account.setStatus(false);
-        return accountTkService.insert(account);
+        return accountService.insert(account);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         }
         // 查找try阶段锁定的用户
         Long id = account.getId();
-        Account queryAccount = accountTkService.queryById(id);
+        Account queryAccount = accountService.queryById(id);
         if (queryAccount == null) {
             return false;
         }
@@ -78,9 +78,9 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         }).toList();
         Boolean execute = template.execute(status -> {
             try {
-                AssertUtil.isTrue(accountTkService.update(queryAccount), "Failed execute to update account.");
-                AssertUtil.isTrue(accountProfileTkService.insert(profile), "Failed execute to insert account profiles.");
-                AssertUtil.isTrue(accountRoleTkService.insertList(accountRoles), "Failed execute to insert account roleJsonObjects.");
+                AssertUtil.isTrue(accountService.update(queryAccount), "Failed execute to update account.");
+                AssertUtil.isTrue(accountProfileService.insert(profile), "Failed execute to insert account profiles.");
+                AssertUtil.isTrue(accountRoleService.insertList(accountRoles), "Failed execute to insert account roleJsonObjects.");
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();
@@ -95,7 +95,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         // 回滚
         Account account = actionContext.getActionContext("account", Account.class);
         if (account != null) {
-            accountTkService.deleteByPrimaryKey(account.getId());
+            accountService.deleteByPrimaryKey(account.getId());
         }
         return true;
     }

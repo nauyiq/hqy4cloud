@@ -1,11 +1,14 @@
 package com.hqy.cloud.admin.service.impl;
 
 import com.hqy.cloud.admin.service.RequestAdminRoleService;
+import com.hqy.cloud.auth.account.service.RoleMenuService;
+import com.hqy.cloud.auth.account.service.RoleService;
 import com.hqy.cloud.auth.base.dto.RoleDTO;
 import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
+import com.hqy.cloud.auth.base.enums.AccountResultCode;
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
-import com.hqy.cloud.auth.entity.AccountRole;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.AccountRole;
+import com.hqy.cloud.auth.account.entity.Role;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
 import com.hqy.cloud.common.bind.R;
@@ -34,6 +37,8 @@ import static com.hqy.cloud.common.result.ResultCode.ROLE_NAME_EXIST;
 public class RequestAdminRoleServiceImpl implements RequestAdminRoleService {
 
     private final TransactionTemplate transactionTemplate;
+    private final RoleService roleService;
+    private final RoleMenuService roleMenuService;
     private final AuthOperationService authoperationService;
     private final AccountOperationService accountOperationService;
 
@@ -117,22 +122,20 @@ public class RequestAdminRoleServiceImpl implements RequestAdminRoleService {
 
     @Override
     public R<Boolean> deleteRole(Integer roleId) {
-        Role role =  accountOperationService.getRoleTkService().queryById(roleId);
+        Role role = roleService.getById(roleId);
         if (Objects.isNull(role)) {
-            return R.failed(NOT_FOUND_ROLE);
+            return R.failed(AccountResultCode.NOT_FOUND_ROLE);
         }
-
         Boolean result = transactionTemplate.execute(status -> {
             try {
                 AssertUtil.isTrue(accountOperationService.deleteAccountRole(role), "Failed execute to delete role, roleId = " + roleId);
-                AssertUtil.isTrue(authoperationService.roleMenuService().deleteByRoleId(roleId), "Failed execute to delete role menu");
+                AssertUtil.isTrue(roleMenuService.deleteByRoleId(roleId), "Failed execute to delete role menu");
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();
                 return false;
             }
         });
-
         if (Objects.isNull(result) || !result) {
             return R.failed();
         }

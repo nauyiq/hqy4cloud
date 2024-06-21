@@ -19,6 +19,7 @@
     </properties>
 
     <modules>
+        <module>hqy4cloud-auth-account-operations</module>
         <module>hqy4cloud-auth-account-service</module>
         <module>hqy4cloud-auth-account-service-api</module>
         <module>hqy4cloud-auth-admin-service</module>

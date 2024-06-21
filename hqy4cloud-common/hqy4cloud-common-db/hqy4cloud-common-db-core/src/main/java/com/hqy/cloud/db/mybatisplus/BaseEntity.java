@@ -2,15 +2,21 @@ package com.hqy.cloud.db.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 基础的entity类
  * @author qiyuan.hong
  * @version 1.0
  * @date 2024/2/29
  */
-public abstract class BaseEntity {
+@Setter
+@Getter
+public abstract class BaseEntity implements Serializable {
 
     public BaseEntity() {
     }
@@ -33,19 +39,4 @@ public abstract class BaseEntity {
     private Date updated;
 
 
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
 }

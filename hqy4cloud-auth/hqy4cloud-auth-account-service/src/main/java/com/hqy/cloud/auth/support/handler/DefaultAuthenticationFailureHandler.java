@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.lang.SecurityConstants;
+import com.hqy.cloud.auth.security.common.SecurityConstants;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;

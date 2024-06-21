@@ -4,15 +4,15 @@ import com.hqy.cloud.account.dto.AccountInfoDTO;
 import com.hqy.cloud.account.service.RemoteAccountService;
 import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.account.struct.RegistryAccountStruct;
+import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.RoleService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.cache.support.AccountCacheService;
-import com.hqy.cloud.auth.entity.Account;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.Role;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
-import com.hqy.cloud.auth.service.tk.AccountTkService;
-import com.hqy.cloud.auth.service.tk.RoleTkService;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UpdateDbException;
 import com.hqy.cloud.common.result.ResultCode;
@@ -46,9 +46,8 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     private final PasswordEncoder passwordEncoder;
     private final AccountOperationService accountOperationService;
     private final AuthOperationService authOperationService;
-    private final AccountTkService accountTkService;
-    private final RoleTkService roleTkService;
-    private final AccountCacheService accountCacheService;
+    private final AccountService accountService;
+    private final RoleService roleService;
     private final TccRegistryAccountService tccRegistryAccountService;
 
     @Override
@@ -59,7 +58,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
     @Override
     public Long getAccountIdByUsernameOrEmail(String usernameOrEmail) {
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
+        Account account = accountService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
             return null;
         }
@@ -89,7 +88,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isBlank(usernameOrEmail)) {
             return new AccountStruct();
         }
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
+        Account account = accountService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
             return new AccountStruct();
         }
@@ -124,7 +123,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
             struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
         }
         //check roles.
-        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
+        List<Role> roles = roleService.queryRolesByNames(struct.roles);
         if (struct.createBy != null && !authOperationService.checkEnableModifyRoles(struct.createBy, roles)) {
             return new CommonResultStruct(ResultCode.LIMITED_SETTING_ROLE_LEVEL);
         }
@@ -159,7 +158,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (CollectionUtils.isEmpty(struct.roles)) {
             struct.roles = Collections.singletonList(DEFAULT_COMMON_ROLE);
         }
-        List<Role> roles = roleTkService.queryRolesByNames(struct.roles);
+        List<Role> roles = roleService.queryRolesByNames(struct.roles);
         // 构造用户对象
         UserDTO userDTO = new UserDTO(null, struct.username, struct.nickname, struct.email, struct.phone,
                 struct.password, struct.avatar, true, struct.roles);
@@ -172,7 +171,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
             return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        Account account = accountTkService.queryOne(new Account(usernameOrEmail));
+        Account account = accountService.queryOne(new Account(usernameOrEmail));
         if (account == null) {
             return CommonResultStruct.of(USER_NOT_FOUND);
         }

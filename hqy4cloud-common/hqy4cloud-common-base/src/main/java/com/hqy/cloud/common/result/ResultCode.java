@@ -6,7 +6,7 @@ import com.hqy.cloud.common.bind.MessageResponse;
 /**
  * 全局错误码和消息提示
  * @author qy
- * @date 2021-08-09 19:33
+ * @date 2021-08-09
  */
 public enum ResultCode implements Result {
 
@@ -191,10 +191,6 @@ public enum ResultCode implements Result {
      */
     ROLE_NAME_EXIST(3005, "This role name already exist."),
 
-    /**
-     * 找不到该角色
-     */
-    NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
 
     /**
      * 租户id或租户秘钥错误

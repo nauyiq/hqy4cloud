@@ -1,21 +1,21 @@
 package com.hqy.cloud.admin.controller;
 
 import com.hqy.cloud.admin.service.RequestAdminRoleService;
+import com.hqy.cloud.auth.annotation.PreAuthentication;
 import com.hqy.cloud.auth.base.dto.RoleDTO;
 import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
 import com.hqy.cloud.auth.base.vo.AccountRoleVO;
-import com.hqy.cloud.auth.core.authentication.PreAuthentication;
-import com.hqy.cloud.auth.entity.Role;
+import com.hqy.cloud.auth.account.entity.Role;
 import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
