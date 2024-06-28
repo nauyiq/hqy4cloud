@@ -1,10 +1,10 @@
 package com.hqy.cloud.foundation.common.account;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.foundation.domain.DomainServer;
 import com.hqy.cloud.foundation.domain.support.Domain;
 import com.hqy.cloud.util.file.FileUtil;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.cloud.util.web.HtmlCommonUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +33,7 @@ public class AccountAvatarUtil {
         }
         if (!avatar.startsWith(StringConstants.HTTP)) {
             // 如果不是以域名开头, 则获取对应的域名进行拼接
-            DomainServer domainServer = SpringContextHolder.getBean(DomainServer.class);
+            DomainServer domainServer = SpringUtil.getBean(DomainServer.class);
             String avatarDomain = domainServer.getDomain(Domain.AVATAR.scene);
             // 默认返回http的路径.
             avatar = StringConstants.Host.HTTP.concat(avatarDomain).concat(avatar);
@@ -71,7 +71,7 @@ public class AccountAvatarUtil {
             if (StringUtils.isBlank(domain)) {
                 return false;
             }
-            DomainServer domainServer = SpringContextHolder.getBean(DomainServer.class);
+            DomainServer domainServer = SpringUtil.getBean(DomainServer.class);
             String avatarDomain = domainServer.getDomain(Domain.AVATAR.scene);
             // 判断和配置的domain是否一致
             return StringUtils.isBlank(avatarDomain) || avatarDomain.equals(domain);

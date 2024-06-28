@@ -1,22 +1,21 @@
 package com.hqy.cloud.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheDelayRemoveService;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
-import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.auth.cache.support.AccountCacheService;
 import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.AccountMenu;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
-import com.hqy.cloud.auth.account.entity.AccountRole;
-import com.hqy.cloud.auth.account.entity.Role;
-import com.hqy.cloud.auth.service.AccountOperationService;
+import com.hqy.cloud.auth.account.service.AccountMenuService;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
-import com.hqy.cloud.auth.account.service.AccountRoleService;
 import com.hqy.cloud.auth.account.service.AccountService;
-import com.hqy.cloud.auth.account.service.RoleService;
-import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.auth.common.UserRole;
+import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
@@ -33,10 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
-import static com.hqy.cloud.common.result.ResultCode.INVALID_UPLOAD_FILE;
-import static com.hqy.cloud.foundation.common.account.AccountAvatarUtil.DEFAULT_AVATAR;
-
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -49,8 +44,8 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     private final PasswordEncoder passwordEncoder;
     private final AccountService accountService;
     private final AccountProfileService accountProfileService;
-    private final RoleService roleService;
-    private final AccountRoleService accountRoleService;
+    private final AccountMenuService accountMenuService;
+    private final AccountAuthCacheDelayRemoveService cacheDelayRemoveService;
     private final TransactionTemplate transactionTemplate;
 
     @Override
@@ -105,30 +100,28 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (StringUtils.isAllEmpty(username, email, phone)) {
             return true;
         }
-        Account account = new Account();
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {
-            account.setUsername(username);
+            queryWrapper.eq("username", username);
         }
         if (StringUtils.isNotBlank(email)) {
-            account.setUsername(email);
+            queryWrapper.eq("email", email);
         }
         if (StringUtils.isNotBlank(phone)) {
-            account.setUsername(phone);
+            queryWrapper.eq("phone", phone);
         }
-        return CollectionUtils.isNotEmpty(accountService.queryList(account));
+        queryWrapper.eq("deleted", 0);
+        return !accountService.exists(queryWrapper);
     }
 
     @Override
-    public boolean registryAccount(UserDTO userDTO, List<Role> roles) {
-        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        Account account = Account.of(userDTO, roles);
-        List<AccountRole> accountRoles = buildAccountRole(account, roles);
-        AccountProfile accountProfile = buildAccountProfile(account, userDTO);
+    public boolean registryAccount(Account account, AccountProfile accountProfile) {
+        // 密码加密
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         Boolean result = transactionTemplate.execute(status -> {
             try {
-                AssertUtil.isTrue(accountService.insert(account), "Failed execute to insert Account: " + account);
-                AssertUtil.isTrue(accountRoleService.insertList(accountRoles), "Failed execute to insert accountRoles, data: " + JsonUtil.toJson(accountRoles));
-                AssertUtil.isTrue(accountProfileService.insert(accountProfile), "Failed execute to insert account profile, data: " + JsonUtil.toJson(accountProfile));
+                AssertUtil.isTrue(accountService.save(account), "Failed execute to insert Account: " + account);
+                AssertUtil.isTrue(accountProfileService.save(accountProfile), "Failed execute to insert account profile, data: " + JsonUtil.toJson(accountProfile));
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();
@@ -140,86 +133,43 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     }
 
 
-    private List<AccountRole> buildAccountRole(Account account, List<Role> roles) {
-        return roles.stream().map(e -> new AccountRole(account.getId(), e.getId(), e.getLevel())).collect(Collectors.toList());
-    }
-
-    private AccountProfile buildAccountProfile(Account account, UserDTO userDTO) {
-        return new AccountProfile(account.getId(),
-                StringUtils.isBlank(userDTO.getNickname()) ? userDTO.getUsername() : userDTO.getNickname(),
-                StringUtils.isBlank(userDTO.getAvatar()) ? DEFAULT_AVATAR : AccountAvatarUtil.extractAvatar(userDTO.getAvatar()));
+    @Override
+    public boolean editAccount(UserDTO userDTO, Account account) {
+        // 第一次删除缓存
+        AccountAuthCacheManager.getInstance().remove(account.getId());
+        // update account.
+        setAccountInfo(account, userDTO);
+        // 第二次删除缓存
+        cacheDelayRemoveService.removeAccountAuthCache(account.getId());
+        return accountService.updateById(account);
     }
 
     @Override
-    public boolean deleteAccountRole(Role role) {
+    public boolean deleteUser(Account account) {
+        Long id = account.getId();
         // 第一次删除缓存
-        AccountAuthCacheManager.getInstance().remove(role.getName());
-
+        AccountAuthCacheManager.getInstance().remove(id);
+        account.setDeleted(true);
         Boolean result = transactionTemplate.execute(status -> {
             try {
-                // 伪删除用户
-                role.setDeleted(true);
-                AssertUtil.isTrue(roleService.updateById(role), ResultCode.SYSTEM_ERROR_UPDATE_FAIL.message);
-                // 删除用户角色中间表数据.
-                AssertUtil.isTrue(accountRoleService.deleteByAccountRoleIds(List.of(role.getId())), "Failed execute to delete account role.");
+                AssertUtil.isTrue(accountService.updateById(account), "Failed execute to update account.");
+                QueryWrapper<AccountMenu> wrapper = Wrappers.query();
+                wrapper.eq("account_id", id);
+                AssertUtil.isTrue(accountMenuService.remove(wrapper), "Failed execute to remove account menu by accountId: " + id);
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();
+                log.error(cause.getMessage(), cause);
                 return false;
             }
         });
 
         // 第二次删除缓存
-        AccountAuthCacheManager.getInstance().remove(role.getName());
+        cacheDelayRemoveService.removeAccountAuthCache(id);
         return Boolean.TRUE.equals(result);
     }
 
-
-    @Override
-    public boolean editAccount(UserDTO userDTO, List<Role> roles, Account account, List<Role> oldRoles) {
-        // update account.
-        setAccountInfo(account, userDTO, roles);
-        Boolean result = transactionTemplate.execute(status -> {
-            try {
-                AssertUtil.isTrue(accountService.update(account), INVALID_UPLOAD_FILE.message);
-                if (CollectionUtils.isNotEmpty(oldRoles)) {
-                    AssertUtil.isTrue(accountRoleService.delete(new AccountRole(account.getId())), "Failed execute to delete old account roles.");
-                    AssertUtil.isTrue(accountRoleService.insertList(buildAccountRole(account, roles)), "Failed execute to insert new account roles.");
-                    accountCacheService.invalid(account.getId());
-                }
-                return true;
-            } catch (Throwable cause) {
-                status.setRollbackOnly();
-                log.error(cause.getMessage(), cause);
-                return false;
-            }
-        });
-        SpringUtil.getBean(AccountCacheService.class).invalid(account.getId());
-        return Boolean.TRUE.equals(result);
-    }
-
-    @Override
-    public boolean deleteUser(Account account) {
-        account.setDeleted(true);
-        List<AccountRole> accountRoles = accountRoleService.queryList(new AccountRole(account.getId()));
-        Boolean result = transactionTemplate.execute(status -> {
-            try {
-                AssertUtil.isTrue(accountService.update(account), "Failed execute to update account.");
-                if (CollectionUtils.isNotEmpty(accountRoles)) {
-                    AssertUtil.isTrue(accountRoleService.deleteByAccountRoles(accountRoles), "Failed execute to deleted account roles.");
-                }
-                accountCacheService.invalid(account.getId());
-                return true;
-            } catch (Throwable cause) {
-                status.setRollbackOnly();
-                log.error(cause.getMessage(), cause);
-                return false;
-            }
-        });
-        return Boolean.TRUE.equals(result);
-    }
-
-    private void setAccountInfo(Account account, UserDTO userDTO, List<Role> roles) {
+    private void setAccountInfo(Account account, UserDTO userDTO) {
         if (StrUtil.isNotBlank(userDTO.getPassword())) {
             account.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
@@ -232,20 +182,8 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (StrUtil.isNotBlank(account.getPhone())) {
             account.setPhone(account.getPhone());
         }
+        account.setRole(UserRole.valueOf(userDTO.getRole()));
         account.setStatus(userDTO.getStatus());
-        List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
-        account.setRoles(StrUtil.join(COMMA, roleNames));
     }
 
-    public AccountService getAccountService() {
-        return accountService;
-    }
-
-    public RoleService getRoleService() {
-        return roleService;
-    }
-
-    public AccountRoleService getAccountRoleService() {
-        return accountRoleService;
-    }
 }

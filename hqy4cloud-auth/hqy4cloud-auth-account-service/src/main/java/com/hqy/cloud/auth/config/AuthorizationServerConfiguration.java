@@ -1,10 +1,10 @@
 package com.hqy.cloud.auth.config;
 
-import com.hqy.cloud.auth.security.common.SecurityConstants;
+import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
-import com.hqy.cloud.auth.server.DefaultRegisteredClientRepository;
-import com.hqy.cloud.auth.service.security.support.CustomerUserDetailServiceImpl;
-import com.hqy.cloud.auth.service.security.support.RedisOAuth2AuthorizationConsentServiceImpl;
+import com.hqy.cloud.auth.support.core.DefaultRegisteredClientRepository;
+import com.hqy.cloud.auth.support.core.DefaultUserDetailServiceImpl;
+import com.hqy.cloud.auth.support.core.RedisOAuth2AuthorizationConsentServiceImpl;
 import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
@@ -24,12 +24,14 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2TokenEndpointConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
@@ -58,7 +60,7 @@ public class AuthorizationServerConfiguration {
     }
     @Bean
     public UserDetailsService userDetailsService(AccountService accountService) {
-        return new CustomerUserDetailServiceImpl(accountService);
+        return new DefaultUserDetailServiceImpl(accountService);
     }
 
     @Bean
@@ -89,36 +91,43 @@ public class AuthorizationServerConfiguration {
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OAuth2TokenGenerator oAuth2TokenGenerator,
                                                                       MessageSource securityMessageSource, OAuth2AuthorizationService oAuth2AuthorizationService) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
-        http
-            //个性化认证授权端点
-            .apply(authorizationServerConfigurer.tokenEndpoint((tokenEndpoint) -> {
-            // 注入自定义的授权认证Converter
-                    tokenEndpoint.accessTokenRequestConverter(accessTokenRequestConverter())
-                    // 登录成功处理器
-                    .accessTokenResponseHandler(new DefaultAuthenticationSuccessHandler())
-                    // 登录失败处理器
-                    .errorResponseHandler(new DefaultAuthenticationFailureHandler());
-            })
-            // 个性化客户端认证
-            .clientAuthentication(oAuth2ClientAuthenticationConfigurer ->
-            // 处理客户端认证异常
-            oAuth2ClientAuthenticationConfigurer.errorResponseHandler(new DefaultAuthenticationFailureHandler()))
-            //授权码端点个性化confirm页面
-            .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI)));
+        DefaultSecurityFilterChain chain = http
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+                //个性化认证授权端点
+                .with(authorizationServerConfigurer
+                                .authorizationService(oAuth2AuthorizationService)
+                                .authorizationServerSettings(AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build())
+                                .tokenEndpoint((tokenEndpoint) -> {
+                                    // 注入自定义的授权认证Converter
+                                    tokenEndpoint.accessTokenRequestConverter(accessTokenRequestConverter())
+                                            // 登录成功处理器
+                                            .accessTokenResponseHandler(new DefaultAuthenticationSuccessHandler())
+                                            // 登录失败处理器
+                                            .errorResponseHandler(new DefaultAuthenticationFailureHandler());
+                                })
+                                // 个性化客户端认证
+                                .clientAuthentication(oAuth2ClientAuthenticationConfigurer ->
+                                        // 处理客户端认证异常
+                                        oAuth2ClientAuthenticationConfigurer.errorResponseHandler(new DefaultAuthenticationFailureHandler()))
+                                //授权码端点个性化confirm页面
+                                .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI))
+                        , (c) -> new FormIdentityLoginConfigurer()).build();
 
-        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
-        DefaultSecurityFilterChain securityFilterChain = http.requestMatcher(endpointsMatcher)
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+//        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
+        /*DefaultSecurityFilterChain securityFilterChain = http
+//                .requestMatcher(endpointsMatcher)
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
                 .apply(authorizationServerConfigurer.authorizationService(oAuth2AuthorizationService))
                 .authorizationServerSettings(AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build())
                 // 授权码登录的登录页个性化
-                .and().apply(new FormIdentityLoginConfigurer()).and()
-                .httpBasic().and().build();
-
+                .apply(new FormIdentityLoginConfigurer())
+                .and()
+                .httpBasic(c -> {})
+                .build();*/
 
         // 注入自定义授权模式实现
         addOauth2GrantAuthenticationProvider(http, securityMessageSource);
-        return securityFilterChain;
+        return chain;
     }
 
     private void addOauth2GrantAuthenticationProvider(HttpSecurity http, MessageSource securityMessageSource) {

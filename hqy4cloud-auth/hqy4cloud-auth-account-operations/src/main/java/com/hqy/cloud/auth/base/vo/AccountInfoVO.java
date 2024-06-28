@@ -1,7 +1,8 @@
 package com.hqy.cloud.auth.base.vo;
 
 import cn.hutool.core.date.DateUtil;
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/12/12 16:11
+ * @date 2022/12/12
  */
 @Data
 @NoArgsConstructor
@@ -28,7 +29,8 @@ public class AccountInfoVO {
     private String phone;
     private String email;
     private String birthday;
-    private List<String> roles;
+    private UserRole userRole;
+    private List<String> authorities;
     private String avatar;
     private String status;
     private String created;
@@ -43,6 +45,7 @@ public class AccountInfoVO {
         this.avatar = AccountAvatarUtil.getAvatar(accountInfo.getAvatar());
         this.status = accountInfo.getStatus().toString();
         this.created = DateUtil.formatDateTime(accountInfo.getCreated());
-        this.roles = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getRoles(), StringConstants.Symbol.COMMA));
+        this.userRole = accountInfo.getRole();
+        this.authorities = Arrays.asList(StringUtils.tokenizeToStringArray(accountInfo.getAuthorities(), StringConstants.Symbol.COMMA));
     }
 }

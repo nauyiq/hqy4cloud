@@ -1,9 +1,9 @@
 package com.hqy.cloud.auth.service;
 
-import com.hqy.cloud.account.dto.AccountInfoDTO;
-import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.account.entity.Account;
-import com.hqy.cloud.auth.account.entity.Role;
+import com.hqy.cloud.auth.account.entity.AccountProfile;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.base.dto.UserDTO;
 
 import java.util.List;
 
@@ -54,29 +54,20 @@ public interface AccountOperationService {
 
     /**
      * 注册账号
-     * @param userDTO         用户信息
-     * @param roles           角色列表
-     * @return                result.
+     * @param account         account实体
+     * @param accountProfile  account profile实体
+     * @return                是否成功
      */
-    boolean registryAccount(UserDTO userDTO, List<Role> roles);
+    boolean registryAccount(Account account, AccountProfile accountProfile);
 
-    /**
-     * 删除账号角色，
-     * 需要注意的是：不会更新账户表冗余字段数据.
-     * @param role 角色
-     * @return     result.
-     */
-    boolean deleteAccountRole(Role role);
 
     /**
      * 修改账户
      * @param userDTO  用户信息.
-     * @param roles    角色列表
      * @param account  被修改的账户
-     * @param oldRoles 旧角色列表
      * @return         result.
      */
-    boolean editAccount(UserDTO userDTO, List<Role> roles, Account account, List<Role> oldRoles);
+    boolean editAccount(UserDTO userDTO,  Account account);
 
     /**
      * 删除用户

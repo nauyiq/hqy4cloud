@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * AccountRpcUtil.
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/10/8 11:04
+ * @date 2022/10/8
  */
 public class AccountRpcUtil {
 

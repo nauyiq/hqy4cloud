@@ -1,5 +1,6 @@
 package com.hqy.cloud.foundation.id;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.id.service.RemoteLeafService;
 import com.hqy.cloud.id.struct.ResultStruct;
@@ -47,7 +48,7 @@ public class DistributedIdGen {
     public static long getSnowflakeId(String scene) {
         AssertUtil.notEmpty(scene, "Snowflake scene should not be empty.");
         if (CommonSwitcher.ENABLE_USING_REDIS_SNOWFLAKE_WORKER_ID.isOn()) {
-            SnowflakeIdGen idGen = ID_MAP.computeIfAbsent(scene, v -> new RedisSnowflakeIdGen(scene, SpringContextHolder.getBean(RedissonClient.class)));
+            SnowflakeIdGen idGen = ID_MAP.computeIfAbsent(scene, v -> new RedisSnowflakeIdGen(scene, SpringUtil.getBean(Redisson)));
             return idGen.nextId();
         }
 

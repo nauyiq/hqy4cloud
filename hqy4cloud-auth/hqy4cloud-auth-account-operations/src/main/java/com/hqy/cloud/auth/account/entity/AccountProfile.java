@@ -1,12 +1,18 @@
 package com.hqy.cloud.auth.account.entity;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.hqy.cloud.auth.base.AccountConstants;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
+import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+
+import static com.hqy.cloud.foundation.common.account.AccountAvatarUtil.DEFAULT_AVATAR;
 
 /**
  * 账户信息表 t_account_profile
@@ -18,7 +24,6 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_account_profile")
 public class AccountProfile extends BaseEntity {
-
 
     /**
      * id
@@ -62,5 +67,16 @@ public class AccountProfile extends BaseEntity {
         this.avatar = avatar;
     }
 
-
+    public static AccountProfile register(long accountId, String nickname, String username, String phone, String avatar) {
+        if (StringUtils.isBlank(nickname)) {
+            // 随机生成昵称， 如果是手机注册的话采用 前缀 + 6位随机数 + 手机号后四位， 手机为空的话 则后四位采用username拼接，username不足四位则username全部拼接
+            if (StringUtils.isBlank(phone)) {
+                nickname = AccountConstants.DEFAULT_NICKNAME_PREFIX + RandomUtil.randomString(6) + (username.length() > 4 ? username.substring(0, 4) : username);
+            } else {
+                nickname = AccountConstants.DEFAULT_NICKNAME_PREFIX + RandomUtil.randomString(6) + phone.substring(7, 11);
+            }
+        }
+        avatar = StringUtils.isBlank(avatar) ? DEFAULT_AVATAR : AccountAvatarUtil.extractAvatar(avatar);
+        return new AccountProfile(accountId, nickname, avatar);
+    }
 }

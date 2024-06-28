@@ -19,11 +19,11 @@ public interface AuthPermissionService {
     boolean isPermitRequest(AuthenticationRequest request);
 
     /**
-     * 检查当前认证用户上下文是否存在permission
-     * @param permissions 校验的permissions
-     * @return            result.
+     * 检查当前认证用户是否存在权限列表
+     * @param authorities 权限列表
+     * @return            是否存在
      */
-    boolean havePermissions(String... permissions);
+    boolean hasAuthorities(String... authorities);
 
     /**
      * 返回白名单uri列表

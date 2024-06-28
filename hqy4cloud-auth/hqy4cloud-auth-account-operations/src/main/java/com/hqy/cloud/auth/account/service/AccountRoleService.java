@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.account.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountRole;
 
 import java.util.List;
@@ -11,6 +12,13 @@ import java.util.List;
  * @date 2022/12/12
  */
 public interface AccountRoleService extends IService<AccountRole> {
+
+    /**
+     * 生成注册账号角色中间表的实体
+     * @param account 账号实体
+     * @return        账号角色中间表实体
+     */
+    List<AccountRole> registerAccountRole(Account account);
 
     /**
      * 更新角色level

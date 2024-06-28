@@ -29,6 +29,8 @@
         <module>hqy4cloud-common-stream</module>
         <module>hqy4cloud-common-lock</module>
         <module>hqy4cloud-common-limit</module>
+        <module>hqy4cloud-common-web</module>
+        <module>hqy4cloud-common-file</module>
     </modules>
 
     <dependencies>

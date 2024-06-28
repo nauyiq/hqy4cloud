@@ -2,11 +2,7 @@ package com.hqy.cloud.auth.utils;
 
 import org.springframework.util.AntPathMatcher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 静态端点鉴权管理者.
@@ -63,16 +59,8 @@ public class StaticEndpointAuthorizationManager {
      */
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
-
-    /**
-     * 判断当前请求是否需要进权限校验.
-     * @param uri uri请求
-     * @return    是否需要进行权限校验
-     */
-    public boolean isNeedPermissionRequest(String uri) {
-
-
-
+    public List<String> getWhiteEndpointsPatterns() {
+        return WHITE_ENDPOINTS_PATTERNS;
     }
 
 

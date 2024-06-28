@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/12/12 10:48
+ * @date 2022/12/12
  */
 @Data
 public class BaseMenuVO {

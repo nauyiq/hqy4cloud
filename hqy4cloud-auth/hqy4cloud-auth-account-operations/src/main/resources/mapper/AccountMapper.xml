@@ -3,70 +3,100 @@
 
 <mapper namespace="com.hqy.cloud.auth.account.mapper.AccountMapper">
 
-    <select id="queryAccountByUsernameOrEmail" resultType="com.hqy.cloud.auth.account.entity.Account">
-        SELECT
-            id,
-            password,
-            username,
-            email,
-            phone,
-            roles,
-            status
-        from t_account
-        WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail} AND deleted = 0
+    <resultMap id="baseResultMap" type="com.hqy.cloud.auth.account.entity.Account">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="role" column="role"/>
+        <result property="authorities" column="authorities"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <resultMap id="accountInfoResultMap" type="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="role" column="role"/>
+        <result property="authorities" column="authorities"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="intro" column="intro"/>
+        <result property="birthday" column="birthday"/>
+        <result property="sex" column="sex"/>
+    </resultMap>
+
+    <select id="getAccountIdByUsernameOrEmail" resultType="java.lang.Long">
+        SELECT id FROM t_account WHERE DELETED = 0 AND ( username = #{value} OR email = #{value})
     </select>
 
-    <select id="getAccountInfo" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+    <select id="queryAccountByUsernameOrEmail" resultMap="baseResultMap">
+        SELECT *
+        from t_account
+        WHERE username = (#{usernameOrEmail} or email = #{usernameOrEmail}) AND deleted = 0
+    </select>
+
+    <select id="getAccountInfo" resultMap="accountInfoResultMap">
         SELECT
-        a.id,a.username,a.email,a.phone,a.roles,a.status,
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
         p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM
         (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
         t_account a
-        WHERE a.id = #{id}
+        WHERE a.id = #{id} AND a.deleted = 0
     </select>
 
 
-    <select id="getAccountInfos" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+    <select id="getAccountInfos" resultMap="accountInfoResultMap">
         SELECT
-        a.id,a.username,a.email,a.phone,a.roles,a.status,
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
         p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM t_account a
-        LEFT JOIN t_account_profile p
-        ON a.id = p.id
-        WHERE a.id in
+        LEFT JOIN t_account_profile p ON a.id = p.id
+        WHERE a.deleted = 0 AND a.id in
         <foreach collection="ids" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
     </select>
 
-    <select id="getAccountInfosByName" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
-        SELECT  a.id,a.username,
+    <select id="getAccountProfilesByName" resultMap="accountInfoResultMap">
+        SELECT  a.id,a.username
                 p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM `t_account` a
         LEFT JOIN `t_account_profile` p ON a.`id` = p.`id`
         WHERE a.`username` = #{name} OR p.nickname LIKE concat('%', #{name}, '%')
     </select>
 
-    <select id="getAccountInfoByUsernameOrEmail" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+    <select id="getAccountInfoByUsernameOrEmail" resultMap="accountInfoResultMap">
         SELECT
-        a.id,a.username,a.email,a.phone,a.roles,a.status,
+            a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
         p.avatar,p.nickname,p.intro,p.birthday,p.sex
         FROM t_account a
         LEFT JOIN t_account_profile p
         ON a.id = p.id
-        WHERE a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail}
+        WHERE a.deleted = 0 AND (a.username = #{usernameOrEmail} or a.email = #{usernameOrEmail})
     </select>
 
 
-    <select id="getPageAccountInfos" resultType="com.hqy.cloud.account.dto.AccountInfoDTO">
+    <select id="getPageAccountInfos" resultMap="accountInfoResultMap">
         SELECT
-        a.id,a.username,a.email,a.phone,a.roles,a.status,a.created,
+        a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
         p.avatar,p.nickname,p.intro,p.birthday
         FROM t_account a
         LEFT JOIN t_account_profile p ON a.id = p.id
-        LEFT JOIN t_account_role ar ON  a.id = ar.account_id
-        WHERE a.deleted = 0 AND ar.level &gt;= #{maxLevel}
+        WHERE a.deleted = 0
         <if test="username != null and username != ''">
             AND a.username like concat('%', #{username}, '%')
         </if>

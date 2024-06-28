@@ -1,10 +1,14 @@
 package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.security.common.SecurityConstants;
+import com.hqy.cloud.auth.base.enums.AccountResultCode;
+import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -14,9 +18,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -66,7 +67,7 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
             if (errorCode.equals(OAuth2ErrorCodes.INVALID_REQUEST)) {
                 result = ResultCode.ERROR_PARAM;
             } else if (errorCode.equals(SecurityConstants.INVALID_REQUEST_CODE)) {
-                result = ResultCode.VERIFY_CODE_ERROR;
+                result = AccountResultCode.VERIFY_CODE_ERROR;
             }
         }
         return result;

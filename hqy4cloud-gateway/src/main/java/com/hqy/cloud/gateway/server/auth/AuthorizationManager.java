@@ -27,7 +27,8 @@ import java.util.Objects;
  * @date 2022-03-14 14:29
  */
 @Slf4j
-@Component
+//@Component
+@Deprecated
 @RequiredArgsConstructor
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
     private final AuthPermissionService authPermissionService;
@@ -47,7 +48,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             // 设置鉴权的权限列表到请求上下文中
             request.setAuthorities(authoritiesAuthorities.stream().map(GrantedAuthority::getAuthority).toList());
         }
-        // 判断是否需要进行鉴权
+        // 判断允许访问
         return new AuthorizationDecision(authPermissionService.isPermitRequest(request));
     }
 
@@ -59,6 +60,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         private final String method;
         @Setter
         private List<String> authorities;
+
 
         public ReactAccess2Request(ServerHttpRequest request) {
             this.requestIp = RequestUtil.getIpAddress(request);

@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.support.base;
 
-import com.hqy.cloud.auth.base.exception.ScopeException;
+import com.hqy.cloud.auth.security.common.ScopeException;
 import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;

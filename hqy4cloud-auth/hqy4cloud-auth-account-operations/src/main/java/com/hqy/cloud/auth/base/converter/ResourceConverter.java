@@ -1,9 +1,9 @@
 package com.hqy.cloud.auth.base.converter;
 
+import com.hqy.cloud.auth.account.entity.Permissions;
 import com.hqy.cloud.auth.base.dto.MicroServiceType;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.base.vo.AdminResourceVO;
-import com.hqy.cloud.auth.account.entity.Resource;
 import com.hqy.cloud.common.base.converter.CommonConverter;
 import com.hqy.cloud.common.base.project.ProjectInfo;
 import org.mapstruct.Mapper;
@@ -25,18 +25,18 @@ public interface ResourceConverter {
 
     /**
      * Resource convert to AdminResourceVO.
-     * @param resource Resource.
+     * @param permissions Resource.
      * @return         {@link AdminResourceVO}
      */
     @Mapping(target = "status", source = "status", qualifiedByName = "statusConvertString")
-    AdminResourceVO convert(Resource resource);
+    AdminResourceVO convert(Permissions permissions);
 
     /**
      * ResourceDTO convert to Resource.
      * @param resourceDTO {@link ResourceDTO}
-     * @return            {@link Resource}
+     * @return            {@link Permissions}
      */
-    Resource convert(ResourceDTO resourceDTO);
+    Permissions convert(ResourceDTO resourceDTO);
 
     /**
      * ProjectInfo convert to MicroServiceType.
@@ -49,8 +49,8 @@ public interface ResourceConverter {
     /**
      * update resource from resourceDTO， not set null property.
      * @param resourceDTO {@link ResourceDTO}
-     * @param resource    {@link Resource}
+     * @param permissions    {@link Permissions}
      */
-    void updateResourceByDTO(ResourceDTO resourceDTO, @MappingTarget Resource resource);
+    void updateResourceByDTO(ResourceDTO resourceDTO, @MappingTarget Permissions permissions);
 
 }

@@ -21,10 +21,10 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- 权限认证核心模块 -->
+        <!-- web模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
+            <artifactId>hqy4cloud-common-web</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -39,6 +39,14 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
+
+        <!-- 敏感词脱敏 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-core</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
     </dependencies>
 
 

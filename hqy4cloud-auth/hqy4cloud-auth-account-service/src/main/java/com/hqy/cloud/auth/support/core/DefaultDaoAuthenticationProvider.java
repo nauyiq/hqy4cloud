@@ -1,11 +1,11 @@
 package com.hqy.cloud.auth.support.core;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.hqy.cloud.auth.security.common.SecurityConstants;
-import com.hqy.cloud.auth.core.CustomerUserDetailService;
-import com.hqy.cloud.util.web.WebUtils;
+import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
+import com.hqy.cloud.auth.common.SecurityConstants;
+import com.hqy.cloud.auth.utils.WebUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
@@ -15,8 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsPasswordService;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -25,22 +23,21 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
+ * 数据层面的认证提供者
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/2/24 16:29
+ * @date 2023/2/24
  */
 public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
     private PasswordEncoder passwordEncoder;
     private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
     private final static BasicAuthenticationConverter basicConvert = new BasicAuthenticationConverter();
-
 
     /**
      * The password used to perform {@link PasswordEncoder#matches(CharSequence, String)}
@@ -50,9 +47,6 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
      */
     private volatile String userNotFoundEncodedPassword;
 
-    private UserDetailsService userDetailsService;
-
-    private UserDetailsPasswordService userDetailsPasswordService;
 
     public DefaultDaoAuthenticationProvider(MessageSource messageSource) {
         setMessageSource(messageSource);
@@ -61,24 +55,29 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
-        String email = WebUtils.getRequest().get().getParameter(SecurityConstants.EMAIL_PARAMETER_NAME);
-        String code = WebUtils.getRequest().get().getParameter(SecurityConstants.CODE_PARAMETER_NAME);
-        if (StrUtil.isAllNotBlank(email, code)) {
-            return;
-        }
+        Optional<HttpServletRequest> optional = WebUtils.getRequest();
+        if (optional.isPresent()) {
+            HttpServletRequest request = optional.get();
+            String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
+            String email = request.getParameter(SecurityConstants.EMAIL_PARAMETER_NAME);
+            String code = request.getParameter(SecurityConstants.CODE_PARAMETER_NAME);
 
-        //验证密码
-        if (authentication.getCredentials() == null) {
-            this.logger.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-        }
-        String presentedPassword = authentication.getCredentials().toString();
-        if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            this.logger.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            if (StrUtil.isAllNotBlank(email, code)) {
+                return;
+            }
+
+            //验证密码
+            if (authentication.getCredentials() == null) {
+                this.logger.debug("Failed to authenticate since no credentials provided");
+                throw new BadCredentialsException(this.messages
+                        .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            }
+            String presentedPassword = authentication.getCredentials().toString();
+            if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+                this.logger.debug("Failed to authenticate since password does not match stored value");
+                throw new BadCredentialsException(this.messages
+                        .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            }
         }
     }
 
@@ -88,25 +87,25 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
         prepareTimingAttackProtection();
         HttpServletRequest request = WebUtils.getRequest().orElseThrow(
                 (Supplier<Throwable>) () -> new InternalAuthenticationServiceException("web request is empty"));
+//        Map<String, String> paramMap = ServletUtil.getParamMap(request);
+//        String grantType = paramMap.get(OAuth2ParameterNames.GRANT_TYPE);
+//        String clientId = paramMap.get(OAuth2ParameterNames.CLIENT_ID);
 
-        Map<String, String> paramMap = ServletUtil.getParamMap(request);
-        String grantType = paramMap.get(OAuth2ParameterNames.GRANT_TYPE);
-        String clientId = paramMap.get(OAuth2ParameterNames.CLIENT_ID);
-
+        String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
+        String clientId = request.getParameter(OAuth2ParameterNames.CLIENT_ID);
         if (StrUtil.isBlank(clientId)) {
             clientId = basicConvert.convert(request).getName();
         }
 
-        Map<String, CustomerUserDetailService> userDetailsServiceMap = SpringUtil
-                .getBeansOfType(CustomerUserDetailService.class);
+        Map<String, UserDetailsServiceWrapper> userDetailsServiceMap = SpringUtil.getBeansOfType(UserDetailsServiceWrapper.class);
 
         String finalClientId = clientId;
-        Optional<CustomerUserDetailService> optional = userDetailsServiceMap.values().stream()
+        Optional<UserDetailsServiceWrapper> optional = userDetailsServiceMap.values().stream()
                 .filter(service -> service.support(finalClientId, grantType))
                 .max(Comparator.comparingInt(Ordered::getOrder));
 
-        if (!optional.isPresent()) {
-            throw new InternalAuthenticationServiceException("UserDetailsService error , not register");
+        if (optional.isEmpty()) {
+            throw new InternalAuthenticationServiceException("UserDetailsService error, not register.");
         }
 
         try {
@@ -160,15 +159,5 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
         return this.passwordEncoder;
     }
 
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
-    protected UserDetailsService getUserDetailsService() {
-        return this.userDetailsService;
-    }
-
-    public void setUserDetailsPasswordService(UserDetailsPasswordService userDetailsPasswordService) {
-        this.userDetailsPasswordService = userDetailsPasswordService;
-    }
 }

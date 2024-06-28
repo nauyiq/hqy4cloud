@@ -25,7 +25,6 @@ import java.util.Objects;
 @Aspect
 @RequiredArgsConstructor
 public class AuthenticationAspect {
-
     private final AuthPermissionService authPermissionService;
 
     @Pointcut("(execution(public * *(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping) && @annotation(com.hqy.cloud.auth.annotation.PreAuthentication)) || "
@@ -42,10 +41,10 @@ public class AuthenticationAspect {
         if (Objects.isNull(authentication)) {
             return pjp.proceed();
         }
-        if (authPermissionService.havePermissions(authentication.value())) {
+        // 判断是否有权限.
+        if (authPermissionService.hasAuthorities(authentication.value())) {
             return pjp.proceed();
         }
-
         return R.failed(ResultCode.NOT_PERMISSION);
     }
 

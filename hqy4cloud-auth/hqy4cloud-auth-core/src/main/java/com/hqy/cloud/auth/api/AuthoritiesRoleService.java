@@ -1,7 +1,5 @@
 package com.hqy.cloud.auth.api;
 
-import com.hqy.cloud.auth.common.AuthenticationModuleInfo;
-
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +15,7 @@ public interface AuthoritiesRoleService {
      * @param authorities 权限、角色
      * @return            权限模块信息.
      */
-    List<AuthenticationModuleInfo> loadAuthenticationModulesByAuthorities(List<String> authorities);
+//    List<AuthenticationModuleInfo> loadAuthenticationModulesByAuthorities(List<String> authorities);
 
     /**
      * 全区权限标识配置

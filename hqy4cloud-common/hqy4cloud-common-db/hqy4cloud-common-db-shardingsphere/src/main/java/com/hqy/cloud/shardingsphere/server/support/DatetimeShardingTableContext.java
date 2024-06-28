@@ -1,7 +1,7 @@
 package com.hqy.cloud.shardingsphere.server.support;
 
 import com.google.common.collect.Maps;
-import com.hqy.cloud.foundation.spi.SpiInstanceServiceLoad;
+import com.hqy.cloud.util.spi.SpiInstanceServiceLoad;
 import com.hqy.cloud.shardingsphere.server.DatetimeShardingTableStrategy;
 import lombok.extern.slf4j.Slf4j;
 

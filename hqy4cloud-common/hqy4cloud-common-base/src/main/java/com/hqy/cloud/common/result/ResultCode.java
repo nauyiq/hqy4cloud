@@ -115,55 +115,8 @@ public enum ResultCode implements Result {
      */
     INVALID_DATA(1003, "Invalid data, please check input again"),
 
-    /**
-     * 找不到该用户
-     */
-    USER_NOT_FOUND(2000, "User not found."),
 
-    /**
-     * 当前用户是禁用状态
-     */
-    USER_DISABLED(2001, "The user disabled."),
 
-    /**
-     * 用户名不能为空
-     */
-    USERNAME_EMPTY(2002, "The username cannot be empty."),
-
-    /**
-     * 用户名已经存在
-     */
-    USERNAME_EXIST(2003,"This username already exist."),
-
-    /**
-     * 无效的邮箱
-     */
-    INVALID_EMAIL(2004, "Please input valid email."),
-
-    /**
-     * 邮箱已经存在.
-     */
-    EMAIL_EXIST(2005, "Account email already exist."),
-
-    /**
-     * 找不到邮箱
-     */
-    NOT_FOUND_EMAIL(2006, "Email not found."),
-
-    /**
-     * 电话已经存在
-     */
-    PHONE_EXIST(2007,"This phone already exist."),
-
-    /**
-     * 验证码错误
-     */
-    VERIFY_CODE_ERROR(2008, "Verify code error, please input right code."),
-
-    /**
-     * 用户已经存在
-     */
-    USER_EXIST(2009, "This user already exist."),
 
 
     /**
@@ -171,15 +124,7 @@ public enum ResultCode implements Result {
      */
     INVALID_ACCESS_USER(3001, "Username or password incorrect."),
 
-    /**
-     * 密码错误
-     */
-    PASSWORD_ERROR(3002, "Please input the correct password."),
 
-    /**
-     * 注册账号失败
-     */
-    REGISTRY_ACCOUNT_ERROR(3003, "Failed execute to registry account, please check params and try again later."),
 
     /**
      * 权限不够，无法设置的账户权限

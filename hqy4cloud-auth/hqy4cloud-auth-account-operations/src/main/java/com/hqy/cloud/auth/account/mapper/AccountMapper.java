@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.account.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.account.entity.Account;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,6 +15,12 @@ import java.util.List;
 @Mapper
 public interface AccountMapper extends BaseMapper<Account> {
 
+    /**
+     * 获取账号id
+     * @param value 邮箱、用户名、手机号码
+     * @return      账号id
+     */
+    Long getAccountIdByUsernameOrEmail(@Param("value") String value);
 
     /**
      * 根据用户名或者邮箱查询账号信息
@@ -49,16 +55,15 @@ public interface AccountMapper extends BaseMapper<Account> {
      * @param name 用户名或昵称
      * @return     {@link AccountInfoDTO}
      */
-    List<AccountInfoDTO> getAccountInfosByName(@Param("name") String name);
+    List<AccountInfoDTO> getAccountProfilesByName(@Param("name") String name);
 
     /**
      * 分页查询查询用户列表
      * @param username     用户名
      * @param nickname     昵称
-     * @param maxRoleLevel 用户最大角色级别
      * @return             AccountInfoDTO.
      */
-    List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname, @Param("maxLevel") Integer maxRoleLevel);
+    List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname);
 
 
 

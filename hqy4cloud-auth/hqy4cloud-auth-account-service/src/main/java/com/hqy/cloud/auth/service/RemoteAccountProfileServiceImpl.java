@@ -1,15 +1,16 @@
 package com.hqy.cloud.auth.service;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hqy.cloud.account.service.RemoteAccountProfileService;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheDelayRemoveService;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
+import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
-import com.hqy.cloud.auth.base.dto.AccountDTO;
-import com.hqy.cloud.auth.cache.support.AccountCacheService;
-import com.hqy.cloud.auth.account.entity.AccountProfile;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
@@ -32,21 +33,15 @@ import java.util.List;
 public class RemoteAccountProfileServiceImpl extends AbstractRPCService implements RemoteAccountProfileService {
     private final AccountProfileService accountProfileService;
     private final AccountOperationService accountOperationService;
-    private final AccountCacheService accountCacheService;
+    private final AccountAuthCacheDelayRemoveService accountAuthCacheDelayRemoveService;
 
     @Override
     public AccountProfileStruct getAccountProfile(Long userId) {
-        AccountDTO account = accountCacheService.getData(userId);
-        AccountProfile profile = accountProfileService.queryById(userId);
-        if (account == null || profile == null) {
-            return new AccountProfileStruct();
+        AccountInfoDTO accountInfo = accountOperationService.getAccountInfo(userId);
+        if (accountInfo == null) {
+            return null;
         }
-        // return host avatar.
-        String avatar = AccountAvatarUtil.getAvatar(profile.getAvatar());
-        profile.setAvatar(avatar);
-        AccountProfileStruct struct = AccountConverter.CONVERTER.convert(profile);
-        struct.username = account.getUsername();
-        return struct;
+        return AccountConverter.CONVERTER.convertProfile(accountInfo);
     }
 
     @Override
@@ -58,7 +53,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             }
             return new AccountProfileStruct();
         }
-        return buildAccountProfileStruct(accountInfo);
+        return AccountConverter.CONVERTER.convertProfile(accountInfo);
     }
 
     @Override
@@ -67,7 +62,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         if (CollectionUtils.isEmpty(infos)) {
             return Collections.emptyList();
         }
-        return infos.stream().map(this::buildAccountProfileStruct).toList();
+        return infos.stream().map(AccountConverter.CONVERTER::convertProfile).toList();
     }
 
     @Override
@@ -79,7 +74,7 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         if (CollectionUtils.isEmpty(infos)) {
             return Collections.emptyList();
         }
-        return infos.stream().map(this::buildAccountProfileStruct).toList();
+        return infos.stream().map(AccountConverter.CONVERTER::convertProfile).toList();
     }
 
     @Override
@@ -88,8 +83,14 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         struct.avatar = AccountAvatarUtil.extractAvatar(struct.avatar);
         AccountProfile profile = new AccountProfile();
         AccountConverter.CONVERTER.update(profile, struct);
-        return accountProfileService.updateSelective(profile);
-
+        // 第一次删除缓存
+        AccountAuthCacheManager.getInstance().remove(struct.id);
+        boolean result = accountProfileService.updateById(profile);
+        if (result) {
+            // 第二次删除缓存
+            accountAuthCacheDelayRemoveService.removeAccountAuthCache(struct.id);
+        }
+        return result;
     }
 
     @Override
@@ -99,11 +100,17 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             // 采用默认头像.
             avatar = AccountAvatarUtil.DEFAULT_AVATAR;
         }
-        AccountProfile profile = new AccountProfile(id, null, avatar);
-        boolean result = accountProfileService.updateSelective(profile);
+        UpdateWrapper<AccountProfile> wrapper = Wrappers.update();
+        wrapper.set("avatar", avatar);
+        wrapper.eq("id", id);
+        // 第一次删除缓存
+        AccountAuthCacheManager.getInstance().remove(id);
+        boolean result = accountProfileService.update(wrapper);
         if (!result) {
             log.warn("Failed execute to updateAccountAvatar, id: {}, avatar:{}.", id, avatar);
         }
+        // 第二次删除缓存
+        accountAuthCacheDelayRemoveService.removeAccountAuthCache(id);
     }
 
     @Override
@@ -111,7 +118,9 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
         if (profile == null || profile.id == null) {
             return false;
         }
-        AccountProfile accountProfile = accountProfileService.queryById(profile.id);
+        // 第一次删除缓存
+        AccountAuthCacheManager.getInstance().remove(profile.id);
+        AccountProfile accountProfile = accountProfileService.getById(profile.id);
         if (accountProfile == null) {
             return false;
         }
@@ -129,17 +138,12 @@ public class RemoteAccountProfileServiceImpl extends AbstractRPCService implemen
             accountProfile.setSex(profile.sex);
         }
         accountProfile.setIntro(profile.intro);
-        return accountProfileService.update(accountProfile);
+        boolean result = accountProfileService.updateById(accountProfile);
+        if (result) {
+            // 第二次删除缓存
+            accountAuthCacheDelayRemoveService.removeAccountAuthCache(profile.id);
+        }
+        return result;
     }
 
-    private AccountProfileStruct buildAccountProfileStruct(AccountInfoDTO accountInfo) {
-        return AccountProfileStruct.builder()
-                .id(accountInfo.getId())
-                .username(accountInfo.getUsername())
-                .nickname(accountInfo.getNickname())
-                .avatar(AccountAvatarUtil.getAvatar(accountInfo.getAvatar()))
-                .intro(accountInfo.getIntro())
-                .birthday(DateUtil.format(accountInfo.getBirthday(), DatePattern.NORM_DATETIME_MINUTE_PATTERN))
-                .sex(accountInfo.getSex()).build();
-    }
 }

@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,14 +29,15 @@ public class UserDTO implements Serializable {
     private String password;
     private String avatar;
     private Boolean status;
-    private List<String> role;
+    private String role;
+    private List<String> authorities = new ArrayList<>();
 
     public boolean checkAddUser() {
         if (StringUtils.isAnyBlank(username, email, password)) {
             return false;
         }
 
-        if (CollectionUtils.isEmpty(role)) {
+        if (StringUtils.isEmpty(role)) {
             return false;
         }
 

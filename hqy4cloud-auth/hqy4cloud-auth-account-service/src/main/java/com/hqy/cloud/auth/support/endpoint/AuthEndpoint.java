@@ -1,13 +1,15 @@
 package com.hqy.cloud.auth.support.endpoint;
 
 import cn.hutool.core.util.StrUtil;
+import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
 import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.auth.account.entity.SysOauthClient;
 import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
-import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.common.bind.R;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +30,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
@@ -71,7 +71,7 @@ public class AuthEndpoint {
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
                                 @RequestParam(OAuth2ParameterNames.STATE) String state) {
 
-        SysOauthClient clientDetails = sysOauthClientService.queryById(clientId);
+        SysOauthClient clientDetails = sysOauthClientService.findByClientId(clientId);
         if (Objects.isNull(clientDetails)) {
             throw new NotAuthenticationException("clientId 不合法");
         }

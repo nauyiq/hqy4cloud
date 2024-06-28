@@ -1,7 +1,7 @@
 package com.hqy.cloud.foundation.event.alerter;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.foundation.spi.SpiInstanceServiceLoad;
+import com.hqy.cloud.util.spi.SpiInstanceServiceLoad;
 import com.hqy.foundation.event.notice.NotificationController;
 import com.hqy.foundation.event.notice.NotificationType;
 import com.hqy.foundation.event.notice.Notifier;

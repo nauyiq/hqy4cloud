@@ -4,7 +4,7 @@ import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
 import com.hqy.foundation.limit.service.BlockedIpService;
 import com.hqy.foundation.limit.service.ManualWhiteIpService;
 import com.hqy.foundation.limit.service.ThrottlesServer;
-import com.hqy.cloud.util.web.HtmlCommonUtil;
+import com.hqy.cloud.web.utils.HtmlCommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

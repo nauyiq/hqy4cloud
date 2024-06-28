@@ -163,10 +163,6 @@ public class CommonSwitcher extends AbstractSwitcher {
      */
     public static final CommonSwitcher ENABLE_TRANSLATE_DRUID_BASIC_AUTH_FILTER = new CommonSwitcher(234, "节点-是否启用druid basic认证传递过滤器", true);
 
-    /**
-     * 节点-是否开启mock ip测试
-     */
-    public static final CommonSwitcher ENABLE_REQUEST_MOCK_IP = new CommonSwitcher(235, "是否开启mock ip测试", false);
 
     /**
      * 节点-是否开启redis缓存token时采用json序列化
@@ -203,6 +199,11 @@ public class CommonSwitcher extends AbstractSwitcher {
      * 节点-是否启用当shardingsphere配置的真实节点列表为空时，兜底使用逻辑表
      */
     public static final CommonSwitcher ENABLE_SUING_LOGIC_TABLE_WHEN_ACTUAL_NODES_EMPTY = new CommonSwitcher(242, "节点-是否启用当shardingsphere配置的真实节点列表为空时，兜底使用逻辑表", true);
+
+    /**
+     * 节点-是否允许内部传播用户认证信息
+     */
+    public static final CommonSwitcher ENABLE_DIFFUSE_INNER_USER_AUTH_INFO = new CommonSwitcher(243, "节点-是否允许内部传播用户认证信息", true);
 
     /**
      * 节点-测试开关（仅仅用于开关测试，不要用于业务规则判定）

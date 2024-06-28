@@ -20,9 +20,12 @@ public class FormIdentityLoginConfigurer extends AbstractHttpConfigurer<FormIden
                     formLogin.loginProcessingUrl("/token/form");
                     formLogin.failureHandler(new FormAuthenticationFailureHandler());
 
-                }).logout() // SSO登出成功处理
-                .logoutSuccessHandler(new SsoLogoutSuccessHandler()).deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true).and().csrf().disable();
+                }).logout((logout) -> {
+                    logout.deleteCookies("JSESSIONID")
+                            .invalidateHttpSession(true)
+                            .logoutUrl("/auth/logout")
+                            .logoutSuccessHandler(new SsoLogoutSuccessHandler());
+                }).csrf(AbstractHttpConfigurer::disable);
     }
 
 }

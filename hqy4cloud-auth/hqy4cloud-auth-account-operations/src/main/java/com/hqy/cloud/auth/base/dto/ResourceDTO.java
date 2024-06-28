@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.base.dto;
 
-import com.hqy.cloud.auth.account.entity.Resource;
+import com.hqy.cloud.auth.account.entity.Permissions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,11 +38,11 @@ public class ResourceDTO {
         this.path = path;
     }
 
-    public ResourceDTO(Resource resource) {
-        this.id = resource.getId();
-        this.name = resource.getName();
-        this.path = resource.getPath();
-        this.method = resource.getMethod();
-        this.status = resource.getStatus();
+    public ResourceDTO(Permissions permissions) {
+        this.id = permissions.getId();
+        this.name = permissions.getName();
+        this.path = permissions.getPath();
+        this.method = permissions.getMethod();
+        this.status = permissions.getStatus();
     }
 }

@@ -2,23 +2,19 @@ package com.hqy.cloud.common.bind;
 
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/2/24 17:39
+ * @date 2023/2/24
  */
+@Setter
+@Getter
 public class R<T> extends Response {
 
     private T data;
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 
     public static <T> R<T> ok() {
         return setResult(true, ResultCode.SUCCESS);

@@ -3,8 +3,7 @@ package com.hqy.cloud.util.crypto.symmetric;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.Mode;
-import cn.hutool.crypto.Padding;
+import cn.hutool.crypto.SecureUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.crypto.AbstractSymmetricSymmetric;
 import com.hqy.cloud.util.crypto.CryptoType;
@@ -12,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,14 +24,14 @@ import java.util.Objects;
 public class AES extends AbstractSymmetricSymmetric {
     private static final Logger log = LoggerFactory.getLogger(AES.class);
     private final cn.hutool.crypto.symmetric.AES aes;
-    private final static AES DEFAULT_AES = new AES("0ZWkuHb23n01sUXC");
+    private final static AES DEFAULT_AES = new AES("MFpXa3VIYjIzbjAxc1VYQw==");
     private final static Map<String, AES> AES_REPOSITORY = MapUtil.newConcurrentHashMap(2);
     private AES(String key) {
         super(key);
-        if (StringUtils.isBlank(key) || key.length() != 16) {
-            throw new UnsupportedOperationException("Aes key length must be 16.");
+        if (StringUtils.isBlank(key)) {
+            throw new UnsupportedOperationException("Aes key should not be blank.");
         }
-        this.aes = new cn.hutool.crypto.symmetric.AES(Mode.ECB, Padding.PKCS5Padding, key.getBytes());
+        this.aes = SecureUtil.aes(Base64.getDecoder().decode(key));
     }
 
     public static AES getInstance() {

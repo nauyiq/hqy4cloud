@@ -27,8 +27,8 @@ public class AuthSpringSecurityAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AuthPermissionService authPermissionService(Environment environment, AuthoritiesRoleService authoritiesRoleService, ManualWhiteIpService manualWhiteIpService) {
-        return new DefaultAuthPermissionService(environment, authoritiesRoleService, manualWhiteIpService);
+    public AuthPermissionService authPermissionService(Environment environment, ManualWhiteIpService manualWhiteIpService) {
+        return new DefaultAuthPermissionService(environment, manualWhiteIpService);
     }
 
     @Bean

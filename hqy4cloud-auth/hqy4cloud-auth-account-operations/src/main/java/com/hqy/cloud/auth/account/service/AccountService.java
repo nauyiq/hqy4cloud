@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.account.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.hqy.cloud.account.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.common.result.PageResult;
@@ -10,10 +10,16 @@ import java.util.List;
 
 /**
  * @author qiyuan.hong
- * @date 2022-03-10 21:17
+ * @date 2022-03-10
  */
 public interface AccountService extends IService<Account> {
 
+    /**
+     * 根据邮箱或用户名或手机获取账号id
+     * @param value 邮箱或用户名
+     * @return      用户id
+     */
+    Long getAccountIdByUsernameOrEmail(String value);
 
     /**
      * 根据用户名或者邮箱查询账号信息
@@ -54,12 +60,11 @@ public interface AccountService extends IService<Account> {
      * 分页查询查询用户列表
      * @param username     用户名模糊查询
      * @param nickname     角色名模糊查询
-     * @param maxRoleLevel 用户最大角色级别
      * @param current      当前页
      * @param size         每页多少行
      * @return             PageResult for AccountInfoDTO.
      */
-    PageResult<AccountInfoVO> getPageAccountInfos(String username, String nickname, Integer maxRoleLevel, Integer current, Integer size);
+    PageResult<AccountInfoVO> getPageAccountInfos(String username, String nickname, Integer current, Integer size);
 
 
 

@@ -1,20 +1,21 @@
 package com.hqy.cloud.auth.account.entity;
 
-import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.hqy.cloud.auth.base.dto.UserDTO;
-import com.hqy.cloud.common.base.project.MicroServiceConstants;
+import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyEmail;
+import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
+import com.hqy.cloud.auth.base.AccountConstants;
+import com.hqy.cloud.auth.common.UserRole;
+import com.hqy.cloud.db.handler.AesEncryptTypeHandler;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
 import com.hqy.cloud.foundation.id.DistributedIdGen;
-import com.hqy.cloud.util.ValidationUtil;
 import lombok.*;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serial;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 
@@ -52,17 +53,38 @@ public class Account extends BaseEntity {
     /**
      * 邮箱
      */
+    @SensitiveStrategyEmail
+    @TableField(typeHandler = AesEncryptTypeHandler.class)
     private String email;
 
     /**
      * 手机号
      */
+    @SensitiveStrategyPhone
+    @TableField(typeHandler = AesEncryptTypeHandler.class)
     private String phone;
+
+    /**
+     * 真实姓名
+     */
+    @TableField(typeHandler = AesEncryptTypeHandler.class)
+    private String realName;
+
+    /**
+     * 身份证
+     */
+    @TableField(typeHandler = AesEncryptTypeHandler.class)
+    private String idCard;
 
     /**
      * 用户角色
      */
-    private String roles;
+    private UserRole role;
+
+    /**
+     * 拥有的权限
+     */
+    private String authorities;
 
     /**
      * 状态
@@ -74,41 +96,36 @@ public class Account extends BaseEntity {
      */
     private Boolean deleted = false;
 
-
-    public Account(String usernameOrEmail) {
-        if (ValidationUtil.validateEmail(usernameOrEmail)) {
-            this.email = usernameOrEmail;
-        } else {
-            this.username = usernameOrEmail;
-        }
-    }
-
-    public Account(Long id, String username, String password) {
-        this(id, username, password, null, null, null);
-    }
-
-    public Account(String username, String password, String email, String roles) {
-        this(null, username, password, email, roles, null);
-    }
-
-    public Account(Long id, String username, String password, String email, String roles, String phone) {
+    public Account(Long id, String username, String password, String email, String phone, UserRole role, List<String> authorities) {
         super(new Date());
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.roles = roles;
+        this.role = role;
         this.phone = phone;
+        this.status = true;
+        // 将用户ROLE也加入authorities
+        if (CollectionUtils.isNotEmpty(authorities)) {
+            authorities.add(this.role.name());
+        } else {
+            authorities = List.of(this.role.name());
+        }
+        this.authorities = String.join(COMMA, authorities);
     }
 
-    public static Account of(UserDTO userDTO, List<Role> roles) {
-        List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
-        String role = StrUtil.join(COMMA, roleNames);
-        Account account = new Account(DistributedIdGen.getSnowflakeId(MicroServiceConstants.ACCOUNT_SERVICE), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), role, userDTO.getPhone());
-        if (Objects.nonNull(userDTO.getStatus())) {
-            account.setStatus(userDTO.getStatus());
+    public static Account register(String username, String password, String email, String phone, UserRole userRole, List<String> authorities) {
+        // 生成分布式用户ID
+        long accountId = DistributedIdGen.getSnowflakeId(AccountConstants.DISTRIBUTE_ID_ACCOUNT_SCENE);
+        if (userRole == null) {
+            userRole = UserRole.CUSTOMER;
         }
-        return account;
+        if (CollectionUtils.isEmpty(authorities)) {
+            authorities = List.of(userRole.name());
+        } else {
+            authorities.add(userRole.name());
+        }
+        return new Account(accountId, username, password, email, phone, userRole, authorities);
     }
 
 }

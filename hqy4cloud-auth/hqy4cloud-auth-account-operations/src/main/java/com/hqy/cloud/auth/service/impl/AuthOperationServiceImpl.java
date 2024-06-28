@@ -2,31 +2,29 @@ package com.hqy.cloud.auth.service.impl;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.account.entity.*;
-import com.hqy.cloud.auth.account.service.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.hqy.cloud.auth.account.entity.AccountMenu;
+import com.hqy.cloud.auth.account.entity.Menu;
+import com.hqy.cloud.auth.account.service.AccountMenuService;
+import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.MenuService;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
 import com.hqy.cloud.auth.base.dto.PermissionDTO;
 import com.hqy.cloud.auth.base.dto.ResourceDTO;
-import com.hqy.cloud.auth.base.dto.RoleMenuDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
-import com.hqy.cloud.auth.core.authentication.support.AuthenticationCacheService;
-import com.hqy.cloud.auth.account.mapper.MenuMapper;
-import com.hqy.cloud.auth.account.mapper.RoleMenuMapper;
-import com.hqy.cloud.auth.service.*;
-import com.hqy.cloud.util.AssertUtil;
+import com.hqy.cloud.auth.service.AuthOperationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hqy.cloud.auth.base.Constants.FIRST_MENU_PARENT_ID;
-import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
+import static com.hqy.cloud.auth.base.AccountConstants.FIRST_MENU_PARENT_ID;
 
 /**
  * @author qiyuan.hong
@@ -39,71 +37,42 @@ import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 public class AuthOperationServiceImpl implements AuthOperationService {
 
     private final AccountService accountService;
-    private final RoleService roleService;
-    private final RoleResourcesService roleResourcesService;
-    private final ResourceService resourceService;
     private final MenuService menuService;
-    private final RoleMenuService roleMenuService;
+    private final AccountMenuService accountMenuService;
     private final TransactionTemplate transactionTemplate;
 
+
     @Override
-    public boolean checkEnableModifyRoles(Long id, List<Role> roles) {
-        if (CollectionUtils.isEmpty(roles)) {
-            return false;
-        }
-        List<Integer> collect = roles.stream().map(Role::getLevel).toList();
-        return getAccountMaxAuthorityRoleLevel(id) <= Collections.min(collect);
+    public List<AccountMenu> getAccountMenus(Long accountId) {
+        QueryWrapper<AccountMenu> query = Wrappers.query();
+        query.eq("account_id", accountId);
+        return accountMenuService.list(query);
     }
 
-    @Override
-    public int getAccountMaxAuthorityRoleLevel(Long id) {
-
-        Account account = accountService.queryById(id);
-        AssertUtil.notNull(account, "Account should no be null.");
-        List<Role> roles = roleService.queryRolesByNames(Arrays.asList(StringUtils.tokenizeToStringArray(account.getRoles(), COMMA)));
-        AssertUtil.notEmpty(roles, "Account Roles should no be empty.");
-        List<Integer> levelList = roles.stream().map(Role::getLevel).toList();
-        return Collections.min(levelList);
-    }
 
     @Override
-    public List<String> getMenuPermissionsByRoles(List<String> roles) {
-        if (CollectionUtils.isEmpty(roles)) {
-            return Collections.emptyList();
-        }
-        List<Integer> ids = roleService.selectIdByNames(roles);
-        return ((RoleMenuMapper)(roleMenuService.getTkDao())).getManuPermissionsByRoleIds(ids)
-                .stream().filter(StrUtil::isNotBlank).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<AdminMenuInfoVO> getAdminMenuInfo(List<String> roles) {
-        if (CollectionUtils.isEmpty(roles)) {
-            return Collections.emptyList();
-        }
+    public List<AdminMenuInfoVO> getAdminMenuInfo(Long id) {
         //获取顶级菜单.
         List<AdminMenuInfoVO> vos = menuService.getAdminMenuInfoByParentId(FIRST_MENU_PARENT_ID);
-        vos = setPermissions(vos, getPermissions(roles));
+        vos = setPermissions(vos, getPermissions(id));
         return vos;
     }
 
     @Override
-    public List<AdminTreeMenuVO> getAdminTreeMenu(List<String> roles, Boolean status) {
+    public List<AdminTreeMenuVO> getAdminTreeMenu(Long accountId, Boolean status) {
         // 查询菜单.
-        Menu queryMenu = new Menu();
-        queryMenu.setStatus(status);
-        List<Menu> menus = menuService.queryList(queryMenu);
+        QueryWrapper<Menu> query = Wrappers.query();
+        query.eq("status", status);
+        List<Menu> menus = menuService.list(query);
         if (CollectionUtils.isEmpty(menus)) {
             return Collections.emptyList();
         }
         // 遍历菜单生成树形结构.
-        return menusConvertTreeMenu(getPermissions(roles), menus);
+        return menusConvertTreeMenu(getPermissions(accountId), menus);
     }
 
-    private List<String> getPermissions(List<String> roles) {
-        List<Integer> ids = roleService.selectIdByNames(roles);
-        return ((RoleMenuMapper) (roleMenuService.getTkDao())).getManuPermissionsByRoleIds(ids)
-                .stream().filter(StrUtil::isNotBlank).collect(Collectors.toList());
+    private List<String> getPermissions(Long id) {
+        return this.getAccountMenus(id).parallelStream().map(AccountMenu::getMenuPermission).toList();
     }
 
     @Override
@@ -135,7 +104,7 @@ public class AuthOperationServiceImpl implements AuthOperationService {
 
     List<AdminTreeMenuVO> findChildrenNode(final Map<Long, List<Menu>> map, List<Menu> menus, List<String> permissions) {
         Map<Long, AdminTreeMenuVO> menuMap = menus.stream().map(menu -> menuConvertMenuInfo(menu, permissions)).collect(Collectors.toMap(AdminTreeMenuVO::getId, e -> e));
-        List<Long> ids = menus.stream().map(Menu::getId).collect(Collectors.toList());
+        List<Long> ids = menus.stream().map(Menu::getId).toList();
         for (Long id : ids) {
             if (map.containsKey(id)) {
                 List<Menu> menuList = map.get(id);
@@ -187,68 +156,6 @@ public class AuthOperationServiceImpl implements AuthOperationService {
         }).collect(Collectors.toList());
     }
 
-    @Override
-    public boolean updateRoleMenus(Role role, RoleMenuDTO roleMenus) {
-        //获取原来的角色菜单.
-        List<RoleMenu> roleMenusEntity = roleMenuService.queryList(new RoleMenu(role.getId()));
-        List<Integer> menuIds = roleMenus.pauseMenuIds();
-        if (CollectionUtils.isEmpty(menuIds) && CollectionUtils.isEmpty(roleMenusEntity)) {
-            return true;
-        }
-        if (CollectionUtils.isNotEmpty(roleMenusEntity) &&
-                roleMenusEntity.size() == menuIds.size() && menuIds.containsAll(roleMenusEntity.stream().map(RoleMenu::getMenuId).collect(Collectors.toList()))) {
-            return true;
-        }
 
-        //修改新的角色菜单
-        Boolean result = transactionTemplate.execute(status -> {
-            try {
-                if (CollectionUtils.isNotEmpty(roleMenusEntity)) {
-                    AssertUtil.isTrue(roleMenuService.deleteByRoleId(role.getId()), "Failed execute to delete account roles.");
-                }
-                if (CollectionUtils.isNotEmpty(menuIds)) {
-                    AssertUtil.isTrue(roleMenuService.insertList(menuIds.stream().map(menuId -> new RoleMenu(role.getId(), menuId)).collect(Collectors.toList()))
-                            , "Failed execute to insert role menus.");
-                }
-                return true;
-            } catch (Throwable cause) {
-                status.setRollbackOnly();
-                log.error(cause.getMessage(), cause);
-                return false;
-            }
-        });
 
-        if (result) {
-            roleAuthenticationCacheServer.invalid(role.getName());
-        }
-        return result;
-    }
-
-    public List<Resource> findResourcesByMenuPermission(List<Integer> menuIds) {
-        if (CollectionUtils.isEmpty(menuIds)) {
-            return Collections.emptyList();
-        }
-        MenuMapper dao = (MenuMapper) menuService.getTkMapper();
-        return dao.queryResourcesByMenuIds(menuIds).stream().filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    @Override
-    public MenuService menuTkService() {
-        return menuService;
-    }
-
-    @Override
-    public RoleMenuService roleMenuService() {
-        return roleMenuService;
-    }
-
-    @Override
-    public ResourceService resourceTkService() {
-        return resourceService;
-    }
-
-    @Override
-    public RoleResourcesService roleResourcesTkService() {
-        return roleResourcesService;
-    }
 }

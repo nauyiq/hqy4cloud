@@ -3,14 +3,16 @@ package com.hqy.cloud.actuator.endpoint;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.actuator.core.Indicator;
+import com.hqy.cloud.auth.utils.AuthUtils;
+import com.hqy.cloud.auth.utils.WebUtils;
 import com.hqy.cloud.common.base.config.ConfigConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.util.IpUtil;
-import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
 import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.util.web.RequestUtil;
+import com.hqy.cloud.web.utils.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +22,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public class MicroServiceDruidMonitorUrlEndpoint implements Indicator<String> {
         Map<String, Object> result = MapUtil.newHashMap(1);
         try {
             // 获取客户端IP
-            HttpServletRequest request = RequestUtil.currentRequest();
+            HttpServletRequest request = WebUtils.currentRequest();
             String requestIp = IpUtil.getRequestIp(request);
             boolean enabled = environment.getProperty(ConfigConstants.DRUID_MONITOR_ENABLED_KEY, Boolean.class, false) ||
                     environment.getProperty(ConfigConstants.DRUID_MONITOR_ALLOW_KEY, StrUtil.EMPTY).contains(requestIp);
@@ -73,7 +74,7 @@ public class MicroServiceDruidMonitorUrlEndpoint implements Indicator<String> {
         if (StringUtils.isAnyBlank(username, password)) {
             return StrUtil.EMPTY;
         }
-        return AuthenticationRequestContext.buildBasicAuth(username, password);
+        return AuthUtils.buildBasicAuth(username, password);
     }
 
     @Override

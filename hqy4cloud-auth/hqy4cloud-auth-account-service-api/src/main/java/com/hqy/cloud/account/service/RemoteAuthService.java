@@ -3,12 +3,9 @@ package com.hqy.cloud.account.service;
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;
 import com.facebook.swift.service.ThriftService;
-import com.hqy.cloud.account.struct.AuthenticationStruct;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.service.RPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
-
-import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -17,22 +14,6 @@ import java.util.List;
  */
 @ThriftService(MicroServiceConstants.ACCOUNT_SERVICE)
 public interface RemoteAuthService extends RPCService {
-
-    /**
-     * 根据角色获取可以访问的资源数据.
-     * @param  roles 角色列表.
-     * @return       ResourcesInRoleStruct.
-     */
-    @ThriftMethod
-    List<AuthenticationStruct> getAuthoritiesResourcesByRoles(@ThriftField(1)List<String> roles);
-
-    /**
-     * 根据角色获取接口permissions
-     * @param roles 角色列表
-     * @return      permissions
-     */
-    @ThriftMethod
-    List<String> getPermissionsByRoles(@ThriftField(1)List<String> roles);
 
     /**
      * basic认证

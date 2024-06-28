@@ -5,7 +5,7 @@ import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.util.IpUtil;
-import com.hqy.cloud.util.web.ResponseUtil;
+import com.hqy.cloud.web.utils.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -1,18 +1,18 @@
 package com.hqy.cloud.auth.support.core.email;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.security.common.SecurityConstants;
+import com.hqy.cloud.auth.common.SecurityConstants;
+import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
-import com.hqy.cloud.auth.utils.Oauth2EndpointUtils;
 import com.hqy.cloud.foundation.common.account.AccountAuthRandomCodeServer;
 import com.hqy.cloud.foundation.common.account.AccountRandomCodeServer;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 

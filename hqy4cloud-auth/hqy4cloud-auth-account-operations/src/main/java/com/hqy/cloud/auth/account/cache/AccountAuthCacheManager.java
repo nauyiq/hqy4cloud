@@ -5,8 +5,8 @@ import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
-import com.hqy.cloud.auth.account.entity.Account;
-import com.hqy.cloud.auth.account.entity.Role;
+import com.hqy.cloud.auth.account.entity.SysOauthClient;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import lombok.Getter;
 
@@ -25,9 +25,9 @@ public class AccountAuthCacheManager {
     public static final String ACCOUNT_USER_CACHE_KEY = ":account:cache:user:";
 
     /**
-     * 账户角色缓存key
+     * oauth2租户缓存key
      */
-    public static final String ACCOUNT_ROLE_CACHE_KEY = ":account:cache:role";
+    public static final String OAUTH2_CLIENT_CACHE_KEY = "account:cache:oauth_client:";
 
 
     private AccountAuthCacheManager() {
@@ -42,12 +42,12 @@ public class AccountAuthCacheManager {
                 .syncLocal(true)
                 .build();
 
-        QuickConfig roleQc = QuickConfig.newBuilder(ACCOUNT_ROLE_CACHE_KEY)
+        QuickConfig clientQc = QuickConfig.newBuilder(OAUTH2_CLIENT_CACHE_KEY)
                 .cacheType(CacheType.BOTH)
                 .expire(DateMeasureConstants.ONE_HOUR)
                 .syncLocal(true)
                 .build();
-        this.roleCache = manager.getOrCreateCache(roleQc);
+        this.oauthClientCache = manager.getOrCreateCache(clientQc);
     }
 
     private static volatile AccountAuthCacheManager instance;
@@ -62,23 +62,15 @@ public class AccountAuthCacheManager {
         return instance;
     }
 
-    private Cache<Long, Account> accountCache;
-    private Cache<String, Role> roleCache;
+    private Cache<Long, AccountInfoDTO> accountCache;
+    private Cache<String, SysOauthClient> oauthClientCache;
 
-    public void put(Long id, Account account) {
+    public void put(Long id, AccountInfoDTO account) {
         this.accountCache.put(id, account);
     }
 
     public void remove(Long id) {
         this.accountCache.remove(id);
-    }
-
-    public void put(String roleName, Role role) {
-        this.roleCache.put(roleName, role);
-    }
-
-    public void remove(String roleName) {
-        this.roleCache.remove(roleName);
     }
 
 

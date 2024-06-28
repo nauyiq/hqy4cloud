@@ -1,21 +1,17 @@
 package com.hqy.cloud.auth.api;
 
-import com.hqy.cloud.auth.common.AuthConstants;
-import com.hqy.cloud.auth.common.AuthenticationModuleInfo;
+import com.hqy.cloud.auth.common.OAuthConstants;
+import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
-import com.hqy.cloud.common.base.AuthenticationInfo;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.authentication.AuthenticationRequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.AntPathMatcher;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 抽象权限校验模板类.
@@ -28,7 +24,7 @@ import java.util.Set;
 public abstract class AbstractAuthPermissionService implements AuthPermissionService {
 
     private final Environment environment;
-    private final AuthoritiesRoleService authoritiesRoleService;
+//    private final AuthoritiesRoleService authoritiesRoleService;
 
 
     @Override
@@ -56,26 +52,23 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         return isWhiteStaticEndpoint(requestUri) || isWhiteAccessIp(request.requestIp()) || isBusinessWhiteAccessUri(requestUri);
     }
 
+
     @Override
-    public boolean havePermissions(String... permissions) {
-        AuthenticationInfo authentication = AuthenticationRequestContext.getAuthentication();
-        List<String> roles = authentication.getRoles();
-        Set<String> permissionsByAuthorities = authoritiesRoleService.loadAuthenticationPermissionsByAuthorities(roles);
-        if (CollectionUtils.isEmpty(permissionsByAuthorities)) {
-            return false;
-        }
-        return permissionsByAuthorities.containsAll(List.of(permissions));
+    public boolean hasAuthorities(String... authorities) {
+        // 获取当前登录用户权限
+        List<String> currentAuthorities = AuthUtils.getCurrentAuthorities();
+        return currentAuthorities.containsAll(List.of(authorities));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<String> getWhiteUris() {
-        return this.environment.getProperty(AuthConstants.BUSINESS_WHITE_URIS_KEY, List.class, AuthConstants.DEFAULT_BUSINESS_WHITE_URIS);
+        return this.environment.getProperty(OAuthConstants.BUSINESS_WHITE_URIS_KEY, List.class, OAuthConstants.DEFAULT_BUSINESS_WHITE_URIS);
     }
 
     protected boolean checkAuthoritiesRequest(List<String> authorities, AuthenticationRequest request) {
         // 权限角色信息.
-        List<AuthenticationModuleInfo> moduleInfos = authoritiesRoleService.loadAuthenticationModulesByAuthorities(authorities);
+        /*List<AuthenticationModuleInfo> moduleInfos = authoritiesRoleService.loadAuthenticationModulesByAuthorities(authorities);
         if (CollectionUtils.isEmpty(moduleInfos)) {
             return false;
         }
@@ -96,7 +89,8 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
                     return info.getMethod().toLowerCase().contains(method.toLowerCase()) && antPathMatcher.match(info.getModuleExpression(), requestUri);
                 }
             });
-        });
+        });*/
+        return true;
     }
 
     protected boolean isWhiteStaticEndpoint(String requestUri) {

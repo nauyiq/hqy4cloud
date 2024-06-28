@@ -9,5 +9,11 @@ import com.hqy.cloud.auth.account.entity.SysOauthClient;
  */
 public interface SysOauthClientService extends IService<SysOauthClient> {
 
+    /**
+     * 根据租户id获取租户信息
+     * @param clientId 租户id
+     * @return          租户信息
+     */
+    SysOauthClient findByClientId(String clientId);
 
 }
