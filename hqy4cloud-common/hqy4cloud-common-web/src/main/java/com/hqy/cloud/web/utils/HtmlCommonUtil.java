@@ -200,21 +200,7 @@ public class HtmlCommonUtil {
         }
     }
 
-    /**
-     * 获取域名
-     * @param url 提取url中的域名
-     * @return    url中的域名
-     */
-    public static String getDomain(String url) {
-        if (org.apache.commons.lang3.StringUtils.isBlank(url)) {
-            return StringConstants.EMPTY;
-        }
-        Matcher matcher = PatternConstants.DOMAIN_PATTERN.matcher(url);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return StringConstants.EMPTY;
-    }
+
 
 
 }

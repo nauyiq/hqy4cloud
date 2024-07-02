@@ -34,12 +34,6 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -48,7 +42,6 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

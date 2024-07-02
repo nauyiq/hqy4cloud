@@ -4,7 +4,7 @@ import com.hqy.cloud.registry.api.FailedBackRegistry;
 import com.hqy.cloud.registry.api.ServiceNotifyListener;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.foundation.timer.Timeout;
+import com.hqy.cloud.util.timer.Timeout;
 
 /**
  * FailedSubscribedTask.

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.hqy.cloud</groupId>
+        <artifactId>hqy4cloud-common</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <description>通用的基础设施模块</description>
+    <artifactId>hqy4cloud-common-infrastructure</artifactId>
+
+
+    <dependencies>
+        <!-- 缓存模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 分布式id api模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-base-id-service-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- rpc客户端 启动器 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- actuator 客户端端点模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-actuator-node</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 敏感词脱敏 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-core</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+    </dependencies>
+
+
+</project>

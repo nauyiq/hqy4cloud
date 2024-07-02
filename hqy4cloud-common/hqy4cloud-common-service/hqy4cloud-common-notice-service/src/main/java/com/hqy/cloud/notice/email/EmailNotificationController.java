@@ -8,7 +8,6 @@ import com.hqy.foundation.event.notice.NotificationType;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.hqy.cloud.notice.NoticeConstants.DEFAULT_SYSTEM_EMAIL;
 import static com.hqy.cloud.notice.NoticeConstants.SYSTEM_EMAIL_TO_PREFIX;

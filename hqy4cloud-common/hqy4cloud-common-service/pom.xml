@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hqy4cloud-common-web-service</module>
         <module>hqy4cloud-common-timer-service</module>
         <module>hqy4cloud-common-notice-service</module>
     </modules>

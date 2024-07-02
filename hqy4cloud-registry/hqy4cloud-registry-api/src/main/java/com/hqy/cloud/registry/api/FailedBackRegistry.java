@@ -5,7 +5,7 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.retry.*;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.thread.DefaultThreadFactory;
-import com.hqy.foundation.timer.HashedWheelTimer;
+import com.hqy.cloud.util.timer.HashedWheelTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

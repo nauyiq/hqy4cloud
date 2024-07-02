@@ -10,7 +10,7 @@ import com.hqy.cloud.socket.SocketConstants;
 import com.hqy.cloud.socket.api.SocketServer;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 
 /**
  * 客户端视角调用获取的到的Socket Instance.

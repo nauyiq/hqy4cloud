@@ -9,7 +9,7 @@ import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.web.utils.IpUtil;
-import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.cloud.common.enums.ExceptionType;
 import com.hqy.foundation.event.ExceptionCollActionEvent;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

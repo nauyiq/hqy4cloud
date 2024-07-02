@@ -1,5 +1,6 @@
 package com.hqy.cloud.registry.nacos.utils;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingMaintainService;
@@ -8,8 +9,7 @@ import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.nacos.naming.NamingServiceWrapper;
-import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.foundation.common.StringConstantFieldValuePredicate;
+import com.hqy.cloud.util.StringConstantFieldValuePredicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.alibaba.nacos.api.PropertyKeyConst.*;
+import static com.alibaba.nacos.api.PropertyKeyConst.NAMING_LOAD_CACHE_AT_START;
+import static com.alibaba.nacos.api.PropertyKeyConst.SERVER_ADDR;
 import static com.alibaba.nacos.client.naming.utils.UtilAndComs.NACOS_NAMING_LOG_NAME;
 
 /**
@@ -34,14 +35,14 @@ public class NacosNamingServiceUtil {
         NamingMaintainService namingMaintainService = BeanRepository.getInstance().getBean(NamingMaintainService.class);
         if (namingService == null) {
             try {
-                namingService = SpringContextHolder.getBean(NamingService.class);
+                namingService = SpringUtil.getBean(NamingService.class);
             } catch (Throwable cause) {
                 log.warn("Get namingService failed from spring context.");
             }
         }
         if (namingMaintainService == null) {
             try {
-                namingMaintainService = SpringContextHolder.getBean(NamingMaintainService.class);
+                namingMaintainService = SpringUtil.getBean(NamingMaintainService.class);
             } catch (Throwable cause) {
                 log.warn("Get namingMaintainService failed from spring context.");
             }

@@ -12,11 +12,11 @@ import com.hqy.cloud.registry.deploy.ApplicationLifecycleDeployer;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.common.base.project.ProjectContextInfo;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.Future;
 
 

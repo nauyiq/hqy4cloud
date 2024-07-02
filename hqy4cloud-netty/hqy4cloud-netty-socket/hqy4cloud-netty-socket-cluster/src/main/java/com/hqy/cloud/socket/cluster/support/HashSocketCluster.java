@@ -8,7 +8,7 @@ import com.hqy.cloud.socket.cluster.AbstractSocketCluster;
 import com.hqy.cloud.socket.model.SocketConnectionInfo;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.foundation.router.HashRouterService;
+import com.hqy.cloud.socket.cluster.HashRouterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -95,7 +95,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     @Override
     protected SocketServer doFind(List<SocketServer> socketServers, SocketConnectionInfo connectionInfo) {
         // 获取连接的应用名
-        String applicationName = socketServers.get(0).getInfo().getApplicationName();
+        String applicationName = socketServers.getFirst().getInfo().getApplicationName();
         HashClientConnection connection = (HashClientConnection) connectionInfo.getConnection();
         return findUpdated(applicationName, socketServers, connection.getHash());
     }
@@ -104,7 +104,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     @Override
     protected List<SocketServer> doFind(List<SocketServer> socketServers, List<SocketConnectionInfo> connectionInfos) {
         // 获取连接的应用名
-        String applicationName = socketServers.get(0).getInfo().getApplicationName();
+        String applicationName = socketServers.getFirst().getInfo().getApplicationName();
         // 获取客户端进行连接的hash参数值.
         Set<Integer> hashSet = connectionInfos.stream().map(connectionInfo -> connectionInfo.getParameter(SocketConstants.SOCKET_CLUSTER_ROUTER_HASH_KEY, 0)).collect(Collectors.toSet());
         // 获取hash值对应的路由地址.
@@ -130,7 +130,7 @@ public class HashSocketCluster extends AbstractSocketCluster {
     @Override
     protected ConnectBindModel chooseClientBindServer(String bizId, SocketServer localServer, List<SocketServer> socketServers) {
         int hash = getHash(bizId, socketServers);
-        SocketServer socketServer = findUpdated(socketServers.get(0).getInfo().getApplicationName(), socketServers, hash);
+        SocketServer socketServer = findUpdated(socketServers.getFirst().getInfo().getApplicationName(), socketServers, hash);
         SocketServerInfo info = socketServer.getInfo();
         Map<String, String> params = new HashMap<>(2);
         params.put(SocketConstants.SOCKET_CLUSTER_ROUTER_HASH_KEY, Integer.toString(hash));

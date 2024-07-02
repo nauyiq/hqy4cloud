@@ -34,11 +34,10 @@
             <version>${revision}</version>
         </dependency>
 
-
-        <!-- actuator端点模块 -->
+        <!-- 基础设施模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
+            <artifactId>hqy4cloud-common-infrastructure</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -46,20 +45,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-sentinel</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-seata</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
+
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>

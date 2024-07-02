@@ -1,10 +1,10 @@
 package com.hqy.cloud.rpc.cluster.support;
 
 import com.hqy.cloud.common.base.lang.exception.RpcException;
-import com.hqy.foundation.timer.HashedWheelTimer;
-import com.hqy.foundation.timer.Timeout;
-import com.hqy.foundation.timer.Timer;
-import com.hqy.foundation.timer.TimerTask;
+import com.hqy.cloud.util.timer.HashedWheelTimer;
+import com.hqy.cloud.util.timer.Timeout;
+import com.hqy.cloud.util.timer.Timer;
+import com.hqy.cloud.util.timer.TimerTask;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.directory.Directory;

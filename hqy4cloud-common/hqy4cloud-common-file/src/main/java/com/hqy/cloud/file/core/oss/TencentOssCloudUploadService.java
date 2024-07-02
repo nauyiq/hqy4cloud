@@ -4,7 +4,32 @@ import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.UploadFileException;
 import com.hqy.cloud.file.api.AbstractUploadFileService;
+import com.hqy.cloud.file.common.CloudSecret;
+import com.hqy.cloud.file.common.MultipartFileAdaptor;
+import com.hqy.cloud.file.common.annotation.UploadMode;
+import com.hqy.cloud.file.common.result.UploadResponse;
+import com.hqy.cloud.file.common.result.UploadResult;
+import com.hqy.cloud.file.config.UploadFileProperties;
+import com.hqy.cloud.file.core.DefaultResultUploadResponse;
+import com.hqy.cloud.file.core.UploadContext;
 import com.hqy.cloud.util.AssertUtil;
+import com.qcloud.cos.COSClient;
+import com.qcloud.cos.ClientConfig;
+import com.qcloud.cos.auth.BasicCOSCredentials;
+import com.qcloud.cos.auth.COSCredentials;
+import com.qcloud.cos.event.ProgressEvent;
+import com.qcloud.cos.event.ProgressListener;
+import com.qcloud.cos.exception.CosClientException;
+import com.qcloud.cos.http.HttpProtocol;
+import com.qcloud.cos.model.Bucket;
+import com.qcloud.cos.model.CannedAccessControlList;
+import com.qcloud.cos.model.CreateBucketRequest;
+import com.qcloud.cos.model.PutObjectRequest;
+import com.qcloud.cos.region.Region;
+import com.qcloud.cos.transfer.TransferManager;
+import com.qcloud.cos.transfer.TransferManagerConfiguration;
+import com.qcloud.cos.transfer.Upload;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -15,9 +40,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.hqy.cloud.file.common.FileConstants.*;
 
+;
 /**
  * 腾讯oss cloud文件上传服务.
  * @see AbstractUploadFileService
@@ -29,11 +57,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TencentOssCloudUploadService extends AbstractUploadFileService implements DisposableBean {
     private final String bucketName;
     private final String hostname;
+    @Getter
     private final TransferManager transferManager;
 
     public TencentOssCloudUploadService(String bucketName, UploadFileProperties properties) {
         super(properties);
-        CloudSecret cloudSecret = properties.getTencent();
+        CloudSecret cloudSecret = properties.getOss();
         AssertUtil.isFalse(Objects.isNull(cloudSecret) || StringUtils.isAnyBlank(cloudSecret.getSecretId(), cloudSecret.getSecretKey())
                 , "Tencent secret should not be empty.");
         // create cos client
@@ -119,7 +148,7 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         String fileName = generateFileName(originalFilename);
         String relativeFilePath = folderPath + fileName;
         String path = this.hostname + relativeFilePath;
-        com.hqy.cloud.web.common.UploadResult result = com.hqy.cloud.web.common.UploadResult.of(relativeFilePath, path);
+        UploadResult result = UploadResult.of(relativeFilePath, path);
 
         // 获取输入流.
         try (InputStream inputStream = getInputStream(state, originalFilename, file)) {
@@ -129,17 +158,21 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
             if (mode == null || mode == UploadMode.Mode.SYNC) {
                 Upload upload = transferManager.upload(putObjectRequest);
                 upload.waitForUploadResult();
-                return FlexibleResultUploadResponse.of(mode, result);
+                return DefaultResultUploadResponse.of(mode, result);
             } else {
                 //异步上传
-                FlexibleResultUploadResponse.AsyncUploadFileCallFuture future = FlexibleResultUploadResponse.AsyncUploadFileCallFuture.create();
-                try {
-                    Upload upload = transferManager.upload(putObjectRequest);
-                } catch (Throwable cause) {
-                    future.setException(cause);
-                }
+                Upload upload = transferManager.upload(putObjectRequest);
+                CompletableFuture<UploadResult> future = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        upload.waitForUploadResult();
+                        return result;
+                    } catch (Throwable cause) {
+                        log.error(cause.getMessage(), cause);
+                        return UploadResult.failed(cause.getMessage());
+                    }
+                }, threadPool);
                 putObjectRequest.withGeneralProgressListener(PutObjectEndProgressListener.of(file.getSize(), inputStream, future, result));
-                return FlexibleResultUploadResponse.of(mode, result, future);
+                return DefaultResultUploadResponse.of(mode, result, future);
             }
         } catch (Throwable cause) {
            throw new UploadFileException(cause);
@@ -157,10 +190,6 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         return inputStream;
     }
 
-    public TransferManager getTransferManager() {
-        return transferManager;
-    }
-
     @Override
     public void destroy() throws Exception {
         this.transferManager.shutdownNow();
@@ -171,15 +200,15 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         private final long bytes;
         private final InputStream inputStream;
         private final AtomicLong uploadedBytes = new AtomicLong(0);
-        private final FlexibleResultUploadResponse.AsyncUploadFileCallFuture future;
-        private final com.hqy.cloud.web.common.UploadResult uploadResult;
+        private final CompletableFuture<UploadResult> future;
+        private final UploadResult uploadResult;
 
         @Override
         public void progressChanged(ProgressEvent progressEvent) {
             //文件上传完毕
             if (uploadedBytes.addAndGet(progressEvent.getBytes()) == bytes) {
                 try {
-                    this.future.set(uploadResult);
+                    this.future.complete(uploadResult);
                 } finally {
                     if (inputStream != null) {
                         IOUtils.closeQuietly(inputStream);

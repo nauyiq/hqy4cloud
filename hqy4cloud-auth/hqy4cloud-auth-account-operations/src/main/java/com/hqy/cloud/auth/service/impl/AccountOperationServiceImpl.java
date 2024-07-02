@@ -2,7 +2,6 @@ package com.hqy.cloud.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheDelayRemoveService;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;

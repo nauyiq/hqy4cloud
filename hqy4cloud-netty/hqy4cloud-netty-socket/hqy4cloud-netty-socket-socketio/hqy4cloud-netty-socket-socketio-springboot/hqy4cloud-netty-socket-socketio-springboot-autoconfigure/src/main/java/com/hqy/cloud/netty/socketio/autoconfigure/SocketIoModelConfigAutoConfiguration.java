@@ -4,11 +4,10 @@ import com.hqy.cloud.netty.socketio.deloyer.SocketIoServerModel;
 import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
 import com.hqy.cloud.netty.socketio.properties.SocketIoServerProperties;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 

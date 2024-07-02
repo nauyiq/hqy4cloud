@@ -1,11 +1,17 @@
 package com.hqy.cloud.file.config;
 
+import com.hqy.cloud.file.api.UploadFileService;
+import com.hqy.cloud.file.core.DefaultUploadFileService;
+import com.hqy.cloud.file.domain.DomainServer;
+import com.hqy.cloud.file.domain.support.DefaultDomainServer;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.util.unit.DataSize;
 
 
@@ -29,5 +35,19 @@ public class UploadFileAutoConfiguration {
         factory.setMaxRequestSize(maxRequestSize);
         return factory.createMultipartConfig();
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomainServer domainServer(Environment environment) {
+        return new DefaultDomainServer(environment);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public UploadFileService uploadFileService(UploadFileProperties uploadFileProperties) {
+        return new DefaultUploadFileService(uploadFileProperties);
+    }
+
 
 }

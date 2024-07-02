@@ -13,7 +13,7 @@ import com.hqy.cloud.socket.cluster.ClusterSocketServer;
 import com.hqy.cloud.socket.cluster.SocketCluster;
 import com.hqy.cloud.socket.cluster.support.InstanceSocketServer;
 import com.hqy.cloud.socket.cluster.support.SocketClusters;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

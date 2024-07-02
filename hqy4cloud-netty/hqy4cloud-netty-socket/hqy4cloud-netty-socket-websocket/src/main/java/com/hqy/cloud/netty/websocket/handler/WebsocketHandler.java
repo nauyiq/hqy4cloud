@@ -18,7 +18,7 @@ import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ProjectExecutors;
 import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.cloud.common.enums.ExceptionType;
 import com.hqy.foundation.event.ExceptionCollActionEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

@@ -3,7 +3,7 @@ package com.hqy.cloud.socket.api;
 import com.hqy.cloud.registry.common.context.CloseableService;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
-import com.hqy.foundation.authorization.AuthorizationService;
+import com.hqy.cloud.util.authentication.AuthorizationService;
 
 /**
  * 标识一个socket服务

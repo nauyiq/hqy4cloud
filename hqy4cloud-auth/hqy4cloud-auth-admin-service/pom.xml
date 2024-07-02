@@ -33,8 +33,8 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-web-service</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>hqy4cloud-common-web</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -46,6 +46,13 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-file</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

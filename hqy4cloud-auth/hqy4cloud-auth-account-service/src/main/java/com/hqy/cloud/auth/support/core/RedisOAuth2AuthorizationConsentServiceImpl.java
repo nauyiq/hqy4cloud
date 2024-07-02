@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.support.core;
 
-import com.hqy.cloud.redis.server.support.RedisManager;
+import com.hqy.cloud.cache.redis.server.support.RedisManager;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;

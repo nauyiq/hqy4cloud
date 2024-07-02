@@ -3,7 +3,7 @@ package com.hqy.cloud.registry.retry;
 import com.hqy.cloud.registry.api.FailedBackRegistry;
 import com.hqy.cloud.registry.api.ServiceNotifyListener;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.foundation.timer.Timeout;
+import com.hqy.cloud.util.timer.Timeout;
 
 /**
  * FailedUnsubscribedTask.

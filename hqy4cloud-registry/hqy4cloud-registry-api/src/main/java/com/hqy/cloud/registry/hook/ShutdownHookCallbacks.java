@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import static com.hqy.foundation.common.thread.ThrowableAction.execute;
+import static com.hqy.cloud.util.thread.ThrowableAction.execute;
 
 /**
  * The composed {@link ShutdownHookCallback} class to manipulate one and more {@link ShutdownHookCallback} instances

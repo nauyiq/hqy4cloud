@@ -1,6 +1,6 @@
 package com.hqy.cloud.lock.server;
 
-import com.hqy.cloud.common.RedisConstants;
+import com.hqy.cloud.cache.common.RedisConstants;
 import com.hqy.cloud.lock.annotation.DistributeLock;
 import com.hqy.cloud.lock.common.DistributeLockException;
 import com.hqy.cloud.lock.common.LockConstants;

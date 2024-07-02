@@ -1,7 +1,7 @@
 package com.hqy.cloud.limit.api;
 
 
-import com.hqy.foundation.common.HttpRequestInfo;
+import com.hqy.cloud.common.request.HttpRequestInfo;
 import com.hqy.cloud.limit.core.LimitResult;
 
 /**

@@ -2,7 +2,7 @@ package com.hqy.cloud.limit.core;
 
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.limit.flow.FlowLimitConfig;
-import com.hqy.cloud.redis.server.support.SmartRedisManager;
+import com.hqy.cloud.cache.redis.server.support.SmartRedisManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;

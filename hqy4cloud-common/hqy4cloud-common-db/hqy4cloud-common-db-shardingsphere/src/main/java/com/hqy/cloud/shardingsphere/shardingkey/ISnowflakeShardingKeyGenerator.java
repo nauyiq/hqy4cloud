@@ -1,6 +1,6 @@
 package com.hqy.cloud.shardingsphere.shardingkey;
 
-import com.hqy.cloud.foundation.id.DistributedIdGen;
+import com.hqy.cloud.id.gen.DistributedIdGen;
 import com.hqy.cloud.registry.context.ProjectContext;
 import org.apache.shardingsphere.spi.keygen.ShardingKeyGenerator;
 

@@ -9,7 +9,7 @@ import com.hqy.cloud.auth.base.AccountConstants;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.db.handler.AesEncryptTypeHandler;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
-import com.hqy.cloud.foundation.id.DistributedIdGen;
+import com.hqy.cloud.id.gen.DistributedIdGen;
 import lombok.*;
 import org.apache.commons.collections4.CollectionUtils;
 

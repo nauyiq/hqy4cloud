@@ -1,11 +1,11 @@
 package com.hqy.cloud.gateway.loadbalance.support;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.gateway.loadbalance.WebsocketRouter;
+import com.hqy.cloud.socket.cluster.HashRouterService;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
 import com.hqy.cloud.util.JsonUtil;
-import com.hqy.cloud.util.spring.SpringContextHolder;
-import com.hqy.foundation.router.HashRouterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,11 +24,10 @@ import static com.hqy.cloud.socket.SocketConstants.SOCKET_SERVER_DEPLOY_METADATA
 @Slf4j
 @RequiredArgsConstructor
 public class WebsocketHashRouter implements WebsocketRouter {
-//    private final HashRouterService hashRouterService;
 
     @Override
     public ServiceInstance router(String serviceName, int hash, List<ServiceInstance> instances) {
-        HashRouterService hashRouterService = SpringContextHolder.getBean(HashRouterService.class);
+        HashRouterService hashRouterService = SpringUtil.getBean(HashRouterService.class);
         if (CollectionUtils.isEmpty(instances)) {
             log.warn("WebsocketHashRouter service instances is empty.");
             return null;
@@ -40,22 +39,8 @@ public class WebsocketHashRouter implements WebsocketRouter {
         }
 
         if (instances.size() == 1) {
-            ServiceInstance instance = instances.get(0);
-            /*int socketPort = getSocketPort(instance);
-            if (socketPort != 0) {
-                String instanceHashAddress = getInstanceHashAddress(instance, socketPort);
-                if (!hashRouterServiceAddress.equals(instanceHashAddress)) {
-                    // Update hash router
-                    updateHashRouter(hash, instanceHashAddress);
-                }
-            }*/
-            return instance;
+            return instances.getFirst();
         } else {
-                /*// 随机选取一个
-                ServiceInstance chooseInstance = instances.get(ThreadLocalRandom.current().nextInt(instances.size()));
-                String instanceHashAddress = getInstanceHashAddress(chooseInstance, getSocketPort(chooseInstance));
-                updateHashRouter(hash, instanceHashAddress);
-                return chooseInstance;*/
             for (ServiceInstance instance : instances) {
                 String hashAddress = getInstanceHashAddress(instance, getSocketPort(instance));
                 if (hashAddress.equals(hashRouterServiceAddress)) {

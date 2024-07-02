@@ -11,7 +11,7 @@ import com.hqy.cloud.chatgpt.config.ChatGptConfigurationProperties;
 import com.hqy.cloud.chatgpt.core.UnofficialApi;
 import com.hqy.cloud.chatgpt.service.UnofficialApiService;
 import com.hqy.cloud.common.base.lang.AuthConstants;
-import com.hqy.cloud.foundation.id.DistributedIdGen;
+import com.hqy.cloud.infrastructure.id.DistributedIdGen;
 import com.theokanning.openai.service.OpenAiService;
 import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,7 @@ import com.hqy.cloud.socket.cluster.SocketCluster;
 import com.hqy.cloud.socket.cluster.client.support.SocketClient;
 import com.hqy.cloud.socket.cluster.support.HashSocketCluster;
 import com.hqy.cloud.socket.cluster.support.SocketClusters;
-import com.hqy.foundation.router.HashRouterService;
+import com.hqy.cloud.socket.cluster.HashRouterService;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;

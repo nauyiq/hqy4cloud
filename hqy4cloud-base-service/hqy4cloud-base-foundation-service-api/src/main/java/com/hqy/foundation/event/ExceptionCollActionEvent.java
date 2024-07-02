@@ -1,7 +1,7 @@
 package com.hqy.foundation.event;
 
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.foundation.common.enums.ExceptionType;
+import com.hqy.cloud.common.enums.ExceptionType;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serial;

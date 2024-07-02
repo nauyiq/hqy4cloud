@@ -12,7 +12,7 @@ import com.hqy.cloud.foundation.limiter.FlowResult;
 import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.foundation.common.EventType;
-import com.hqy.foundation.common.HttpRequestInfo;
+import com.hqy.cloud.common.request.HttpRequestInfo;
 import com.hqy.foundation.event.collection.Collector;
 import com.hqy.foundation.limit.LimitResult;
 import com.hqy.foundation.limit.service.HttpThrottles;
