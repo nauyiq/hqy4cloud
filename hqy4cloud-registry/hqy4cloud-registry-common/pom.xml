@@ -18,11 +18,6 @@
             <artifactId>hqy4cloud-common-util</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service-api</artifactId>
-            <version>${revision}</version>
-        </dependency>
     </dependencies>
 
 </project>

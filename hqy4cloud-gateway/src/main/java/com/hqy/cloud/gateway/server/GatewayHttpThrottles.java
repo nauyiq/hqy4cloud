@@ -1,26 +1,24 @@
 package com.hqy.cloud.gateway.server;
 
 import cn.hutool.core.map.MapUtil;
-import com.hqy.cloud.auth.core.authentication.UploadFileSecurityChecker;
-import com.hqy.cloud.auth.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
+import com.hqy.cloud.collection.api.Collector;
+import com.hqy.cloud.collection.common.BusinessCollectionType;
+import com.hqy.cloud.collection.core.CollectorHolder;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.swticher.ServerSwitcher;
-import com.hqy.cloud.foundation.event.collector.support.CollectorCenter;
-import com.hqy.cloud.foundation.limiter.FlowResult;
-import com.hqy.cloud.gateway.util.RequestUtil;
-import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.foundation.common.EventType;
 import com.hqy.cloud.common.request.HttpRequestInfo;
-import com.hqy.foundation.event.collection.Collector;
-import com.hqy.foundation.limit.LimitResult;
-import com.hqy.foundation.limit.service.HttpThrottles;
+import com.hqy.cloud.common.swticher.ServerSwitcher;
+import com.hqy.cloud.gateway.util.RequestUtil;
+import com.hqy.cloud.limiter.api.HttpThrottles;
+import com.hqy.cloud.limiter.core.LimitResult;
+import com.hqy.cloud.limiter.flow.FlowResult;
+import com.hqy.cloud.limiter.flow.HttpAccessFlowControlCenter;
+import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -43,7 +41,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
     private final HttpAccessFlowControlCenter flowControlCenter;
     private final ThrottlesProcess throttlesProcess;
-    private final UploadFileSecurityChecker uploadFileSecurityChecker;
     private static final int MAX_LENGTH = 1024;
 
     public LimitResult limitValue(ServerHttpRequest request) {
@@ -61,7 +58,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
 
             @Override
             public String getMethod() {
-                return request.getMethodValue();
+                return request.getMethod().name();
             }
 
             @Override
@@ -126,8 +123,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
             return new LimitResult(true, printErrorMessage(requestIp, url, "[BBK]"), LimitResult.ReasonEnum.BI_BLOCKED_IP_NG);
         }
         //是否校验请求中的xss 聚合浓缩黑客判定方法
-        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn() &&
-                !uploadFileSecurityChecker.isUploadFileRequest(request.getHeader(HttpHeaders.CONTENT_TYPE), uri)) {
+        if (ServerSwitcher.ENABLE_HTTP_THROTTLE_SECURITY_CHECKING.isOn()) {
             LimitResult hackCheckLimitResult = checkHackAccess(uri, url, requestParams, request.getRequestBody(), requestIp);
             if (hackCheckLimitResult.isNeedLimit()) {
                 hackCheckLimitResult.setTip(printErrorMessage(requestIp, url, "[HAK]"));
@@ -235,7 +231,7 @@ public class GatewayHttpThrottles implements HttpThrottles {
                 .env(ProjectContext.getContextInfo().getEnv())
                 .throttleBy(createdBy).build();
         // 调用采集器进行采集
-        Collector<Object> collector = CollectorCenter.getInstance().getCollector(EventType.THROTTLES);
+        Collector<Object> collector = CollectorHolder.getInstance().getCollector(BusinessCollectionType.THROTTLES);
         collector.collect(struct);
     }
 }

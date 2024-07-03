@@ -231,18 +231,7 @@ public class IpUtil {
         return request.getHeader("cf-ipcountry");
     }
 
-    /**
-     *
-     * @param hostName hostName
-     * @return ip address or hostName if UnknownHostException
-     */
-    public static String getIpByHost(String hostName) {
-        try {
-            return InetAddress.getByName(hostName).getHostAddress();
-        } catch (UnknownHostException e) {
-            return hostName;
-        }
-    }
+
 
 
 }

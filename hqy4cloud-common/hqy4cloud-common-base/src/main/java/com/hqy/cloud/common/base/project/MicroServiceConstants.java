@@ -67,9 +67,6 @@ public class MicroServiceConstants {
     public static final String BLOG_SERVICE = "hqy4cloud-apps-blog-service";
     public static final ProjectInfo BLOG_INFO = new ProjectInfo("博客服务", BLOG_SERVICE);
 
-    public static final String FOUNDATION_SERVICE = "hqy4cloud-foundation-service";
-
-
     /**
      * 服务列表
      */

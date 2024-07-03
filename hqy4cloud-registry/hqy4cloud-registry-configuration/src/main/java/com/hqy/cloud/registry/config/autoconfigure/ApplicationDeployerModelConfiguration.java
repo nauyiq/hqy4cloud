@@ -1,5 +1,6 @@
 package com.hqy.cloud.registry.config.autoconfigure;
 
+import com.hqy.cloud.lock.service.LockService;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.cluster.MasterElectionService;
 import com.hqy.cloud.registry.cluster.support.LockMasterServiceImpl;
@@ -7,7 +8,7 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 import com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProperties;
 import com.hqy.cloud.registry.context.RegistryContext;
-import com.hqy.foundation.lock.LockService;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -19,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX;

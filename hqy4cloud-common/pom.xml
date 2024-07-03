@@ -28,11 +28,12 @@
         <module>hqy4cloud-common-db</module>
         <module>hqy4cloud-common-stream</module>
         <module>hqy4cloud-common-lock</module>
-        <module>hqy4cloud-common-limit</module>
+        <module>hqy4cloud-common-limiter</module>
         <module>hqy4cloud-common-web</module>
         <module>hqy4cloud-common-file</module>
         <module>hqy4cloud-common-infrastructure</module>
         <module>hqy4cloud-common-alarm-notification</module>
+        <module>hqy4cloud-common-business-collection</module>
     </modules>
 
     <dependencies>

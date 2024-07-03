@@ -1,12 +1,12 @@
 package com.hqy.cloud.registry.cluster.support;
 
 import cn.hutool.core.util.StrUtil;
+import com.hqy.cloud.lock.service.LockService;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.cluster.MasterElectionService;
 import com.hqy.cloud.registry.common.Constants;
 import com.hqy.cloud.registry.common.model.ApplicationModel;
-import com.hqy.foundation.lock.LockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

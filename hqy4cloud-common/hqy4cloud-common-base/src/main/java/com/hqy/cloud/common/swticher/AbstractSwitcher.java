@@ -1,8 +1,4 @@
 package com.hqy.cloud.common.swticher;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.beans.Transient;
 import java.io.Serial;
 import java.lang.reflect.Field;
@@ -95,7 +91,6 @@ public abstract class AbstractSwitcher extends IdSwitcher {
     }
 
 
-    @JsonIgnore
     @Transient
     public boolean getBooleanStatus() {
         if (this.type == S_TYPE.BOOLEAN) {
@@ -104,7 +99,6 @@ public abstract class AbstractSwitcher extends IdSwitcher {
         throw new IllegalAccessError(ILL_MSG);
     }
 
-    @JsonIgnore
     @Transient
     public short getShortStatus() {
         if (this.type == S_TYPE.UNSIGNED_SHORT) {
@@ -113,7 +107,6 @@ public abstract class AbstractSwitcher extends IdSwitcher {
         throw new IllegalAccessError(ILL_MSG);
     }
 
-    @JsonIgnore
     @Transient
     public String getVarcharStatus() {
         if (this.type == S_TYPE.VARCHAR) {

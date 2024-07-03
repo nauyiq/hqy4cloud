@@ -1,6 +1,5 @@
 package com.hqy.cloud.alarm.notification.api;
 
-import com.hqy.cloud.alarm.notification.common.EventType;
 import com.hqy.cloud.alarm.notification.common.NotificationType;
 
 /**
@@ -19,10 +18,9 @@ public interface Notifier {
 
     /**
      * 进行业务通知
-     * @param eventType 事件类型
      * @param content   通知内容
      * @param config    通知配置类
      */
-    <T extends EventContent> void notify(EventType eventType, T content, NotificationController config);
+    <T extends NotificationContent> void notify(T content, NotificationController config);
 
 }

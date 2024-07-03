@@ -17,7 +17,7 @@ public class ConsoleAppender<E> extends ch.qos.logback.core.ConsoleAppender<E> {
             super.start();
         }else {
             //非windows环境下忽略<appender-ref ref=\"stdout\"/>的输出，当做没配置，防止线程锁....
-            System.out.println("com.hqy.foundation.common.logback.ConsoleAppender  IGNORE <appender-ref ref=\"stdout\"/> \r\n");
+            System.out.println("com.hqy.cloud.infrastructure.logback.ConsoleAppender  IGNORE <appender-ref ref=\"stdout\"/> \r\n");
         }
     }
 }

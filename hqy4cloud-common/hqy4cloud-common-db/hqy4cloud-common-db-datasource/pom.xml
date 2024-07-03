@@ -31,13 +31,19 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-collection-service-api</artifactId>
+            <artifactId>hqy4cloud-common-notice-service</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-notice-service</artifactId>
+            <artifactId>hqy4cloud-common-business-collection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-alarm-notification</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

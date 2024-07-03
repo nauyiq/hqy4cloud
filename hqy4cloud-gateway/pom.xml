@@ -15,38 +15,10 @@
     <description>hqy4cloud-全局网关-负责鉴权、限流、负载等</description>
 
     <dependencies>
+        <!-- spring cloud gateway模块 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-netty-socket-socketio-cluster</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-spring-security</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -54,17 +26,52 @@
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
-        <!-- sentinel整合gateway -->
+        <!-- 注册中心模块 -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
+            <version>${revision}</version>
         </dependency>
 
+        <!-- spring security模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-auth-spring-security</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
+        <!-- socket.io负载模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-netty-socket-socketio-cluster</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 基础设施模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-infrastructure</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 业务采集模块 -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-business-collection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- sentinel模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-sentinel</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- sentinel整合gateway -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
         </dependency>
 
         <dependency>

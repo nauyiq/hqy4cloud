@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.hqy.cloud.auth.base.AccountConstants;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
-import static com.hqy.cloud.foundation.common.account.AccountAvatarUtil.DEFAULT_AVATAR;
+import static com.hqy.cloud.file.domain.AccountAvatarUtil.DEFAULT_AVATAR;
+
 
 /**
  * 账户信息表 t_account_profile

@@ -1,6 +1,6 @@
 package com.hqy.cloud.util.thread;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import cn.hutool.core.thread.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
@@ -52,7 +52,8 @@ public abstract class ExecutorServiceProject {
     /**
      * 线程工厂
      */
-    private ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(poolThreadName + "-%d").build();
+    private ThreadFactory threadFactory =
+            new ThreadFactoryBuilder().setNamePrefix(poolThreadName + "-%d").build();
 
     public ExecutorServiceProject(String poolThreadName) {
         this.poolThreadName =  poolThreadName;

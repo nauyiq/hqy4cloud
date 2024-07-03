@@ -35,11 +35,6 @@
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-foundation-service</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
             <version>${revision}</version>
         </dependency>

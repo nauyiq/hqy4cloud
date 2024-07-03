@@ -1,9 +1,9 @@
 package com.hqy.cloud.gateway.server;
 
-import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
-import com.hqy.foundation.limit.service.BlockedIpService;
-import com.hqy.foundation.limit.service.ManualWhiteIpService;
-import com.hqy.foundation.limit.service.ThrottlesServer;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
+import com.hqy.cloud.limiter.api.BlockedIpService;
+import com.hqy.cloud.limiter.api.ManualWhiteIpService;
+import com.hqy.cloud.limiter.api.ThrottlesServer;
 import com.hqy.cloud.web.utils.HtmlCommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class ThrottlesProcess implements ThrottlesServer {
 
     @Override
     public boolean isWhiteUri(String uri) {
-        return EndpointAuthorizationManager.getInstance().isAdminRequest(uri);
+        return StaticEndpointAuthorizationManager.getInstance().isStaticWhiteEndpoint(uri);
     }
 
     @Override

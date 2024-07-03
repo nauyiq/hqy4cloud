@@ -1,7 +1,6 @@
 package com.hqy.cloud.auth.security.autoconfigure;
 
 import com.hqy.cloud.auth.api.AuthPermissionService;
-import com.hqy.cloud.auth.api.AuthoritiesRoleService;
 import com.hqy.cloud.auth.security.core.DefaultAuthPermissionService;
 import com.hqy.cloud.auth.api.support.RemoteAccountAuthoritiesRoleService;
 import com.hqy.cloud.limit.api.ManualWhiteIpService;

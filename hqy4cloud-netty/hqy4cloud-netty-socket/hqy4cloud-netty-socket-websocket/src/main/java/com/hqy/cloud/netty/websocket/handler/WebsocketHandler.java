@@ -1,8 +1,10 @@
 package com.hqy.cloud.netty.websocket.handler;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.hqy.cloud.collection.core.exception.ExceptionCollActionEvent;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.lang.exception.PublishedException;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
@@ -17,9 +19,7 @@ import com.hqy.cloud.netty.websocket.session.BaseWsSession;
 import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ProjectExecutors;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import com.hqy.cloud.common.enums.ExceptionType;
-import com.hqy.foundation.event.ExceptionCollActionEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -193,7 +193,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
                 } catch (Exception e) {
                     log.warn(e.getMessage());
                     ExceptionCollActionEvent event = new ExceptionCollActionEvent(ExceptionType.WEBSOCKET, this.getClass().getName(), e, 5000);
-                    SpringContextHolder.publishEvent(event);
+                    SpringUtil.publishEvent(event);
                 }
 
                 if (StringUtils.isNotBlank(responseMsg)) {
@@ -214,7 +214,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<Object> {
                 } catch (Exception e) {
                     log.warn(e.getMessage());
                     ExceptionCollActionEvent event = new ExceptionCollActionEvent(ExceptionType.WEBSOCKET, this.getClass().getName(), e, 5000);
-                    SpringContextHolder.publishEvent(event);
+                    SpringUtil.publishEvent(event);
                 }
 
                 if (Objects.nonNull(responseMsg)) {

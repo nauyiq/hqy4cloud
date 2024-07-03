@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -28,15 +29,15 @@ public class SecurityActuatorAutoConfiguration  {
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         String contextPath = adminServerProperties.getContextPath();
-        httpSecurity.authorizeRequests()
-                .antMatchers(contextPath + "/assets/**", contextPath + "/actuator/**", contextPath + "/login").permitAll()
-                        .anyRequest().authenticated()
-                        .and().formLogin().loginPage(contextPath + "/login").successHandler(successHandler)
-                        .and().logout().logoutUrl(contextPath + "/logout")
-                        .and().httpBasic().and().csrf().disable()
-                .headers().frameOptions().sameOrigin()
-                .and()
-                        .rememberMe((rememberMe) -> rememberMe.key(UUID.fastUUID().toString(true)).tokenValiditySeconds(3600 * 6));
+        httpSecurity.authorizeHttpRequests(c -> {
+            c.requestMatchers(contextPath + "/assets/**", contextPath + "/actuator/**", contextPath + "/login").permitAll();
+            c.anyRequest().authenticated();
+        }).rememberMe((rememberMe) -> rememberMe.key(UUID.fastUUID().toString(true)).tokenValiditySeconds(3600 * 6));
+
+        httpSecurity.formLogin(c -> c.loginPage(contextPath + "/login").successHandler(successHandler))
+                .logout(c -> c.logoutUrl(contextPath + "/logout"))
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 

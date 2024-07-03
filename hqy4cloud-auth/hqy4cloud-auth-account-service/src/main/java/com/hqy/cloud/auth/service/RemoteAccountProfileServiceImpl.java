@@ -11,7 +11,7 @@ import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

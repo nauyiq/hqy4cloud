@@ -1,0 +1,4 @@
+com.hqy.cloud.collection.autoconfigure.CollectionAutoConfiguration
+com.hqy.cloud.collection.core.exception.ExceptionCollectionConfigProperties
+com.hqy.cloud.collection.core.sql.SqlCollectionConfigProperties
+com.hqy.cloud.collection.core.throttles.ThrottleCollectionConfigProperties

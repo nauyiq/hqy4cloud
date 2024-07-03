@@ -399,13 +399,10 @@
 
     <build>
         <resources>
-            <permissions>
+            <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>*/**</include>
-                </includes>
                 <filtering>true</filtering>
-            </permissions>
+            </resource>
         </resources>
 
         <plugins>

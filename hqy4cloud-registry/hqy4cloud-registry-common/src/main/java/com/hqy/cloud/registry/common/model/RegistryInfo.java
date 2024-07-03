@@ -4,10 +4,11 @@ import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.common.base.Parameters;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.Constants;
-import com.hqy.cloud.util.IpUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -94,7 +95,7 @@ public class RegistryInfo extends Parameters implements Serializable {
     }
 
     public String getIp() {
-        return IpUtil.getIpByHost(getHost());
+        return getIpByHost(getHost());
     }
 
     public Map<String, String> getConnectionParams() {
@@ -147,5 +148,18 @@ public class RegistryInfo extends Parameters implements Serializable {
         return Objects.hash(host, port, rawAddr);
     }
 
+
+    /**
+     *
+     * @param hostName hostName
+     * @return ip address or hostName if UnknownHostException
+     */
+    private String getIpByHost(String hostName) {
+        try {
+            return InetAddress.getByName(hostName).getHostAddress();
+        } catch (UnknownHostException e) {
+            return hostName;
+        }
+    }
 
 }

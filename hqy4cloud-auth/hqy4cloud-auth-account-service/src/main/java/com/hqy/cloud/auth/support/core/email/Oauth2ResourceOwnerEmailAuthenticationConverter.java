@@ -4,8 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
-import com.hqy.cloud.foundation.common.account.AuthRandomCodeService;
-import com.hqy.cloud.foundation.common.account.RandomCodeService;
+import com.hqy.cloud.infrastructure.random.RandomCodeService;
+import com.hqy.cloud.infrastructure.random.RedisRandomCodeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ import java.util.Set;
  * @date 2023/3/17 17:32
  */
 public class Oauth2ResourceOwnerEmailAuthenticationConverter extends Oauth2ResourceOwnerBaseAuthenticationConverter<Oauth2ResourceOwnerEmailAuthenticationToken> {
-    RandomCodeService randomCodeService = new AuthRandomCodeService();
+    RandomCodeService randomCodeService = new RedisRandomCodeService();
 
     @Override
     public boolean support(String grantType) {

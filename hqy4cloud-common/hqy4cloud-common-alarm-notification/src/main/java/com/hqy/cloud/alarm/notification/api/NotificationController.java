@@ -1,6 +1,6 @@
 package com.hqy.cloud.alarm.notification.api;
 
-import com.hqy.cloud.alarm.notification.common.EventType;
+import com.hqy.cloud.alarm.notification.common.NoticeTarget;
 import com.hqy.cloud.alarm.notification.common.NotificationType;
 
 import java.util.List;
@@ -21,11 +21,9 @@ public interface NotificationController {
 
     /**
      * 通知目标
-     * @param environment {@link Environment}
-     * @param eventType   事件类型
      * @return 获取通知的对象
      */
-    List<NoticeTarget> target(Environment environment, EventType eventType);
+    List<NoticeTarget> target();
 
     /**
      * 获取通知器

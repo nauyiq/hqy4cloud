@@ -1,3 +1,4 @@
+/*
 package com.hqy.cloud.gateway.server.auth;
 
 import com.hqy.cloud.util.JsonUtil;
@@ -14,11 +15,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+*/
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/10/25 18:06
- */
+ * @date 2022/10/25
+ *//*
+
 public class DefaultJwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     private static final String DEFAULT_AUTHORITY_PREFIX = "SCOPE_";
@@ -30,12 +33,14 @@ public class DefaultJwtGrantedAuthoritiesConverter implements Converter<Jwt, Col
 
     private String authoritiesClaimName;
 
-    /**
+    */
+/**
      * Extract {@link GrantedAuthority}s from the given {@link Jwt}.
      *
      * @param jwt The {@link Jwt} token
      * @return The {@link GrantedAuthority authorities} read from the token scopes
-     */
+     *//*
+
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -45,25 +50,29 @@ public class DefaultJwtGrantedAuthoritiesConverter implements Converter<Jwt, Col
         return grantedAuthorities;
     }
 
-    /**
+    */
+/**
      * Sets the prefix to use for {@link GrantedAuthority authorities} mapped by this converter.
      * Defaults to {@link DefaultJwtGrantedAuthoritiesConverter#DEFAULT_AUTHORITY_PREFIX}.
      *
      * @param authorityPrefix The authority prefix
      * @since 5.2
-     */
+     *//*
+
     public void setAuthorityPrefix(String authorityPrefix) {
         Assert.notNull(authorityPrefix, "authorityPrefix cannot be null");
         this.authorityPrefix = authorityPrefix;
     }
 
-    /**
+    */
+/**
      * Sets the name of token claim to use for mapping {@link GrantedAuthority authorities} by this converter.
      * Defaults to {@link DefaultJwtGrantedAuthoritiesConverter#WELL_KNOWN_AUTHORITIES_CLAIM_NAMES}.
      *
      * @param authoritiesClaimName The token claim name to map authorities
      * @since 5.2
-     */
+     *//*
+
     public void setAuthoritiesClaimName(String authoritiesClaimName) {
         Assert.hasText(authoritiesClaimName, "authoritiesClaimName cannot be empty");
         this.authoritiesClaimName = authoritiesClaimName;
@@ -133,3 +142,4 @@ public class DefaultJwtGrantedAuthoritiesConverter implements Converter<Jwt, Col
     }
 
 }
+*/

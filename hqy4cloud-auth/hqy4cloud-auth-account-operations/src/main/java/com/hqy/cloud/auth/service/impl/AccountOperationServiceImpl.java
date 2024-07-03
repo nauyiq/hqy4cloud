@@ -15,7 +15,7 @@ import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.AccountOperationService;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;

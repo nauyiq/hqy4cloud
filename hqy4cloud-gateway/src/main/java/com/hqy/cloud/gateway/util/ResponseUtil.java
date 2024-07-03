@@ -1,6 +1,5 @@
 package com.hqy.cloud.gateway.util;
 
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.util.JsonUtil;

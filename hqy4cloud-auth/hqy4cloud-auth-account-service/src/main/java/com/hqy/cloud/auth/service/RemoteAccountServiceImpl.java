@@ -17,7 +17,7 @@ import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 import com.hqy.cloud.util.JsonUtil;

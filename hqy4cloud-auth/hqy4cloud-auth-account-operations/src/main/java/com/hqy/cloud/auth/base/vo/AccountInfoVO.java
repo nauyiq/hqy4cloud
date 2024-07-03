@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.foundation.common.account.AccountAvatarUtil;
+import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

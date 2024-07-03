@@ -8,7 +8,6 @@ import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
-import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.cloud.gateway.server.auth.ClientSecretReactiveAuthenticationManager;
 import com.hqy.cloud.gateway.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
