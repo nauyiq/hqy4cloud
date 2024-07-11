@@ -11,17 +11,18 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.config.autoconfigure.ApplicationDeployerModelConfiguration;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.JsonUtil;
+import com.hqy.cloud.util.config.YamlPropertySourceFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Map;
 
@@ -34,13 +35,13 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnNacosDiscoveryEnabled
+@PropertySource(value = "classpath:nacos_config.yml", factory = YamlPropertySourceFactory.class)
 @AutoConfigureAfter({ApplicationDeployerModelConfiguration.class, NacosApplicationAutoConfiguration.class})
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class, CommonsClientAutoConfiguration.class, NacosDiscoveryClientConfiguration.class})
 public class NacosRegistryBindingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean({NacosDiscoveryProperties.class, NacosServiceManager.class, ApplicationModel.class})
     @ConditionalOnProperty(value = {"spring.cloud.nacos.discovery.watch.enabled"}, matchIfMissing = true)
     public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceManager nacosServiceManager,
                                  ApplicationModel applicationModel, ProjectContext projectContext) {

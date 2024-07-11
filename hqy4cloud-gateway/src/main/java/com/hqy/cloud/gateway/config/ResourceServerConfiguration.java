@@ -4,10 +4,12 @@ import com.hqy.cloud.auth.api.AuthPermissionService;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.security.core.DefaultReactiveOpaqueTokenIntrospector;
 import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
+import com.hqy.cloud.gateway.server.auth.AuthorizationManager;
 import com.hqy.cloud.gateway.server.auth.ClientSecretReactiveAuthenticationManager;
 import com.hqy.cloud.gateway.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,8 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * 网关承担资源服务器
  * @author qiyuan.hong
@@ -49,6 +53,7 @@ public class ResourceServerConfiguration {
 
     private final MessageSource securityMessageSource;
     private final AuthPermissionService authPermissionService;
+    private final AuthorizationManager authorizationManager;
 
     @Bean
     public OAuth2AuthorizationService oAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
@@ -79,12 +84,12 @@ public class ResourceServerConfiguration {
                 // 放行所有option请求
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 白名单uri
-                .pathMatchers(authPermissionService.getWhiteUris().toArray(new String[0])).permitAll()
+                .pathMatchers(getWhiteUriPatterns()).permitAll()
                 // 默认所有请求都需要登录
-                .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name())
+                .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())
             )
                 // 通用的请求授权走AuthorizationManager
-//            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
+            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
             .oauth2ResourceServer(oauth2ResourceServerCustomizer -> oauth2ResourceServerCustomizer
                     // token认证失败
                     .authenticationEntryPoint(authenticationEntryPoint())
@@ -100,6 +105,15 @@ public class ResourceServerConfiguration {
             .cors(ServerHttpSecurity.CorsSpec::disable)
             .csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();
+    }
+
+    private String[] getWhiteUriPatterns() {
+        // 业务白名单， 不需要登录即可访问的.
+        List<String> businessWhiteUris = authPermissionService.getBusinessWhiteUris();
+        // 获取静态白名单
+        List<String> endpointsPatterns = StaticEndpointAuthorizationManager.getInstance().getWhiteEndpointsPatterns();
+        endpointsPatterns.addAll(businessWhiteUris);
+        return endpointsPatterns.toArray(new String[0]);
     }
 
 

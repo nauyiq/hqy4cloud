@@ -12,36 +12,28 @@
 
     <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-nacos</artifactId>
             <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-configuration</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-springboot-autoconfigure</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
     </dependencies>
 
 </project>

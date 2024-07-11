@@ -26,14 +26,14 @@ import java.util.List;
 @Configuration
 public class SentinelGatewayConfiguration {
 
-    private final List<ViewResolver> viewResolvers;
-    private final ServerCodecConfigurer serverCodecConfigurer;
+//    private final List<ViewResolver> viewResolvers;
+//    private final ServerCodecConfigurer serverCodecConfigurer;
 
-    public SentinelGatewayConfiguration(ObjectProvider<List<ViewResolver>> viewResolversProvider,
+  /*  public SentinelGatewayConfiguration(ObjectProvider<List<ViewResolver>> viewResolversProvider,
                                         ServerCodecConfigurer serverCodecConfigurer) {
         this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
         this.serverCodecConfigurer = serverCodecConfigurer;
-    }
+    }*/
 
     @PostConstruct
     public void init() {
@@ -41,17 +41,17 @@ public class SentinelGatewayConfiguration {
         GatewayCallbackManager.setBlockHandler(requestHandler);
     }
 
-    @Bean
+   /* @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SentinelGatewayBlockExceptionHandler sentinelGatewayBlockExceptionHandler() {
         return new SentinelGatewayBlockExceptionHandler(viewResolvers, serverCodecConfigurer);
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     @Order(-1)
     public GlobalFilter sentinelGatewayFilter() {
         return new SentinelGatewayFilter();
-    }
+    }*/
 
 
 

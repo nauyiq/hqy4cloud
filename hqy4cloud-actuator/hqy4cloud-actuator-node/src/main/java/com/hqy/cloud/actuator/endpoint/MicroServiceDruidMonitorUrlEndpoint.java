@@ -7,10 +7,9 @@ import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.auth.utils.WebUtils;
 import com.hqy.cloud.common.base.config.ConfigConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.common.base.project.ProjectContextInfo;
 import com.hqy.cloud.common.base.project.UsingIpPort;
 import com.hqy.cloud.registry.context.ProjectContext;
-import com.hqy.cloud.common.base.project.ProjectContextInfo;
-import com.hqy.cloud.util.web.RequestUtil;
 import com.hqy.cloud.web.utils.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -30,7 +28,6 @@ import java.util.Map;
  * @date 2023/12/25 15:06
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 @Endpoint(id = MicroServiceDruidMonitorUrlEndpoint.ID)
 public class MicroServiceDruidMonitorUrlEndpoint implements Indicator<String> {

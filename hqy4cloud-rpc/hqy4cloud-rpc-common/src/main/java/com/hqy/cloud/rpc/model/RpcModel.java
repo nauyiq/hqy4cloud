@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class RpcModel extends Parameters implements Serializable {
     @Serial
-    private transient static final long serialVersionUID = -1724139538145932293L;
+    private static final long serialVersionUID = -1724139538145932293L;
     private static final Logger log = LoggerFactory.getLogger(RpcModel.class);
 
     /**

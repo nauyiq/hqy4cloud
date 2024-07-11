@@ -6,7 +6,6 @@ import com.hqy.cloud.registry.context.RegistryContext;
 import com.hqy.cloud.registry.deploy.ApplicationDeployModel;
 import com.hqy.cloud.registry.deploy.ApplicationLifecycleDeployer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,6 @@ import static com.hqy.cloud.registry.common.Constants.CONFIGURATION_PREFIX;
 public class AutoApplicationDeployerConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
     public ApplicationLifecycleDeployer applicationLifecycleDeployer(RegistryContext registryContext) {
         ApplicationDeployModel deployModel = new ApplicationDeployModel(registryContext);
         ApplicationLifecycleDeployer deployer = new ApplicationLifecycleDeployer(deployModel);
@@ -35,7 +33,6 @@ public class AutoApplicationDeployerConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public ProjectContext projectContext(RegistryContext registryContext, ApplicationLifecycleDeployer applicationLifecycleDeployer) {
         return new ProjectContext(registryContext, applicationLifecycleDeployer);
     }

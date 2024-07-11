@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.hqy.cloud.netty.socketio.autoconfigure.SocketIoModelConfigAutoConfiguration,\
- com.hqy.cloud.netty.socketio.autoconfigure.SocketIoServerDeployAutoConfiguration

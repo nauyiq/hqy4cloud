@@ -40,6 +40,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- dubbo -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-dubbo-autoconfigure</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- socket.io负载模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
@@ -61,24 +68,11 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- sentinel模块 -->
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-sentinel</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
         <!-- sentinel整合gateway -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

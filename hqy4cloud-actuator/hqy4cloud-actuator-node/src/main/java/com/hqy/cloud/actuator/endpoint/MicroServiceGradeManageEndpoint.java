@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import java.util.Map;
  * @date 2023/11/17 17:41
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 @Endpoint(id = MicroServiceGradeManageEndpoint.ID)
 public class MicroServiceGradeManageEndpoint implements Indicator<MicroServerGradeInfo> {

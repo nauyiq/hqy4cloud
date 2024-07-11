@@ -5,7 +5,13 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.proxy.jdbc.StatementProxy;
 import com.alibaba.druid.stat.DruidStatManagerFacade;
+import com.hqy.cloud.alarm.notification.common.NotificationType;
+import com.hqy.cloud.alarm.notification.core.AlerterHolder;
+import com.hqy.cloud.alarm.notification.core.email.EmailContent;
 import com.hqy.cloud.coll.struct.SqlRecordStruct;
+import com.hqy.cloud.collection.api.Collector;
+import com.hqy.cloud.collection.common.BusinessCollectionType;
+import com.hqy.cloud.collection.core.CollectorHolder;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.NumberConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
@@ -82,7 +88,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_EXCEPTION_SQL_ALTER.isOn()) {
                 // 进行sql报警通知（发邮件）
                 EmailContent emailContent = buildEmailNoticeContent(SqlExceptionType.ERROR, costMills, sql, params);
-                AlerterHolder.getInstance().notify(EventType.SQL, NotificationType.EMAIL, emailContent);
+                AlerterHolder.getInstance().notify(NotificationType.EMAIL, emailContent);
             }
 
             if (MicroServiceConstants.COMMON_COLLECTOR.equals(ProjectContext.getContextInfo().getNameEn())) {
@@ -93,7 +99,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_DATABASE_ERROR_SQL_COLLECTION.isOn()) {
                 // 获取采集器进行sql采集
                 SqlRecordStruct struct = CollectionModelUtil.buildErrorSqlRecordStruct(params, sql, SystemClock.now(), costMills, error);
-                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(EventType.SQL);
+                Collector<SqlRecordStruct> collector = CollectorHolder.getInstance().getCollector(BusinessCollectionType.SQL);
                 collector.collect(struct);
             }
         } catch (Throwable cause) {
@@ -117,7 +123,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_EXCEPTION_SQL_ALTER.isOn()) {
                 // 进行sql报警通知（发邮件）
                 EmailContent emailContent = buildEmailNoticeContent(SqlExceptionType.SLOW, costMills, sql, params);
-                AlerterHolder.getInstance().notify(EventType.SQL, NotificationType.EMAIL, emailContent);
+                AlerterHolder.getInstance().notify(NotificationType.EMAIL, emailContent);
             }
 
             if (MicroServiceConstants.COMMON_COLLECTOR.equals(ProjectContext.getContextInfo().getNameEn())) {
@@ -128,7 +134,7 @@ public class ExtendDruidStatFilter extends StatFilter {
             if (CommonSwitcher.ENABLE_DATABASE_SLOW_SQL_COLLECTION.isOn()) {
                 // 获取采集器进行sql采集
                 SqlRecordStruct struct = CollectionModelUtil.buildSlowSqlRecordStruct(params, sql, SystemClock.now(), costMills);
-                Collector<SqlRecordStruct> collector = CollectorCenter.getInstance().getCollector(EventType.SQL);
+                Collector<SqlRecordStruct> collector = CollectorHolder.getInstance().getCollector(BusinessCollectionType.SQL);
                 collector.collect(struct);
             }
         } catch (Throwable cause) {

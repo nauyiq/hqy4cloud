@@ -171,7 +171,6 @@ public class KafkaDefaultAutoConfiguration {
 
 
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public MqTransactionalService mqTransactionalService(MqMessageOperations operations, KafkaProducer kafkaProducer) {
         return new KafkaTransactionalService(operations, kafkaProducer);

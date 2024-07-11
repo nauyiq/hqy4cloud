@@ -1,6 +1,5 @@
 package com.hqy.cloud.auth.service.impl;
 
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,8 +9,6 @@ import com.hqy.cloud.auth.account.service.AccountMenuService;
 import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.auth.account.service.MenuService;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
-import com.hqy.cloud.auth.base.dto.PermissionDTO;
-import com.hqy.cloud.auth.base.dto.ResourceDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
 import com.hqy.cloud.auth.service.AuthOperationService;
@@ -75,23 +72,7 @@ public class AuthOperationServiceImpl implements AuthOperationService {
         return this.getAccountMenus(id).parallelStream().map(AccountMenu::getMenuPermission).toList();
     }
 
-    @Override
-    public Map<String, List<ResourceDTO>> getAuthoritiesResourcesByRoles(List<String> roles) {
-        if (CollectionUtils.isEmpty(roles)) {
-            return MapUtil.empty();
-        }
-        return roleResourcesService.getAuthoritiesResourcesByRoles(roles);
-    }
 
-    @Override
-    public Map<String, List<String>> getPermissionsByRoles(List<String> roles) {
-        List<Integer> ids = roleService.selectIdByNames(roles);
-        List<PermissionDTO> manuPermissionsByRoles = ((RoleMenuMapper) (roleMenuService.getTkDao())).getManuPermissionsByRoles(ids);
-        if (CollectionUtils.isEmpty(manuPermissionsByRoles)) {
-            return MapUtil.empty();
-        }
-        return manuPermissionsByRoles.stream().collect(Collectors.toMap(PermissionDTO::getRole, PermissionDTO::getPermissions));
-    }
 
     private List<AdminTreeMenuVO> menusConvertTreeMenu(List<String> permissions, List<Menu> menus) {
         // 对parenId相同的进行分组

@@ -18,4 +18,4 @@
 #org.apache.shardingsphere.spring.boot.datasource.HikariDataSourcePropertiesSetter
 #org.apache.shardingsphere.spring.boot.datasource.CommonDbcp2DataSourcePropertiesSetter
 #org.apache.shardingsphere.spring.boot.datasource.TomcatDbcp2DataSourcePropertiesSetter
-com.hqy.cloud.shardingsphere.autoconfigure.DruidDataSourcePropertiesSetter
+com.hqy.cloud.sharding.autoconfig.DruidDataSourcePropertiesSetter

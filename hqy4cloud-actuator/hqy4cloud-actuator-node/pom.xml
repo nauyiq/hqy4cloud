@@ -21,12 +21,13 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

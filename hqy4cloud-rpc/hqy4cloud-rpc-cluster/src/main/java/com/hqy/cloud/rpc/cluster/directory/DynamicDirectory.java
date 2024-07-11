@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.cluster.directory;
 
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
@@ -12,7 +13,6 @@ import com.hqy.cloud.rpc.cluster.router.hashfactor.HashFactorRouterFactory;
 import com.hqy.cloud.rpc.cluster.router.master.MasterNodeRouterFactory;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public abstract class DynamicDirectory<T> extends AbstractDirectory<T> implement
             // 1. No service provider 2. Service providers are disabled
             throw new RpcException(RpcException.FORBIDDEN_EXCEPTION, "No provider available from registry " +
                     getRegistry().getRegistryInfo() + " for service " + getProviderServiceName() + " on consumer " +
-                    IpUtil.getHostAddress() +
+                    NetUtil.getLocalhostStr() +
                     ", please check status of providers(disabled, not registered or in blacklist).");
         }
 

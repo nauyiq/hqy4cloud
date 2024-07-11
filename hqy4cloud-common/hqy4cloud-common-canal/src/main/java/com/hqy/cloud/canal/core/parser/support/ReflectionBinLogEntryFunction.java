@@ -4,12 +4,12 @@ import com.hqy.cloud.canal.core.parser.BaseCommonEntryFunction;
 import com.hqy.cloud.canal.core.parser.ColumnMetadata;
 import com.hqy.cloud.canal.core.parser.ModelTableMetadata;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.ClassUtils;
 import com.hqy.cloud.util.ReflectUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;

@@ -2,8 +2,8 @@ package com.hqy.cloud.auth.security.autoconfigure;
 
 import com.hqy.cloud.auth.api.AuthPermissionService;
 import com.hqy.cloud.auth.security.core.DefaultAuthPermissionService;
-import com.hqy.cloud.auth.api.support.RemoteAccountAuthoritiesRoleService;
-import com.hqy.cloud.limit.api.ManualWhiteIpService;
+import com.hqy.cloud.limiter.api.ManualWhiteIpService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +23,7 @@ import java.util.Locale;
 @Configuration
 public class AuthSpringSecurityAutoConfiguration {
 
-
     @Bean
-    @ConditionalOnMissingBean
     public AuthPermissionService authPermissionService(Environment environment, ManualWhiteIpService manualWhiteIpService) {
         return new DefaultAuthPermissionService(environment, manualWhiteIpService);
     }
@@ -36,7 +34,8 @@ public class AuthSpringSecurityAutoConfiguration {
     }
 
     @Bean
-    public MessageSource securityMessageSource() {
+    @ConditionalOnMissingBean
+    public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.addBasenames("classpath:i18n/errors/messages");
         messageSource.setDefaultLocale(Locale.CHINA);

@@ -37,11 +37,6 @@
             <artifactId>hqy4cloud-actuator-node</artifactId>
             <version>${revision}</version>
         </dependency>
-
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

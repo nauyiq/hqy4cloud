@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.PERCENT;

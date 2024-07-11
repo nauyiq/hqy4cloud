@@ -1,11 +1,11 @@
 package com.hqy.cloud.auth.base.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * @author qiyuan.hong
@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class MenuDTO {
 
     private Long id;
-    @NotEmpty(message = "Menu name should not be empty.")
+    @NotBlank(message = "Menu name should not be empty.")
     private String name;
     private String path;
     private Long parentId;

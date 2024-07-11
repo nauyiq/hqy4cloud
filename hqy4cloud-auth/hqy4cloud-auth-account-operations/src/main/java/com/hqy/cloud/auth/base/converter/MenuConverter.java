@@ -26,7 +26,7 @@ public interface MenuConverter {
     @Mapping(target = "menuType", source = "type")
     @Mapping(target = "status", source = "status", qualifiedByName = "booleanToInteger")
     @Mapping(target = "label", source = "name")
-    AdminTreeMenuVO convert(Menu menu);
+    AdminTreeMenuVO convert( Menu menu);
 
     /**
      * MenuDTO convert Menu

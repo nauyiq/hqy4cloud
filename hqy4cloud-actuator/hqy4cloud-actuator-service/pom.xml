@@ -17,6 +17,7 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>

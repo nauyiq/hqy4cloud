@@ -1,1 +1,1 @@
-com.hqy.cloud.lock.autoconfigure.DistributeLockAutoConfiguration
+com.hqy.cloud.lock.config.DistributeLockAutoConfiguration

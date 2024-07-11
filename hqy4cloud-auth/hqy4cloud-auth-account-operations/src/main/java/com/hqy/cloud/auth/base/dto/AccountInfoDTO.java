@@ -1,8 +1,7 @@
 package com.hqy.cloud.auth.base.dto;
 
 import com.hqy.cloud.auth.common.UserRole;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.Date;
 
@@ -13,8 +12,10 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/9/27
  */
-@Data
-@EqualsAndHashCode
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccountInfoDTO  {
 
     /**

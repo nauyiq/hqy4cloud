@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.starter.model;
 
+import com.hqy.cloud.common.base.lang.DeployComponent;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.rpc.model.RpcMetadata;
 import com.hqy.cloud.rpc.model.RpcModel;
@@ -19,7 +20,6 @@ import java.util.Map;
  * @date 2024/1/4
  */
 public class RpcProviderDeployModel extends RpcDeployModel {
-    private static final String NAME = RpcProviderDeployModel.class.getSimpleName();
     private final RpcServer rpcServer;
 
     public RpcProviderDeployModel(RpcModel rpcModel, RpcServer rpcServer) {
@@ -42,7 +42,7 @@ public class RpcProviderDeployModel extends RpcDeployModel {
 
     @Override
     public String getModelName() {
-        return NAME;
+        return DeployComponent.RPC_SERVER.name;
     }
 
     @Override

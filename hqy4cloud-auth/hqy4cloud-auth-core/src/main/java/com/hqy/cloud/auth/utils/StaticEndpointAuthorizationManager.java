@@ -2,6 +2,7 @@ package com.hqy.cloud.auth.utils;
 
 import org.springframework.util.AntPathMatcher;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class StaticEndpointAuthorizationManager {
             "/token",
             "/favicon.io","/favicon.ico",
             //Oauth2 Endpoint
-            "/oauth/**", "/auth/**", "/oauth2/**", "/token/**",
+            "/oauth/**", "/auth/**", "/oauth2/**", "/token/**", "/oauth2/token",
             "/basic/**", "/actuator/**", "/druid/**"
             //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
@@ -60,7 +61,7 @@ public class StaticEndpointAuthorizationManager {
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
     public List<String> getWhiteEndpointsPatterns() {
-        return WHITE_ENDPOINTS_PATTERNS;
+        return new ArrayList<>(WHITE_ENDPOINTS_PATTERNS);
     }
 
 

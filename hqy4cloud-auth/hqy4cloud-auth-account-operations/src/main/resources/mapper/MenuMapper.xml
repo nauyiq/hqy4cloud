@@ -56,15 +56,6 @@
         ORDER BY children.sort_order,children.id ASC
     </select>
 
-    <select id="queryResourcesByMenuIds" resultType="com.hqy.cloud.auth.account.entity.Permissions">
-        SELECT r.*
-        FROM `t_admin_menu` m
-                 LEFT JOIN `t_resource` r ON m.`permission` = r.`permission`
-        WHERE m.`deleted` = 0  AND  m.`id` IN
-        <foreach collection="ids" item="id" separator="," open="(" close=")">
-            #{id}
-        </foreach>
-    </select>
 
 
 </mapper>

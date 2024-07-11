@@ -40,7 +40,7 @@ public class RedisManager extends AbstractTemplateOperations implements RedisObj
         if (Objects.isNull(instance)) {
             synchronized (RedisManager.class) {
                 if (Objects.isNull(instance)) {
-                    instance = new RedisManager(SpringUtil.getBean(RedisConstants.DEFAULT_REDIS_TEMPLATE_BEAN_NAME, RedisTemplate.class));
+                    instance = new RedisManager(SpringUtil.getBean(RedisTemplate.class));
                 }
             }
         }

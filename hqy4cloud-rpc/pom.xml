@@ -21,6 +21,7 @@
         <module>hqy4cloud-rpc-api</module>
         <module>hqy4cloud-rpc-cluster</module>
         <module>hqy4cloud-rpc-starter</module>
+        <module>hqy4cloud-rpc-dubbo-autoconfigure</module>
     </modules>
 
 </project>

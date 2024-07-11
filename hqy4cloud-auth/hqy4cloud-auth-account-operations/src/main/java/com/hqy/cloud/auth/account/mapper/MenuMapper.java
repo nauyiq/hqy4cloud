@@ -1,7 +1,6 @@
 package com.hqy.cloud.auth.account.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.hqy.cloud.auth.account.entity.Permissions;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.account.entity.Menu;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,11 +24,5 @@ public interface MenuMapper extends BaseMapper<Menu> {
      */
     List<AdminMenuInfoVO> getAdminMenuByParentId(@Param("parentId") long parentId);
 
-    /**
-     * 通过菜单id列表查找资源列表（根据菜单permission）
-     * @param menuIds 菜单id列表
-     * @return        {@link Permissions}
-     */
-    List<Permissions> queryResourcesByMenuIds(@Param("ids") List<Integer> menuIds);
 
 }

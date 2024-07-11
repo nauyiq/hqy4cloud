@@ -34,52 +34,10 @@
         <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
         <flatten.maven.plugin>1.1.0</flatten.maven.plugin>
 
-        <!-- spring依赖版本 -->
+        <!-- 框架层核心依赖 -->
         <springboot.version>3.2.2</springboot.version>
         <springcloud.version>2023.0.0</springcloud.version>
-        <spring.authorization.version>0.4.0</spring.authorization.version>
-        <spring.ai.version>0.7.1-SNAPSHOT</spring.ai.version> <!-- spring-ai暂时还未开放. -->
-
-        <!-- alibaba技术栈先关依赖 -->
-        <seata.version>1.8.0</seata.version>
-        <druid.version>1.1.18</druid.version>
-        <apache.rocketmq.version>2.2.2</apache.rocketmq.version> <!-- 对应rocketmq 4.9.3 -->
-        <sentinel.version>1.8.5</sentinel.version>
-
-        <dubbo.version>3.2.10</dubbo.version>
         <springcloud.alibaba.version>2022.0.0.0</springcloud.alibaba.version>
-
-        <!-- db相关操作依赖版本 -->
-
-
-        <elasticsearch.version>7.17.3</elasticsearch.version>
-        <jakarta-json.version>2.0.1</jakarta-json.version>
-
-
-        <qcloud.api.version>5.6.133</qcloud.api.version>
-
-
-        <!-- log -->
-        <logstash.logback.encoder.version>5.3</logstash.logback.encoder.version>
-
-        <!-- cache -->
-        <caffeine.cache.version>3.1.8</caffeine.cache.version>
-        <guava.version>32.1.3-jre</guava.version>
-
-        <!-- common -->
-        <sensitive.word.version>0.13.1</sensitive.word.version>
-        <chatgtp.service.version>0.12.0</chatgtp.service.version>
-        <retrofit2.converter.jackson.version>2.9.0</retrofit2.converter.jackson.version>
-        <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
-        <mapstruct.version>1.5.2.Final</mapstruct.version>
-        <servlet.version>3.1.0</servlet.version>
-        <swift.version>0.14.2</swift.version>
-        <thrift.version>0.9.3</thrift.version>
-        <nifty.version>0.23.0</nifty.version>
-
-        <lombok.version>1.18.12</lombok.version>
-        <quartz.version>2.3.0</quartz.version>
-        <javassist.version>3.28.0-GA</javassist.version>
     </properties>
 
 
@@ -92,20 +50,6 @@
                 <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <!-- spring boot admin server -->
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-server</artifactId>
-                <version>${springboot.version}</version>
-            </dependency>
-
-            <!-- spring boot admin client -->
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-client</artifactId>
-                <version>${springboot.version}</version>
             </dependency>
 
             <!-- spring cloud -->
@@ -125,182 +69,6 @@
                 <scope>import</scope>
                 <version>${springcloud.alibaba.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-core</artifactId>
-                <version>${seata.version}</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/io.seata/seata-spring-boot-starter -->
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-spring-boot-starter</artifactId>
-                <version>${seata.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-core</artifactId>
-                <version>${sentinel.version}</version>
-            </dependency>
-
-
-
-
-
-
-
-            <!-- elastic -->
-            <dependency>
-                <groupId>jakarta.json</groupId>
-                <artifactId>jakarta.json-api</artifactId>
-                <version>${jakarta-json.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-client</artifactId>
-                <version>${elasticsearch.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.theokanning.openai-gpt3-java</groupId>
-                <artifactId>service</artifactId>
-                <version>${chatgtp.service.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>converter-jackson</artifactId>
-                <version>${retrofit2.converter.jackson.version}</version>
-            </dependency>
-
-            <!-- rocket mq -->
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot-starter</artifactId>
-                <version>${apache.rocketmq.version}</version>
-            </dependency>
-
-            <!-- hibernate-validator -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate.validator.version}</version>
-            </dependency>
-
-
-            <!-- tx oss api -->
-            <dependency>
-                <groupId>com.qcloud</groupId>
-                <artifactId>cos_api</artifactId>
-                <version>${qcloud.api.version}</version>
-            </dependency>
-
-
-            <!-- facebook.thrift -->
-            <dependency>
-                <groupId>com.facebook.swift</groupId>
-                <artifactId>swift-codec</artifactId>
-                <version>${swift.version}</version>
-            </dependency>
-
-            <!-- facebook.thrift -->
-            <dependency>
-                <groupId>com.facebook.swift</groupId>
-                <artifactId>swift-annotations</artifactId>
-                <version>${swift.version}</version>
-            </dependency>
-
-            <!-- facebook.thrift -->
-            <dependency>
-                <groupId>org.apache.thrift</groupId>
-                <artifactId>libthrift</artifactId>
-                <version>${thrift.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- facebook.nifty -->
-            <dependency>
-                <groupId>com.facebook.nifty</groupId>
-                <artifactId>nifty-core</artifactId>
-                <version>${nifty.version}</version>
-            </dependency>
-
-            <!-- 缓存相关-->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.cache.version}</version>
-            </dependency>
-
-            <!-- Quartz -->
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist.version}</version>
-            </dependency>
-
-            <!-- logstash-logback 模块 -->
-            <dependency>
-                <groupId>net.logstash.logback</groupId>
-                <artifactId>logstash-logback-encoder</artifactId>
-                <version>${logstash.logback.encoder.version}</version>
-            </dependency>
-
-
-            <!-- github 敏感词过滤 DFA - https://github.com/houbb/sensitive-word -->
-            <dependency>
-                <groupId>com.github.houbb</groupId>
-                <artifactId>sensitive-word</artifactId>
-                <version>${sensitive.word.version}</version>
-            </dependency>
-
-            <!--<dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>1.0</version>
-            </dependency>-->
-            <!-- spring-ai -->
-            <!--<dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-                <version>${spring.ai.version}</version>
-            </dependency>-->
-
         </dependencies>
     </dependencyManagement>
 
@@ -312,59 +80,12 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <!--mapstruct核心-->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-
-        <!--mapstruct编译-->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-
-
-        <!--
-        fix deprecated.
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-
-        -->
-
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>-->
-
         <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-engine-core</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <profiles>
@@ -417,6 +138,18 @@
                     <excludes>
                         <exclude>**/apache/bval/**</exclude>
                     </excludes>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.2.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 

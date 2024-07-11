@@ -42,7 +42,7 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
     private ConfigurableListableBeanFactory configurableListableBeanFactory;
     private final SwitcherConfigProperties switcherConfigProperties;
 
-    @Bean
+    /*@Bean
     public MicroServiceGradeManageService microServiceGradeManageService(Registry registry) {
         return new MicroServiceGradeManageServiceImpl(registry);
     }
@@ -50,14 +50,14 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
     @Bean
     public MicroServiceInfoContributorEndpoint microServiceInfoContributorEndpoint() {
         return new MicroServiceInfoContributorEndpoint();
-    }
+    }*/
 
     @Bean
     public BasicAuthorizationService basicAuthorizationService() {
         return new BasicAuthorizationServiceImpl();
     }
 
-    @Bean
+    /*@Bean
     public EndpointBasicAuthorizationFilter filter(BasicAuthorizationService basicAuthorizationService) {
         return new EndpointBasicAuthorizationFilter(basicAuthorizationService);
     }
@@ -89,7 +89,7 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
     @Bean
     public CommandLineRunner initActuatorSwitchers() {
         return args -> GradeSwitcherCenter.getInstance().initializeSwitchers();
-    }
+    }*/
 
     @Override
     public void setBeanFactory(@Nonnull BeanFactory beanFactory) throws BeansException {

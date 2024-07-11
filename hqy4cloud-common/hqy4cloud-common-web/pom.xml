@@ -12,6 +12,10 @@
 
     <description>web模块</description>
     <artifactId>hqy4cloud-common-web</artifactId>
+    <properties>
+        <sensitive.word.version>1.7.0</sensitive.word.version>
+        <logstash.logback.encoder.version>5.3</logstash.logback.encoder.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -29,6 +33,25 @@
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-business-collection</artifactId>
             <version>${revision}</version>
+        </dependency>
+
+        <!-- github 敏感词过滤 DFA - https://github.com/houbb/sensitive-word -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-core</artifactId>
+            <version>${sensitive.word.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-logback</artifactId>
+            <version>${sensitive.word.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash.logback.encoder.version}</version>
         </dependency>
     </dependencies>
 

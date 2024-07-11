@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.thrift.TApplicationException.INVALID_MESSAGE_TYPE;
@@ -52,6 +53,8 @@ public class ThriftServiceProcessor implements NiftyProcessor {
 
     private final Map<String, ThriftMethodProcessor> methods;
     private final List<ThriftEventHandler> eventHandlers;
+    // FIXME 修改源码，新增worker线程池的引用
+    private ExecutorService workerExecutor;
 
     /**
      * @param eventHandlers event handlers to attach to services
@@ -123,6 +126,8 @@ public class ThriftServiceProcessor implements NiftyProcessor {
             // invoke method
             final ContextChain context = new ContextChain(eventHandlers, method.getName(), method.getQualifiedName(), method.getServiceTypeName(), requestContext);
             ListenableFuture<Boolean> processResult = method.process(in, out, sequenceId, context);
+
+
 
             Futures.addCallback(
                     processResult,

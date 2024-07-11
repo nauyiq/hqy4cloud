@@ -1,5 +1,6 @@
 package com.hqy.cloud.rpc.thrift.starter.autoconfigure;
 
+import cn.hutool.core.net.NetUtil;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.model.RpcServerAddress;
@@ -10,7 +11,6 @@ import com.hqy.cloud.rpc.thrift.server.ThriftRpcServer;
 import com.hqy.cloud.rpc.thrift.server.ThriftServerModel;
 import com.hqy.cloud.rpc.thrift.service.ThriftServerContextHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftServerProperties;
-import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class ThriftServerConfigAutoConfiguration implements BeanFactoryAware {
 
     private RpcServerAddress initRpcServerAddr(RpcModel rpcModel, ThriftServerProperties properties) {
         RpcServerAddress serverAddress = rpcModel.getServerAddress();
-        String ip = serverAddress == null ? IpUtil.getHostAddress() : serverAddress.getHostAddr();
+        String ip = serverAddress == null ? NetUtil.getLocalhostStr() : serverAddress.getHostAddr();
         int port = getEnableRpcPort(rpcModel.getModel().getPort(), properties);
         return new RpcServerAddress(port, ip);
     }

@@ -35,8 +35,7 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
         httpResponse.setStatusCode(HttpStatus.OK);
 
         String errorMessage;
-        if (exception instanceof OAuth2AuthenticationException) {
-            OAuth2AuthenticationException authorizationException = (OAuth2AuthenticationException) exception;
+        if (exception instanceof OAuth2AuthenticationException authorizationException) {
             String errorCode = authorizationException.getError().getErrorCode();
             errorMessage = StrUtil.isBlank(authorizationException.getError().getDescription())
                     ? errorCode

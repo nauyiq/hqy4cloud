@@ -3,12 +3,12 @@ package com.hqy.cloud.id.component.segment.service;
 import com.hqy.cloud.id.exception.InitException;
 import com.hqy.cloud.id.service.IdGenService;
 import com.hqy.cloud.id.struct.ResultStruct;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 
 /**
  * SegmentService.

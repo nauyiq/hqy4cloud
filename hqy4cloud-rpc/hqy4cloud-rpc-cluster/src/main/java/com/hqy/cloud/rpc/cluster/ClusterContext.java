@@ -1,13 +1,13 @@
 package com.hqy.cloud.rpc.cluster;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
 import com.hqy.cloud.rpc.cluster.support.FailBackCluster;
 import com.hqy.cloud.rpc.cluster.support.FailFastCluster;
 import com.hqy.cloud.rpc.cluster.support.FailSafeCluster;
 import com.hqy.cloud.rpc.cluster.support.FailoverCluster;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.spring.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,10 +60,10 @@ public class ClusterContext {
             Cluster cluster;
             try {
                 cluster = switch (mode) {
-                    case FAILBACK -> SpringContextHolder.getBean(FailBackCluster.class);
-                    case FAILFAST -> SpringContextHolder.getBean(FailFastCluster.class);
-                    case FAILSAFE -> SpringContextHolder.getBean(FailSafeCluster.class);
-                    default -> SpringContextHolder.getBean(FailoverCluster.class);
+                    case FAILBACK -> SpringUtil.getBean(FailBackCluster.class);
+                    case FAILFAST -> SpringUtil.getBean(FailFastCluster.class);
+                    case FAILSAFE -> SpringUtil.getBean(FailSafeCluster.class);
+                    default -> SpringUtil.getBean(FailoverCluster.class);
                 };
             } catch (Exception e) {
                 log.warn(e.getMessage());
@@ -77,7 +77,7 @@ public class ClusterContext {
             if (defaultCluster == null) {
                 synchronized (ClusterContext.class) {
                     try {
-                        setDefault(SpringContextHolder.getBean(FailoverCluster.class));
+                        setDefault(SpringUtil.getBean(FailoverCluster.class));
                     } catch (Throwable throwable) {
                         log.warn("Spring container not start or not found failover cluster from container.");
                         setDefault(new FailoverCluster());

@@ -26,10 +26,10 @@ public class DynamicRouteConfiguration {
     @ConditionalOnProperty(prefix = "gateway.dynamicRoute", name = "type", havingValue = "nacos", matchIfMissing = true)
     public class NacosDynamicRoute{
 
-        @Value("${gateway.dynamicRoute.dataId:hqy4cloud-gateway-routing.json}")
+        @Value("${gateway.dynamicRoute.dataId:gateway-routing.json}")
         private String dataId;
 
-        @Value("${gateway.dynamicRoute.group:DEV_GROUP}")
+        @Value("${gateway.dynamicRoute.group:DEFAULT_GROUP}")
         private String group;
 
         private final NacosConfigProperties nacosConfigProperties;

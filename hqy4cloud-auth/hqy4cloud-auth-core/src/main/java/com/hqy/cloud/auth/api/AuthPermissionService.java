@@ -29,7 +29,7 @@ public interface AuthPermissionService {
      * 返回白名单uri列表
      * @return 白名单列表
      */
-    default List<String> getWhiteUris() {
+    default List<String> getBusinessWhiteUris() {
         return Collections.emptyList();
     }
 

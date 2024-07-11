@@ -18,7 +18,6 @@
         <module>hqy4cloud-common-db-core</module>
         <module>hqy4cloud-common-db-datasource</module>
         <module>hqy4cloud-common-db-shardingsphere</module>
-        <module>hqy4cloud-common-db-dynamics</module>
     </modules>
 
 

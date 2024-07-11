@@ -9,7 +9,8 @@ import com.hqy.cloud.auth.base.AccountConstants;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.db.handler.AesEncryptTypeHandler;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
-import com.hqy.cloud.id.gen.DistributedIdGen;
+import com.hqy.cloud.sharding.id.DistributedIdGen;
+import com.hqy.cloud.sharding.id.WorkerIdHolder;
 import lombok.*;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -116,7 +117,7 @@ public class Account extends BaseEntity {
 
     public static Account register(String username, String password, String email, String phone, UserRole userRole, List<String> authorities) {
         // 生成分布式用户ID
-        long accountId = DistributedIdGen.getSnowflakeId(AccountConstants.DISTRIBUTE_ID_ACCOUNT_SCENE);
+        long accountId = DistributedIdGen.getSnowflakeId(WorkerIdHolder.workerId);
         if (userRole == null) {
             userRole = UserRole.CUSTOMER;
         }

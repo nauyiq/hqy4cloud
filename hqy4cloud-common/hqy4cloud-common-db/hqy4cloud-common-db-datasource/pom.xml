@@ -12,26 +12,26 @@
 
     <artifactId>hqy4cloud-common-db-datasource</artifactId>
     <properties>
-        <springboot.druid.version>1.2.20</springboot.druid.version>
+        <druid.version>1.2.22</druid.version>
     </properties>
 
     <dependencies>
         <!-- druid连接池 -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${springboot.druid.version}</version>
+            <version>${druid.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-common-db-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-notice-service</artifactId>
             <version>${revision}</version>
         </dependency>
 

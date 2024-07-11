@@ -19,13 +19,19 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
-            <version>${spring.authorization.version}</version>
+            <version>1.3.0</version>
         </dependency>
 
         <!-- 基础认证模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-auth-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-util</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

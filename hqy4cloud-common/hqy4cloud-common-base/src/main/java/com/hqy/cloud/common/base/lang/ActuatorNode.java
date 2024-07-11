@@ -14,14 +14,29 @@ public enum ActuatorNode {
 
 
     /**
-     * 服务的消费者
+     * 服务的消费者, 使用内部自研thrift-RPC
      */
     CONSUMER("消费者", new DeployComponent[]{ RPC_CLIENT }),
 
     /**
-     * 服务的提供者
+     * 服务的提供者, 使用内部自研thrift-RPC
      */
     PROVIDER("生产者", new DeployComponent[]{ RPC_CLIENT, RPC_SERVER }),
+
+    /**
+     * dubbo服务提供者
+     */
+    DUBBO_PROVIDER("dubbo生产者", new DeployComponent[] { DUBBO_PROVIDER_COMPONENT, DUBBO_CONSUMER_COMPONENT }),
+
+    /**
+     * dubbo服务消费者
+     */
+    DUBBO_CONSUMER("dubbo消费者", new DeployComponent[] { DUBBO_CONSUMER_COMPONENT, RPC_CLIENT }),
+
+    /**
+     * dubbo的socketio服务
+     */
+    DUBBO_SOCKETIO("dubbo长连接服务", new DeployComponent[] {DUBBO_PROVIDER_COMPONENT, DUBBO_CONSUMER_COMPONENT, SOCKETIO} ),
 
 
     /**
@@ -39,8 +54,5 @@ public enum ActuatorNode {
     public final String alias;
     public final DeployComponent[] components;
 
-    public boolean isProvider() {
-        return this == PROVIDER || this == SOCKETIO_SERVER;
-    }
 
 }

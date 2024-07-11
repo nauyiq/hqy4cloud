@@ -10,7 +10,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +36,6 @@ public class SocketIoModelConfigAutoConfiguration implements BeanFactoryAware {
     private int port;
 
     @Bean
-    @ConditionalOnBean(ApplicationModel.class)
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX_COMPONENTS, name = "socketio.enabled", matchIfMissing = true)
     public SocketIoServerModel socketIoModel(ApplicationModel applicationModel, SocketIoServerProperties properties, AuthorizationService authorizationService) {

@@ -17,15 +17,10 @@
     <properties>
         <redisson.version>3.24.3</redisson.version>
         <jetcache.version>2.7.5</jetcache.version>
+        <caffeine.cache.version>3.1.8</caffeine.cache.version>
     </properties>
 
     <dependencies>
-        <!-- redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
         <!-- redisson -->
         <dependency>
             <groupId>org.redisson</groupId>
@@ -48,10 +43,10 @@
         </dependency>
 
         <!-- springboot cache -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- alibaba-jetcache -->
         <dependency>
@@ -64,13 +59,6 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
 
         <!-- caffeine -->

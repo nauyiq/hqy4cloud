@@ -2,9 +2,7 @@ package com.hqy.cloud.auth.service.tansactional.impl;
 
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
-import com.hqy.cloud.auth.account.entity.AccountRole;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
-import com.hqy.cloud.auth.account.service.AccountRoleService;
 import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.util.AssertUtil;
@@ -18,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
-
 /**
  * @author qiyuan.hong
  * @version 1.0
@@ -31,7 +27,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TccRegistryAccountServiceImpl implements TccRegistryAccountService {
     private final AccountService accountService;
-    private final AccountRoleService accountRoleService;
     private final AccountProfileService accountProfileService;
     private final TransactionTemplate template;
 
@@ -60,12 +55,10 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
             return false;
         }
         queryAccount.setStatus(true);
-        List<AccountRole> accountRoles = accountRoleService.registerAccountRole(account);
         Boolean execute = template.execute(status -> {
             try {
                 AssertUtil.isTrue(accountService.updateById(queryAccount), "Failed execute to update account.");
                 AssertUtil.isTrue(accountProfileService.save(profile), "Failed execute to insert account profiles.");
-                AssertUtil.isTrue(accountRoleService.saveBatch(accountRoles), "Failed execute to insert account roleJsonObjects.");
                 return true;
             } catch (Throwable cause) {
                 status.setRollbackOnly();

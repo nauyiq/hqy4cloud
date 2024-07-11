@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -27,6 +28,7 @@ import java.util.Optional;
  * @version 1.0
  * @date 2023/2/27 10:06
  */
+@Component
 @RequiredArgsConstructor
 public class DefaultRegisteredClientRepository implements RegisteredClientRepository {
 

@@ -22,13 +22,6 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- 分布式id api模块 -->
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-id-service-api</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
         <!-- rpc客户端 启动器 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>

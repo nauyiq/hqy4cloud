@@ -2,7 +2,6 @@ package com.hqy.cloud.common.base.converter;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.mapstruct.Named;

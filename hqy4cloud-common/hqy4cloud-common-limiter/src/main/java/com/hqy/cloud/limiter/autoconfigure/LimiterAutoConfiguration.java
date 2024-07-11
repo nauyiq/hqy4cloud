@@ -7,12 +7,10 @@ import com.hqy.cloud.limiter.core.ManualWhiteIpRedisService;
 import com.hqy.cloud.limiter.flow.FlowConfigProperties;
 import com.hqy.cloud.limiter.flow.HttpAccessFlowControlCenter;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * @author qiyuan.hong
@@ -24,30 +22,24 @@ import org.springframework.context.annotation.Lazy;
 public class LimiterAutoConfiguration {
 
     @Bean
-    @ConditionalOnBean
+    @ConditionalOnMissingBean
     public ManualWhiteIpService manualWhiteIpService(RedissonClient redisson) {
         return new ManualWhiteIpRedisService(redisson);
     }
 
-    @Bean
-    @Lazy
-    @ConditionalOnBean
+    @Bean(name = "biBlockedIpRedisService")
     @ConditionalOnMissingBean
     public BiBlockedIpRedisService biBlockedIpRedisService(RedissonClient redissonClient) {
         return new BiBlockedIpRedisService(redissonClient);
     }
 
-    @Bean
-    @Lazy
-    @ConditionalOnBean
+    @Bean(name = "manualBlockedIpService")
     @ConditionalOnMissingBean
     public ManualBlockedIpService manualBlockedIpService(RedissonClient redissonClient) {
         return new ManualBlockedIpService(redissonClient);
     }
 
     @Bean
-    @Lazy
-    @ConditionalOnBean
     public HttpAccessFlowControlCenter httpAccessFlowControlCenter(FlowConfigProperties properties) {
         return new HttpAccessFlowControlCenter(properties);
     }

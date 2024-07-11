@@ -57,7 +57,7 @@ public class ProjectContextInfo implements Serializable {
     /**
      * 端口等信息
      */
-    private UsingIpPort uip;
+    private UsingIpPort uip = new UsingIpPort();
 
     /**
      * 节点类型

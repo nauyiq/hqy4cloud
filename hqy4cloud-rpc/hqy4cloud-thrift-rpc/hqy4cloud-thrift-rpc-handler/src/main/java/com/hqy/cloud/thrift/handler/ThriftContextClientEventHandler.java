@@ -1,5 +1,6 @@
 package com.hqy.cloud.thrift.handler;
 
+import cn.hutool.core.net.NetUtil;
 import com.facebook.ThriftRequestPram;
 import com.facebook.nifty.client.ClientRequestContext;
 import com.facebook.swift.service.ThriftClientEventHandler;
@@ -7,7 +8,6 @@ import com.hqy.cloud.rpc.core.RPCContext;
 import com.hqy.cloud.rpc.thrift.service.ThriftContextClientHandleService;
 import com.hqy.cloud.rpc.thrift.support.ThriftContext;
 import com.hqy.cloud.thrift.core.ThriftEventHandlerUtil;
-import com.hqy.cloud.util.IpUtil;
 import com.hqy.cloud.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.thrift.TApplicationException;
@@ -46,7 +46,7 @@ public class ThriftContextClientEventHandler extends ThriftClientEventHandler {
         RPCContext context = RPCContext.getRpcContext();
         if (context == null) {
             String remoteAddress = requestContext.getRemoteAddress().toString();
-            log.warn("Rpc context should not be null in the client side, methodName:{}, localAddress:{},  remoteAddress:{}.", methodName, IpUtil.getHostAddress(), remoteAddress);
+            log.warn("Rpc context should not be null in the client side, methodName:{}, localAddress:{},  remoteAddress:{}.", methodName, NetUtil.getLocalhostStr(), remoteAddress);
         }
         return new ThriftContext(context);
     }

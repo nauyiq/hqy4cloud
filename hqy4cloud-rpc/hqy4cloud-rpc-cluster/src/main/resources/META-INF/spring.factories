@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.hqy.cloud.rpc.cluster.support.FailBackCluster,\
- com.hqy.cloud.rpc.cluster.support.FailFastCluster,\
- com.hqy.cloud.rpc.cluster.support.FailoverCluster,\
- com.hqy.cloud.rpc.cluster.support.FailSafeCluster

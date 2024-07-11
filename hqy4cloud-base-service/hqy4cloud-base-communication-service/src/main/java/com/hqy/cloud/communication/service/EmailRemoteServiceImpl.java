@@ -5,6 +5,7 @@ import com.hqy.cloud.service.EmailRemoteService;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ValidationUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.Set;
 

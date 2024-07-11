@@ -6,10 +6,10 @@ import com.hqy.cloud.mq.api.transactional.service.MqTransactionalService;
 import com.hqy.cloud.mq.rabbit.canal.RabbitCanalListener;
 import com.hqy.cloud.mq.rabbit.dynamic.RabbitModuleInitializer;
 import com.hqy.cloud.mq.rabbit.dynamic.RabbitModuleProperties;
+import com.hqy.cloud.mq.rabbit.server.RabbitProducerFactory;
 import com.hqy.cloud.mq.rabbit.server.RabbitTransactionalService;
 import com.hqy.cloud.mq.rabbit.server.RabbitmqProducer;
 import com.hqy.cloud.stream.api.StreamProducer;
-import com.hqy.cloud.mq.rabbit.server.RabbitProducerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -18,7 +18,6 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +35,6 @@ public class RabbitmqAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(ConnectionFactory.class)
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setConnectionFactory(connectionFactory);
@@ -67,7 +65,6 @@ public class RabbitmqAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public RabbitCanalListener rabbitCanalListener(CanalGlue canalGlue) {
         return new RabbitCanalListener(canalGlue);
@@ -77,7 +74,6 @@ public class RabbitmqAutoConfiguration {
      * 消息序列化配置
      */
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public RabbitListenerContainerFactory<?> rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
@@ -90,14 +86,12 @@ public class RabbitmqAutoConfiguration {
      * 动态创建队列、交换机初始化器
      */
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public RabbitModuleInitializer rabbitModuleInitializer(AmqpAdmin amqpAdmin, RabbitModuleProperties rabbitModuleProperties) {
         return new RabbitModuleInitializer(amqpAdmin, rabbitModuleProperties);
     }
 
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public MqTransactionalService mqTransactionalService(MqMessageOperations operations, RabbitmqProducer producer) {
         return new RabbitTransactionalService(operations, producer);

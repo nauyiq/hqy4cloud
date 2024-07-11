@@ -45,7 +45,7 @@
     <select id="queryAccountByUsernameOrEmail" resultMap="baseResultMap">
         SELECT *
         from t_account
-        WHERE username = (#{usernameOrEmail} or email = #{usernameOrEmail}) AND deleted = 0
+        WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail} AND deleted = 0
     </select>
 
     <select id="getAccountInfo" resultMap="accountInfoResultMap">

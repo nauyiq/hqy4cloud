@@ -22,6 +22,7 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-core</artifactId>
+            <version>1.8.0</version>
         </dependency>
     </dependencies>
 

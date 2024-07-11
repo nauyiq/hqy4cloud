@@ -4,7 +4,6 @@ import com.hqy.cloud.mq.rocket.server.RocketmqProducer;
 import com.hqy.cloud.mq.rocket.server.RocketmqProducerFactory;
 import com.hqy.cloud.stream.api.StreamProducer;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,6 @@ public class RocketmqAutoConfiguration {
 
 
     @Bean
-    @ConditionalOnBean
     @ConditionalOnMissingBean
     public RocketmqProducer rocketmqProducer(RocketMQTemplate rocketMQTemplate) {
         // 创建配置类

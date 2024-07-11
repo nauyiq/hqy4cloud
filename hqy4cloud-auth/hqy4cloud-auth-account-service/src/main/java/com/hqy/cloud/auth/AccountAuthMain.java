@@ -5,7 +5,6 @@ import com.hqy.cloud.registry.config.deploy.EnableDeployClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * 账号授权服务 提供auth2授权、用户相关服务等
@@ -14,8 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableDeployClient(actuatorType = ActuatorNode.PROVIDER)
-@MapperScan(basePackages = {"com.hqy.cloud.**.mapper"})
+@EnableDeployClient(actuatorType = ActuatorNode.DUBBO_PROVIDER)
 public class AccountAuthMain {
 
     public static void main(String[] args) {

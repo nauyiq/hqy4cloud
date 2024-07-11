@@ -1,11 +1,11 @@
 package com.hqy.cloud.cache.redis.stream.support;
 
 import com.hqy.cloud.cache.common.RedisConstants;
+import com.hqy.cloud.cache.common.RedisException;
 import com.hqy.cloud.cache.redis.stream.RedisStreamMessageListener;
 import com.hqy.cloud.cache.redis.stream.RedisStreamService;
 import com.hqy.cloud.stream.api.AbstractStreamConsumerTemplate;
 import com.hqy.cloud.util.JsonUtil;
-import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;

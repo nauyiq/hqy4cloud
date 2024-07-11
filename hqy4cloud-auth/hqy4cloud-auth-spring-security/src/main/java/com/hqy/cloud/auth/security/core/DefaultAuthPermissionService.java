@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.security.core;
 
 import com.hqy.cloud.auth.api.AbstractAuthPermissionService;
-import com.hqy.cloud.limit.api.ManualWhiteIpService;
+import com.hqy.cloud.limiter.api.ManualWhiteIpService;
 import org.springframework.core.env.Environment;
 
 /**

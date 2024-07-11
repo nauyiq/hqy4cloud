@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.account.service.impl;
 
+import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.anno.CacheRefresh;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.Cached;
@@ -26,7 +27,7 @@ public class SysOauthClientServiceImpl extends ServiceImpl<SysOauthClientMapper,
 
     @Override
     @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
-    @Cached(name = AccountAuthCacheManager.OAUTH2_CLIENT_CACHE_KEY, expire = 3000,  cacheType = CacheType.BOTH, key = "#clientId", cacheNullValue = true)
+    @Cached(name = ":account:cache:oauth_client:", expire = 3000,  cacheType = CacheType.REMOTE, key = "#clientId", cacheNullValue = true)
     public SysOauthClient findByClientId(String clientId) {
         return sysOauthClientMapper.selectById(clientId);
     }

@@ -14,6 +14,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
@@ -23,6 +24,7 @@ import java.util.Objects;
  * @date 2023/2/27 9:11
  */
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
     private final AccountService service;

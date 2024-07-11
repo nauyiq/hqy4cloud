@@ -1,5 +1,6 @@
 package com.hqy.cloud.socket.cluster;
 
+import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.base.project.MicroServiceConstants;
@@ -12,7 +13,6 @@ import com.hqy.cloud.socket.model.SocketAuthorization;
 import com.hqy.cloud.socket.model.SocketConnectionInfo;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.util.AssertUtil;
-import com.hqy.cloud.util.IpUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
@@ -71,7 +71,7 @@ public abstract class AbstractSocketCluster implements SocketCluster {
         String connectUrl;
         if (CommonSwitcher.ENABLE_GATEWAY_SOCKET_AUTHORIZE.isOn()) {
             // 如果允许gateway路由socket服务.
-            String host = StringConstants.Host.HTTP + IpUtil.getHostAddress();
+            String host = StringConstants.Host.HTTP + NetUtil.getLocalhostStr();
             connectUrl = ProjectContext.getEnvironment().isDevEnvironment() ?
                     host + StrUtil.COLON + MicroServiceConstants.DEFAULT_PORT_GATEWAY : MicroServiceConstants.DEFAULT_ACCESS_DOMAIN_NAME;
         } else {

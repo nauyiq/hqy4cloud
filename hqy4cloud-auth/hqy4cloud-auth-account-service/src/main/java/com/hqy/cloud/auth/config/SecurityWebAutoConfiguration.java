@@ -6,6 +6,7 @@ import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @version 1.0
  * @date 2022/3/11 10:47
  */
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityWebAutoConfiguration {
@@ -56,7 +58,7 @@ public class SecurityWebAutoConfiguration {
                 // 表单登录个性化
                 .and().apply(new FormIdentityLoginConfigurer());*/
                 // 处理 UsernamePasswordAuthenticationToken
-        http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
+//        http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         return http.build();
     }
 

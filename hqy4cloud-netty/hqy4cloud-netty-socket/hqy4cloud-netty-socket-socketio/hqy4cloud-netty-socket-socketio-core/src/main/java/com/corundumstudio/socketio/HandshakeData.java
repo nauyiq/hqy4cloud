@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.hqy.cloud.common.base.lang.AuthConstants.BIZ_ID;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 /**
  * socket.io 握手数据.<br/>
@@ -94,12 +93,12 @@ public class HandshakeData implements Serializable {
         this.urlParams = urlParams;
         this.url = url;
         this.xdomain = xdomain;
-
-        this.authorization = headers.get(AUTHORIZATION);
+        String authorizationString = HttpHeaderNames.AUTHORIZATION.toString();
+        this.authorization = headers.get(authorizationString);
         if (StringUtils.isBlank(authorization)) {
             //尝试去解析参数里的认证信息
-            if (urlParams.containsKey(AUTHORIZATION)) {
-                this.authorization = urlParams.get(AUTHORIZATION).get(0);
+            if (urlParams.containsKey(authorizationString)) {
+                this.authorization = urlParams.get(authorizationString).getFirst();
             } else {
                 log.warn("SocketIo handshakeData authorization is empty.");
             }

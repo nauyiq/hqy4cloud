@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        namespace: ${NACOS_NAMESPACE:6ff9c59b-f5a4-4d65-a4f3-2d32eb0fa70d}
+      config:
+        server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        namespace: ${NACOS_NAMESPACE:6ff9c59b-f5a4-4d65-a4f3-2d32eb0fa70d}

@@ -1,0 +1,2 @@
+com.hqy.cloud.datasource.druid.config.DruidAutoConfiguration
+com.hqy.cloud.datasource.config.DatasourceAutoConfiguration

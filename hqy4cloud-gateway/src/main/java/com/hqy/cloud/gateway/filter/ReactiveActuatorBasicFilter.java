@@ -2,7 +2,7 @@ package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.actuator.filter.AbstractActuatorBasicFilter;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
-import com.hqy.cloud.auth.core.component.EndpointAuthorizationManager;
+import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
@@ -42,7 +42,7 @@ public class ReactiveActuatorBasicFilter extends AbstractActuatorBasicFilter imp
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         String uri = request.getURI().getPath();
-        if (EndpointAuthorizationManager.getInstance().isActuatorRequest(uri)) {
+        if (StaticEndpointAuthorizationManager.getInstance().isActuatorRequest(uri)) {
             String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (!basicAuthorizationService.isAuth(authorization)) {
                 log.warn("Failed basic auth, authorization: {}, ip:{}", authorization, RequestUtil.getIpAddress(request));

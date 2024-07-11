@@ -38,12 +38,14 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         if (isWhiteRequest(request)) {
             return true;
         }
+        return false;
+
         // 基于RBAC进行鉴权. 通过该请求对应的用户是什么角色, 那些角色能访问什么权限.
-        List<String> authorities = request.authorities();
-        if (CollectionUtils.isEmpty(authorities)) {
-            return false;
-        }
-        return checkAuthoritiesRequest(authorities, request);
+//        List<String> authorities = request.authorities();
+//        if (CollectionUtils.isEmpty(authorities)) {
+//            return false;
+//        }
+//        return checkAuthoritiesRequest(authorities, request);
     }
 
     private boolean isWhiteRequest(AuthenticationRequest request) {
@@ -62,7 +64,7 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> getWhiteUris() {
+    public List<String> getBusinessWhiteUris() {
         return this.environment.getProperty(OAuthConstants.BUSINESS_WHITE_URIS_KEY, List.class, OAuthConstants.DEFAULT_BUSINESS_WHITE_URIS);
     }
 
@@ -115,7 +117,7 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
      */
     protected boolean isBusinessWhiteAccessUri(String requestUri) {
         try {
-            List<String> whiteUris = this.getWhiteUris();
+            List<String> whiteUris = this.getBusinessWhiteUris();
             return StaticEndpointAuthorizationManager.getInstance().isMatch(whiteUris, requestUri);
         } catch (Throwable cause) {
             log.error(cause.getMessage(), cause);

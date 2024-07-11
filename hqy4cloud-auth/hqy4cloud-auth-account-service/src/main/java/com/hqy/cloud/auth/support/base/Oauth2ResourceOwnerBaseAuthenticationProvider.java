@@ -140,8 +140,8 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
 
             log.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
 
-            Authentication usernamePasswordAuthentication = authenticationManager
-                    .authenticate(usernamePasswordAuthenticationToken);
+            Authentication usernamePasswordAuthentication = authenticationManager == null ? usernamePasswordAuthenticationToken :
+                    authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
             // @formatter:off
             DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()

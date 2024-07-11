@@ -106,7 +106,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-Name>${artifactId}</Bundle-Name>
                         <Import-Package>
                             org.springframework.*;resolution:=optional,com.hazelcast.*;resolution:=optional,org.redisson.*;resolution:=optional,*
                         </Import-Package>

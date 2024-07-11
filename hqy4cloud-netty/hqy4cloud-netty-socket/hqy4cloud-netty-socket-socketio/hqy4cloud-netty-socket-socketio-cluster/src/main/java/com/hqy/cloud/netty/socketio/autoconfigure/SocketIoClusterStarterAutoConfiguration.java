@@ -15,6 +15,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +46,7 @@ public class SocketIoClusterStarterAutoConfiguration implements SmartInitializin
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnBean(Client.class)
     public SocketIoThriftDiscovery socketIoThriftDiscovery(Client client, SocketClient socketClient) {
         return new DefaultSocketIoThriftDiscovery(client, socketClient);
     }
