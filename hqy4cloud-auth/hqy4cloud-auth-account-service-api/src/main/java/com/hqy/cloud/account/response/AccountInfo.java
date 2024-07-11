@@ -1,24 +1,20 @@
-package com.hqy.cloud.auth.base.dto;
+package com.hqy.cloud.account.response;
 
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyEmail;
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
-import com.hqy.cloud.auth.common.UserRole;
 import lombok.*;
 
 import java.util.Date;
 
 /**
- * 用户信息DTO
- * account表和account_profile表的宽表实体
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/9/27
+ * @date 2024/7/11
  */
-@Setter
 @Getter
-@AllArgsConstructor
+@Setter
+@ToString
 @NoArgsConstructor
-public class AccountInfoDTO  {
+@AllArgsConstructor
+public class AccountInfo {
 
     /**
      * 用户id
@@ -38,19 +34,17 @@ public class AccountInfoDTO  {
     /**
      * 手机号
      */
-    @SensitiveStrategyPhone
     private String phone;
 
     /**
      * 邮箱
      */
-    @SensitiveStrategyEmail
     private String email;
 
     /**
      * 拥有的权限
      */
-    private UserRole role;
+    private String role;
 
     /**
      * 用户拥有的权限
@@ -101,7 +95,6 @@ public class AccountInfoDTO  {
      * 创建时间
      */
     private Date created;
-
 
 
 

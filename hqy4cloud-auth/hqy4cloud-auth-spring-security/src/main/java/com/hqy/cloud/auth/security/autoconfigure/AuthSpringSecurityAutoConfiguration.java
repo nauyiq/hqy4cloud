@@ -1,15 +1,10 @@
 package com.hqy.cloud.auth.security.autoconfigure;
 
-import com.hqy.cloud.auth.api.AuthPermissionService;
-import com.hqy.cloud.auth.security.core.DefaultAuthPermissionService;
-import com.hqy.cloud.limiter.api.ManualWhiteIpService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,10 +18,6 @@ import java.util.Locale;
 @Configuration
 public class AuthSpringSecurityAutoConfiguration {
 
-    @Bean
-    public AuthPermissionService authPermissionService(Environment environment, ManualWhiteIpService manualWhiteIpService) {
-        return new DefaultAuthPermissionService(environment, manualWhiteIpService);
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

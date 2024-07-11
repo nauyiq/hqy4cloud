@@ -94,6 +94,11 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         public String method() {
             return method;
         }
+
+        @Override
+        public List<String> authorities() {
+            return this.authorities;
+        }
     }
 
 

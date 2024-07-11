@@ -88,13 +88,14 @@ public class ResourceServerConfiguration {
                 // 默认所有请求都需要登录
                 .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())
             )
-                // 通用的请求授权走AuthorizationManager
-            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
+
             .oauth2ResourceServer(oauth2ResourceServerCustomizer -> oauth2ResourceServerCustomizer
                     // token认证失败
                     .authenticationEntryPoint(authenticationEntryPoint())
                     // 开放式token
                     .opaqueToken(c -> c.introspector(opaqueTokenIntrospector)))
+            // 通用的请求授权走AuthorizationManager
+            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
             .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST)
             .exceptionHandling(handler -> handler
                     // 拒绝策略

@@ -36,6 +36,14 @@ public interface AccountService extends IService<Account> {
     AccountInfoDTO getAccountInfo(Long id);
 
     /**
+     * 查询用户信息
+     * @param phoneOrEmail 电话或邮箱
+     * @return             用户信息
+     */
+    AccountInfoDTO getAccountInfo(String phoneOrEmail);
+
+
+    /**
      * return account info by username or email.
      * @param usernameOrEmail username or email.
      * @return               {@link AccountInfoDTO}

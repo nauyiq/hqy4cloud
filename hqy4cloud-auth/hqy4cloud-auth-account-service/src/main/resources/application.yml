@@ -11,7 +11,6 @@ spring:
   config:
     import:
       - classpath:nacos_config.yml
-      - classpath:cache.yml
       - classpath:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml
@@ -24,5 +23,29 @@ spring:
     suffix: .ftl
   mvc:
     static-path-pattern: /static/*
+
+
+
+
+dubbo:
+  consumer:
+    timeout: 3000
+    check: false
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: nacos://120.76.65.160:8848
+    username: nacos
+    password: nacos2023.
+    parameters:
+      namespace: dc6be3bd-0250-44d0-a73e-c77631bf0d19
+      group: DEFAULT_GROUP
+
+
+  application:
+    name: ${spring.application.name}
+    qos-enable: false
+    qos-accept-foreign-ip: false
 
 

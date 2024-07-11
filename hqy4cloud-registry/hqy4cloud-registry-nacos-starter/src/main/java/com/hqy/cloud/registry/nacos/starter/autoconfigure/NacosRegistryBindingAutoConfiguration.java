@@ -32,7 +32,7 @@ import java.util.Map;
  * @date 2024/1/5
  */
 @Slf4j
-@Configuration(proxyBeanMethods = false)
+//@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnNacosDiscoveryEnabled
 @PropertySource(value = "classpath:nacos_config.yml", factory = YamlPropertySourceFactory.class)

@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.security.core;
+package com.hqy.cloud.auth.api.support;
 
 import com.hqy.cloud.auth.api.AbstractAuthPermissionService;
 import com.hqy.cloud.limiter.api.ManualWhiteIpService;

@@ -7,13 +7,13 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.auth.api.AuthUser;
 import com.hqy.cloud.auth.api.AuthUserService;
 import com.hqy.cloud.auth.api.support.DefaultAuthUser;
+import com.hqy.cloud.auth.common.AuthException;
 import com.hqy.cloud.auth.common.AuthUserHeaderConstants;
 import com.hqy.cloud.auth.common.UserRole;
-import com.hqy.cloud.common.base.exception.BizException;
+import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -59,7 +56,7 @@ public class AuthUtils {
                         Arrays.stream(StringUtils.tokenizeToStringArray(authorities, StringConstants.Symbol.COMMA)).toList());
             } catch (Exception cause) {
                 log.error(cause.getMessage(), cause);
-                throw new BizException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+                throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
             }
 
         } else {
@@ -71,11 +68,11 @@ public class AuthUtils {
     private static AuthUser getAuthUserByService(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasLength(authorization)) {
-            throw new BizException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+            throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
         }
         AuthUserService service = SpringUtil.getBean(AuthUserService.class);
         if (service == null) {
-            throw new BizException("Not found AuthUser service.", ResultCode.SYSTEM_ERROR.code);
+            throw new AuthException("Not found AuthUser service.", ResultCode.SYSTEM_ERROR.code);
         }
         return service.getAuthUserByToken(authorization);
     }

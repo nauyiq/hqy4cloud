@@ -17,6 +17,7 @@ import java.util.Date;
 @Slf4j
 public class CommonConverter {
 
+
     @Named("booleanToInteger")
     public static Integer booleanToInteger(Boolean status) {
         return status ? 1 : 0;

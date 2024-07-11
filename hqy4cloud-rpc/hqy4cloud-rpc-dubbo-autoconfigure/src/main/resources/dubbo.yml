@@ -1,18 +1,21 @@
-dubbo:
-  consumer:
-    timeout: 3000
-    check: false
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    address: nacos://${NACOS_SERVER:127.0.0.1:8848}
-    parameters:
-      username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD:nacos}
-      namespace: ${NACOS_NAMESPACE:public}  # 自己到nacos上创建一个给dubbo用的namespce，然后和这里保持一致，首次启动前务必修改成你自己的
-      group: ${NACOS_GROUP:DEV_GROUP} #首次启动前务必修改成你自己的
-  application:
-    name: ${spring.application.name}
-    qos-enable: true
-    qos-accept-foreign-ip: false
+#dubbo:
+#  consumer:
+#    timeout: 3000
+#    check: false
+#  protocol:
+#    name: dubbo
+#    port: -1
+#  registry:
+##    address: nacos://${NACOS_SERVER:127.0.0.1:8848}
+#    address: 120.76.65.160:8848
+#    parameters:
+##      username: ${NACOS_USERNAME:nacos}
+#      username: nacos
+#      password: nacos2023.
+##      namespace: ${NACOS_DUBBO_NAMESPACE:dc6be3bd-0250-44d0-a73e-c77631bf0d19}  # 自己到nacos上创建一个给dubbo用的namespce，然后和这里保持一致，首次启动前务必修改成你自己的
+#      namespace: dc6be3bd-0250-44d0-a73e-c77631bf0d19} # 自己到nacos上创建一个给dubbo用的namespce，然后和这里保持一致，首次启动前务必修改成你自己的
+#      group: DEFAULT_GROUP #首次启动前务必修改成你自己的
+#  application:
+#    name: ${spring.application.name}
+#    qos-enable: false
+#    qos-accept-foreign-ip: false

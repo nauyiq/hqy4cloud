@@ -58,6 +58,16 @@
         WHERE a.id = #{id} AND a.deleted = 0
     </select>
 
+    <select id="getAccountInfoByPhoneOrEmail" resultMap="accountInfoResultMap">
+        SELECT
+            a.id,a.username,a.password,a.email,a.phone,a.role,a.status,a.authorities,a.created,a.real_name,a.id_card,a.real_name,
+            p.avatar,p.nickname,p.intro,p.birthday,p.sex
+        FROM
+                (SELECT * FROM t_account_profile WHERE `id` = #{id} ) p,
+                t_account a
+        WHERE a.phone = #{value} or a.email = #{value} AND a.deleted = 0
+    </select>
+
 
     <select id="getAccountInfos" resultMap="accountInfoResultMap">
         SELECT

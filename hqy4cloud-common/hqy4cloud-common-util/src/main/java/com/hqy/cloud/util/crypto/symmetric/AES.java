@@ -94,4 +94,9 @@ public class AES extends AbstractSymmetricSymmetric {
     }
 
 
+    public static void main(String[] args) {
+        System.out.println(AES.getInstance().encrypt("13751938073"));
+        System.out.println(AES.getInstance().encrypt("759428167@qq.com"));
+    }
+
 }

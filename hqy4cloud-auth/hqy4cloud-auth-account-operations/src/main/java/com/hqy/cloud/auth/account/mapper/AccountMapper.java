@@ -36,6 +36,14 @@ public interface AccountMapper extends BaseMapper<Account> {
      */
     AccountInfoDTO getAccountInfo(@Param("id") Long id);
 
+
+    /**
+     * 根据电话或者邮箱获取用户信息
+     * @param phoneOrEmail 电话或邮箱
+     * @return  用户信息
+     */
+    AccountInfoDTO getAccountInfoByPhoneOrEmail(@Param("value") String phoneOrEmail);
+
     /**
      * return account info by username or email.
      * @param usernameOrEmail username or email.
@@ -64,7 +72,6 @@ public interface AccountMapper extends BaseMapper<Account> {
      * @return             AccountInfoDTO.
      */
     List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname);
-
 
 
 }

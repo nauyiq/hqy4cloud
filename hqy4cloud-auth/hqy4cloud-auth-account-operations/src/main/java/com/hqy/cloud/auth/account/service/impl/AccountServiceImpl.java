@@ -55,6 +55,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
+    public AccountInfoDTO getAccountInfo(String phoneOrEmail) {
+        return mapper.getAccountInfoByPhoneOrEmail(phoneOrEmail);
+    }
+
+    @Override
     public AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail) {
         return mapper.getAccountInfoByUsernameOrEmail(usernameOrEmail);
     }

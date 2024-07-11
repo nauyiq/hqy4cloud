@@ -2,11 +2,13 @@ package com.hqy.cloud.gateway.filter;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollectionUtil;
+import com.hqy.cloud.auth.common.AuthException;
 import com.hqy.cloud.auth.common.AuthUserHeaderConstants;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.security.core.SecurityAuthUser;
 import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -51,19 +53,22 @@ public class SecurityAuthenticationFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
+
+        // 移除请求头，防止客户端自己伪造用户信息
+        HttpHeaders headers = request.getHeaders();
+        if (headers.containsKey(AuthUserHeaderConstants.ID) || headers.containsKey(AuthUserHeaderConstants.EMAIL)
+                || headers.containsKey(AuthUserHeaderConstants.PHONE)  || headers.containsKey(AuthUserHeaderConstants.USERNAME)
+                || headers.containsKey(AuthUserHeaderConstants.ROLE) || headers.containsKey(AuthUserHeaderConstants.AUTHORITIES) ) {
+            throw new AuthException(ResultCode.ILLEGAL_REQUEST_LIMITED.getCode());
+        }
+
         return ReactiveSecurityContextHolder.getContext().filter(Objects::nonNull)
                 .map(SecurityContext::getAuthentication)
                 .flatMap(authentication -> {
                     if (authentication.isAuthenticated()) {
                         // 将已认证用户信息数据设置到HTTP Request Header 中.
                         try {
-                            // 移除请求头，防止客户端自己伪造用户信息
-                            request.getHeaders().remove(AuthUserHeaderConstants.ID);
-                            request.getHeaders().remove(AuthUserHeaderConstants.EMAIL);
-                            request.getHeaders().remove(AuthUserHeaderConstants.PHONE);
-                            request.getHeaders().remove(AuthUserHeaderConstants.USERNAME);
-                            request.getHeaders().remove(AuthUserHeaderConstants.ROLE);
-                            request.getHeaders().remove(AuthUserHeaderConstants.AUTHORITIES);
+
                             // 获取认证的用户信息
                             SecurityAuthUser securityUser = (SecurityAuthUser) authentication.getPrincipal();
                             Long id = securityUser.getId();

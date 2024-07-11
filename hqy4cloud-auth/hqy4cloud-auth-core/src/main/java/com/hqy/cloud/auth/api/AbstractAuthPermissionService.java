@@ -32,12 +32,20 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
         AssertUtil.notNull(request, "AuthenticationRequest should not be null.");
         // option请求放行.
         if (HttpMethod.OPTIONS.name().equalsIgnoreCase(request.method())) {
-            return false;
+            return true;
         }
         // 判断是否是白名单请求
         if (isWhiteRequest(request)) {
             return true;
         }
+
+        // 判断是否认证
+        List<String> authorities = request.authorities();
+        if (CollectionUtils.isNotEmpty(authorities)) {
+            return true;
+        }
+
+
         return false;
 
         // 基于RBAC进行鉴权. 通过该请求对应的用户是什么角色, 那些角色能访问什么权限.
