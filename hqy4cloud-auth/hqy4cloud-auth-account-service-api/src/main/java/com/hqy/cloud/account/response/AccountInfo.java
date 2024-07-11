@@ -2,6 +2,7 @@ package com.hqy.cloud.account.response;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,9 @@ import java.util.Date;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountInfo {
+public class AccountInfo implements Serializable {
+
+
 
     /**
      * 用户id

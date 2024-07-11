@@ -1,4 +1,4 @@
-package com.hqy.cloud.service;
+package com.hqy.cloud.communication.service;
 
 import com.facebook.swift.codec.ThriftField;
 import com.facebook.swift.service.ThriftMethod;

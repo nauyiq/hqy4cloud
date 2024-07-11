@@ -10,6 +10,7 @@ import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticat
 import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
 import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
+import com.hqy.cloud.auth.support.core.sms.Oauth2ResourceOwnerSmsAuthenticationProvider;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationSuccessHandler;
 import com.hqy.cloud.auth.support.server.DefaultOauth2AccessTokenGenerator;
@@ -120,11 +121,15 @@ public class AuthorizationServerAutoConfiguration {
     private void addOauth2GrantAuthenticationProvider(HttpSecurity http, MessageSource securityMessageSource) throws Exception {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
+        // 密码认证方式
         Oauth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new Oauth2ResourceOwnerPasswordAuthenticationProvider(
                 authenticationManager, authorizationService, oAuth2TokenGenerator(), securityMessageSource);
+        // 邮箱验证码认证方式
         Oauth2ResourceOwnerEmailAuthenticationProvider resourceOwnerEmailAuthenticationProvider = new Oauth2ResourceOwnerEmailAuthenticationProvider(authenticationManager, authorizationService,
                 oAuth2TokenGenerator(), securityMessageSource);
-
+        // 手机验证码认证方式
+        Oauth2ResourceOwnerSmsAuthenticationProvider resourceOwnerSmsAuthenticationProvider = new Oauth2ResourceOwnerSmsAuthenticationProvider(authenticationManager, authorizationService,
+                oAuth2TokenGenerator(), securityMessageSource);
 
         // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
@@ -132,6 +137,8 @@ public class AuthorizationServerAutoConfiguration {
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
         // 处理 Oauth2ResourceOwnerEmailAuthenticationProvider
         http.authenticationProvider(resourceOwnerEmailAuthenticationProvider);
+        // 处理 Oauth2ResourceOwnerSmsAuthenticationProvider
+        http.authenticationProvider(resourceOwnerSmsAuthenticationProvider);
     }
 
     private AuthenticationConverter accessTokenRequestConverter() {

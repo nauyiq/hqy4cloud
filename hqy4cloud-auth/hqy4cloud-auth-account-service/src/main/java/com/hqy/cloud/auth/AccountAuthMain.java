@@ -15,7 +15,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDubbo
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableDeployClient(actuatorType = ActuatorNode.DUBBO_PROVIDER)
+@EnableDeployClient(actuatorType = ActuatorNode.DUBBO)
 public class AccountAuthMain {
 
     public static void main(String[] args) {

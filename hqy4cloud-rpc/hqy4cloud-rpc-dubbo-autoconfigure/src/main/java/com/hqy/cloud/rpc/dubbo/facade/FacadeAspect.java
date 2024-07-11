@@ -50,7 +50,7 @@ public class FacadeAspect {
                 BeanValidator.validateObject(parameter);
             } catch (ValidationException e) {
                 printLog(stopWatch, method, args, "failed to validate", null, e);
-                return getFailedResponse(returnType, e);
+                return getFailedResponse(returnType, e, true);
             }
         }
 
@@ -65,7 +65,7 @@ public class FacadeAspect {
 
             // 如果执行异常，则返回一个失败的response
             printLog(stopWatch, method, args, "failed to execute", null, throwable);
-            return getFailedResponse(returnType, throwable);
+            return getFailedResponse(returnType, throwable, false);
         }
 
     }
@@ -160,16 +160,20 @@ public class FacadeAspect {
     /**
      * 定义并返回一个通用的失败响应
      */
-    private Object getFailedResponse(Class returnType, Throwable throwable)
+    private Object getFailedResponse(Class returnType, Throwable throwable, boolean valid)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         //如果返回值的类型为BaseResponse 的子类，则创建一个通用的失败响应
         if (returnType.getDeclaredConstructor().newInstance() instanceof Response response) {
             response.setResult(false);
-            if (throwable instanceof BizException bizException) {
+            if (valid) {
+                // 校验入参异常
+                response.setCode(ResultCode.ERROR_PARAM.getCode());
+                response.setMessage(ResultCode.ERROR_PARAM.getMessage());
+            } else if (throwable instanceof BizException bizException) {
                 response.setMessage(ResultCode.SYSTEM_BUSY.getMessage());
                 response.setCode(bizException.getCode());
-            } else {
+            }  else {
                 response.setMessage(throwable.toString());
                 response.setCode(ResultCode.FAILED.code);
             }

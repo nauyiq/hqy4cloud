@@ -1,6 +1,9 @@
 package com.hqy.cloud.account.request;
 
+import com.hqy.cloud.common.request.BaseRequest;
 import lombok.*;
+
+import java.io.Serial;
 
 /**
  * @author qiyuan.hong
@@ -12,7 +15,10 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountQueryParams {
+public class AccountQueryParams extends BaseRequest {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String phone;

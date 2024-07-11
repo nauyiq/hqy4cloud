@@ -14,7 +14,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @date 2021/7/25 19:08
  */
 @EnableDiscoveryClient
-@EnableDeployClient(actuatorType = ActuatorNode.DUBBO_CONSUMER)
+@EnableDeployClient(actuatorType = ActuatorNode.DUBBO)
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, SentinelAutoConfiguration.class})
 public class GatewayMain {
 

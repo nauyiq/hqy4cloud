@@ -15,21 +15,24 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- nacos -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
             <version>${revision}</version>
         </dependency>
 
+        <!-- dubbo -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-base-communication-service-api</artifactId>
+            <artifactId>hqy4cloud-rpc-dubbo-autoconfigure</artifactId>
             <version>${revision}</version>
         </dependency>
 
+        <!-- api模块 -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
+            <artifactId>hqy4cloud-base-communication-service-api</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -43,7 +46,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

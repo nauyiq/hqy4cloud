@@ -9,7 +9,7 @@ import com.hqy.cloud.limiter.flow.AccessFlowController;
 import com.hqy.cloud.limiter.flow.FlowLimitConfig;
 import com.hqy.cloud.limiter.flow.FlowResult;
 import com.hqy.cloud.rpc.starter.client.RpcClient;
-import com.hqy.cloud.service.EmailRemoteService;
+import com.hqy.cloud.communication.service.EmailRemoteService;
 import com.hqy.cloud.alarm.notification.api.NotificationContent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -26,17 +26,13 @@ public enum ActuatorNode {
     /**
      * dubbo服务提供者
      */
-    DUBBO_PROVIDER("dubbo生产者", new DeployComponent[] { DUBBO_PROVIDER_COMPONENT, DUBBO_CONSUMER_COMPONENT }),
+    DUBBO("dubbo生产者", new DeployComponent[] {DUBBO_COMPONENT, RPC_CLIENT }),
 
-    /**
-     * dubbo服务消费者
-     */
-    DUBBO_CONSUMER("dubbo消费者", new DeployComponent[] { DUBBO_CONSUMER_COMPONENT, RPC_CLIENT }),
 
     /**
      * dubbo的socketio服务
      */
-    DUBBO_SOCKETIO("dubbo长连接服务", new DeployComponent[] {DUBBO_PROVIDER_COMPONENT, DUBBO_CONSUMER_COMPONENT, SOCKETIO} ),
+    DUBBO_SOCKETIO("dubbo长连接服务", new DeployComponent[] {DUBBO_COMPONENT, SOCKETIO} ),
 
 
     /**

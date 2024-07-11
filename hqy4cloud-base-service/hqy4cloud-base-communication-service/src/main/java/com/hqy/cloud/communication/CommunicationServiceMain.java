@@ -12,7 +12,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @version 1.0
  * @date 2022/10/14
  */
-@EnableDeployClient(actuatorType = ActuatorNode.PROVIDER)
+
+@EnableDeployClient(actuatorType = ActuatorNode.DUBBO)
 @SpringBootApplication
 @EnableDiscoveryClient
 public class CommunicationServiceMain {

@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.support.core.email;
+package com.hqy.cloud.auth.support.core.sms;
 
 import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationProvider;
@@ -17,14 +17,12 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.Map;
 
 /**
- * 邮箱认证核心处理
+ * 手机验证认证核心处理
  * @author qiyuan.hong
- * @version 1.0
- * @date 2023/3/17 17:43
+ * @date 2024/7/11
  */
 @Slf4j
-public class Oauth2ResourceOwnerEmailAuthenticationProvider extends Oauth2ResourceOwnerBaseAuthenticationProvider<Oauth2ResourceOwnerEmailAuthenticationToken> {
-
+public class Oauth2ResourceOwnerSmsAuthenticationProvider extends Oauth2ResourceOwnerBaseAuthenticationProvider<Oauth2ResourceOwnerSmsAuthenticationToken> {
     /**
      * Constructs an {@code OAuth2AuthorizationCodeAuthenticationProvider} using the
      * provided parameters.
@@ -35,13 +33,13 @@ public class Oauth2ResourceOwnerEmailAuthenticationProvider extends Oauth2Resour
      * @param messageSource
      * @since 0.3.1
      */
-    public Oauth2ResourceOwnerEmailAuthenticationProvider(AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator, MessageSource messageSource) {
+    public Oauth2ResourceOwnerSmsAuthenticationProvider(AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator, MessageSource messageSource) {
         super(authenticationManager, authorizationService, tokenGenerator, messageSource);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        boolean supports = Oauth2ResourceOwnerEmailAuthenticationToken.class.isAssignableFrom(authentication);
+        boolean supports = Oauth2ResourceOwnerBaseAuthenticationProvider.class.isAssignableFrom(authentication);
         log.debug("supports authentication={} returning {}", authentication, supports);
         return supports;
     }
@@ -50,14 +48,14 @@ public class Oauth2ResourceOwnerEmailAuthenticationProvider extends Oauth2Resour
     public void checkClient(RegisteredClient registeredClient) {
         assert registeredClient != null;
         if (!registeredClient.getAuthorizationGrantTypes()
-                .contains(new AuthorizationGrantType(SecurityConstants.EMAIL))) {
+                .contains(new AuthorizationGrantType(SecurityConstants.SMS))) {
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
         }
     }
 
     @Override
     public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
-        String email = (String) reqParameters.get(SecurityConstants.EMAIL);
-        return new UsernamePasswordAuthenticationToken(email, null);
+        String phone = (String) reqParameters.get(SecurityConstants.PHONE_PARAMETER_NAME);
+        return new UsernamePasswordAuthenticationToken(phone, null);
     }
 }

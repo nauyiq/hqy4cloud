@@ -24,16 +24,9 @@ public enum DeployComponent {
     RPC_SERVER(Constants.RPC_SERVER_COMPONENT),
 
     /**
-     * dubbo服务提供者
+     * dubbo服务
      */
-    DUBBO_PROVIDER_COMPONENT(Constants.DUBBO_PROVIDER_COMPONENT),
-
-
-    /**
-     * dubbo服务消费者
-     */
-    DUBBO_CONSUMER_COMPONENT(Constants.DUBBO_CONSUMER_COMPONENT),
-
+    DUBBO_COMPONENT(Constants.DUBBO_COMPONENT),
     
     ;
     
@@ -48,8 +41,7 @@ public enum DeployComponent {
         public static final String RPC_SERVER_COMPONENT = "rpc-server";
         public static final String RPC_CLIENT_COMPONENT = "rpc-client";
         public static final String SOCKETIO_COMPONENT = "socketio";
-        public static final String DUBBO_PROVIDER_COMPONENT = "dubbo-provider";
-        public static final String DUBBO_CONSUMER_COMPONENT = "dubbo-consumer";
+        public static final String DUBBO_COMPONENT = "dubbo";
     }
 
 }

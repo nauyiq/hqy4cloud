@@ -31,7 +31,13 @@
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-actuator-node</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-rpc-thrift-monitor</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

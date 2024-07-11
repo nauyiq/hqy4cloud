@@ -12,7 +12,7 @@ spring:
   config:
     import:
       - classpath:nacos_config.yml
-      - classpath:dubbo.yml
+      - nacos:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml
 

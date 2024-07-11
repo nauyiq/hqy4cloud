@@ -5,14 +5,14 @@ import com.hqy.cloud.registry.common.model.ApplicationModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 
 /**
- * dubbo客户端model类
+ * dubbo服务提供者
  * @author qiyuan.hong
- * @date 2024/7/9
+ * @date 2024/7/10
  * @version 1.0
  */
-public class DubboConsumerDeployModel extends DeployModel {
+public class DubboDeployModel extends DeployModel {
 
-    public DubboConsumerDeployModel(ApplicationModel model) {
+    public DubboDeployModel(ApplicationModel model) {
         super(model);
     }
 
@@ -23,6 +23,6 @@ public class DubboConsumerDeployModel extends DeployModel {
 
     @Override
     public String getModelName() {
-        return DeployComponent.DUBBO_CONSUMER_COMPONENT.name;
+        return DeployComponent.DUBBO_COMPONENT.name;
     }
 }

@@ -53,6 +53,11 @@ public interface SecurityConstants {
     String EMAIL = "email";
 
     /**
+     * 手机验证码登录
+     */
+    String SMS = "sms";
+
+    /**
      * {bcrypt} 加密的特征码
      */
     String BCRYPT = "{bcrypt}";
@@ -117,6 +122,11 @@ public interface SecurityConstants {
      * 验证码code 参数名称
      */
     String CODE_PARAMETER_NAME = "code";
+
+    /**
+     * 手机号码验证code， 参数名称
+     */
+    String PHONE_PARAMETER_NAME = "phone";
 
     /**
      * 无效的验证码
