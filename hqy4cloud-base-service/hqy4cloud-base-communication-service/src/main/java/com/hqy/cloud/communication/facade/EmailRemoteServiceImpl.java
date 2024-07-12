@@ -1,6 +1,7 @@
-package com.hqy.cloud.communication.service;
+package com.hqy.cloud.communication.facade;
 
 import cn.hutool.core.lang.Validator;
+import com.hqy.cloud.communication.service.EmailRemoteService;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ValidationUtil;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;

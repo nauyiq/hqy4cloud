@@ -14,8 +14,8 @@ public interface RandomCodeService {
     int DEFAULT_LENGTH = 4;
 
 
-    default String randomNumber(int expired, TimeUnit timeUnit, String... params) {
-        return randomNumber(DEFAULT_LENGTH, expired, timeUnit, params);
+    default String randomNumber(int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
+        return randomNumber(DEFAULT_LENGTH, expired, timeUnit, scene, value);
     }
 
     /**
@@ -23,14 +23,15 @@ public interface RandomCodeService {
      * @param length     code长度
      * @param expired    过期时间
      * @param timeUnit   过期时间单位
-     * @param params     请求的参数
+     * @param scene      场景
+     * @param value      缓存的值
      * @return           随机生成的code
      */
-    String randomNumber(int length, int expired, TimeUnit timeUnit, String... params);
+    String randomNumber(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value);
 
 
-    default String randomStr(int expired, TimeUnit timeUnit, String... params) {
-        return randomStr(DEFAULT_LENGTH, expired, timeUnit, params);
+    default String randomStr(int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
+        return randomStr(DEFAULT_LENGTH, expired, timeUnit, scene, value);
     }
 
     /**
@@ -38,18 +39,20 @@ public interface RandomCodeService {
      * @param length         code长度
      * @param expired       过期时间
      * @param timeUnit      过期时间单位
-     * @param params        请求的参数
+     * @param scene         场景
+     * @param value         缓存的值
      * @return              随机生成的code
      */
-    String randomStr(int length, int expired, TimeUnit timeUnit, String... params);
+    String randomStr(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value);
 
     /**
      * code是否存在
      * @param code           验证code
-     * @param params         请求参数
+     * @param value          保存的值
+     * @param scene          场景
      * @return     result.
      */
-    boolean isExist(String code, String... params);
+    boolean isExist(String code, String value, RandomCodeScene scene);
 
 
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class DeployModel implements ModelService, DeployMetaDataService, Comparable<DeployModel> {
     private static final Logger log = LoggerFactory.getLogger(DeployModel.class);
 
-    private final ApplicationModel model;
+    private final ProjectInfoModel model;
     private String internalId;
     private final String appName;
     private final String desc;
@@ -30,7 +30,7 @@ public abstract class DeployModel implements ModelService, DeployMetaDataService
     private Set<ModelDeployerListener<DeployModel>> deployerListeners;
     private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
-    public DeployModel(ApplicationModel model) {
+    public DeployModel(ProjectInfoModel model) {
         AssertUtil.notNull(model, "Application model should not be null.");
         this.model = model;
         this.appName = model.getApplicationName();
@@ -110,7 +110,7 @@ public abstract class DeployModel implements ModelService, DeployMetaDataService
     }
 
     @Override
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return model;
     }
 

@@ -1,6 +1,6 @@
 package com.hqy.cloud.socket.cluster;
 
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.socket.api.AbstractSocketServer;
 import com.hqy.cloud.socket.cluster.support.HashSocketCluster;
 
@@ -12,11 +12,11 @@ import com.hqy.cloud.socket.cluster.support.HashSocketCluster;
 public abstract class ClusterSocketServer extends AbstractSocketServer {
     private final String routerName;
 
-    protected ClusterSocketServer(ApplicationModel model, int bindPort) {
+    protected ClusterSocketServer(ProjectInfoModel model, int bindPort) {
         this(model, bindPort,  HashSocketCluster.NAME);
     }
 
-    protected ClusterSocketServer(ApplicationModel model, int bindPort, String router) {
+    protected ClusterSocketServer(ProjectInfoModel model, int bindPort, String router) {
         super(model, bindPort);
         this.routerName = router;
     }

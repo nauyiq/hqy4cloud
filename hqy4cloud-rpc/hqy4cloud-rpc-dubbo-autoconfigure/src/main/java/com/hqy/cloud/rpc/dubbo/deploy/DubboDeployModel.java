@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.dubbo.deploy;
 
 import com.hqy.cloud.common.base.lang.DeployComponent;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 
 /**
@@ -12,7 +12,7 @@ import com.hqy.cloud.registry.common.model.DeployModel;
  */
 public class DubboDeployModel extends DeployModel {
 
-    public DubboDeployModel(ApplicationModel model) {
+    public DubboDeployModel(ProjectInfoModel model) {
         super(model);
     }
 

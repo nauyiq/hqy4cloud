@@ -10,10 +10,10 @@ import com.hqy.cloud.communication.request.PhoneMsgParams;
 public interface CommunicationFacadeService {
 
     /**
-     * 发送短信
+     * 发送认证短信
      * @param params 请求参数
      * @return       是否发送成功
      */
-    R<Boolean> sendSms(PhoneMsgParams params);
+    R<Boolean> sendAuthSms(PhoneMsgParams params);
 
 }

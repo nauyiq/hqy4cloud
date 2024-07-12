@@ -42,8 +42,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
-    public Account queryAccountByUsernameOrEmail(String usernameOrEmail) {
-        return mapper.queryAccountByUsernameOrEmail(usernameOrEmail);
+    public Account queryAccountByUniqueIndex(String uniqueIndex) {
+        return mapper.queryAccountByUniqueIndex(uniqueIndex);
     }
 
     @Override

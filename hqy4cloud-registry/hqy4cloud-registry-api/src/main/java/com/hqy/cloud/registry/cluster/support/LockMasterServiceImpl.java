@@ -6,7 +6,7 @@ import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.cluster.MasterElectionService;
 import com.hqy.cloud.registry.common.Constants;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public record LockMasterServiceImpl(LockService lockService, Registry registry) 
     public void elect(List<ServiceInstance> instances) {
         // 当前节点信息
         ServiceInstance instance = registry.getInstance();
-        ApplicationModel model = instance.getApplicationModel();
+        ProjectInfoModel model = instance.getApplicationModel();
         String host = instance.getHost();
         // 排除自己
         instances = instances.stream().filter(i -> !i.getHost().equals(host)).toList();
@@ -62,7 +62,7 @@ public record LockMasterServiceImpl(LockService lockService, Registry registry) 
         }
     }
 
-    public String buildLockName(ApplicationModel model) {
+    public String buildLockName(ProjectInfoModel model) {
         String applicationName = model.getApplicationName();
         String group = model.getGroup();
         return applicationName + StrUtil.COLON + "clusterLock" + StrUtil.COLON + model.getGroup();

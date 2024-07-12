@@ -94,11 +94,11 @@ public enum AccountResultCode implements Result {
 
     @Override
     public String getMessage() {
-        return "";
+        return this.message;
     }
 
     @Override
     public int getCode() {
-        return 0;
+        return this.code;
     }
 }

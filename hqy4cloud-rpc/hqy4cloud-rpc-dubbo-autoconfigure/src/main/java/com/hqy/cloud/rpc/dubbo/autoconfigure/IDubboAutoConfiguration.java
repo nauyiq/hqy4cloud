@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.dubbo.autoconfigure;
 
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.dubbo.deploy.DubboDeployModel;
 import com.hqy.cloud.rpc.dubbo.facade.FacadeAspect;
 import com.hqy.cloud.util.config.YamlPropertySourceFactory;
@@ -31,7 +31,7 @@ public class IDubboAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX_COMPONENTS, name = "dubbo.enabled", havingValue = "true")
-    public DubboDeployModel dubboProviderDeployModel(ApplicationModel applicationModel) {
-        return new DubboDeployModel(applicationModel);
+    public DubboDeployModel dubboProviderDeployModel(ProjectInfoModel projectInfoModel) {
+        return new DubboDeployModel(projectInfoModel);
     }
 }

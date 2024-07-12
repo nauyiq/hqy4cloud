@@ -24,10 +24,10 @@ public interface AccountMapper extends BaseMapper<Account> {
 
     /**
      * 根据用户名或者邮箱查询账号信息
-     * @param usernameOrEmail 用户名或邮箱
+     * @param uniqueIndex     唯一索引
      * @return                Account
      */
-    Account queryAccountByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail);
+    Account queryAccountByUniqueIndex(@Param("value") String uniqueIndex);
 
     /**
      * 根据id查找用户信息

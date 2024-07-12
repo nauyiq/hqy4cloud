@@ -152,7 +152,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
             return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        Account account = accountService.queryAccountByUsernameOrEmail(usernameOrEmail);
+        Account account = accountService.queryAccountByUniqueIndex(usernameOrEmail);
         if (account == null) {
             return CommonResultStruct.of(AccountResultCode.USER_NOT_FOUND);
         }

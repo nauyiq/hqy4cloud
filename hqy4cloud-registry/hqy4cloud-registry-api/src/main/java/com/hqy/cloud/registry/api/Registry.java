@@ -2,7 +2,7 @@ package com.hqy.cloud.registry.api;
 
 import com.hqy.cloud.registry.common.context.CloseableService;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public interface Registry extends ServerDiscovery, CloseableService {
      * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link ServiceNotifyListener#notify(List)}.
      * @throws RegisterDiscoverException e.
      */
-    List<ServiceInstance> lookup(ApplicationModel model) throws RegisterDiscoverException;
+    List<ServiceInstance> lookup(ProjectInfoModel model) throws RegisterDiscoverException;
 
     /**
      * Query the registered data that matches the conditions. Corresponding to the push mode of the subscription, this is the pull mode and returns only one result.
@@ -45,7 +45,7 @@ public interface Registry extends ServerDiscovery, CloseableService {
      * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link ServiceNotifyListener#notify(List)}.
      * @throws RegisterDiscoverException e.
      */
-    List<ServiceInstance> lookupAll(ApplicationModel model) throws RegisterDiscoverException;
+    List<ServiceInstance> lookupAll(ProjectInfoModel model) throws RegisterDiscoverException;
 
 
     /**
@@ -54,7 +54,7 @@ public interface Registry extends ServerDiscovery, CloseableService {
      * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link ServiceNotifyListener#notify(List)}.
      * @throws RegisterDiscoverException e.
      */
-    List<ApplicationModel> lookupModels(ApplicationModel model) throws RegisterDiscoverException;
+    List<ProjectInfoModel> lookupModels(ProjectInfoModel model) throws RegisterDiscoverException;
 
     /**
      * return registry delay notify time

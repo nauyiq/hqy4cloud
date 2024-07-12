@@ -6,6 +6,7 @@ import com.hqy.cloud.cache.common.RedisException;
 import com.hqy.cloud.cache.redis.server.support.SmartRedisManager;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
@@ -21,24 +22,24 @@ public class RedisRandomCodeService implements RandomCodeService {
     private static final String PREFIX = "random:";
 
     @Override
-    public String randomNumber(int length, int expired, TimeUnit timeUnit, String... params) {
+    public String randomNumber(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
         Assert.isTrue(length > 0, "length must be greater than 0");
         // 生成随机的code
         String code = RandomUtil.randomNumbers(length);
-        return doRandom(expired, timeUnit, params, code);
+        return doRandom(expired, timeUnit, scene, code, value);
     }
 
     @Override
-    public String randomStr(int length, int expired, TimeUnit timeUnit, String... params) {
+    public String randomStr(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
         Assert.isTrue(length > 0, "length must be greater than 0");
         // 生成随机的code
         String code = RandomUtil.randomString(length);
-        return doRandom(expired, timeUnit, params, code);
+        return doRandom(expired, timeUnit, scene, code, value);
     }
 
-    private String doRandom(long expired, TimeUnit timeUnit, String[] params, String code) {
-        String redisKey = getRedisKey(code, params);
-        Boolean set = SmartRedisManager.getInstance().set(redisKey, StringConstants.EMPTY, expired, timeUnit);
+    private String doRandom(long expired, TimeUnit timeUnit, RandomCodeScene scene, String code, String value) {
+        String redisKey = getRedisKey(code, scene.suffix);
+        Boolean set = SmartRedisManager.getInstance().set(redisKey, value, expired, timeUnit);
         if (Boolean.TRUE.equals(set)) {
             return code;
         }
@@ -47,16 +48,14 @@ public class RedisRandomCodeService implements RandomCodeService {
     }
 
     @Override
-    public boolean isExist(String code, String... params) {
-        String redisKey = getRedisKey(code, params);
-        Boolean exists = SmartRedisManager.getInstance().exists(redisKey);
-        return Boolean.TRUE.equals(exists);
+    public boolean isExist(String code, String value, RandomCodeScene scene) {
+        String redisKey = getRedisKey(code, scene.suffix);
+        String data = SmartRedisManager.getInstance().get(redisKey);
+        return StringUtils.isNotBlank(data) && data.equals(value);
     }
     
-    private String getRedisKey(String code, String... params){
-        Assert.notEmpty(params, "Request params should not be empty.");
-        String suffix = Arrays.stream(params).reduce((a, b) -> a + RedisConstants.CACHE_KEY_SEPARATOR + b).orElse(StringConstants.EMPTY);
-        return PREFIX + suffix + RedisConstants.CACHE_KEY_SEPARATOR + code;
+    private String getRedisKey(String code, String suffix){
+        return PREFIX + suffix + code;
     }
     
 

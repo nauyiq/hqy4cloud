@@ -36,14 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class DistributeLockAspect {
     private final LockService lockService;
 
-    /**
-     * 切点
-     */
-    @Pointcut("@annotation(com.hqy.cloud.lock.annotation.DistributeLock)")
-    private void pointcut() {
-    }
-
-    @Around("pointcut()")
+    @Around("@annotation(com.hqy.cloud.lock.annotation.DistributeLock)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         DistributeLock distributeLock = method.getAnnotation(DistributeLock.class);

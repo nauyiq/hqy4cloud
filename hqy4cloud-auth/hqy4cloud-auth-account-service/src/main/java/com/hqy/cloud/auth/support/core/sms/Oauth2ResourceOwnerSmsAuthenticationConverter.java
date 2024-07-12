@@ -1,11 +1,8 @@
 package com.hqy.cloud.auth.support.core.sms;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
 import com.hqy.cloud.auth.support.base.Oauth2ResourceOwnerBaseAuthenticationConverter;
-import com.hqy.cloud.infrastructure.random.RandomCodeScene;
-import com.hqy.cloud.infrastructure.random.RandomCodeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -45,13 +42,6 @@ public class Oauth2ResourceOwnerSmsAuthenticationConverter extends Oauth2Resourc
         // 校验入参
         if (StringUtils.isAnyBlank(phone, code)) {
             Oauth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.PHONE_PARAMETER_NAME,
-                    Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
-        }
-
-        // 判断验证码是否存在
-        RandomCodeService service = SpringUtil.getBean(RandomCodeService.class);
-        if (!service.isExist(code, RandomCodeScene.SMS_AUTH.PARAMS)) {
-            Oauth2EndpointUtils.throwError(SecurityConstants.INVALID_REQUEST_CODE, SecurityConstants.INVALID_REQUEST_CODE,
                     Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
     }

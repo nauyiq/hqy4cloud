@@ -6,9 +6,9 @@
     <resultMap id="baseResultMap" type="com.hqy.cloud.auth.account.entity.Account">
         <result property="id" column="id"/>
         <result property="username" column="username"/>
-        <result property="phone" column="phone" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="phone" column="phone" />
         <result property="password" column="password"/>
-        <result property="email" column="email" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="email" column="email"/>
         <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
         <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
         <result property="role" column="role"/>
@@ -22,9 +22,9 @@
     <resultMap id="accountInfoResultMap" type="com.hqy.cloud.auth.base.dto.AccountInfoDTO">
         <result property="id" column="id"/>
         <result property="username" column="username"/>
-        <result property="phone" column="phone" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="phone" column="phone"/>
         <result property="password" column="password"/>
-        <result property="email" column="email" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
+        <result property="email" column="email" />
         <result property="idCard" column="id_card" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
         <result property="realName" column="real_name" typeHandler="com.hqy.cloud.db.handler.AesEncryptTypeHandler"/>
         <result property="role" column="role"/>
@@ -42,10 +42,10 @@
         SELECT id FROM t_account WHERE DELETED = 0 AND ( username = #{value} OR email = #{value})
     </select>
 
-    <select id="queryAccountByUsernameOrEmail" resultMap="baseResultMap">
+    <select id="queryAccountByUniqueIndex" resultMap="baseResultMap">
         SELECT *
         from t_account
-        WHERE username = #{usernameOrEmail} or email = #{usernameOrEmail} AND deleted = 0
+        WHERE phone = #{value} or username = #{value} or email = #{value} AND deleted = 0
     </select>
 
     <select id="getAccountInfo" resultMap="accountInfoResultMap">

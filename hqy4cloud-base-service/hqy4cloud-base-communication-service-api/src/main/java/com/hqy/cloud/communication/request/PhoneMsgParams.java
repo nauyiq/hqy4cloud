@@ -22,7 +22,10 @@ public class PhoneMsgParams extends BaseRequest {
     private String code;
 
     @NotBlank
-    private String templateId;
+    private SmsType smsType;
+
+
+
 
 
 }

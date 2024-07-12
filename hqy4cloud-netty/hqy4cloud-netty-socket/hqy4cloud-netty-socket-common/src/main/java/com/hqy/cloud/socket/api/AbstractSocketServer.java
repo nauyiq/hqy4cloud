@@ -2,7 +2,7 @@ package com.hqy.cloud.socket.api;
 
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.socket.model.SocketServerInfo;
 import com.hqy.cloud.socket.model.SocketServerMetadata;
 
@@ -15,10 +15,10 @@ import static com.hqy.cloud.socket.SocketConstants.*;
  */
 public abstract class AbstractSocketServer implements SocketServer {
     private final int bindPort;
-    private final ApplicationModel model;
+    private final ProjectInfoModel model;
     private String address;
     private SocketServerInfo socketServerInfo;
-    protected AbstractSocketServer(ApplicationModel model, int bindPort) {
+    protected AbstractSocketServer(ProjectInfoModel model, int bindPort) {
         this.model = model;
         this.bindPort = bindPort;
     }
@@ -57,7 +57,7 @@ public abstract class AbstractSocketServer implements SocketServer {
         this.socketServerInfo = new SocketServerInfo(applicationName, model.getId(), metadata);
     }
 
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return model;
     }
 

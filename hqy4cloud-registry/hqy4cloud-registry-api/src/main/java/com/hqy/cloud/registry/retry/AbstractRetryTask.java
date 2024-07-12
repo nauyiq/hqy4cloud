@@ -1,7 +1,7 @@
 package com.hqy.cloud.registry.retry;
 
 import com.hqy.cloud.registry.api.FailedBackRegistry;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.timer.Timeout;
 import com.hqy.cloud.util.timer.Timer;
@@ -26,7 +26,7 @@ public abstract class AbstractRetryTask implements TimerTask {
     /**
      * model for retry task
      */
-    protected final ApplicationModel model;
+    protected final ProjectInfoModel model;
 
     /**
      * registry for this task
@@ -56,7 +56,7 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     private volatile boolean cancel;
 
-    AbstractRetryTask(ApplicationModel model, FailedBackRegistry registry, String taskName) {
+    AbstractRetryTask(ProjectInfoModel model, FailedBackRegistry registry, String taskName) {
         AssertUtil.isFalse(Objects.isNull(model) || StringUtils.isBlank(taskName), "Initial retry task failure. url or taskName error.");
         this.model = model;
         this.registry = registry;
@@ -112,5 +112,5 @@ public abstract class AbstractRetryTask implements TimerTask {
      * @param registry  registry
      * @param timeout   timeout handler
      */
-    protected abstract void doRetry(ApplicationModel model, FailedBackRegistry registry, Timeout timeout);
+    protected abstract void doRetry(ProjectInfoModel model, FailedBackRegistry registry, Timeout timeout);
 }

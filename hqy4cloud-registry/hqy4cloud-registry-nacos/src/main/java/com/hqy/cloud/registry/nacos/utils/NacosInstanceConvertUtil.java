@@ -3,11 +3,10 @@ package com.hqy.cloud.registry.nacos.utils;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.nacos.Constants;
 import com.hqy.cloud.util.AssertUtil;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -19,7 +18,7 @@ import java.util.Map;
  */
 public class NacosInstanceConvertUtil {
 
-    public static Instance convert(ApplicationModel model, Map<String, String> metadataMap) {
+    public static Instance convert(ProjectInfoModel model, Map<String, String> metadataMap) {
         Instance instance = new Instance();
         instance.setInstanceId(model.getId());
         instance.setServiceName(model.getApplicationName());
@@ -33,8 +32,8 @@ public class NacosInstanceConvertUtil {
         return instance;
     }
 
-    public static ApplicationModel convert(Instance instance, String group, RegistryInfo registryInfo, MetadataInfo metadataInfo) {
-        ApplicationModel model = ApplicationModel.of(getInstanceServiceName(instance), metadataInfo.getEnv(), group);
+    public static ProjectInfoModel convert(Instance instance, String group, RegistryInfo registryInfo, MetadataInfo metadataInfo) {
+        ProjectInfoModel model = ProjectInfoModel.of(getInstanceServiceName(instance), metadataInfo.getEnv(), group);
         model.setId(instance.getInstanceId());
         model.setHealthy(instance.isHealthy());
         model.setPort(instance.getPort());
@@ -45,7 +44,7 @@ public class NacosInstanceConvertUtil {
     }
 
 
-    public static void updateInstance(Instance instance, ApplicationModel model, Map<String, String> metadataMap) {
+    public static void updateInstance(Instance instance, ProjectInfoModel model, Map<String, String> metadataMap) {
         boolean ephemeral = model.getParameter(Constants.EPHEMERAL, Constants.DEFAULT_EPHEMERAL);
         instance.setEphemeral(ephemeral);
         double weight = model.getParameter(Constants.WEIGHT, Constants.DEFAULT_WEIGHT);

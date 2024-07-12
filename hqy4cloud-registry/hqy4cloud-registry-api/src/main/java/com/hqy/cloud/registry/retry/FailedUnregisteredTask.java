@@ -1,7 +1,7 @@
 package com.hqy.cloud.registry.retry;
 
 import com.hqy.cloud.registry.api.FailedBackRegistry;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.util.timer.Timeout;
 
 /**
@@ -12,12 +12,12 @@ import com.hqy.cloud.util.timer.Timeout;
 public final class FailedUnregisteredTask extends AbstractRetryTask {
     private static final String NAME = "retry unregistered task";
 
-    public FailedUnregisteredTask(ApplicationModel model, FailedBackRegistry registry) {
+    public FailedUnregisteredTask(ProjectInfoModel model, FailedBackRegistry registry) {
         super(model, registry, NAME);
     }
 
     @Override
-    protected void doRetry(ApplicationModel model, FailedBackRegistry registry, Timeout timeout) {
+    protected void doRetry(ProjectInfoModel model, FailedBackRegistry registry, Timeout timeout) {
         registry.doUnregister(model);
         registry.removeFailedUnregisteredTask(model);
     }

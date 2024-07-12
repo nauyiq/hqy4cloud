@@ -1,6 +1,6 @@
 package com.hqy.cloud.registry.api;
 
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 
 /**
  * RegistryFactory
@@ -15,6 +15,6 @@ public interface RegistryFactory {
      * @param model the service application model.
      * @return      registry
      */
-    Registry getRegistry(ApplicationModel model);
+    Registry getRegistry(ProjectInfoModel model);
 
 }

@@ -3,7 +3,7 @@ package com.hqy.cloud.socket.cluster.support;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.socket.SocketConstants;
@@ -26,7 +26,7 @@ public class InstanceSocketServer implements SocketServer {
     public InstanceSocketServer(ServiceInstance serviceInstance) {
         AssertUtil.notNull(serviceInstance, "Socket instance should not be null.");
         this.serviceInstance = serviceInstance;
-        ApplicationModel model = serviceInstance.getApplicationModel();
+        ProjectInfoModel model = serviceInstance.getApplicationModel();
         MetadataInfo metadataInfo = model.getMetadataInfo();
         // 获取socket服务的元数据.
         String socketMetadata = metadataInfo.getParameter(SocketConstants.SOCKET_SERVER_DEPLOY_METADATA_KEY);

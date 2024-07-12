@@ -13,7 +13,7 @@ import com.hqy.cloud.registry.api.support.ApplicationServiceInstance;
 import com.hqy.cloud.registry.common.exeception.RegisterDiscoverException;
 import com.hqy.cloud.registry.common.metadata.MetadataConverter;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.nacos.Constants;
 import com.hqy.cloud.registry.nacos.naming.NamingServiceWrapper;
@@ -38,10 +38,10 @@ public class NacosRegistry extends FailedBackRegistry {
     private static final String UP = "UP";
     private final NamingServiceWrapper namingService;
     private final MetadataConverter metadataConverter;
-    private final Map<ApplicationModel, EventListener> nacosListeners = new ConcurrentHashMap<>();
+    private final Map<ProjectInfoModel, EventListener> nacosListeners = new ConcurrentHashMap<>();
 
 
-    public NacosRegistry(ApplicationModel model, NamingServiceWrapper namingService, MetadataConverter metadataConverter) {
+    public NacosRegistry(ProjectInfoModel model, NamingServiceWrapper namingService, MetadataConverter metadataConverter) {
         super(model);
         AssertUtil.notNull(namingService, "Naming service should not be null.");
         AssertUtil.notNull(metadataConverter, "MetadataConverter should not be null.");
@@ -51,18 +51,18 @@ public class NacosRegistry extends FailedBackRegistry {
 
     @Override
     protected ServiceInstance querySelfInstanceInfo() {
-        ApplicationModel applicationModel = getModel();
-        String applicationName = applicationModel.getApplicationName();
-        String group = applicationModel.getGroup();
+        ProjectInfoModel projectInfoModel = getModel();
+        String applicationName = projectInfoModel.getApplicationName();
+        String group = projectInfoModel.getGroup();
         try {
             List<Instance> allInstances = namingService.getAllInstances(applicationName, group)
-                    .stream().filter(instance -> instance.getIp().equals(applicationModel.getIp()) && instance.getPort() == applicationModel.getPort()).toList();
+                    .stream().filter(instance -> instance.getIp().equals(projectInfoModel.getIp()) && instance.getPort() == projectInfoModel.getPort()).toList();
             if (CollectionUtils.isEmpty(allInstances)) {
                 throw new IllegalStateException();
             }
             Instance instance = allInstances.get(0);
-            applicationModel.setId(instance.getInstanceId());
-            return new ApplicationServiceInstance(applicationModel);
+            projectInfoModel.setId(instance.getInstanceId());
+            return new ApplicationServiceInstance(projectInfoModel);
         } catch (Throwable cause) {
             throw new RegisterDiscoverException("Not found self instance by " + applicationName + ", nacos " + getRegistryInfo());
         }
@@ -70,7 +70,7 @@ public class NacosRegistry extends FailedBackRegistry {
 
     @Override
     protected ServiceInstance queryMasterInstance() {
-        ApplicationModel model = getModel();
+        ProjectInfoModel model = getModel();
         String applicationName = model.getApplicationName();
         String group = model.getGroup();
         RegistryInfo registryInfo = getRegistryInfo();
@@ -88,7 +88,7 @@ public class NacosRegistry extends FailedBackRegistry {
 
     @Override
     protected synchronized ServiceInstance doRegister() {
-        ApplicationModel model = getModel();
+        ProjectInfoModel model = getModel();
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
         Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
@@ -102,12 +102,12 @@ public class NacosRegistry extends FailedBackRegistry {
 
     @Override
     protected synchronized void doUnRegister() {
-        ApplicationModel model = getModel();
+        ProjectInfoModel model = getModel();
         unregister(getInstance());
     }
 
     @Override
-    public synchronized void update(ApplicationModel model) throws RuntimeException {
+    public synchronized void update(ProjectInfoModel model) throws RuntimeException {
         try {
             ApplicationServiceInstance serviceInstance = new ApplicationServiceInstance(model);
             Instance instance = NacosInstanceConvertUtil.convert(model, model.getMetadataMap());
@@ -120,7 +120,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public void doRegister(ApplicationModel model) {
+    public void doRegister(ProjectInfoModel model) {
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
         Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
@@ -132,7 +132,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public void doUnregister(ApplicationModel model) {
+    public void doUnregister(ProjectInfoModel model) {
         String applicationName = model.getApplicationName();
         MetadataInfo metadataInfo = model.getMetadataInfo();
         Instance instance = NacosInstanceConvertUtil.convert(model, metadataInfo.getMetadataMap());
@@ -144,7 +144,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public void doSubscribe(ApplicationModel model, ServiceNotifyListener listener) {
+    public void doSubscribe(ProjectInfoModel model, ServiceNotifyListener listener) {
         String applicationName = model.getApplicationName();
         String group = model.getGroup();
         try {
@@ -157,7 +157,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public void doUnsubscribe(ApplicationModel model, ServiceNotifyListener listener) {
+    public void doUnsubscribe(ProjectInfoModel model, ServiceNotifyListener listener) {
         String applicationName = model.getApplicationName();
         EventListener eventListener = nacosListeners.get(model);
         if (eventListener != null) {
@@ -181,7 +181,7 @@ public class NacosRegistry extends FailedBackRegistry {
 
 
     @Override
-    public List<ServiceInstance> lookup(ApplicationModel model) {
+    public List<ServiceInstance> lookup(ProjectInfoModel model) {
         AssertUtil.notNull(model, "Application model of lookUp should not be null.");
         try {
             RegistryInfo registryInfo = getRegistryInfo();
@@ -193,7 +193,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public List<ServiceInstance> lookupAll(ApplicationModel model) throws RegisterDiscoverException {
+    public List<ServiceInstance> lookupAll(ProjectInfoModel model) throws RegisterDiscoverException {
         AssertUtil.notNull(model, "Application model of lookUp should not be null.");
         try {
             RegistryInfo registryInfo = getRegistryInfo();
@@ -205,7 +205,7 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     @Override
-    public List<ApplicationModel> lookupModels(ApplicationModel model) {
+    public List<ProjectInfoModel> lookupModels(ProjectInfoModel model) {
         AssertUtil.notNull(model, "Application model of lookUp should not be null.");
         try {
             RegistryInfo registryInfo = getRegistryInfo();
@@ -217,18 +217,18 @@ public class NacosRegistry extends FailedBackRegistry {
         }
     }
 
-    private void subscribeEventListener(String applicationName, ApplicationModel model, ServiceNotifyListener listener) throws NacosException {
+    private void subscribeEventListener(String applicationName, ProjectInfoModel model, ServiceNotifyListener listener) throws NacosException {
         EventListener eventListener = nacosListeners.computeIfAbsent(model, v -> new NacosRegistryListener(applicationName, model, listener));
         namingService.subscribe(applicationName, eventListener);
     }
 
     /**
      * Notify the Enabled {@link Instance instances} to subscriber.
-     * @param model     {@link ApplicationModel}
+     * @param model     {@link ProjectInfoModel}
      * @param instances {@link ServiceNotifyListener}
      * @param listener  {@link Instance}
      */
-    private void notifySubscriber(ApplicationModel model, List<Instance> instances, ServiceNotifyListener listener) {
+    private void notifySubscriber(ProjectInfoModel model, List<Instance> instances, ServiceNotifyListener listener) {
         List<Instance> enabledInstances = new LinkedList<>(instances);
         if (enabledInstances.size() > 0) {
             //  Instances
@@ -243,7 +243,7 @@ public class NacosRegistry extends FailedBackRegistry {
     private List<ServiceInstance> getServiceInstances(List<Instance> instances, RegistryInfo registryInfo, String group) {
         List<ServiceInstance> serviceInstances = new ArrayList<>(instances.size());
         for (Instance instance : instances) {
-            ApplicationModel model = NacosInstanceConvertUtil.convert(instance, group, registryInfo, metadataConverter.convertMetadataInfo(instance.getServiceName(), instance.getMetadata()));
+            ProjectInfoModel model = NacosInstanceConvertUtil.convert(instance, group, registryInfo, metadataConverter.convertMetadataInfo(instance.getServiceName(), instance.getMetadata()));
             ServiceInstance serviceInstance = new ApplicationServiceInstance(model);
             serviceInstances.add(serviceInstance);
         }
@@ -265,12 +265,12 @@ public class NacosRegistry extends FailedBackRegistry {
     }
 
     private class NacosRegistryListener implements EventListener {
-        private final ApplicationModel model;
+        private final ProjectInfoModel model;
         private final String applicationName;
         private final ServiceNotifyListener notifyListener;
         private final RegistryNotifier<List<Instance>> notifier;
 
-        public NacosRegistryListener(String applicationName, ApplicationModel model, ServiceNotifyListener notifyListener) {
+        public NacosRegistryListener(String applicationName, ProjectInfoModel model, ServiceNotifyListener notifyListener) {
             this.applicationName = applicationName;
             this.model = model;
             this.notifyListener = notifyListener;

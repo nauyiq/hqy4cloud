@@ -10,6 +10,7 @@ import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticat
 import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
 import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationProvider;
+import com.hqy.cloud.auth.support.core.sms.Oauth2ResourceOwnerSmsAuthenticationConverter;
 import com.hqy.cloud.auth.support.core.sms.Oauth2ResourceOwnerSmsAuthenticationProvider;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationSuccessHandler;
@@ -145,6 +146,7 @@ public class AuthorizationServerAutoConfiguration {
         return new DelegatingAuthenticationConverter(Arrays.asList(
                 new Oauth2ResourceOwnerPasswordAuthenticationConverter(),
                 new Oauth2ResourceOwnerEmailAuthenticationConverter(),
+                new Oauth2ResourceOwnerSmsAuthenticationConverter(),
                 new OAuth2RefreshTokenAuthenticationConverter(),
                 new OAuth2ClientCredentialsAuthenticationConverter(),
                 new OAuth2AuthorizationCodeAuthenticationConverter(),

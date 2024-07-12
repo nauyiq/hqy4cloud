@@ -3,7 +3,7 @@ package com.hqy.cloud.netty.socketio.autoconfigure;
 import com.hqy.cloud.netty.socketio.deloyer.SocketIoServerModel;
 import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
 import com.hqy.cloud.netty.socketio.properties.SocketIoServerProperties;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.util.authentication.AuthorizationService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -38,8 +38,8 @@ public class SocketIoModelConfigAutoConfiguration implements BeanFactoryAware {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX_COMPONENTS, name = "socketio.enabled", matchIfMissing = true)
-    public SocketIoServerModel socketIoModel(ApplicationModel applicationModel, SocketIoServerProperties properties, AuthorizationService authorizationService) {
-        SocketIoServerModel model = new SocketIoServerModel(applicationModel.getApplicationName());
+    public SocketIoServerModel socketIoModel(ProjectInfoModel projectInfoModel, SocketIoServerProperties properties, AuthorizationService authorizationService) {
+        SocketIoServerModel model = new SocketIoServerModel(projectInfoModel.getApplicationName());
         model.setPort(properties.getPort() == 0 ? port + 100 : properties.getPort());
         model.setContext(properties.getContext());
         model.setCluster(properties.isCluster());

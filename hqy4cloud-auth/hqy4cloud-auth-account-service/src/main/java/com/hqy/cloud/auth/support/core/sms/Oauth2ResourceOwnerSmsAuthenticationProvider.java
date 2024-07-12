@@ -39,8 +39,8 @@ public class Oauth2ResourceOwnerSmsAuthenticationProvider extends Oauth2Resource
 
     @Override
     public boolean supports(Class<?> authentication) {
-        boolean supports = Oauth2ResourceOwnerBaseAuthenticationProvider.class.isAssignableFrom(authentication);
-        log.debug("supports authentication={} returning {}", authentication, supports);
+        boolean supports = Oauth2ResourceOwnerSmsAuthenticationToken.class.isAssignableFrom(authentication);
+        log.warn("supports authentication={} returning {}", authentication, supports);
         return supports;
     }
 

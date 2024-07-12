@@ -6,7 +6,7 @@ import com.hqy.cloud.netty.socketio.listener.SocketIoEventListener;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.api.ServiceInstance;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.socket.SocketConstants;
 import com.hqy.cloud.socket.api.SocketServer;
 import com.hqy.cloud.socket.cluster.ClusterSocketServer;
@@ -32,7 +32,7 @@ public class SocketIoSocketServer extends ClusterSocketServer {
     private final SocketIoServerModel socketIoServerModel;
     private volatile boolean destroy = false;
 
-    public SocketIoSocketServer(ApplicationModel model, SocketIOServer socketIOServer, SocketIoServerModel socketIoServerModel) {
+    public SocketIoSocketServer(ProjectInfoModel model, SocketIOServer socketIOServer, SocketIoServerModel socketIoServerModel) {
         super(model, socketIoServerModel.getPort());
         this.socketIOServer = socketIOServer;
         this.socketIoServerModel = socketIoServerModel;

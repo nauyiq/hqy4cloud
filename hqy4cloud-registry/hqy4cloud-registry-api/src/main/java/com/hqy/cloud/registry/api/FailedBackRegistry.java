@@ -1,7 +1,7 @@
 package com.hqy.cloud.registry.api;
 
 import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.retry.*;
 import com.hqy.cloud.util.AssertUtil;
 import com.hqy.cloud.util.thread.DefaultThreadFactory;
@@ -26,20 +26,20 @@ import static com.hqy.cloud.registry.common.Constants.REGISTRY_RETRY_PERIOD_KEY;
 public abstract class FailedBackRegistry extends AbstractRegistry {
     private static final Logger log = LoggerFactory.getLogger(FailedBackRegistry.class);
 
-    private final Map<ApplicationModel, FailedRegisteredTask> failedRegistered = new ConcurrentHashMap<>();
-    private final Map<ApplicationModel, FailedUnregisteredTask> failedUnregistered = new ConcurrentHashMap<>();
+    private final Map<ProjectInfoModel, FailedRegisteredTask> failedRegistered = new ConcurrentHashMap<>();
+    private final Map<ProjectInfoModel, FailedUnregisteredTask> failedUnregistered = new ConcurrentHashMap<>();
     private final Map<Holder, FailedSubscribedTask> failedSubscribed = new ConcurrentHashMap<>();
     private final Map<Holder, FailedUnsubscribedTask> failedUnsubscribed = new ConcurrentHashMap<>();
     private final int retryPeriod;
     private final HashedWheelTimer retryTimer;
 
-    public FailedBackRegistry(ApplicationModel model) {
+    public FailedBackRegistry(ProjectInfoModel model) {
         super(model);
         this.retryPeriod = model.getParameter(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);
         this.retryTimer = new HashedWheelTimer(new DefaultThreadFactory("FailedBackRegistryTimer"), retryPeriod, TimeUnit.MILLISECONDS, 128);
     }
 
-    public void addFailedRegistered(ApplicationModel model) {
+    public void addFailedRegistered(ProjectInfoModel model) {
         FailedRegisteredTask failRegisteredTask = failedRegistered.get(model);
         if (failRegisteredTask != null) {
             return;
@@ -52,7 +52,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void addFailedUnregistered(ApplicationModel model) {
+    public void addFailedUnregistered(ProjectInfoModel model) {
         FailedUnregisteredTask failedUnregisteredTask = failedUnregistered.get(model);
         if (failedUnregisteredTask != null) {
             return;
@@ -65,7 +65,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void addFailedSubscribed(ApplicationModel model, ServiceNotifyListener listener) {
+    public void addFailedSubscribed(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         FailedSubscribedTask failedSubscribedTask = failedSubscribed.get(holder);
         if (Objects.nonNull(failedSubscribedTask)) {
@@ -79,7 +79,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void addFailedUnsubscribed(ApplicationModel model, ServiceNotifyListener listener) {
+    public void addFailedUnsubscribed(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         FailedUnsubscribedTask failedUnsubscribedTask = failedUnsubscribed.get(holder);
         if (Objects.nonNull(failedUnsubscribedTask)) {
@@ -93,21 +93,21 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         }
     }
 
-    public void removeFailedRegistered(ApplicationModel model) {
+    public void removeFailedRegistered(ProjectInfoModel model) {
         FailedRegisteredTask task = failedRegistered.remove(model);
         if (Objects.nonNull(task)) {
             task.cancel();
         }
     }
 
-    public void removeFailedUnRegistered(ApplicationModel model) {
+    public void removeFailedUnRegistered(ProjectInfoModel model) {
         FailedUnregisteredTask task = failedUnregistered.get(model);
         if (Objects.nonNull(task)) {
             task.cancel();
         }
     }
 
-    public void removeFailSubscribed(ApplicationModel model, ServiceNotifyListener listener) {
+    public void removeFailSubscribed(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         FailedSubscribedTask failedSubscribedTask = failedSubscribed.remove(holder);
         if (Objects.nonNull(failedSubscribedTask)) {
@@ -116,7 +116,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
         removeFailUnsubscribed(model, listener);
     }
 
-    public void removeFailUnsubscribed(ApplicationModel model, ServiceNotifyListener listener) {
+    public void removeFailUnsubscribed(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         FailedUnsubscribedTask failedUnsubscribedTask = failedUnsubscribed.get(holder);
         if (Objects.nonNull(failedUnsubscribedTask)) {
@@ -125,29 +125,29 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     }
 
 
-    public void removeFailedRegisteredTask(ApplicationModel model) {
+    public void removeFailedRegisteredTask(ProjectInfoModel model) {
         failedRegistered.remove(model);
     }
 
-    public void removeFailedUnregisteredTask(ApplicationModel model) {
+    public void removeFailedUnregisteredTask(ProjectInfoModel model) {
         failedUnregistered.remove(model);
     }
 
-    public void removeFailedSubscribedTask(ApplicationModel model, ServiceNotifyListener listener) {
+    public void removeFailedSubscribedTask(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         failedSubscribed.remove(holder);
     }
 
-    public void removeFailedUnsubscribedTask(ApplicationModel model, ServiceNotifyListener listener) {
+    public void removeFailedUnsubscribedTask(ProjectInfoModel model, ServiceNotifyListener listener) {
         Holder holder = new Holder(model, listener);
         failedUnsubscribed.remove(holder);
     }
 
-    public Map<ApplicationModel, FailedRegisteredTask> getFailedRegistered() {
+    public Map<ProjectInfoModel, FailedRegisteredTask> getFailedRegistered() {
         return failedRegistered;
     }
 
-    public Map<ApplicationModel, FailedUnregisteredTask> getFailedUnregistered() {
+    public Map<ProjectInfoModel, FailedUnregisteredTask> getFailedUnregistered() {
         return failedUnregistered;
     }
 
@@ -163,7 +163,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     @Override
     public void register(ServiceInstance instance) {
         super.register(instance);
-        ApplicationModel model = instance.getApplicationModel();
+        ProjectInfoModel model = instance.getApplicationModel();
         removeFailedRegistered(model);
         removeFailedUnRegistered(model);
 
@@ -191,7 +191,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     @Override
     public void unregister(ServiceInstance instance) {
         super.unregister(instance);
-        ApplicationModel model = instance.getApplicationModel();
+        ProjectInfoModel model = instance.getApplicationModel();
         removeFailedRegistered(model);
         removeFailedUnRegistered(model);
 
@@ -221,7 +221,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     @Override
     public void subscribe(ServiceInstance instance, ServiceNotifyListener listener) {
         super.subscribe(instance, listener);
-        ApplicationModel model = instance.getApplicationModel();
+        ProjectInfoModel model = instance.getApplicationModel();
         removeFailSubscribed(model, listener);
 
         try {
@@ -250,7 +250,7 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
     @Override
     public void unsubscribe(ServiceInstance instance, ServiceNotifyListener listener) {
         super.unsubscribe(instance, listener);
-        ApplicationModel model = instance.getApplicationModel();
+        ProjectInfoModel model = instance.getApplicationModel();
         removeFailUnsubscribed(model, listener);
 
         try {
@@ -282,33 +282,33 @@ public abstract class FailedBackRegistry extends AbstractRegistry {
      * retry register template method.
      * @param model registry information
      */
-    public abstract void doRegister(ApplicationModel model);
+    public abstract void doRegister(ProjectInfoModel model);
 
     /**
      * retry unregister template method.
      * @param model unregister information
      */
-    public abstract void doUnregister(ApplicationModel model);
+    public abstract void doUnregister(ProjectInfoModel model);
 
     /**
      * retry subscribe template method.
      * @param model     subscribe information
      * @param listener notify listener
      */
-    public abstract void doSubscribe(ApplicationModel model, ServiceNotifyListener listener);
+    public abstract void doSubscribe(ProjectInfoModel model, ServiceNotifyListener listener);
 
     /**
      * retry unsubscribe template method.
      * @param model     unsubscribe information
      * @param listener  notify listener
      */
-    public abstract void doUnsubscribe(ApplicationModel model, ServiceNotifyListener listener);
+    public abstract void doUnsubscribe(ProjectInfoModel model, ServiceNotifyListener listener);
 
     static class Holder {
-        private final ApplicationModel model;
+        private final ProjectInfoModel model;
         private final ServiceNotifyListener notifyListener;
 
-        public Holder(ApplicationModel model, ServiceNotifyListener listener) {
+        public Holder(ProjectInfoModel model, ServiceNotifyListener listener) {
             AssertUtil.isTrue(Objects.nonNull(model) && Objects.nonNull(listener), "url or listener is null.");
             this.model = model;
             this.notifyListener = listener;

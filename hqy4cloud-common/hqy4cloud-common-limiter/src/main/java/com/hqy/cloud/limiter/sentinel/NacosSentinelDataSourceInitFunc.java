@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class NacosSentinelDataSourceInitFunc implements InitFunc {
     public void init() throws Exception {
         ProjectContext context = BeanRepository.getInstance().getBean(ProjectContext.class);
         if (context != null) {
-            ApplicationModel model = context.registryContext().getModel();
+            ProjectInfoModel model = context.registryContext().getModel();
             RegistryInfo registryInfo = model.getRegistryInfo();
             String dataId = model.getApplicationName() + StrUtil.DASHED + "flow";
             Properties properties = new Properties();

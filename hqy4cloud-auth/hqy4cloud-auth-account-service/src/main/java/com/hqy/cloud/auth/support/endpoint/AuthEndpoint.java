@@ -6,12 +6,21 @@ import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.auth.account.entity.SysOauthClient;
 import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
+import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
 import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.communication.request.PhoneMsgParams;
+import com.hqy.cloud.communication.request.SmsType;
+import com.hqy.cloud.communication.service.CommunicationFacadeService;
+import com.hqy.cloud.infrastructure.random.RandomCodeScene;
+import com.hqy.cloud.infrastructure.random.RandomCodeService;
+import com.hqy.cloud.rpc.dubbo.DubboConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +43,7 @@ import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 令牌端点
@@ -51,6 +61,11 @@ public class AuthEndpoint {
     private final AuthenticationFailureHandler authenticationFailureHandler = new DefaultAuthenticationFailureHandler();
     private final HttpMessageConverter<OAuth2AccessTokenResponse> accessTokenHttpResponseConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
 
+    private final RandomCodeService randomCodeService;
+
+    @DubboReference(version = DubboConstants.DEFAULT_DUBBO_SERVICE_VERSION)
+    private CommunicationFacadeService communicationFacadeService;
+
     /**
      * 认证页面
      * @param modelAndView
@@ -62,6 +77,20 @@ public class AuthEndpoint {
         modelAndView.setViewName("ftl/login");
         modelAndView.addObject("error", error);
         return modelAndView;
+    }
+
+
+    /**
+     * 发送手机验证码
+     * @param telephone 手机号码
+     * @return          验证码
+     */
+    @GetMapping("/sendCaptcha")
+    public R<Boolean> sendCaptcha(@NotBlank @RequestParam String telephone) {
+        // 生成验证码
+        String code = randomCodeService.randomNumber((int) DateMeasureConstants.FIVE_MINUTES.getSeconds(),
+                TimeUnit.SECONDS, RandomCodeScene.SMS_AUTH, telephone);
+        return communicationFacadeService.sendAuthSms(new PhoneMsgParams(telephone, code, SmsType.SMS_AUTH));
     }
 
 

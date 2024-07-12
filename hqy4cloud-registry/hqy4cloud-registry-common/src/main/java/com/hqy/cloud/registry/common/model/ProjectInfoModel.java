@@ -17,8 +17,8 @@ import java.util.Objects;
  * @version 1.0
  * @date 2023/12/29
  */
-public class ApplicationModel extends Parameters implements Serializable {
-    private static final Logger log = LoggerFactory.getLogger(ApplicationModel.class);
+public class ProjectInfoModel extends Parameters implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(ProjectInfoModel.class);
 
     private String id;
     private String applicationName;
@@ -31,14 +31,14 @@ public class ApplicationModel extends Parameters implements Serializable {
     private MetadataInfo metadataInfo;
     private Long startupTimeMillis;
 
-    private ApplicationModel(String applicationName, String namespace, String group) {
+    private ProjectInfoModel(String applicationName, String namespace, String group) {
         this.applicationName = applicationName;
         this.namespace = namespace;
         this.group = group;
     }
 
-    public static ApplicationModel of(String applicationName, String namespace, String group) {
-        return new ApplicationModel(applicationName, namespace, group);
+    public static ProjectInfoModel of(String applicationName, String namespace, String group) {
+        return new ProjectInfoModel(applicationName, namespace, group);
     }
 
     /**
@@ -190,7 +190,7 @@ public class ApplicationModel extends Parameters implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ApplicationModel that = (ApplicationModel) o;
+        ProjectInfoModel that = (ProjectInfoModel) o;
         return port == that.port && applicationName.equals(that.applicationName) && namespace.equals(that.namespace) && group.equals(that.group) && ip.equals(that.ip) && registryInfo.equals(that.registryInfo) && Objects.equals(metadataInfo, that.metadataInfo);
     }
 

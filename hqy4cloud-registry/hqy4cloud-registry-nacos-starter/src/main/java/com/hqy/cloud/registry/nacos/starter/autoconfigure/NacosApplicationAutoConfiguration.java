@@ -9,7 +9,7 @@ import com.hqy.cloud.registry.api.RegistryFactory;
 import com.hqy.cloud.registry.common.context.BeanRepository;
 import com.hqy.cloud.registry.api.Environment;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.PubMode;
 import com.hqy.cloud.registry.common.model.RegistryInfo;
 import com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProperties;
@@ -56,8 +56,8 @@ public class NacosApplicationAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ApplicationModel applicationModel(NacosDiscoveryProperties properties, AutoApplicationDeployerProperties applicationDeployerProperties) {
-        ApplicationModel model = ApplicationModel.of(properties.getService(), properties.getNamespace(), properties.getGroup());
+    public ProjectInfoModel projectInfoModel(NacosDiscoveryProperties properties, AutoApplicationDeployerProperties applicationDeployerProperties) {
+        ProjectInfoModel model = ProjectInfoModel.of(properties.getService(), properties.getNamespace(), properties.getGroup());
         model.setIp(properties.getIp());
         model.setPort(port);
         model.setStartupTimeMillis(System.currentTimeMillis());
@@ -73,9 +73,9 @@ public class NacosApplicationAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Registry registry(ApplicationModel applicationModel) {
+    public Registry registry(ProjectInfoModel projectInfoModel) {
         RegistryFactory registryFactory = new NacosRegistryFactory();
-        Registry registry = registryFactory.getRegistry(applicationModel);
+        Registry registry = registryFactory.getRegistry(projectInfoModel);
         BeanRepository.getInstance().register(Registry.class, registry);
         return registry;
     }

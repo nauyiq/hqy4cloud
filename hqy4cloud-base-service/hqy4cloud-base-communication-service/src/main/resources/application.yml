@@ -8,6 +8,8 @@ spring:
   config:
     import:
       - classpath:nacos_config.yml
+      - nacos:sms.yml
+      - nacos:email.yml
       - nacos:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml

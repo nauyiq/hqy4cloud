@@ -4,7 +4,7 @@ import com.hqy.cloud.lock.service.LockService;
 import com.hqy.cloud.registry.api.Registry;
 import com.hqy.cloud.registry.cluster.MasterElectionService;
 import com.hqy.cloud.registry.cluster.support.LockMasterServiceImpl;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.model.DeployModel;
 import com.hqy.cloud.registry.config.deploy.AutoApplicationDeployerProperties;
 import com.hqy.cloud.registry.context.RegistryContext;
@@ -40,7 +40,7 @@ public class ApplicationDeployerModelConfiguration implements InitializingBean, 
     }
 
     @Bean
-    public RegistryContext registryContext(ApplicationModel model, Registry registry, MasterElectionService masterElectionService) {
+    public RegistryContext registryContext(ProjectInfoModel model, Registry registry, MasterElectionService masterElectionService) {
         return new RegistryContext(model, registry, masterElectionService);
     }
 

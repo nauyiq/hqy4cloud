@@ -115,8 +115,20 @@ public enum ResultCode implements Result {
      */
     INVALID_DATA(1003, "Invalid data, please check input again"),
 
+    /**
+     * 当前环境未启用/支持短信发送
+     */
+    NOT_SUPPORT_SMS(2000, "The environment not support sms."),
 
+    /**
+     * 找不到短信模板
+     */
+    NOT_FOUND_SMS_TEMPLATE(2001, "Not found sms template."),
 
+    /**
+     * 发送短信失败
+     */
+    FAILED_SEND_SMS(2009, "Failed execute to send sms message."),
 
 
     /**
@@ -161,6 +173,9 @@ public enum ResultCode implements Result {
      * 获取不到资源
      */
     NOT_FOUND_RESOURCE(5002, "Not found resource, please check you input again."),
+
+
+
 
     /**
      * 上传文件失败.

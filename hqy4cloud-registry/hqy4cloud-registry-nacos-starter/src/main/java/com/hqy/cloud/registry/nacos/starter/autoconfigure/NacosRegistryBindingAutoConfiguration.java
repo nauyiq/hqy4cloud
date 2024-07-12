@@ -7,7 +7,7 @@ import com.alibaba.cloud.nacos.discovery.NacosDiscoveryClientConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
 import com.hqy.cloud.registry.common.deploy.DeployState;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.config.autoconfigure.ApplicationDeployerModelConfiguration;
 import com.hqy.cloud.registry.context.ProjectContext;
 import com.hqy.cloud.util.JsonUtil;
@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Map;
@@ -44,9 +43,9 @@ public class NacosRegistryBindingAutoConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = {"spring.cloud.nacos.discovery.watch.enabled"}, matchIfMissing = true)
     public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceManager nacosServiceManager,
-                                 ApplicationModel applicationModel, ProjectContext projectContext) {
+                                 ProjectInfoModel projectInfoModel, ProjectContext projectContext) {
         DeployState state = projectContext.deployer().getState();
-        MetadataInfo metadataInfo = applicationModel.getMetadataInfo();
+        MetadataInfo metadataInfo = projectInfoModel.getMetadataInfo();
         Map<String, String> metadataMap = metadataInfo.getMetadataMap();
         Map<String, String> metadata = nacosDiscoveryProperties.getMetadata();
         metadata.putAll(metadataMap);

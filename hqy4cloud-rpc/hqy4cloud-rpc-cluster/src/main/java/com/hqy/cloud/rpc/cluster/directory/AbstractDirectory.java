@@ -2,7 +2,7 @@ package com.hqy.cloud.rpc.cluster.directory;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.hqy.cloud.common.base.lang.exception.RpcException;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.router.RouterChain;
@@ -28,7 +28,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractDirectory.class);
 
     protected final String providerServiceName;
-    protected final ApplicationModel providerModel;
+    protected final ProjectInfoModel providerModel;
     private volatile boolean destroyed = false;
     protected volatile RpcModel rpcModel;
     protected RouterChain<T> routerChain;
@@ -81,7 +81,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         AssertUtil.notNull(rpcModel, "Rpc model is null.");
         this.providerServiceName = providerServiceName;
         this.rpcModel = rpcModel;
-        this.providerModel = ApplicationModel.of(providerServiceName, rpcModel.getModel().getNamespace(), rpcModel.getModel().getGroup());
+        this.providerModel = ProjectInfoModel.of(providerServiceName, rpcModel.getModel().getNamespace(), rpcModel.getModel().getGroup());
         setRouterChain(routerChain);
         connectivityExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("rpc-connectivity-scheduler", true));
         reconnectTaskTryCount = DEFAULT_RECONNECT_TASK_TRY_COUNT;
@@ -275,12 +275,12 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     }
 
     @Override
-    public ApplicationModel getModel() {
+    public ProjectInfoModel getModel() {
         return getRPCModel().getModel();
     }
 
     @Override
-    public ApplicationModel getProviderModel() {
+    public ProjectInfoModel getProviderModel() {
         return this.providerModel;
     }
 

@@ -138,6 +138,9 @@
                     <excludes>
                         <exclude>**/apache/bval/**</exclude>
                     </excludes>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

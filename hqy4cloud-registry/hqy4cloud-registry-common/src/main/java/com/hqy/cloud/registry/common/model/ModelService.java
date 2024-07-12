@@ -12,9 +12,9 @@ public interface ModelService {
 
     /**
      * get application model.
-     * @return {@link ApplicationModel}
+     * @return {@link ProjectInfoModel}
      */
-    ApplicationModel getModel();
+    ProjectInfoModel getModel();
 
 
     /**

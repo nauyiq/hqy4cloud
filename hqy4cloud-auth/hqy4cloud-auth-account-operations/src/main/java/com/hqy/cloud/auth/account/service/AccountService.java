@@ -22,11 +22,11 @@ public interface AccountService extends IService<Account> {
     Long getAccountIdByUsernameOrEmail(String value);
 
     /**
-     * 根据用户名或者邮箱查询账号信息
-     * @param usernameOrEmail 用户名或邮箱
+     * 查询账户信息
+     * @param uniqueIndex     唯一索引（用户名，手机号，邮箱）
      * @return                Account
      */
-    Account queryAccountByUsernameOrEmail(String usernameOrEmail);
+    Account queryAccountByUniqueIndex(String uniqueIndex);
 
     /**
      * 查找用户信息

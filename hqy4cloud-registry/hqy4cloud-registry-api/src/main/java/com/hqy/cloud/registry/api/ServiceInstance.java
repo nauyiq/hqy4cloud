@@ -2,7 +2,7 @@ package com.hqy.cloud.registry.api;
 
 
 import com.hqy.cloud.registry.cluster.ClusterService;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.registry.common.metadata.MetadataInfo;
 
 import java.io.Serializable;
@@ -60,7 +60,7 @@ public interface ServiceInstance extends ClusterService, Serializable {
      * The model of the current instance
      * @return non-null
      */
-    ApplicationModel getApplicationModel();
+    ProjectInfoModel getApplicationModel();
 
     /**
      * The rpc metadata of the current instance

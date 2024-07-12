@@ -1,7 +1,7 @@
 package com.hqy.cloud.rpc.thrift.starter.autoconfigure;
 
 import com.hqy.cloud.registry.common.context.BeanRepository;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.model.RpcModel;
 import com.hqy.cloud.rpc.threadpool.DefaultExecutorRepository;
 import com.hqy.cloud.rpc.threadpool.ExecutorRepository;
@@ -19,7 +19,7 @@ public class ThriftRpcModelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RpcModel rpcModel(ApplicationModel model) {
+    public RpcModel rpcModel(ProjectInfoModel model) {
         RpcModel rpcModel = new RpcModel(model);
         // create executor repository bean
         ExecutorRepository repository = new DefaultExecutorRepository(rpcModel);

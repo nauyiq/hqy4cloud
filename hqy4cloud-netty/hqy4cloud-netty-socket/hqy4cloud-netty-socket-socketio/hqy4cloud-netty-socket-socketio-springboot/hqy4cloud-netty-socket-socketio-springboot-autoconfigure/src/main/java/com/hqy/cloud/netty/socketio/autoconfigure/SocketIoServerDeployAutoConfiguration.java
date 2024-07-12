@@ -6,7 +6,7 @@ import com.hqy.cloud.netty.socketio.SocketIoServerFactory;
 import com.hqy.cloud.netty.socketio.SocketIoSocketServer;
 import com.hqy.cloud.netty.socketio.deloyer.SocketIoDeployModel;
 import com.hqy.cloud.netty.socketio.deloyer.SocketIoServerModel;
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,18 +27,18 @@ public class SocketIoServerDeployAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX_COMPONENTS, name = "socketio.enabled", matchIfMissing = true)
-    public SocketIoSocketServer socketServer(ApplicationModel applicationModel, SocketIoServerModel socketIoServerModel) {
+    public SocketIoSocketServer socketServer(ProjectInfoModel projectInfoModel, SocketIoServerModel socketIoServerModel) {
         // 创建socketIO Server.
         SocketIoServerFactory socketIoServerFactory = new DefaultSocketIoServerFactory(socketIoServerModel);
         SocketIOServer socketIoServer = socketIoServerFactory.createSocketIoServer();
-        return new SocketIoSocketServer(applicationModel, socketIoServer, socketIoServerModel);
+        return new SocketIoSocketServer(projectInfoModel, socketIoServer, socketIoServerModel);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = CONFIGURATION_PREFIX_COMPONENTS, name = "socketio.enabled", matchIfMissing = true)
-    public SocketIoDeployModel socketIoDeployModel(ApplicationModel applicationModel, SocketIoSocketServer socketServer) {
-        return new SocketIoDeployModel(applicationModel, socketServer);
+    public SocketIoDeployModel socketIoDeployModel(ProjectInfoModel projectInfoModel, SocketIoSocketServer socketServer) {
+        return new SocketIoDeployModel(projectInfoModel, socketServer);
     }
 
 

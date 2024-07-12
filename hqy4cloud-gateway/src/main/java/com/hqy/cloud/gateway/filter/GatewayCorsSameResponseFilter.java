@@ -20,14 +20,13 @@ import java.util.stream.Collectors;
  * @date  2021/7/25 22:42
  */
 @Slf4j
-//@Component
+@Component
 public class GatewayCorsSameResponseFilter implements GlobalFilter, Ordered {
     private static final String ANY = "*";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         List<String> strings = exchange.getResponse().getHeaders().get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS);
-        System.out.println(strings);
 
 
         return chain.filter(exchange).then(Mono.fromRunnable(() -> exchange.getResponse().getHeaders().entrySet().stream()

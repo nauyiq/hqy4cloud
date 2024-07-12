@@ -1,6 +1,6 @@
 package com.hqy.cloud.rpc.cluster.router.master;
 
-import com.hqy.cloud.registry.common.model.ApplicationModel;
+import com.hqy.cloud.registry.common.model.ProjectInfoModel;
 import com.hqy.cloud.rpc.Invocation;
 import com.hqy.cloud.rpc.Invoker;
 import com.hqy.cloud.rpc.cluster.ClusterJoinConstants;
@@ -38,7 +38,7 @@ public class MasterNodeRouter<T> extends AbstractRouter<T> {
         try {
             Invoker<T> chooseInvoker = null;
             for (Invoker<T> invoker : invokers) {
-                ApplicationModel model = invoker.getModel().getModel();
+                ProjectInfoModel model = invoker.getModel().getModel();
                 if (model.getMetadataInfo().isMaster()) {
                     chooseInvoker = invoker;
                     break;
