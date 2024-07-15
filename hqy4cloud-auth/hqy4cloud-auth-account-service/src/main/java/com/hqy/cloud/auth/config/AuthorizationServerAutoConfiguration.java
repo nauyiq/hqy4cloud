@@ -5,7 +5,7 @@ import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.DefaultOauth2TokenCustomizer;
 import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
-import com.hqy.cloud.auth.support.core.RedisOAuth2AuthorizationConsentServiceImpl;
+import com.hqy.cloud.auth.support.core.RedisOAuth2AuthorizationConsentService;
 import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationConverter;
 import com.hqy.cloud.auth.support.core.email.Oauth2ResourceOwnerEmailAuthenticationProvider;
 import com.hqy.cloud.auth.support.core.password.Oauth2ResourceOwnerPasswordAuthenticationConverter;
@@ -24,10 +24,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
@@ -59,9 +61,16 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
-        return new RedisOAuth2AuthorizationConsentServiceImpl();
+        return new RedisOAuth2AuthorizationConsentService();
     }
 
+    @Bean
+    public AbstractUserDetailsAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, MessageSource messageSource) {
+        DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider(messageSource);
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
+    }
     /**
      * 令牌生成规则实现 </br>
      * client:username:uuid
@@ -84,6 +93,7 @@ public class AuthorizationServerAutoConfiguration {
         http
                 //个性化认证授权端点
                 .with(authorizationServerConfigurer
+
 //                                .authorizationService(oAuth2AuthorizationService)
 //                                .authorizationServerSettings(AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build())
                                 .tokenEndpoint((tokenEndpoint) -> {
@@ -116,6 +126,7 @@ public class AuthorizationServerAutoConfiguration {
         DefaultSecurityFilterChain chain = http.build();
         // 注入自定义授权模式实现
         addOauth2GrantAuthenticationProvider(http, securityMessageSource);
+
         return chain;
     }
 
@@ -132,8 +143,6 @@ public class AuthorizationServerAutoConfiguration {
         Oauth2ResourceOwnerSmsAuthenticationProvider resourceOwnerSmsAuthenticationProvider = new Oauth2ResourceOwnerSmsAuthenticationProvider(authenticationManager, authorizationService,
                 oAuth2TokenGenerator(), securityMessageSource);
 
-        // 处理 UsernamePasswordAuthenticationToken
-        http.authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
         // 处理 Oauth2ResourceOwnerEmailAuthenticationProvider

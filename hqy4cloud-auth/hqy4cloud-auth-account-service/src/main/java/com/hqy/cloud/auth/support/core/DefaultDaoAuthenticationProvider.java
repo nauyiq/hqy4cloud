@@ -2,9 +2,10 @@ package com.hqy.cloud.auth.support.core;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
 import com.hqy.cloud.auth.common.SecurityConstants;
+import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
 import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.auth.utils.WebUtils;
 import com.hqy.cloud.infrastructure.random.RandomCodeScene;
 import com.hqy.cloud.infrastructure.random.RandomCodeService;
@@ -20,7 +21,6 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -44,6 +44,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
     private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
     private final static BasicAuthenticationConverter basicConvert = new BasicAuthenticationConverter();
 
+
     /**
      * The password used to perform {@link PasswordEncoder#matches(CharSequence, String)}
      * on when the user is not found to avoid SEC-2056. This is necessary, because some
@@ -55,7 +56,9 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
 
     public DefaultDaoAuthenticationProvider(MessageSource messageSource) {
         setMessageSource(messageSource);
-        setPasswordEncoder(new BCryptPasswordEncoder());
+//        setPasswordEncoder(new BCryptPasswordEncoder());
+        // FIXME 不隐藏用户找不到异常
+//        setHideUserNotFoundExceptions(false);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
                 RandomCodeService service = SpringUtil.getBean(RandomCodeService.class);
                 String phone = request.getParameter(SecurityConstants.PHONE_PARAMETER_NAME);
                 if (StringUtils.isBlank(phone) || !service.isExist(code, phone, RandomCodeScene.SMS_AUTH)) {
-                    Oauth2EndpointUtils.throwError(SecurityConstants.INVALID_REQUEST_CODE, SecurityConstants.INVALID_REQUEST_CODE,
+                    Oauth2EndpointUtils.throwError(Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE, Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE,
                             Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
                 }
                 return;
@@ -82,7 +85,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
                 RandomCodeService service = SpringUtil.getBean(RandomCodeService.class);
                 String email = request.getParameter(SecurityConstants.EMAIL_PARAMETER_NAME);
                 if (StringUtils.isBlank(email) || !service.isExist(code, email, RandomCodeScene.EMAIL_AUTH)) {
-                    Oauth2EndpointUtils.throwError(SecurityConstants.INVALID_REQUEST_CODE, SecurityConstants.INVALID_REQUEST_CODE,
+                    Oauth2EndpointUtils.throwError(Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE, Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE,
                             Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
                 }
                 return;

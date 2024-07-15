@@ -128,11 +128,6 @@ public interface SecurityConstants {
      */
     String PHONE_PARAMETER_NAME = "phone";
 
-    /**
-     * 无效的验证码
-     */
-    String INVALID_REQUEST_CODE = "invalid_request_code";
-
 
     /**
      * 授权码模式confirm

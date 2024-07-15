@@ -41,4 +41,9 @@ public interface Oauth2ErrorCodesExpand {
      */
     String INVALID_BEARER_TOKEN = "invalid_bearer_token";
 
+    /**
+     * 无效的验证码
+     */
+    String INVALID_REQUEST_CODE = "invalid_request_code";
+
 }

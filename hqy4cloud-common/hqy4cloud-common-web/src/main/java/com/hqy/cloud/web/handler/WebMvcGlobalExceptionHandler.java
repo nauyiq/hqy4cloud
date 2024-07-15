@@ -1,4 +1,4 @@
-package com.hqy.cloud.web.component;
+package com.hqy.cloud.web.handler;
 
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;

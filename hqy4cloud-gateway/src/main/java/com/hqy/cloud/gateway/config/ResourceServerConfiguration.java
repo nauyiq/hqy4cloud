@@ -103,7 +103,6 @@ public class ResourceServerConfiguration {
                     .authenticationEntryPoint(authenticationEntryPoint()))
                 // basic 认证
             .httpBasic(b -> b.authenticationManager(new ClientSecretReactiveAuthenticationManager()))
-            .cors(ServerHttpSecurity.CorsSpec::disable)
             .csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();
     }

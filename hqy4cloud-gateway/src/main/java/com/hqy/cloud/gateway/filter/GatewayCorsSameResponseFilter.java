@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
  * @date  2021/7/25 22:42
  */
 @Slf4j
-@Component
+//@Component
+@Deprecated
 public class GatewayCorsSameResponseFilter implements GlobalFilter, Ordered {
     private static final String ANY = "*";
 

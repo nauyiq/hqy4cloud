@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.base.enums.AccountResultCode;
-import com.hqy.cloud.auth.common.SecurityConstants;
+import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
@@ -51,24 +51,31 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
     }
 
     private Result getResult(String errorMessage, String errorCode) {
-        Result result  = new Result() {
-            @Override
-            public String getMessage() {
-                return errorMessage;
-            }
-            @Override
-            public int getCode() {
-                return ResultCode.FAILED.code;
-            }
-        };
+        Result result = null;
 
         if (StrUtil.isNotBlank(errorCode)) {
-            if (errorCode.equals(OAuth2ErrorCodes.INVALID_REQUEST)) {
-                result = ResultCode.ERROR_PARAM;
-            } else if (errorCode.equals(SecurityConstants.INVALID_REQUEST_CODE)) {
-                result = AccountResultCode.VERIFY_CODE_ERROR;
-            }
+            result = switch (errorCode) {
+                case OAuth2ErrorCodes.INVALID_REQUEST -> ResultCode.ERROR_PARAM;
+                case Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE -> AccountResultCode.VERIFY_CODE_ERROR;
+                case Oauth2ErrorCodesExpand.USERNAME_NOT_FOUND -> AccountResultCode.USER_NOT_FOUND;
+                default -> null;
+            };
         }
+
+        if (result == null) {
+            result = new Result() {
+                @Override
+                public String getMessage() {
+                    return errorMessage;
+                }
+                @Override
+                public int getCode() {
+                    return ResultCode.FAILED.code;
+                }
+            };
+        }
+
+
         return result;
     }
 }

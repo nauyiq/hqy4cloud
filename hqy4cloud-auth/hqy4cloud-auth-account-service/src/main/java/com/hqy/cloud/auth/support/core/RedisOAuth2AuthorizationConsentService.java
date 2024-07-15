@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2023/2/27 11:25
  */
 @RequiredArgsConstructor
-public class RedisOAuth2AuthorizationConsentServiceImpl implements OAuth2AuthorizationConsentService {
+public class RedisOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
     private final static Long TIMEOUT = 10L;
 
     @Override

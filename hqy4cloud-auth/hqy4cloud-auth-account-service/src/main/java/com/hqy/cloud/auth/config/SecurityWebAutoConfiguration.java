@@ -42,8 +42,7 @@ public class SecurityWebAutoConfiguration {
             .headers(c -> c.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             // druid监控页面允许iframe
             .securityMatcher("/druid").headers(c -> c.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-            .with(new FormIdentityLoginConfigurer(), c -> {})
-            .authenticationProvider(new DefaultDaoAuthenticationProvider(securityMessageSource));
+            .with(new FormIdentityLoginConfigurer(), c -> {});
 
 
         /*http.authorizeRequests(authorizeRequests -> authorizeRequests
