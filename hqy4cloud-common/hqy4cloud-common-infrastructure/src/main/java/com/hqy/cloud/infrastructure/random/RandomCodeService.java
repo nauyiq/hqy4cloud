@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 public interface RandomCodeService {
 
-    int DEFAULT_LENGTH = 4;
+    int DEFAULT_LENGTH = 6;
 
 
     default String randomNumber(int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
@@ -54,5 +54,14 @@ public interface RandomCodeService {
      */
     boolean isExist(String code, String value, RandomCodeScene scene);
 
+
+    /**
+     * 保存一下code
+     * @param code  code
+     * @param value 保存的值
+     * @param scene 场景
+     * @return      是否保存成功
+     */
+    boolean saveCode(String code, String value, RandomCodeScene scene);
 
 }

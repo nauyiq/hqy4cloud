@@ -48,5 +48,5 @@ gateway:
 hqy4cloud:
   auth:
     white:
-      uris: /blog/**
+      uris: /blog/**, /nft/user/register
 

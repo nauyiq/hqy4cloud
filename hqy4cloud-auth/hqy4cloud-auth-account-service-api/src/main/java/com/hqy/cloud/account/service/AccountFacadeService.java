@@ -1,7 +1,9 @@
 package com.hqy.cloud.account.service;
 
 import com.hqy.cloud.account.request.AccountQueryParams;
+import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
+import com.hqy.cloud.account.response.RegisterInfo;
 import com.hqy.cloud.common.bind.R;
 
 /**
@@ -18,5 +20,12 @@ public interface AccountFacadeService {
      * @return            账号信息
      */
     R<AccountInfo> query(AccountQueryParams queryParams);
+
+    /**
+     * 根据手机号注册账号
+     * @param registryParams 注册账号
+     * @return               认证信息
+     */
+    R<RegisterInfo> registerByPhone(RegistryAccountByPhoneParams registryParams);
 
 }

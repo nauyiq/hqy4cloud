@@ -12,7 +12,7 @@ import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
-import com.hqy.cloud.auth.base.enums.AccountResultCode;
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.common.base.lang.StringConstants;

@@ -53,7 +53,15 @@ public class RedisRandomCodeService implements RandomCodeService {
         String data = SmartRedisManager.getInstance().get(redisKey);
         return StringUtils.isNotBlank(data) && data.equals(value);
     }
-    
+
+    @Override
+    public boolean saveCode(String code, String value, RandomCodeScene scene) {
+        String redisKey = getRedisKey(code, scene.suffix);
+        String data = SmartRedisManager.getInstance().get(redisKey);
+        Boolean set = SmartRedisManager.getInstance().set(redisKey, value, 5L, TimeUnit.MINUTES);
+        return Boolean.TRUE.equals(set);
+    }
+
     private String getRedisKey(String code, String suffix){
         return PREFIX + suffix + code;
     }

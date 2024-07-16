@@ -151,8 +151,8 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
                         List<OAuth2Authorization> oAuth2Authorizations = values.stream().filter(Objects::nonNull).map(v -> (OAuth2Authorization) v).toList();
                         if (oAuth2Authorizations.size() == maxSize) {
                             // 本地持有的token缓存列表已经达到最大值. 删除最开始认证的OAuth2Authorization
-                            String removeToken = tokenCaches.remove(0);
-                            redisTemplate.delete(keys.get(0));
+                            String removeToken = tokenCaches.removeFirst();
+                            redisTemplate.delete(keys.getFirst());
                         }
                     }
                 }
@@ -162,7 +162,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
     }
 
     private void savingRefreshToken(OAuth2Authorization authorization) {
-        OAuth2RefreshToken refreshToken = authorization.getRefreshToken().getToken();
+        OAuth2RefreshToken refreshToken = Objects.requireNonNull(authorization.getRefreshToken()).getToken();
         String tokenValue = refreshToken.getTokenValue();
         long between = ChronoUnit.SECONDS.between(refreshToken.getIssuedAt(), refreshToken.getExpiresAt());
         if (CommonSwitcher.ENABLE_REDIS_JSON_SERIAL_TOKEN_VALUE_STORE.isOff()) {
@@ -187,8 +187,8 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
                         List<OAuth2Authorization> oAuth2Authorizations = values.stream().filter(Objects::nonNull).map(v -> (OAuth2Authorization) v).toList();
                         if (oAuth2Authorizations.size() == maxSize) {
                             // 本地持有的token缓存列表已经达到最大值. 删除最开始认证的OAuth2Authorization
-                            String removeToken = tokenCaches.remove(0);
-                            redisTemplate.delete(keys.get(0));
+                            String removeToken = tokenCaches.removeFirst();
+                            redisTemplate.delete(keys.getFirst());
                         }
                     }
                 }

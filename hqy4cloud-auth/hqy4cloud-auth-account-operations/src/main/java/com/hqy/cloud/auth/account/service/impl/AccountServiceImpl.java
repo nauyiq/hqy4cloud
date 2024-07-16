@@ -42,13 +42,18 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
+    @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
+    @Cached(name = AccountAuthCacheManager.ACCOUNT_USER_CACHE_KEY, expire = 1440,  cacheType = CacheType.BOTH, key = "#id", cacheNullValue = true)
+    public Account findById(Long id) {
+        return mapper.findById(id);
+    }
+
+    @Override
     public Account queryAccountByUniqueIndex(String uniqueIndex) {
         return mapper.queryAccountByUniqueIndex(uniqueIndex);
     }
 
     @Override
-    @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
-    @Cached(name = AccountAuthCacheManager.ACCOUNT_USER_CACHE_KEY, expire = 3600,  cacheType = CacheType.BOTH, key = "#id", cacheNullValue = true)
     public AccountInfoDTO getAccountInfo(Long id) {
         AssertUtil.notNull(id, "Account id should not be null.");
         return mapper.getAccountInfo(id);
@@ -66,7 +71,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Override
     public List<AccountInfoDTO> getAccountInfos(List<Long> ids) {
-        Map<Long, AccountInfoDTO> map = AccountAuthCacheManager.getInstance().getAccountCache()
+        /*Map<Long, AccountInfoDTO> map = AccountAuthCacheManager.getInstance().getAccountCache()
                 .getAll(new HashSet<>(ids));
         List<AccountInfoDTO> result = new ArrayList<>(map.values());
         if (MapUtils.isEmpty(map) || map.size() != ids.size()) {
@@ -78,7 +83,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 result.addAll(accountInfos);
             }
         }
-        return result;
+        return result;*/
+        return null;
     }
 
     @Override

@@ -149,10 +149,7 @@ public enum ResultCode implements Result {
     ROLE_NAME_EXIST(3005, "This role name already exist."),
 
 
-    /**
-     * 租户id或租户秘钥错误
-     */
-    INVALID_CLIENT_OR_SECRET(3007, "ClientId or secret incorrect."),
+
 
     /**
      * 空数据

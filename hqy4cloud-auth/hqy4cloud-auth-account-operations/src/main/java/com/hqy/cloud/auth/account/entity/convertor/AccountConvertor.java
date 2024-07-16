@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.account.entity.convertor;
 
 import com.hqy.cloud.account.response.AccountInfo;
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.common.base.converter.CommonConverter;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
@@ -17,7 +17,7 @@ public interface AccountConvertor {
 
     AccountConvertor CONVERTOR = Mappers.getMapper(AccountConvertor.class);
 
-    AccountInfo mapToVo(AccountInfoDTO account);
+    AccountInfo mapToVo(Account account);
 
 
 

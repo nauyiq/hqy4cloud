@@ -1,4 +1,4 @@
-package com.hqy.cloud.auth.base.enums;
+package com.hqy.cloud.account.response;
 
 import com.hqy.cloud.common.result.Result;
 
@@ -78,7 +78,10 @@ public enum AccountResultCode implements Result {
      */
     NOT_FOUND_ROLE(3006, "Not found role, please check your input."),
 
-
+    /**
+     * 租户id或租户秘钥错误
+     */
+    INVALID_CLIENT_OR_SECRET(3007, "ClientId or secret incorrect."),
 
 
     ;

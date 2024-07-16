@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.handler;
 
 import cn.hutool.core.util.StrUtil;
-import com.hqy.cloud.auth.base.enums.AccountResultCode;
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.Result;

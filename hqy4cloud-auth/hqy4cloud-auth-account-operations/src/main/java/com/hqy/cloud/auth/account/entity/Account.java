@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyEmail;
 import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
-import com.hqy.cloud.auth.base.AccountConstants;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.db.handler.AesEncryptTypeHandler;
 import com.hqy.cloud.db.mybatisplus.BaseEntity;
@@ -55,14 +54,12 @@ public class Account extends BaseEntity {
      * 邮箱
      */
     @SensitiveStrategyEmail
-    @TableField(typeHandler = AesEncryptTypeHandler.class)
     private String email;
 
     /**
      * 手机号
      */
     @SensitiveStrategyPhone
-    @TableField(typeHandler = AesEncryptTypeHandler.class)
     private String phone;
 
     /**
@@ -76,6 +73,11 @@ public class Account extends BaseEntity {
      */
     @TableField(typeHandler = AesEncryptTypeHandler.class)
     private String idCard;
+
+    /**
+     * 是否实名
+     */
+    private Boolean certification;
 
     /**
      * 用户角色
@@ -106,12 +108,6 @@ public class Account extends BaseEntity {
         this.role = role;
         this.phone = phone;
         this.status = true;
-        // 将用户ROLE也加入authorities
-        if (CollectionUtils.isNotEmpty(authorities)) {
-            authorities.add(this.role.name());
-        } else {
-            authorities = List.of(this.role.name());
-        }
         this.authorities = String.join(COMMA, authorities);
     }
 

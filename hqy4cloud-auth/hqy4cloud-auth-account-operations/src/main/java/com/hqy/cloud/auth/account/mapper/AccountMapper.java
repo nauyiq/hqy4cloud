@@ -23,11 +23,20 @@ public interface AccountMapper extends BaseMapper<Account> {
     Long getAccountIdByUsernameOrEmail(@Param("value") String value);
 
     /**
+     * 根据id获取账号信息
+     * @param id 账号id
+     * @return   账号实体
+     */
+    Account findById(@Param("id") Long id);
+
+    /**
      * 根据用户名或者邮箱查询账号信息
      * @param uniqueIndex     唯一索引
      * @return                Account
      */
     Account queryAccountByUniqueIndex(@Param("value") String uniqueIndex);
+
+
 
     /**
      * 根据id查找用户信息
@@ -72,6 +81,7 @@ public interface AccountMapper extends BaseMapper<Account> {
      * @return             AccountInfoDTO.
      */
     List<AccountInfoDTO> getPageAccountInfos(@Param("username")String username, @Param("nickname")String nickname);
+
 
 
 }

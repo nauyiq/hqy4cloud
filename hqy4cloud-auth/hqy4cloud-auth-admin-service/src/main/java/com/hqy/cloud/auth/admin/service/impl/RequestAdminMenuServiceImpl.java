@@ -11,7 +11,7 @@ import com.hqy.cloud.auth.admin.service.RequestAdminMenuService;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
-import com.hqy.cloud.auth.base.enums.AccountResultCode;
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
 import com.hqy.cloud.auth.base.vo.BaseMenuVO;

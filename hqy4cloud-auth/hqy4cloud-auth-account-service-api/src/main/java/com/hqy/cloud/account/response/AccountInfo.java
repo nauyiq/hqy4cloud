@@ -17,8 +17,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class AccountInfo implements Serializable {
 
-
-
     /**
      * 用户id
      */
@@ -65,34 +63,14 @@ public class AccountInfo implements Serializable {
     private String idCard;
 
     /**
-     * 昵称
-     */
-    private String nickname;
-
-    /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
-     * 简介
-     */
-    private String intro;
-
-    /**
-     * 生日
-     */
-    private Date birthday;
-
-    /**
-     * 性别
-     */
-    private Integer sex;
-
-    /**
      * 状态
      */
     private Boolean status;
+
+    /**
+     * 是否实名
+     */
+    private Boolean certification;
 
     /**
      * 创建时间

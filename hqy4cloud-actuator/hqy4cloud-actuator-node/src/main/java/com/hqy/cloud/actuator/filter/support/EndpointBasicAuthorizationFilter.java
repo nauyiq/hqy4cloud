@@ -1,5 +1,6 @@
 package com.hqy.cloud.actuator.filter.support;
 
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
@@ -42,7 +43,7 @@ public class EndpointBasicAuthorizationFilter implements Filter {
         String authorization = getBasicAuth(req);
         if (!basicAuthorizationService.isAuth(authorization)) {
             log.warn("Failed basic auth, authorization: {}, ip:{}", authorization, IpUtil.getRequestIp(req));
-            ResponseUtil.out((HttpServletResponse) response, HttpStatus.UNAUTHORIZED.value(), R.failed(ResultCode.INVALID_CLIENT_OR_SECRET));
+            ResponseUtil.out((HttpServletResponse) response, HttpStatus.UNAUTHORIZED.value(), R.failed(AccountResultCode.INVALID_CLIENT_OR_SECRET));
             return;
         }
         chain.doFilter(request, response);

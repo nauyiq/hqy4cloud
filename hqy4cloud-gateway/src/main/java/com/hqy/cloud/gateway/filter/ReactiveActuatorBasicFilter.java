@@ -1,5 +1,6 @@
 package com.hqy.cloud.gateway.filter;
 
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.actuator.filter.AbstractActuatorBasicFilter;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
@@ -47,7 +48,7 @@ public class ReactiveActuatorBasicFilter extends AbstractActuatorBasicFilter imp
             if (!basicAuthorizationService.isAuth(authorization)) {
                 log.warn("Failed basic auth, authorization: {}, ip:{}", authorization, RequestUtil.getIpAddress(request));
                 return Mono.defer(() -> {
-                    DataBuffer buffer = ResponseUtil.outputBuffer(R.failed(ResultCode.INVALID_CLIENT_OR_SECRET), response, HttpStatus.FORBIDDEN);
+                    DataBuffer buffer = ResponseUtil.outputBuffer(R.failed(AccountResultCode.INVALID_CLIENT_OR_SECRET), response, HttpStatus.FORBIDDEN);
                     return response.writeWith(Flux.just(buffer));
                 });
             }

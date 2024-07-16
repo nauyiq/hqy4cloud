@@ -5,6 +5,7 @@ import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
+import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.SysOauthClient;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
@@ -29,7 +30,7 @@ public class AccountAuthCacheManager {
     /**
      * 账号用户信息缓存key
      */
-    public static final String ACCOUNT_USER_CACHE_KEY = ":account:cache:user:";
+    public static final String ACCOUNT_USER_CACHE_KEY = ":account:cache:id:";
 
     /**
      * oauth2租户缓存key
@@ -41,7 +42,7 @@ public class AccountAuthCacheManager {
     public void doInit() {
         QuickConfig userQc = QuickConfig.newBuilder(ACCOUNT_USER_CACHE_KEY)
                 .cacheType(CacheType.BOTH)
-                .expire(DateMeasureConstants.ONE_HOUR)
+                .expire(DateMeasureConstants.ONE_DAY)
                 .syncLocal(true)
                 .build();
         this.accountCache = cacheManager.getOrCreateCache(userQc);
@@ -59,10 +60,10 @@ public class AccountAuthCacheManager {
         return SpringUtil.getBean(AccountAuthCacheManager.class);
     }
 
-    private Cache<Long, AccountInfoDTO> accountCache;
+    private Cache<Long, Account> accountCache;
     private Cache<String, SysOauthClient> oauthClientCache;
 
-    public void put(Long id, AccountInfoDTO account) {
+    public void put(Long id, Account account) {
         this.accountCache.put(id, account);
     }
 

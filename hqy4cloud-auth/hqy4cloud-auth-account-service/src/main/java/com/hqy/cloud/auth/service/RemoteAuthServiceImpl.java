@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.service;
 import com.hqy.cloud.account.service.RemoteAuthService;
 import com.hqy.cloud.auth.account.entity.SysOauthClient;
 import com.hqy.cloud.auth.account.service.SysOauthClientService;
-import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.rpc.thrift.service.AbstractRPCService;
 import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +30,13 @@ public class RemoteAuthServiceImpl extends AbstractRPCService implements RemoteA
     @Override
     public CommonResultStruct basicAuth(String clientId, String clientSecret) {
         if (StringUtils.isAnyBlank(clientId, clientSecret)) {
-            return CommonResultStruct.of(ResultCode.INVALID_CLIENT_OR_SECRET);
+            return CommonResultStruct.of(AccountResultCode.INVALID_CLIENT_OR_SECRET);
         }
         SysOauthClient oauthClient = sysOauthClientService.getById(clientId);
         if (oauthClient == null
                 || !clientId.equals(oauthClient.getClientId())
                 || passwordEncoder.matches(clientSecret, oauthClient.getClientSecret())) {
-            return CommonResultStruct.of(ResultCode.INVALID_CLIENT_OR_SECRET);
+            return CommonResultStruct.of(AccountResultCode.INVALID_CLIENT_OR_SECRET);
         }
         return CommonResultStruct.of();
     }

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-import static com.hqy.cloud.auth.base.enums.AccountResultCode.USER_NOT_FOUND;
+import static com.hqy.cloud.account.response.AccountResultCode.USER_NOT_FOUND;
 
 /**
  * @author qiyuan.hong

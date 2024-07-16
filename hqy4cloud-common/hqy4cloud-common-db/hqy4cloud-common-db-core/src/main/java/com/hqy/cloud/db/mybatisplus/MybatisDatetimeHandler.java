@@ -14,11 +14,20 @@ public class MybatisDatetimeHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictInsertFill(metaObject, "created", Date.class, new Date());
+        this.setFieldValByNameIfNull("created", new Date(), metaObject);
+        this.setFieldValByNameIfNull("updated", new Date(), metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updated", Date.class, new Date());
+        this.setFieldValByNameIfNull("updated", new Date(), metaObject);
     }
+
+
+    private void setFieldValByNameIfNull(String fieldName, Object fieldVal, MetaObject metaObject) {
+        if (metaObject.getValue(fieldName) == null) {
+            this.setFieldValByName(fieldName, fieldVal, metaObject);
+        }
+    }
+
 }
