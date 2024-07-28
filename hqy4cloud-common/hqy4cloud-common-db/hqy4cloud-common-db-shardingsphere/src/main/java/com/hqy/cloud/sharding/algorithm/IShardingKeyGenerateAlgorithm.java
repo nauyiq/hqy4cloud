@@ -1,8 +1,8 @@
-package com.hqy.cloud.sharding.strategy.support;
+package com.hqy.cloud.sharding.algorithm;
 
 import com.hqy.cloud.sharding.id.DistributedIdGen;
 import com.hqy.cloud.sharding.id.WorkerIdHolder;
-import org.apache.shardingsphere.spi.keygen.ShardingKeyGenerator;
+import org.apache.shardingsphere.sharding.spi.KeyGenerateAlgorithm;
 
 import java.util.Properties;
 
@@ -17,7 +17,7 @@ import java.util.Properties;
  * @version 1.0
  * @date 2024/1/30
  */
-public class IShardingKeyGeneratorStrategy implements ShardingKeyGenerator {
+public class IShardingKeyGenerateAlgorithm implements KeyGenerateAlgorithm {
     private Properties properties;
 
 
@@ -32,13 +32,12 @@ public class IShardingKeyGeneratorStrategy implements ShardingKeyGenerator {
     }
 
     @Override
-    public Properties getProperties() {
+    public Properties getProps() {
         return properties;
     }
 
     @Override
-    public void setProperties(Properties properties) {
+    public void init(Properties properties) {
         this.properties = properties;
     }
-
 }

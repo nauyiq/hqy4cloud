@@ -59,7 +59,7 @@ public class WebMvcGlobalExceptionHandler {
     public R<Boolean> handler(BizException e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
         // 异常采集
-        collectionException(e, request);
+//        collectionException(e, request);
         return R.setResult(false,  e.getCode(), e.getMessage(), null);
     }
 

@@ -1,5 +1,6 @@
 package com.hqy.cloud.common.bind;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -8,6 +9,9 @@ import java.io.Serializable;
  * @date 2023/2/24 17:35
  */
 public class Response implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public Response() {
     }

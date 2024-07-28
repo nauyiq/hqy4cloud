@@ -26,10 +26,9 @@ public class StaticEndpointAuthorizationManager {
      */
     private static final List<String> WHITE_ENDPOINTS_PATTERNS = List.of(
             "/code",
-            "/token",
             "/favicon.io","/favicon.ico",
             //Oauth2 Endpoint
-            "/oauth/**", "/oauth2/**", "/token/**", "/oauth2/token", "/auth/sendCaptcha",
+            "/oauth/**", "/oauth2/**", "/oauth2/token", "/auth/sendCaptcha", "/token/**",
             "/basic/**", "/actuator/**", "/druid/**"
             //swagger
 //                "/v2/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**",

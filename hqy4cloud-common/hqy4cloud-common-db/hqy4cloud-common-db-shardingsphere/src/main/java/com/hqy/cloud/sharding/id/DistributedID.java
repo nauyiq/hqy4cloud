@@ -1,5 +1,6 @@
 package com.hqy.cloud.sharding.id;
 
+import com.hqy.cloud.sharding.strategy.ShardingTableStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,8 +65,21 @@ public class DistributedID {
         return distributeId;
     }
 
+    public static String getShardingTable(DistributedID distributeId){
+        return distributeId.tableIndex;
+    }
 
+    public static String getShardingTable(String id){
+        return getShardingTable(valueOf(id));
+    }
 
+    public static String getShardingTable(String externalId, int tableCount) {
+        return getShardingTable(externalId, tableCount, DistributedIdGen.strategy);
+    }
+
+    public static String getShardingTable(String externalId, int tableCount, ShardingTableStrategy shardingTableStrategy) {
+        return StringUtils.leftPad(String.valueOf(shardingTableStrategy.getTableIndex(externalId, tableCount)), 4, "0");
+    }
 
 
 

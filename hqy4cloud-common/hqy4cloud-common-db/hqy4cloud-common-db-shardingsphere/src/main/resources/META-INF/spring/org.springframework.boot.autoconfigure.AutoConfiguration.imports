@@ -1,2 +1,1 @@
-com.hqy.cloud.sharding.autoconfig.DruidShardingJdbcAutoConfiguration
 com.hqy.cloud.sharding.id.WorkerIdHolder

@@ -35,6 +35,7 @@ public interface StringConstants {
     String DO_PNG = ".png";
     String CONSUMER = "消费者";
     String PROVIDER = "生产者";
+    String UNDEFINED = "undefined";
 
     interface Symbol {
 

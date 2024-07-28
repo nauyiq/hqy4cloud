@@ -1,3 +1,4 @@
+/*
 package com.hqy.cloud.sharding.autoconfig;
 
 import com.alibaba.druid.filter.Filter;
@@ -14,13 +15,15 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * shardingsphere druid 连接池属性注入
  * 基于SPI的方式 {@link org.apache.shardingsphere.spring.boot.datasource.DataSourcePropertiesSetterHolder}
  * @author qiyuan.hong
  * @version 1.0
  * @date 2023/12/14 17:58
- */
+ *//*
+
 public class DruidDataSourcePropertiesSetter implements DataSourcePropertiesSetter {
 
     @Override
@@ -52,3 +55,4 @@ public class DruidDataSourcePropertiesSetter implements DataSourcePropertiesSett
         return DruidDataSource.class.getName();
     }
 }
+*/

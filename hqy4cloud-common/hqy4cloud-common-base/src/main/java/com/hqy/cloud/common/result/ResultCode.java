@@ -21,14 +21,14 @@ public enum ResultCode implements Result {
     FAILED(1, "Failed."),
 
     /**
-     * 系统异常
-     */
-    SYSTEM_ERROR(9999, "System internal error, please try again later."),
-
-    /**
      * 系统繁忙
      */
-    SYSTEM_BUSY(9000, "System is busy, please try again later."),
+    SYSTEM_BUSY(90, "System is busy, please try again later."),
+
+    /**
+     * 系统异常
+     */
+    SYSTEM_ERROR(99, "System internal error, please try again later."),
 
     /**
      * 异常请求 封禁几分钟
@@ -183,6 +183,10 @@ public enum ResultCode implements Result {
      * 上传文件失败, 文件类型不支持
      */
     INVALID_FILE_TYPE(10002, "Failed execute to upload file, file type not supported."),
+
+
+
+
 
 
     ;

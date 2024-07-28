@@ -77,6 +77,11 @@ public class DistributedIdGen {
         return IdUtil.getSnowflake(workerId).nextId();
     }
 
+    public static String generateWithSnowflake(BusinessCode businessCode, long workerId, long externalId) {
+        return generateWithSnowflake(businessCode.getBusinessCode(), businessCode.getTableCount(), workerId, externalId);
+    }
+
+
     public static String generateWithSnowflake(String businessCode, int tableCount, long workerId, long externalId) {
         long seq = IdUtil.getSnowflake(workerId).nextId();
         return generate(businessCode, tableCount, externalId, seq);

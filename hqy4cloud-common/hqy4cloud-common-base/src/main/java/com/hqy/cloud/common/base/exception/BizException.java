@@ -1,5 +1,6 @@
 package com.hqy.cloud.common.base.exception;
 
+import com.hqy.cloud.common.result.Result;
 import lombok.Getter;
 
 /**
@@ -19,6 +20,11 @@ public class BizException extends RuntimeException {
     public BizException(String message, int code) {
         super(message);
         this.code = code;
+    }
+
+    public BizException(Result result) {
+        super(result.getMessage());
+        this.code = result.getCode();
     }
 
     public BizException(int code, String message, Throwable cause) {

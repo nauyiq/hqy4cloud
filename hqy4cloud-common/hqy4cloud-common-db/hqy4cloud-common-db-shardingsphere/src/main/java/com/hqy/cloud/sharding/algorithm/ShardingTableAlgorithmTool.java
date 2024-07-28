@@ -4,8 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.sharding.service.ShardingService;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
+import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,7 @@ import java.util.Set;
  * @date 2024/1/31
  */
 @Slf4j
-public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implements PreciseShardingAlgorithm<T>, RangeShardingAlgorithm<T> {
+public abstract class ShardingTableAlgorithmTool<T extends Comparable<?>> implements StandardShardingAlgorithm<T> {
 
 
     /**

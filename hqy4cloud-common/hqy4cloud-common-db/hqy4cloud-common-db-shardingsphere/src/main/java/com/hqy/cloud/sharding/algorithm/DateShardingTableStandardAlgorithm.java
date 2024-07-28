@@ -8,8 +8,8 @@ import com.hqy.cloud.sharding.strategy.DatetimeShardingTableStrategy;
 import com.hqy.cloud.sharding.strategy.support.DatetimeShardingTableContext;
 import com.hqy.cloud.sharding.service.ShardingService;
 import com.hqy.cloud.util.AssertUtil;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
-import org.apache.shardingsphere.api.sharding.standard.RangeShardingValue;
+import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
+import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.springframework.core.env.Environment;
 
 import java.util.Collection;

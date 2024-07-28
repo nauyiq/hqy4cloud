@@ -40,11 +40,11 @@
             <version>${revision}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>sharding-transaction-base-seata-at</artifactId>
-            <version>${sharding.jdbc.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shardingsphere</groupId>-->
+<!--            <artifactId>sharding-transaction-base-seata-at</artifactId>-->
+<!--            <version>5.2.1</version>-->
+<!--        </dependency>-->
     </dependencies>
 
 </project>
