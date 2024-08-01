@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.N;
 
 /**
  * 账号菜单中间表实体

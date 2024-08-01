@@ -37,7 +37,7 @@
         <!-- 框架层核心依赖 -->
         <springboot.version>3.2.2</springboot.version>
         <springcloud.version>2023.0.0</springcloud.version>
-        <springcloud.alibaba.version>2022.0.0.0</springcloud.alibaba.version>
+        <springcloud.alibaba.version>2023.0.1.2</springcloud.alibaba.version>
     </properties>
 
 

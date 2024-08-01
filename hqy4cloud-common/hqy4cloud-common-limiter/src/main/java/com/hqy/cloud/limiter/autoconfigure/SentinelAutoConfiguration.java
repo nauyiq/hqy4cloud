@@ -1,6 +1,6 @@
 package com.hqy.cloud.limiter.autoconfigure;
 
-import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.BlockExceptionHandler;
+import com.alibaba.csp.sentinel.adapter.spring.webmvc_v6x.callback.BlockExceptionHandler;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityException;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
@@ -44,7 +44,7 @@ public class SentinelAutoConfiguration {
 
     @Bean
     public BlockExceptionHandler blockExceptionHandler() {
-        return (httpServletRequest, httpServletResponse, e) -> {
+        return (httpServletRequest, httpServletResponse, resourceName, e) -> {
             if (e instanceof DegradeException) {
                 out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_ALREADY_DEGRADE));
             } else if (e instanceof ParamFlowException) {

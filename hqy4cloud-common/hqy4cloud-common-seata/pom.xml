@@ -13,38 +13,51 @@
     <artifactId>hqy4cloud-common-seata</artifactId>
     <properties>
         <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
-        <seata.version>1.8.0</seata.version>
+        <seata.version>2.0.0</seata.version>
     </properties>
 
     <dependencies>
+
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.seata</groupId>
-                    <artifactId>seata-spring-boot-starter</artifactId>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-runtime</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-spring-boot-starter</artifactId>
-            <version>${seata.version}</version>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.hqy.cloud</groupId>-->
+<!--            <artifactId>hqy4cloud-thrift-rpc-seata-adaptor</artifactId>-->
+<!--            <version>${revision}</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-transaction-base-seata-at</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-transaction-core</artifactId>
+            <version>5.2.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-seata-adaptor</artifactId>
+            <artifactId>hqy4cloud-common-util</artifactId>
             <version>${revision}</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shardingsphere</groupId>-->
-<!--            <artifactId>sharding-transaction-base-seata-at</artifactId>-->
-<!--            <version>5.2.1</version>-->
-<!--        </dependency>-->
     </dependencies>
 
 </project>
