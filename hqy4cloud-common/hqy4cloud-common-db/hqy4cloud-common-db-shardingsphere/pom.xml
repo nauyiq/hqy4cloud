@@ -12,17 +12,13 @@
 
     <artifactId>hqy4cloud-common-db-shardingsphere</artifactId>
 
-    <properties>
-        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
-    </properties>
-
     <dependencies>
         <!-- shardingsphere  -->
         <!-- 后后续整合是否要修改为 shardingsphere-jdbc-core-spring-boot-starter  -->
 <!--        <dependency>-->
 <!--            <groupId>org.apache.shardingsphere</groupId>-->
 <!--            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>-->
-<!--            <version>${sharding.jdbc.version}</version>-->
+<!--            <version>4.1.1</version>-->
 <!--        </dependency>-->
 
         <dependency>

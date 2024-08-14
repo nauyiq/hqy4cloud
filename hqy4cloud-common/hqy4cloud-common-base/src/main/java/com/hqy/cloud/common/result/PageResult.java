@@ -1,5 +1,6 @@
 package com.hqy.cloud.common.result;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +8,11 @@ import java.util.List;
 /**
  * 分页对象
  * @author qy
- * @date 2021-09-14 19:49
+ * @date 2021-09-14
  */
 public class PageResult<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4206093235632254490L;
 
     /**
