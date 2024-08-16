@@ -11,6 +11,6 @@ public interface StreamConstants {
 
     String DEFAULT_PRODUCER_EXECUTOR_PREFIX = "stream-executor";
 
-
+    String TAGS = "TAGS";
 
 }

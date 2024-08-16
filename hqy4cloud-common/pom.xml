@@ -33,6 +33,7 @@
         <module>hqy4cloud-common-alarm-notification</module>
         <module>hqy4cloud-common-business-collection</module>
         <module>hqy4cloud-common-quartz</module>
+        <module>hqy4cloud-common-xxljob</module>
     </modules>
 
     <dependencies>
