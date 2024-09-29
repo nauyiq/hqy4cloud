@@ -56,16 +56,16 @@ seata:
       username: ${NACOS_USERNAME:nacos}
       password: ${NACOS_PASSWORD:nacos}
       application: seata-server
-      namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
-      group: TEST_GROUP
+      namespace: 6ff9c59b-f5a4-4d65-a4f3-2d32eb0fa70d
+      group: DEFAULT_GROUP
       dataId: seataServer.properties
   config:
     type: nacos
     nacos:
       data-id: seataServer.properties
       server-addr: ${NACOS_SERVER:127.0.0.1:8848}
-      group: TEST_GROUP
-      namespace: e3f4bf0e-5118-4e06-90de-087cb676b98c
+      group: DEFAULT_GROUP
+      namespace: 6ff9c59b-f5a4-4d65-a4f3-2d32eb0fa70d
       username: ${NACOS_USERNAME:nacos}
       password: ${NACOS_PASSWORD:nacos}
 
