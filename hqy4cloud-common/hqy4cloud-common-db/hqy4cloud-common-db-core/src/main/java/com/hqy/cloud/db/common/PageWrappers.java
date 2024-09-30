@@ -19,8 +19,13 @@ public class PageWrappers {
         return new PageResult<>(currentPage, page.getTotal(), (int) page.getPages(), page.getRecords());
     }
 
+    public static <T, R>PageResult<R> buildResult(Page<T> page, Function<T, R> function) {
+        return new PageResult<>((int) page.getCurrent(), page.getTotal(), (int) page.getPages(), page.getRecords().stream().map(function).toList());
+    }
+
     public static <T, R> PageResult<R> buildResult(int currentPage, Page<T> page, Function<T, R> function) {
         return new PageResult<>(currentPage, page.getTotal(), (int) page.getPages(), page.getRecords().stream().map(function).toList());
     }
+
 
 }
