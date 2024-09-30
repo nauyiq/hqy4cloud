@@ -11,10 +11,13 @@ import java.util.function.Function;
  */
 public class PageWrappers {
 
+    public static <T> PageResult<T> buildResult(Page<T> page) {
+        return new PageResult<>((int)page.getCurrent(), page.getTotal(), (int) page.getPages(), page.getRecords());
+    }
+
     public static <T> PageResult<T> buildResult(int currentPage, Page<T> page) {
         return new PageResult<>(currentPage, page.getTotal(), (int) page.getPages(), page.getRecords());
     }
-
 
     public static <T, R> PageResult<R> buildResult(int currentPage, Page<T> page, Function<T, R> function) {
         return new PageResult<>(currentPage, page.getTotal(), (int) page.getPages(), page.getRecords().stream().map(function).toList());

@@ -31,6 +31,12 @@ public class PageResult<T> implements Serializable {
     private int pages;
 
     /**
+     * 分页大小
+     */
+    private int pageSize;
+
+
+    /**
      * 结果集
      */
     private List<T> resultList = new ArrayList<>();
@@ -48,6 +54,7 @@ public class PageResult<T> implements Serializable {
     public PageResult(int currentPage, int pageSize, long total, List<T> resultList) {
         this.currentPage = currentPage;
         this.resultList = resultList;
+        this.pageSize = pageSize;
         this.total = total;
         if (total == 0) {
             this.pages = 0;
@@ -93,5 +100,13 @@ public class PageResult<T> implements Serializable {
 
     public void setResultList(List<T> resultList) {
         this.resultList = resultList;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 }
