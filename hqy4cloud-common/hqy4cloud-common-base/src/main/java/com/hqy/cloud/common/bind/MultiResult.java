@@ -52,6 +52,10 @@ public class MultiResult<T> extends Response {
         return new MultiResult<>(false, result.getCode(), result.getMessage(), null, 0, 0, 0);
     }
 
+    public static <T> MultiResult<T> convert(PageResult<T> pageResult) {
+        return MultiResult.ok(pageResult.getResultList(), pageResult.getTotal(), pageResult.getCurrentPage(), pageResult.getPageSize());
+    }
+
     public static <T> MultiResult<T> convert(int size, PageResult<T> pageResult) {
         return MultiResult.ok(pageResult.getResultList(), pageResult.getTotal(), pageResult.getCurrentPage(), size);
     }
