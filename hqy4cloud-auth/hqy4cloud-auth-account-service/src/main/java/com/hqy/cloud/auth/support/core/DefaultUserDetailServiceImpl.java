@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.core;
 
 import com.hqy.cloud.auth.account.entity.Account;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
 import com.hqy.cloud.auth.security.core.SecurityAuthUser;
@@ -27,7 +27,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
-    private final AccountService service;
+    private final AccountDomainService service;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

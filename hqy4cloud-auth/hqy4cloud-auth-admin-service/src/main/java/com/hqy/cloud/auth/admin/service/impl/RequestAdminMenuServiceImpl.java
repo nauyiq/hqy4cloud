@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hqy.cloud.auth.account.entity.AccountMenu;
 import com.hqy.cloud.auth.account.entity.Menu;
 import com.hqy.cloud.auth.account.service.AccountMenuService;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.account.service.MenuService;
 import com.hqy.cloud.auth.admin.service.RequestAdminMenuService;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
@@ -42,7 +42,7 @@ import static com.hqy.cloud.common.result.ResultCode.NOT_FOUND_MENU;
 @RequiredArgsConstructor
 public class RequestAdminMenuServiceImpl implements RequestAdminMenuService {
 
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final MenuService menuService;
     private final AccountMenuService accountMenuService;
     private final AuthOperationService operationService;
@@ -145,7 +145,7 @@ public class RequestAdminMenuServiceImpl implements RequestAdminMenuService {
 
     @Override
     public R<List<AdminTreeMenuVO>> getAdminTreeMenu(Long id, Boolean status) {
-        AccountInfoDTO accountInfo = accountService.getAccountInfo(id);
+        AccountInfoDTO accountInfo = accountDomainService.getAccountInfo(id);
         if (Objects.isNull(accountInfo)) {
             return R.failed(AccountResultCode.USER_NOT_FOUND);
         }

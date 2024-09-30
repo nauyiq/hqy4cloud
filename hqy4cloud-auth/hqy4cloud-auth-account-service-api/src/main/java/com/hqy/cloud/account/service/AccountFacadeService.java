@@ -6,6 +6,9 @@ import com.hqy.cloud.account.response.AccountInfo;
 import com.hqy.cloud.account.response.RegisterInfo;
 import com.hqy.cloud.common.bind.R;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * 远程调用service
  * @author qiyuan.hong
@@ -20,6 +23,13 @@ public interface AccountFacadeService {
      * @return            账号信息
      */
     R<AccountInfo> query(AccountQueryParams queryParams);
+
+    /**
+     * 批量查找账户信息
+     * @param ids id集合
+     * @return    账户信息
+     */
+    R<List<AccountInfo>> queryList(Collection<Long> ids);
 
     /**
      * 根据手机号注册账号

@@ -6,13 +6,14 @@ import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.common.result.PageResult;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author qiyuan.hong
  * @date 2022-03-10
  */
-public interface AccountService extends IService<Account> {
+public interface AccountDomainService extends IService<Account> {
 
     /**
      * 根据邮箱或用户名或手机获取账号id
@@ -27,6 +28,13 @@ public interface AccountService extends IService<Account> {
      * @return   Account表实体
      */
     Account findById(Long id);
+
+    /**
+     * 批量获取
+     * @param ids id集合
+     * @return    Account表实体
+     */
+    List<Account> findByIds(Collection<Long> ids);
 
     /**
      * 查询账户信息

@@ -9,7 +9,7 @@ import com.hqy.cloud.auth.account.cache.AccountAuthCacheDelayRemoveService;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.account.response.AccountResultCode;
@@ -45,7 +45,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
     private final PasswordEncoder passwordEncoder;
     private final AccountOperationService accountOperationService;
     private final AuthOperationService authOperationService;
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final TccRegistryAccountService tccRegistryAccountService;
     private final AccountAuthCacheDelayRemoveService accountAuthCacheDelayRemoveService;
 
@@ -57,7 +57,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
 
     @Override
     public Long getAccountIdByUsernameOrEmail(String usernameOrEmail) {
-        return accountService.getAccountIdByUsernameOrEmail(usernameOrEmail);
+        return accountDomainService.getAccountIdByUsernameOrEmail(usernameOrEmail);
     }
 
     @Override
@@ -83,11 +83,11 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isBlank(usernameOrEmail)) {
             return null;
         }
-        Long id = accountService.getAccountIdByUsernameOrEmail(usernameOrEmail);
+        Long id = accountDomainService.getAccountIdByUsernameOrEmail(usernameOrEmail);
         if (id == null) {
             return null;
         }
-        AccountInfoDTO account = accountService.getAccountInfo(id);
+        AccountInfoDTO account = accountDomainService.getAccountInfo(id);
         return AccountConverter.CONVERTER.convert(account);
     }
 
@@ -152,14 +152,14 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (StringUtils.isAnyBlank(usernameOrEmail, newPassword)) {
             return CommonResultStruct.of(ResultCode.ERROR_PARAM);
         }
-        Account account = accountService.queryAccountByUniqueIndex(usernameOrEmail);
+        Account account = accountDomainService.queryAccountByUniqueIndex(usernameOrEmail);
         if (account == null) {
             return CommonResultStruct.of(AccountResultCode.USER_NOT_FOUND);
         }
         account.setPassword(passwordEncoder.encode(newPassword));
         // 删除缓存
         AccountAuthCacheManager.getInstance().remove(account.getId());
-        boolean result = accountService.updateById(account);
+        boolean result = accountDomainService.updateById(account);
         if (result) {
             // 第二次删除缓存
             accountAuthCacheDelayRemoveService.removeAccountAuthCache(account.getId());
@@ -173,7 +173,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         if (accountId == null || StringUtils.isAnyBlank(oldPassword, newPassword)) {
             return new CommonResultStruct(ResultCode.ERROR_PARAM_UNDEFINED);
         }
-        AccountInfoDTO account = accountService.getAccountInfo(accountId);
+        AccountInfoDTO account = accountDomainService.getAccountInfo(accountId);
         if (account == null) {
             return CommonResultStruct.of(AccountResultCode.USER_NOT_FOUND);
         }
@@ -187,7 +187,7 @@ public class RemoteAccountServiceImpl extends AbstractRPCService implements Remo
         wrapper.eq("id", accountId);
         // 第一次删除缓存
         AccountAuthCacheManager.getInstance().remove(accountId);
-        if (accountService.update(wrapper)) {
+        if (accountDomainService.update(wrapper)) {
             // 第二次删除缓存
             accountAuthCacheDelayRemoveService.removeAccountAuthCache(accountId);
             return CommonResultStruct.of();

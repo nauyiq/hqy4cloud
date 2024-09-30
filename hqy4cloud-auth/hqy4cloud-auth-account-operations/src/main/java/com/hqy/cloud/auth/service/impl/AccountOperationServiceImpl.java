@@ -10,7 +10,7 @@ import com.hqy.cloud.auth.account.entity.AccountMenu;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountMenuService;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.common.UserRole;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountOperationServiceImpl implements AccountOperationService {
     private final PasswordEncoder passwordEncoder;
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final AccountProfileService accountProfileService;
     private final AccountMenuService accountMenuService;
     private final AccountAuthCacheDelayRemoveService cacheDelayRemoveService;
@@ -50,7 +50,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
     @Override
     public AccountInfoDTO getAccountInfo(Long id) {
         AssertUtil.notNull(id, "Account id should not be null.");
-        AccountInfoDTO accountInfo = accountService.getAccountInfo(id);
+        AccountInfoDTO accountInfo = accountDomainService.getAccountInfo(id);
         if (Objects.isNull(accountInfo)) {
             return null;
         }
@@ -63,7 +63,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (StringUtils.isBlank(usernameOrEmail)) {
             return null;
         }
-        AccountInfoDTO accountInfo = accountService.getAccountInfoByUsernameOrEmail(usernameOrEmail);
+        AccountInfoDTO accountInfo = accountDomainService.getAccountInfoByUsernameOrEmail(usernameOrEmail);
         if (accountInfo != null) {
             accountInfo.setAvatar(AccountAvatarUtil.getAvatar(accountInfo.getAvatar()));
         }
@@ -75,7 +75,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
-        List<AccountInfoDTO> accountInfos = accountService.getAccountInfos(ids);
+        List<AccountInfoDTO> accountInfos = accountDomainService.getAccountInfos(ids);
         if (CollectionUtils.isNotEmpty(accountInfos)) {
             accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AccountAvatarUtil.getAvatar(e.getAvatar()))).collect(Collectors.toList());
         }
@@ -87,7 +87,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         if (StringUtils.isBlank(name)) {
             return Collections.emptyList();
         }
-        List<AccountInfoDTO> accountInfos = accountService.getAccountInfosByName(name);
+        List<AccountInfoDTO> accountInfos = accountDomainService.getAccountInfosByName(name);
         if (CollectionUtils.isNotEmpty(accountInfos)) {
             accountInfos = accountInfos.stream().peek(e -> e.setAvatar(AccountAvatarUtil.getAvatar(e.getAvatar()))).collect(Collectors.toList());
         }
@@ -110,7 +110,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
             queryWrapper.eq("phone", phone);
         }
         queryWrapper.eq("deleted", 0);
-        return !accountService.exists(queryWrapper);
+        return !accountDomainService.exists(queryWrapper);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         Boolean result = transactionTemplate.execute(status -> {
             try {
-                AssertUtil.isTrue(accountService.save(account), "Failed execute to insert Account: " + account);
+                AssertUtil.isTrue(accountDomainService.save(account), "Failed execute to insert Account: " + account);
                 AssertUtil.isTrue(accountProfileService.save(accountProfile), "Failed execute to insert account profile, data: " + JsonUtil.toJson(accountProfile));
                 return true;
             } catch (Throwable cause) {
@@ -140,7 +140,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         setAccountInfo(account, userDTO);
         // 第二次删除缓存
         cacheDelayRemoveService.removeAccountAuthCache(account.getId());
-        return accountService.updateById(account);
+        return accountDomainService.updateById(account);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class AccountOperationServiceImpl implements AccountOperationService {
         account.setDeleted(true);
         Boolean result = transactionTemplate.execute(status -> {
             try {
-                AssertUtil.isTrue(accountService.updateById(account), "Failed execute to update account.");
+                AssertUtil.isTrue(accountDomainService.updateById(account), "Failed execute to update account.");
                 QueryWrapper<AccountMenu> wrapper = Wrappers.query();
                 wrapper.eq("account_id", id);
                 AssertUtil.isTrue(accountMenuService.remove(wrapper), "Failed execute to remove account menu by accountId: " + id);

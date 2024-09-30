@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hqy.cloud.auth.account.entity.AccountMenu;
 import com.hqy.cloud.auth.account.entity.Menu;
 import com.hqy.cloud.auth.account.service.AccountMenuService;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.account.service.MenuService;
 import com.hqy.cloud.auth.base.converter.MenuConverter;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
@@ -33,7 +33,7 @@ import static com.hqy.cloud.auth.base.AccountConstants.FIRST_MENU_PARENT_ID;
 @RequiredArgsConstructor
 public class AuthOperationServiceImpl implements AuthOperationService {
 
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final MenuService menuService;
     private final AccountMenuService accountMenuService;
     private final TransactionTemplate transactionTemplate;

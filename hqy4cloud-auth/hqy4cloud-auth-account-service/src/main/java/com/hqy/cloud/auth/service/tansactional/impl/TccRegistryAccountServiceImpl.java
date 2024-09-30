@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.service.tansactional.impl;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.util.AssertUtil;
 import io.seata.core.context.RootContext;
@@ -26,7 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @LocalTCC
 @RequiredArgsConstructor
 public class TccRegistryAccountServiceImpl implements TccRegistryAccountService {
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final AccountProfileService accountProfileService;
     private final TransactionTemplate template;
 
@@ -37,7 +37,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         // 新增用户，并且用户状态设置为不可用
         String xid = RootContext.getXID();
         account.setStatus(false);
-        return accountService.save(account);
+        return accountDomainService.save(account);
     }
 
     @Override
@@ -50,14 +50,14 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
             return false;
         }
         // 查找try阶段锁定的用户
-        Account queryAccount = accountService.getById(account.getId());
+        Account queryAccount = accountDomainService.getById(account.getId());
         if (queryAccount == null) {
             return false;
         }
         queryAccount.setStatus(true);
         Boolean execute = template.execute(status -> {
             try {
-                AssertUtil.isTrue(accountService.updateById(queryAccount), "Failed execute to update account.");
+                AssertUtil.isTrue(accountDomainService.updateById(queryAccount), "Failed execute to update account.");
                 AssertUtil.isTrue(accountProfileService.save(profile), "Failed execute to insert account profiles.");
                 return true;
             } catch (Throwable cause) {
@@ -73,7 +73,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         // 回滚
         Account account = actionContext.getActionContext("account", Account.class);
         if (account != null) {
-            accountService.removeById(account.getId());
+            accountDomainService.removeById(account.getId());
         }
         return true;
     }

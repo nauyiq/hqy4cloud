@@ -4,7 +4,7 @@ import com.hqy.cloud.auth.admin.service.RequestAdminAccountService;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountMenu;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
@@ -36,11 +36,11 @@ import static com.hqy.cloud.account.response.AccountResultCode.USER_NOT_FOUND;
 public class RequestAdminAccountServiceImpl implements RequestAdminAccountService {
     private final AuthOperationService authOperationService;
     private final AccountOperationService accountOperationService;
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
 
     @Override
     public R<AdminUserInfoVO> getLoginUserInfo(Long id) {
-        AccountInfoDTO accountInfo = accountService.getAccountInfo(id);
+        AccountInfoDTO accountInfo = accountDomainService.getAccountInfo(id);
         if (Objects.isNull(accountInfo)) {
             return R.failed(USER_NOT_FOUND);
         }
@@ -53,7 +53,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
     @Override
     public R<PageResult<AccountInfoVO>> getPageUsers(String username, String nickname, Long id, Integer current, Integer size) {
         AssertUtil.notNull(id, "Account id should no be null.");
-        PageResult<AccountInfoVO> result = accountService.getPageAccountInfos(username, nickname, current, size);
+        PageResult<AccountInfoVO> result = accountDomainService.getPageAccountInfos(username, nickname, current, size);
         return R.ok(result);
     }
 
@@ -80,7 +80,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
     @Override
     public R<Boolean> editUser(Long accessAccountId, UserDTO userDTO) {
         //check user exist.
-        Account account = accountService.getById(userDTO.getId());
+        Account account = accountDomainService.getById(userDTO.getId());
         if (Objects.isNull(account) || account.getDeleted()) {
             return R.failed(USER_NOT_FOUND);
         }
@@ -94,7 +94,7 @@ public class RequestAdminAccountServiceImpl implements RequestAdminAccountServic
 
     @Override
     public R<Boolean> deleteUser(Long accessId, Long id) {
-        Account account = accountService.getById(id);
+        Account account = accountDomainService.getById(id);
         if (Objects.isNull(account)) {
             R.failed(USER_NOT_FOUND);
         }

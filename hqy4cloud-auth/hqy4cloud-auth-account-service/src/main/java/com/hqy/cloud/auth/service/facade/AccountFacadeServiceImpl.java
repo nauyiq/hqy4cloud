@@ -11,9 +11,8 @@ import com.hqy.cloud.account.service.AccountFacadeService;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.entity.convertor.AccountConvertor;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.AccountConstants;
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.common.bind.R;
@@ -26,7 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author qiyuan.hong
@@ -37,7 +38,7 @@ import java.util.Date;
 @DubboService(version = DubboConstants.DEFAULT_DUBBO_SERVICE_VERSION)
 public class AccountFacadeServiceImpl implements AccountFacadeService {
     private final PasswordEncoder passwordEncoder;
-    private final AccountService accountService;
+    private final AccountDomainService accountDomainService;
     private final AccountOperationService accountOperationService;
     private final RandomCodeService randomCodeService;
 
@@ -47,11 +48,11 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
         Account account = null;
         Long id = queryParams.getId();
         if (id != null) {
-            account = accountService.findById(id);
+            account = accountDomainService.findById(id);
         } else if (StringUtils.isNotBlank(queryParams.getPhone())) {
-            account = accountService.queryAccountByUniqueIndex(queryParams.getPhone());
+            account = accountDomainService.queryAccountByUniqueIndex(queryParams.getPhone());
         } else if (StringUtils.isNotBlank(queryParams.getEmail())) {
-            account = accountService.queryAccountByUniqueIndex(queryParams.getEmail());
+            account = accountDomainService.queryAccountByUniqueIndex(queryParams.getEmail());
         }
         if (account == null) {
             return R.failed(AccountResultCode.USER_NOT_FOUND);
@@ -59,6 +60,13 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
 
         AccountInfo accountInfo = AccountConvertor.CONVERTOR.mapToVo(account);
         return R.ok(accountInfo);
+    }
+
+    @Facade
+    @Override
+    public R<List<AccountInfo>> queryList(Collection<Long> ids) {
+        List<Account> accounts = accountDomainService.findByIds(ids);
+        return R.ok(accounts.stream().map(AccountConvertor.CONVERTOR::mapToVo).toList());
     }
 
     @Facade

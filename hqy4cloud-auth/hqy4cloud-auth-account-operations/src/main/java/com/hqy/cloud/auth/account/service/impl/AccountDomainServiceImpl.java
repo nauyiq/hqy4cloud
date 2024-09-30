@@ -10,21 +10,16 @@ import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.mapper.AccountMapper;
-import com.hqy.cloud.auth.account.service.AccountService;
+import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService {
+public class AccountDomainServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountDomainService {
     private final AccountMapper mapper;
 
     @Override
@@ -46,6 +41,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Cached(name = AccountAuthCacheManager.ACCOUNT_USER_CACHE_KEY, expire = 1440,  cacheType = CacheType.BOTH, key = "#id", cacheNullValue = true)
     public Account findById(Long id) {
         return mapper.findById(id);
+    }
+
+    @Override
+    public List<Account> findByIds(Collection<Long> ids) {
+        return mapper.selectBatchIds(ids);
     }
 
     @Override
