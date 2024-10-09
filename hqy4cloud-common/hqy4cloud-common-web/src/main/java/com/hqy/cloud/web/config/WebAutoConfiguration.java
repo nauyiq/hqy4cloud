@@ -1,11 +1,13 @@
 package com.hqy.cloud.web.config;
 
+import com.hqy.cloud.web.filter.AuthUserFilter;
 import com.hqy.cloud.web.filter.TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -38,5 +40,19 @@ public class WebAutoConfiguration {
         registrationBean.setOrder(10);
         return registrationBean;
     }
+
+    /**
+     * 注册AUTHUser 过滤器
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean<AuthUserFilter> authUserFilter() {
+        FilterRegistrationBean<AuthUserFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new AuthUserFilter());
+        bean.addUrlPatterns("/**");
+        bean.setOrder(Ordered.LOWEST_PRECEDENCE);
+        return bean;
+    }
+
 
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson2.JSON;
 import com.hqy.cloud.auth.api.AuthUser;
 import com.hqy.cloud.auth.api.AuthUserService;
 import com.hqy.cloud.auth.api.support.DefaultAuthUser;
@@ -14,6 +15,7 @@ import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
 import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
+import com.hqy.cloud.util.AssertUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.hqy.cloud.common.base.lang.AuthConstants.*;
@@ -38,30 +39,40 @@ import static com.hqy.cloud.common.base.lang.AuthConstants.*;
 @UtilityClass
 public class AuthUtils {
 
+    private static final ThreadLocal<AuthUser> THREAD_LOCAL = new InheritableThreadLocal<>();
+
+    public void removeUser() {
+        THREAD_LOCAL.remove();
+    }
+
     public AuthUser getCurrentUser() {
+        AuthUser authUser = THREAD_LOCAL.get();
+        if (authUser != null) {
+            return authUser;
+        }
+
         HttpServletRequest request = WebUtils.currentRequest();
         Assert.notNull(request, "Current env not support spring mvc.");
-        AuthUser authUser;
         if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
             // 从请求头获取用户信息
             try {
-                Long id = Long.valueOf(Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.ID)));
-                String username = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.USERNAME));
-                String email = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.EMAIL));
-                String phone = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.PHONE));
-                UserRole userRole = UserRole.valueOf(Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.ROLE)));
-                String authorities = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.AUTHORITIES));
-
-                authUser = new DefaultAuthUser(id, username, email, phone, userRole,
-                        Arrays.stream(StringUtils.tokenizeToStringArray(authorities, StringConstants.Symbol.COMMA)).toList());
+                String authUserJson = request.getHeader(AuthUserHeaderConstants.AUTH_USER);
+                AssertUtil.notEmpty(authUserJson, "AuthUser is empty from request header.");
+                authUser = JSON.parseObject(Base64.decodeStr(authUserJson), DefaultAuthUser.class);
             } catch (Exception cause) {
                 log.error(cause.getMessage(), cause);
                 throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
             }
-
         } else {
             authUser = getAuthUserByService(request);
         }
+
+        if (authUser != null) {
+            THREAD_LOCAL.set(authUser);
+        } else {
+            throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+        }
+
        return authUser;
     }
 
@@ -78,75 +89,28 @@ public class AuthUtils {
     }
 
     public Long getCurrentUserId() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            return Long.valueOf(Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.ID)));
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.getId();
-        }
+        return getCurrentUser().getId();
     }
 
     public String getCurrentUserName() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            return Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.USERNAME));
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.getUsername();
-        }
+        return getCurrentUser().getUsername();
     }
 
     public String getCurrentUserEmail() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            return Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.EMAIL));
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.getEmail();
-        }
+        return getCurrentUser().getEmail();
     }
 
     public String getCurrentUserPhone() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            return Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.PHONE));
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.getPhone();
-        }
+       return getCurrentUser().getPhone();
     }
 
     public UserRole getCurrentUserRole() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            String role = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.ROLE));
-            return UserRole.valueOf(role);
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.getUserRole();
-        }
+      return getCurrentUser().getUserRole();
     }
 
     public List<String> getCurrentAuthorities() {
-        HttpServletRequest request = WebUtils.currentRequest();
-        Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            String authorities = Base64.decodeStr(request.getHeader(AuthUserHeaderConstants.AUTHORITIES));
-            return Arrays.asList(StringUtils.tokenizeToStringArray(authorities, StringConstants.Symbol.COMMA));
-        } else {
-            AuthUser user = getAuthUserByService(request);
-            return user.authorities();
-        }
-
-
+        return getCurrentUser().authorities();
     }
-
 
     public String getOAuthClientId(HttpServletRequest request) {
         //从请求路径中获取

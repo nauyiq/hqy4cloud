@@ -19,5 +19,7 @@ public interface AuthUserHeaderConstants {
 
     String AUTHORITIES = "auth_authorities";
 
+    String AUTH_USER = "auth_user";
+
 
 }
