@@ -31,13 +31,6 @@
             <artifactId>hqy4cloud-common-canal</artifactId>
             <version>${revision}</version>
         </dependency>
-
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-quartz</artifactId>
-            <version>${revision}</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class StreamProducer {
+public class StreamBridgeProducer {
     private final StreamBridge streamBridge;
 
     /**
