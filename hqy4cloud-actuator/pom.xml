@@ -16,6 +16,7 @@
         <module>hqy4cloud-actuator-service</module>
         <module>hqy4cloud-actuator-node</module>
         <module>hqy4cloud-actuator-common</module>
+        <module>hqy4cloud-actuator-client</module>
     </modules>
 
 </project>
