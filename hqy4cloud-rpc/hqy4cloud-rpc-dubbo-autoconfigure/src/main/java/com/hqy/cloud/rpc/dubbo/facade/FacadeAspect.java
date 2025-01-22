@@ -168,14 +168,14 @@ public class FacadeAspect {
             response.setResult(false);
             if (valid) {
                 // 校验入参异常
-                response.setCode(ResultCode.ERROR_PARAM.getCode());
+                response.setCode(String.valueOf(ResultCode.ERROR_PARAM.getCode()));
                 response.setMessage(ResultCode.ERROR_PARAM.getMessage());
             } else if (throwable instanceof BizException bizException) {
                 response.setMessage(ResultCode.SYSTEM_BUSY.getMessage());
-                response.setCode(bizException.getCode());
+                response.setCode(String.valueOf(bizException.getCode()));
             }  else {
                 response.setMessage(throwable.toString());
-                response.setCode(ResultCode.FAILED.code);
+                response.setCode(String.valueOf(ResultCode.FAILED.code));
             }
             return response;
         }

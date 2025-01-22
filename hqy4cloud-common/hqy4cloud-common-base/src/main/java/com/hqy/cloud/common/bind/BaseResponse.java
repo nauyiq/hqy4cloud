@@ -31,4 +31,8 @@ public class BaseResponse implements Serializable {
         this.result = result;
     }
 
+    public boolean isSuccess() {
+        return result;
+    }
+
 }

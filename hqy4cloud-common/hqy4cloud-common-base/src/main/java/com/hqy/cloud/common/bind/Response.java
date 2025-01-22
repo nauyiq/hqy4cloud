@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/2/24 17:35
+ * @date 2023/2/24
  */
 public class Response implements Serializable {
 
@@ -16,7 +16,7 @@ public class Response implements Serializable {
     public Response() {
     }
 
-    public Response(boolean result, String message, int code) {
+    public Response(boolean result, String message, String code) {
         this.result = result;
         this.message = message;
         this.code = code;
@@ -24,7 +24,7 @@ public class Response implements Serializable {
 
     private boolean result;
     private String message;
-    private int code;
+    private String code;
 
     public String getMessage() {
         return message;
@@ -34,11 +34,11 @@ public class Response implements Serializable {
         this.message = message;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -49,4 +49,9 @@ public class Response implements Serializable {
     public void setResult(boolean result) {
         this.result = result;
     }
+
+    public boolean isSuccess() {
+        return this.result;
+    }
+
 }
