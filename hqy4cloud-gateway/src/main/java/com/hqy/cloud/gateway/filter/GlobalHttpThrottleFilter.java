@@ -1,6 +1,6 @@
 package com.hqy.cloud.gateway.filter;
 
-import com.hqy.cloud.common.bind.MessageResponse;
+import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.Constants;
@@ -57,9 +57,9 @@ public class GlobalHttpThrottleFilter implements GlobalFilter, Ordered {
             if (limitResult.isNeedLimit()) {
                 String resultTip = StringUtils.isBlank(limitResult.getTip()) ? ResultCode.ILLEGAL_REQUEST_LIMITED.message : limitResult.getTip();
                 log.warn("HttpThrottled the request: {}, {}, {}.", requestIp, url, resultTip);
-                MessageResponse response = new MessageResponse(false, resultTip, HttpStatus.FORBIDDEN.value());
+                R<Object> failed = R.failed(resultTip, ResultCode.NOT_PERMISSION.code);
                 return Mono.defer(() -> {
-                    DataBuffer buffer = ResponseUtil.outputBuffer(response, httpResponse, HttpStatus.FORBIDDEN);
+                    DataBuffer buffer = ResponseUtil.outputBuffer(failed, httpResponse, HttpStatus.FORBIDDEN);
                     return httpResponse.writeWith(Flux.just(buffer));
                 });
             }

@@ -1,5 +1,6 @@
 package com.hqy.cloud.common.bind;
 
+import com.hqy.cloud.common.response.Response;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
 import lombok.Getter;
@@ -15,7 +16,6 @@ import lombok.Setter;
 public class R<T> extends Response {
 
     private T data;
-
     public static <T> R<T> ok() {
         return setResult(true, ResultCode.SUCCESS);
     }
@@ -49,15 +49,6 @@ public class R<T> extends Response {
     }
 
     public static <T> R<T> setResult(boolean result, int code, String msg, T data) {
-        R<T> apiResult = new R<>();
-        apiResult.setResult(result);
-        apiResult.setCode(String.valueOf(code));
-        apiResult.setData(data);
-        apiResult.setMessage(msg);
-        return apiResult;
-    }
-
-    public static <T> R<T> setResult(boolean result, String code, String msg, T data) {
         R<T> apiResult = new R<>();
         apiResult.setResult(result);
         apiResult.setCode(code);

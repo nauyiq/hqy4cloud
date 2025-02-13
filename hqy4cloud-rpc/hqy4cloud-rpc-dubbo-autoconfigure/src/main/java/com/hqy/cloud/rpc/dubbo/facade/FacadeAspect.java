@@ -1,8 +1,9 @@
 package com.hqy.cloud.rpc.dubbo.facade;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson2.JSON;
 import com.hqy.cloud.common.base.exception.BizException;
-import com.hqy.cloud.common.bind.Response;
+import com.hqy.cloud.common.response.Response;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.BeanValidator;
 import jakarta.validation.ValidationException;
@@ -168,14 +169,11 @@ public class FacadeAspect {
             response.setResult(false);
             if (valid) {
                 // 校验入参异常
-                response.setCode(String.valueOf(ResultCode.ERROR_PARAM.getCode()));
+                response.setCode(ResultCode.ERROR_PARAM.getCode());
                 response.setMessage(ResultCode.ERROR_PARAM.getMessage());
-            } else if (throwable instanceof BizException bizException) {
-                response.setMessage(ResultCode.SYSTEM_BUSY.getMessage());
-                response.setCode(String.valueOf(bizException.getCode()));
-            }  else {
-                response.setMessage(throwable.toString());
-                response.setCode(String.valueOf(ResultCode.FAILED.code));
+            } else {
+                response.setMessage(ResultCode.SYSTEM_ERROR.message);
+                response.setCode(ResultCode.SYSTEM_ERROR.code);
             }
             return response;
         }

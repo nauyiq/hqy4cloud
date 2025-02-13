@@ -1,10 +1,7 @@
 package com.hqy.cloud.common.result;
 
-import com.hqy.cloud.common.bind.DataResponse;
-import com.hqy.cloud.common.bind.MessageResponse;
-
 /**
- * 全局错误码和消息提示
+ * 接口级别错误码
  * @author qy
  * @date 2021-08-09
  */
@@ -191,9 +188,9 @@ public enum ResultCode implements Result {
 
     ;
 
-    public int code;
+    public final int code;
 
-    public String message;
+    public final String message;
 
     ResultCode(int code, String message) {
         this.code = code;
@@ -205,60 +202,11 @@ public enum ResultCode implements Result {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
     @Override
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-
-    public static MessageResponse messageResponse(){
-        return messageResponse(true, SUCCESS);
-    }
-
-    public static MessageResponse messageResponse(ResultCode code) {
-        return messageResponse(false, code);
-    }
-
-    public static MessageResponse messageResponse(boolean result, ResultCode code) {
-        return new MessageResponse(result, code.message, code.code);
-    }
-
-    public static MessageResponse messageResponse(int code, String message) {
-        return new MessageResponse(false, message, code);
-    }
-
-
-    public static DataResponse dataResponse() {
-        return dataResponse(true, SUCCESS, null);
-    }
-
-    public static DataResponse dataResponse(Object data) {
-        return dataResponse(ResultCode.SUCCESS, data);
-    }
-
-    public static DataResponse dataResponse(ResultCode code) {
-        return dataResponse(false, code, null);
-    }
-
-    public static DataResponse dataResponse(ResultCode code, Object data) {
-        return dataResponse(true, code, data);
-    }
-
-    public static DataResponse dataResponse(boolean result, ResultCode code, Object data) {
-        return new DataResponse(result, code.message, code.code, data);
-    }
-
-    public static DataResponse dataResponse(int code, String message) {
-        return new DataResponse(false, message, code, null);
-    }
 
 
 }

@@ -26,6 +26,6 @@ public class RedissonRateLimiter extends AbstractLimiter {
         if (!rateLimiter.isExists()) {
             rateLimiter.setRate(RateType.OVERALL, getConfig().getCount(), getConfig().getWindows(), RateIntervalUnit.SECONDS);
         }
-        return rateLimiter.tryAcquire();
+        return !rateLimiter.tryAcquire();
     }
 }

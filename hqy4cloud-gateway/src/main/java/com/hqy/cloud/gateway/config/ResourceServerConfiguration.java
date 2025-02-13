@@ -5,7 +5,6 @@ import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.security.core.DefaultReactiveOpaqueTokenIntrospector;
 import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
-import com.hqy.cloud.common.bind.MessageResponse;
 import com.hqy.cloud.common.bind.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
@@ -122,8 +121,8 @@ public class ResourceServerConfiguration {
         return (webFilterExchange, exception) -> {
             ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
             return Mono.defer(() -> {
-                MessageResponse code = ResultCode.messageResponse(ResultCode.INVALID_ACCESS_USER);
-                DataBuffer buffer = ResponseUtil.outputBuffer(code, response, HttpStatus.UNAUTHORIZED);
+                R<Object> failed = R.failed(ResultCode.INVALID_ACCESS_USER);
+                DataBuffer buffer = ResponseUtil.outputBuffer(failed, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
 

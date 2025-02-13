@@ -10,14 +10,14 @@ import com.hqy.cloud.common.base.exception.BizException;
 public class SmsException extends BizException {
 
     public SmsException(int code) {
-        super(code);
+        super(String.valueOf(code));
     }
 
     public SmsException(int code, String message) {
-        super(message, code);
+        super(message, String.valueOf(code));
     }
 
     public SmsException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+        super(String.valueOf(code), message, cause);
     }
 }

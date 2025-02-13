@@ -11,14 +11,14 @@ import com.hqy.cloud.common.base.exception.BizException;
 public class AuthException extends BizException {
 
     public AuthException(int code) {
-        super(code);
+        super(String.valueOf(code));
     }
 
     public AuthException(String message, int code) {
-        super(message, code);
+        super(message, String.valueOf(code));
     }
 
     public AuthException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+        super(String.valueOf(code), message, cause);
     }
 }

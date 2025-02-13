@@ -1,4 +1,4 @@
-package com.hqy.cloud.common.bind;
+package com.hqy.cloud.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
