@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.admin.service;
 
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
 
 /**

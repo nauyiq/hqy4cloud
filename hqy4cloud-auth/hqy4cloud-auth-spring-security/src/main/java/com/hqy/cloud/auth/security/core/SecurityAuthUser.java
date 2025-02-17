@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.security.core;
 
 import cn.hutool.core.map.MapUtil;
+import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.auth.api.AuthUser;
 import com.hqy.cloud.auth.common.UserRole;
 import lombok.Getter;
@@ -39,7 +40,7 @@ public class SecurityAuthUser extends User implements OAuth2AuthenticatedPrincip
     /**
      * 用户状态， 是否可用
      */
-    private final Boolean status;
+    private final AccountStatus status;
 
     /**
      * 用户角色
@@ -52,7 +53,7 @@ public class SecurityAuthUser extends User implements OAuth2AuthenticatedPrincip
     private final Map<String, Object> attributes = MapUtil.newHashMap();
 
 
-    public SecurityAuthUser(Long id, String username, String password, String email, String phone, Boolean status,
+    public SecurityAuthUser(Long id, String username, String password, String email, String phone, AccountStatus status,
                             UserRole userRole,
                             Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
@@ -86,6 +87,6 @@ public class SecurityAuthUser extends User implements OAuth2AuthenticatedPrincip
 
     @Override
     public boolean isEnabled() {
-        return Boolean.TRUE.equals(this.status) ;
+        return AccountStatus.ACTIVE == this.status;
     }
 }

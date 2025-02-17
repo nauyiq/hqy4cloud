@@ -1,6 +1,5 @@
 package com.hqy.cloud.common.base.exception;
 
-import com.hqy.cloud.common.result.BsResult;
 import com.hqy.cloud.common.result.Result;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class BizException extends RuntimeException {
         this.code = code;
     }
 
-    public BizException(String message, String code) {
+    public BizException(String code, String message) {
         super(message);
         this.code = code;
     }
@@ -26,11 +25,6 @@ public class BizException extends RuntimeException {
     public BizException(Result result) {
         super(result.getMessage());
         this.code = String.valueOf(result.getCode());
-    }
-
-    public BizException(BsResult bsResult) {
-        super(bsResult.getMessage());
-        this.code = bsResult.getCode();
     }
 
     public BizException(String code, String message, Throwable cause) {

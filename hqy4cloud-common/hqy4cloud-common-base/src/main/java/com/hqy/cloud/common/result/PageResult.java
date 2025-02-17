@@ -1,5 +1,8 @@
 package com.hqy.cloud.common.result;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.List;
  * @author qy
  * @date 2021-09-14
  */
+@Setter
+@Getter
 public class PageResult<T> implements Serializable {
 
     @Serial
@@ -70,43 +75,4 @@ public class PageResult<T> implements Serializable {
         this.resultList = resultList;
     }
 
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public long getTotal() {
-        return total;
-    }
-
-    public void setTotal(long total) {
-        this.total = total;
-    }
-
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
-    }
-
-    public List<T> getResultList() {
-        return resultList;
-    }
-
-    public void setResultList(List<T> resultList) {
-        this.resultList = resultList;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
 }

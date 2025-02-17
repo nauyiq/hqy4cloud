@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.common;
 
 import com.hqy.cloud.common.base.exception.BizException;
+import com.hqy.cloud.common.result.Result;
 
 /**
  * 认证异常
@@ -10,15 +11,20 @@ import com.hqy.cloud.common.base.exception.BizException;
  */
 public class AuthException extends BizException {
 
-    public AuthException(int code) {
-        super(String.valueOf(code));
+    public AuthException(String code) {
+        super(code);
     }
 
-    public AuthException(String message, int code) {
-        super(message, String.valueOf(code));
+    public AuthException(String code, String message) {
+        super(code, message);
     }
 
-    public AuthException(int code, String message, Throwable cause) {
-        super(String.valueOf(code), message, cause);
+    public AuthException(Result result) {
+        super(result.getCode(), result.getMessage());
+    }
+
+
+    public AuthException(String code, String message, Throwable cause) {
+        super(code, message, cause);
     }
 }

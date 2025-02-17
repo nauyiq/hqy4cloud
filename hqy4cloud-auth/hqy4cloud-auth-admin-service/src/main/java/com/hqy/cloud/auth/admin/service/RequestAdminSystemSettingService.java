@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.admin.service;
 
 import com.hqy.cloud.auth.base.vo.BlackAddressVO;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 
 import java.util.Set;
 

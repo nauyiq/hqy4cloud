@@ -21,7 +21,7 @@ public final class CommonResultStruct {
     public boolean result;
 
     @ThriftField(2)
-    public int code;
+    public String code;
 
     @ThriftField(3)
     public String message;
@@ -38,7 +38,7 @@ public final class CommonResultStruct {
         this.message = result.getMessage();
     }
 
-    public CommonResultStruct(boolean result, int code, String message) {
+    public CommonResultStruct(boolean result, String code, String message) {
         this.result = result;
         this.code = code;
         this.message = message;

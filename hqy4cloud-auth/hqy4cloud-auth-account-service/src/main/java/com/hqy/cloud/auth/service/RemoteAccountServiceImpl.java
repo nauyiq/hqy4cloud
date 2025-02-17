@@ -2,6 +2,7 @@ package com.hqy.cloud.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.account.service.RemoteAccountService;
 import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.account.struct.RegistryAccountStruct;
@@ -12,7 +13,6 @@ import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
-import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.tansactional.TccRegistryAccountService;
 import com.hqy.cloud.common.base.lang.StringConstants;
@@ -44,7 +44,6 @@ import java.util.List;
 public class RemoteAccountServiceImpl extends AbstractRPCService implements RemoteAccountService {
     private final PasswordEncoder passwordEncoder;
     private final AccountOperationService accountOperationService;
-    private final AuthOperationService authOperationService;
     private final AccountDomainService accountDomainService;
     private final TccRegistryAccountService tccRegistryAccountService;
     private final AccountAuthCacheDelayRemoveService accountAuthCacheDelayRemoveService;

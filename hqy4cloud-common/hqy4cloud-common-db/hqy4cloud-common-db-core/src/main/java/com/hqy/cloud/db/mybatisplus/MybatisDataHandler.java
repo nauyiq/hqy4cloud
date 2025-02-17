@@ -10,12 +10,14 @@ import java.util.Date;
  * @version 1.0
  * @date 2024/3/1
  */
-public class MybatisDatetimeHandler implements MetaObjectHandler {
+public class MybatisDataHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByNameIfNull("created", new Date(), metaObject);
         this.setFieldValByNameIfNull("updated", new Date(), metaObject);
+        this.setFieldValByNameIfNull("deleted", 0, metaObject);
+        this.setFieldValByNameIfNull("lockVersion", 0, metaObject);
     }
 
     @Override

@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum BsResultCode implements BsResult {
+public enum BsResultCode implements Result {
 
     SUCCESS("SUCCESS", "成功"),
     FAILED("FAILED", "失败"),

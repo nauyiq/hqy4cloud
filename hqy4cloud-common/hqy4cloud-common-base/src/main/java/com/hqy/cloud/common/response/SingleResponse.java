@@ -1,7 +1,7 @@
 package com.hqy.cloud.common.response;
 
-import com.hqy.cloud.common.result.BsResult;
-import com.hqy.cloud.common.result.BsResultCode;
+import com.hqy.cloud.common.result.Result;
+import com.hqy.cloud.common.result.ResultCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,40 +11,64 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SingleResponse<T> extends BsResponse {
+public class SingleResponse<T> extends Response {
 
     private T data;
 
-    public SingleResponse(boolean result, String code, String message, T data) {
-        super(result, code, message);
-        this.data = data;
-    }
-
     public static <T> SingleResponse<T> ok() {
-        return new SingleResponse<>(true, BsResultCode.SUCCESS.getCode(), BsResultCode.SUCCESS.getMessage(), null);
+        return setResult(true, ResultCode.SUCCESS);
     }
 
     public static <T> SingleResponse<T> ok(T data) {
-        return new SingleResponse<>(true, BsResultCode.SUCCESS.getCode(), BsResultCode.SUCCESS.getMessage(), data);
+        return setResult(true, ResultCode.SUCCESS, data);
     }
 
-    public static <T> SingleResponse<T> ok(T data, BsResult bsResult) {
-        return new SingleResponse<>(true, bsResult.getCode(), bsResult.getMessage(), data);
+    public static <T> SingleResponse<T> ok(String code, String message, T data) {
+        return setResult(true, code, message, data);
     }
 
-    public static <T> SingleResponse<T> failed(BsResult bsResult) {
-        return new SingleResponse<>(false, bsResult.getCode(), bsResult.getMessage(), null);
+    public static <T> SingleResponse<T> success() {
+        return setResult(true, ResultCode.SUCCESS);
     }
 
-    public static <T> SingleResponse<T> failed(T data, BsResult bsResult) {
-        return new SingleResponse<>(false, bsResult.getCode(), bsResult.getMessage(), data);
+    public static <T> SingleResponse<T> success(T data) {
+        return setResult(true, ResultCode.SUCCESS, data);
+    }
+
+    public static <T> SingleResponse<T> success(String code, String message, T data) {
+        return setResult(true, code, message, data);
+    }
+
+    public static <T> SingleResponse<T> failed() {
+        return setResult(false, ResultCode.FAILED);
+    }
+
+    public static <T> SingleResponse<T> failed(String message) {
+        return failed(ResultCode.FAILED.code, message);
     }
 
     public static <T> SingleResponse<T> failed(String code, String message) {
-        return new SingleResponse<>(false, code, message, null);
+        return setResult(false, code, message, null);
     }
 
-    public static <T> SingleResponse<T> failed(String code, String message, T data) {
-        return new SingleResponse<>(false, code, message, data);
+    public static <T> SingleResponse<T> failed(Result result) {
+        return setResult(false, result);
+    }
+
+    public static <T> SingleResponse<T> setResult(boolean result, Result resultCode) {
+        return setResult(result, resultCode, null);
+    }
+
+    public static <T> SingleResponse<T> setResult(boolean result, Result resultCode, T data) {
+        return setResult(result, resultCode.getCode(), resultCode.getMessage(), data);
+    }
+
+    public static <T> SingleResponse<T> setResult(boolean result, String code, String msg, T data) {
+        SingleResponse<T> apiResult = new SingleResponse<>();
+        apiResult.setResult(result);
+        apiResult.setCode(code);
+        apiResult.setData(data);
+        apiResult.setMessage(msg);
+        return apiResult;
     }
 }

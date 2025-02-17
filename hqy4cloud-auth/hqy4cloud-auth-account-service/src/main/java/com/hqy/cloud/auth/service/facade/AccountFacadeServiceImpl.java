@@ -1,21 +1,30 @@
 package com.hqy.cloud.auth.service.facade;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
+import com.alicp.jetcache.anno.CacheInvalidate;
+import com.hqy.cloud.account.constants.AccountStatus;
+import com.hqy.cloud.account.request.AccountAuthRequest;
 import com.hqy.cloud.account.request.AccountQueryParams;
 import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
+import com.hqy.cloud.account.response.AccountOperationInfo;
 import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.account.response.RegisterInfo;
 import com.hqy.cloud.account.service.AccountFacadeService;
+import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
-import com.hqy.cloud.auth.account.entity.convertor.AccountConvertor;
 import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.base.AccountConstants;
+import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.auth.common.UserRole;
+import com.hqy.cloud.auth.infrastructure.certification.service.AuthService;
 import com.hqy.cloud.auth.service.AccountOperationService;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.base.exception.BizException;
+import com.hqy.cloud.common.result.BsResultCode;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.infrastructure.random.RandomCodeScene;
 import com.hqy.cloud.infrastructure.random.RandomCodeService;
 import com.hqy.cloud.rpc.dubbo.DubboConstants;
@@ -24,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Date;
@@ -40,6 +50,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     private final PasswordEncoder passwordEncoder;
     private final AccountDomainService accountDomainService;
     private final AccountOperationService accountOperationService;
+    private final AuthService authService;
     private final RandomCodeService randomCodeService;
 
     @Facade
@@ -58,7 +69,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
             return R.failed(AccountResultCode.USER_NOT_FOUND);
         }
 
-        AccountInfo accountInfo = AccountConvertor.CONVERTOR.mapToVo(account);
+        AccountInfo accountInfo = AccountConverter.CONVERTER.mapToVo(account);
         return R.ok(accountInfo);
     }
 
@@ -66,7 +77,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     @Override
     public R<List<AccountInfo>> queryList(Collection<Long> ids) {
         List<Account> accounts = accountDomainService.findByIds(ids);
-        return R.ok(accounts.stream().map(AccountConvertor.CONVERTOR::mapToVo).toList());
+        return R.ok(accounts.stream().map(AccountConverter.CONVERTER::mapToVo).toList());
     }
 
     @Facade
@@ -91,5 +102,31 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
             Thread.ofVirtual().start(() -> randomCodeService.saveCode(code, phone, RandomCodeScene.SMS_AUTH));
         }
         return result ? R.ok(new RegisterInfo(account.getId(), account.getUsername(), profile.getNickname(), profile.getAvatar())) : R.failed();
+    }
+
+    @Facade
+    @Override
+    @Transactional
+    @CacheInvalidate(name = AccountAuthCacheManager.ACCOUNT_USER_CACHE_KEY, key = "#request.id")
+    public R<AccountOperationInfo> auth(AccountAuthRequest request) {
+        Account account = accountDomainService.findById(request.getId());
+        Assert.notNull(account, () -> new BizException(AccountResultCode.USER_NOT_FOUND));
+
+        if (account.getCertification()) {
+            // 已经实名
+            return R.ok(AccountOperationInfo.of(AccountConverter.CONVERTER.mapToVo(account)));
+        }
+        if (account.getStatus() == AccountStatus.DISABLED) {
+            throw new BizException(AccountResultCode.USER_DISABLED);
+        }
+        // 验证实名是否正常
+        if (!authService.checkAuth(request.getRearName(), request.getIdCard())) {
+            return R.failed(AccountResultCode.USER_AUTH_FAIL);
+        }
+        account.auth(request.getRearName(), request.getIdCard());
+        if (accountDomainService.updateById(account)) {
+            return R.ok(AccountOperationInfo.of(AccountConverter.CONVERTER.mapToVo(account)));
+        }
+        return R.failed(BsResultCode.UPDATE_FAILED);
     }
 }

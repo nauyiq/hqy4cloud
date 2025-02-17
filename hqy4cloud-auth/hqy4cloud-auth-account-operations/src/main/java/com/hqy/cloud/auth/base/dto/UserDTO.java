@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.base.dto;
 
+import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.util.ValidationUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2022/12/13 15:44
+ * @date 2022/12/13
  */
 @Data
 @NoArgsConstructor
@@ -28,7 +29,7 @@ public class UserDTO implements Serializable {
     private String phone;
     private String password;
     private String avatar;
-    private Boolean status;
+    private AccountStatus status;
     private String role;
     private List<String> authorities = new ArrayList<>();
 

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.hqy.cloud.db.mybatisplus.MybatisDatetimeHandler;
+import com.hqy.cloud.db.mybatisplus.MybatisDataHandler;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +36,7 @@ public class MybatisPlusAutoConfiguration {
 
     @Bean
     public MetaObjectHandler mybatisDatetimeHandler() {
-        return new MybatisDatetimeHandler();
+        return new MybatisDataHandler();
     }
 
 

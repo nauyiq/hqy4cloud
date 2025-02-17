@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.admin.service.impl;
 import com.hqy.cloud.auth.admin.service.RequestAdminThrottleService;
 import com.hqy.cloud.coll.service.CollPersistService;
 import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;

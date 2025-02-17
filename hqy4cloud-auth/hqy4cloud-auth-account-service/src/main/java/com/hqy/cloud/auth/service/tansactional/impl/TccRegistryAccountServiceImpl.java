@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.service.tansactional.impl;
 
+import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.auth.account.service.AccountProfileService;
@@ -34,9 +35,8 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
     @TwoPhaseBusinessAction(name = "registerAccountInfo", useTCCFence = true)
     public boolean register(@BusinessActionContextParameter(paramName = "account") Account account,
                             @BusinessActionContextParameter(paramName = "accountProfile") AccountProfile profile) {
-        // 新增用户，并且用户状态设置为不可用
         String xid = RootContext.getXID();
-        account.setStatus(false);
+        account.setStatus(AccountStatus.INIT);
         return accountDomainService.save(account);
     }
 
@@ -54,7 +54,7 @@ public class TccRegistryAccountServiceImpl implements TccRegistryAccountService 
         if (queryAccount == null) {
             return false;
         }
-        queryAccount.setStatus(true);
+        queryAccount.setStatus(AccountStatus.ACTIVE);
         Boolean execute = template.execute(status -> {
             try {
                 AssertUtil.isTrue(accountDomainService.updateById(queryAccount), "Failed execute to update account.");

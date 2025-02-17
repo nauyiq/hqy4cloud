@@ -8,7 +8,7 @@ import com.hqy.cloud.auth.account.service.SysOauthClientService;
 import com.hqy.cloud.auth.support.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.communication.request.PhoneMsgParams;
 import com.hqy.cloud.communication.request.SmsType;
 import com.hqy.cloud.communication.service.CommunicationFacadeService;

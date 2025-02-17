@@ -1,10 +1,9 @@
 package com.hqy.cloud.auth.account.entity;
 
 import cn.hutool.core.util.RandomUtil;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.hqy.cloud.auth.base.AccountConstants;
-import com.hqy.cloud.db.mybatisplus.BaseEntity;
+import com.hqy.cloud.db.entity.CommonEntity;
 import com.hqy.cloud.file.domain.AccountAvatarUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,13 +23,7 @@ import static com.hqy.cloud.file.domain.AccountAvatarUtil.DEFAULT_AVATAR;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_account_profile")
-public class AccountProfile extends BaseEntity {
-
-    /**
-     * id
-     */
-    @TableId
-    private Long id;
+public class AccountProfile extends CommonEntity {
 
     /**
      * 昵称
@@ -62,8 +55,7 @@ public class AccountProfile extends BaseEntity {
     }
 
     public AccountProfile(Long id, String nickname, String avatar) {
-        super(new Date());
-        this.id = id;
+        setId(id);
         this.nickname = nickname;
         this.avatar = avatar;
     }

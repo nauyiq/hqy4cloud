@@ -1,6 +1,6 @@
 package com.hqy.cloud.gateway.server.support;
 
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;

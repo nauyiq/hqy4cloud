@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.server.support;
 
 import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.BlockRequestHandler;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

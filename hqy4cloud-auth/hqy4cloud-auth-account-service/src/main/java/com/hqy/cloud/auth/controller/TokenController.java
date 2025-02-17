@@ -1,11 +1,10 @@
 package com.hqy.cloud.auth.controller;
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.cache.common.RedisConstants;
 import com.hqy.cloud.cache.redis.server.support.SmartRedisManager;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,52 +1,47 @@
 package com.hqy.cloud.common.base.lang.exception;
 
 import com.hqy.cloud.common.result.ResultCode;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serial;
 
 /**
  * @author qiyuan.hong
  * @version 1.0
  * @date 2022/5/6 17:25
  */
+@Setter
+@Getter
 public class MessageQueueException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = -3601156255152951538L;
 
-    public int code;
+    public String code;
 
     public MessageQueueException(String message) {
         this(ResultCode.SYSTEM_BUSY.code, message);
     }
 
-    public MessageQueueException(int code, String message) {
+    public MessageQueueException(String code, String message) {
         super(message);
         this.code = code;
     }
 
-    public MessageQueueException(String message, Throwable cause) {
-        this(ResultCode.SYSTEM_BUSY.code, message, cause);
-    }
-
-    public MessageQueueException(int code, String message, Throwable cause) {
+    public MessageQueueException(String code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
-
     public MessageQueueException(Throwable cause) {
         this(ResultCode.SYSTEM_BUSY.code, cause);
     }
 
-    public MessageQueueException(int code, Throwable cause) {
+    public MessageQueueException(String code, Throwable cause) {
         super(cause);
         this.code = code;
     }
 
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     /**
      * 消息为空

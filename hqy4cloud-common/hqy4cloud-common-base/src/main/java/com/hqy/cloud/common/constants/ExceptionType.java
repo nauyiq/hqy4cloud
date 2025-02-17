@@ -1,4 +1,4 @@
-package com.hqy.cloud.common.enums;
+package com.hqy.cloud.common.constants;
 
 /**
  * @author qiyuan.hong

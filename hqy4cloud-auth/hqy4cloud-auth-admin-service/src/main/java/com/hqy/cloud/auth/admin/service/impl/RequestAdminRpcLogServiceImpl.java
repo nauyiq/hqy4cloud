@@ -4,7 +4,7 @@ import com.hqy.cloud.auth.admin.service.RequestAdminRpcLogService;
 import com.hqy.cloud.coll.service.RpcLogRemoteService;
 import com.hqy.cloud.coll.struct.PageRpcExceptionRecordStruct;
 import com.hqy.cloud.coll.struct.PageRpcFlowRecordStruct;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.rpc.starter.client.RpcClient;
 import com.hqy.cloud.rpc.thrift.struct.PageStruct;
 import lombok.RequiredArgsConstructor;

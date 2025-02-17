@@ -5,7 +5,7 @@ import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.security.core.DefaultReactiveOpaqueTokenIntrospector;
 import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.gateway.filter.SecurityAuthenticationFilter;
 import com.hqy.cloud.gateway.server.auth.AuthorizationManager;

@@ -2,7 +2,7 @@ package com.hqy.cloud.netty.socketio;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import com.hqy.cloud.auth.utils.AuthUtils;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.socket.api.ClientConnection;
 import com.hqy.cloud.socket.cluster.SocketCluster;
 import com.hqy.cloud.socket.cluster.client.support.SocketClient;

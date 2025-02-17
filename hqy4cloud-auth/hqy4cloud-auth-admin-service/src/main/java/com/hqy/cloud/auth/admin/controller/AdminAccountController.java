@@ -6,7 +6,7 @@ import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
 import com.hqy.cloud.auth.utils.AuthUtils;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.common.result.ResultCode;
 import jakarta.servlet.http.HttpServletRequest;

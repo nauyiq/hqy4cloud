@@ -6,7 +6,7 @@ import com.hqy.cloud.auth.admin.service.RequestAdminSystemSettingService;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
 import com.hqy.cloud.auth.base.enums.WhiteListType;
 import com.hqy.cloud.auth.base.vo.BlackAddressVO;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.limiter.api.ManualWhiteIpService;
 import com.hqy.cloud.limiter.core.BiBlockedIpRedisService;
 import com.hqy.cloud.limiter.core.BlockDTO;

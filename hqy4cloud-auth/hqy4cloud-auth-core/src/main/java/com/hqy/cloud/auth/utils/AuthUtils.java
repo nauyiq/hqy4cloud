@@ -61,7 +61,7 @@ public class AuthUtils {
                 authUser = JSON.parseObject(Base64.decodeStr(authUserJson), DefaultAuthUser.class);
             } catch (Exception cause) {
                 log.error(cause.getMessage(), cause);
-                throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+                throw new AuthException(ResultCode.NOT_LOGIN);
             }
         } else {
             authUser = getAuthUserByService(request);
@@ -70,7 +70,7 @@ public class AuthUtils {
         if (authUser != null) {
             THREAD_LOCAL.set(authUser);
         } else {
-            throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+            throw new AuthException(ResultCode.NOT_LOGIN);
         }
 
        return authUser;
@@ -79,11 +79,11 @@ public class AuthUtils {
     private static AuthUser getAuthUserByService(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasLength(authorization)) {
-            throw new AuthException(ResultCode.NOT_LOGIN.message, ResultCode.NOT_LOGIN.code);
+            throw new AuthException(ResultCode.NOT_LOGIN);
         }
         AuthUserService service = SpringUtil.getBean(AuthUserService.class);
         if (service == null) {
-            throw new AuthException("Not found AuthUser service.", ResultCode.SYSTEM_ERROR.code);
+            throw new AuthException(ResultCode.SYSTEM_ERROR.code, "Not found AuthUser service.");
         }
         return service.getAuthUserByToken(authorization);
     }

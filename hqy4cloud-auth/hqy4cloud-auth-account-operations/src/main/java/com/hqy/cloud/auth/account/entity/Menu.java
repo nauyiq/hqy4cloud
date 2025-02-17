@@ -1,15 +1,11 @@
 package com.hqy.cloud.auth.account.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.hqy.cloud.db.mybatisplus.BaseEntity;
+import com.hqy.cloud.db.entity.CommonEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serial;
 
 
 /**
@@ -23,12 +19,7 @@ import java.io.Serial;
 @NoArgsConstructor
 @TableName("t_admin_menu")
 @EqualsAndHashCode(callSuper = true)
-public class Menu extends BaseEntity {
-    @Serial
-    private static final long serialVersionUID = 6353760484084075881L;
-
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class Menu extends CommonEntity {
 
     private String name;
 

@@ -12,7 +12,7 @@ import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;

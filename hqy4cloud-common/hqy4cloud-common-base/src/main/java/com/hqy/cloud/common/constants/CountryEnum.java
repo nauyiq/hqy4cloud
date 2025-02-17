@@ -1,4 +1,4 @@
-package com.hqy.cloud.common.enums;
+package com.hqy.cloud.common.constants;
 
 
 //import org.apache.commons.lang3.StringUtils;

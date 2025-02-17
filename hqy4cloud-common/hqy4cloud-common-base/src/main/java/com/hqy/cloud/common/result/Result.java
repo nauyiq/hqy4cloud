@@ -3,7 +3,7 @@ package com.hqy.cloud.common.result;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/3/10 9:16
+ * @date 2023/3/10
  */
 public interface Result {
 
@@ -17,7 +17,7 @@ public interface Result {
      * get response code
      * @return code
      */
-    int getCode();
+    String getCode();
 
     /**
      * get response data

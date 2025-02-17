@@ -23,7 +23,7 @@ public class Response implements Serializable, Result {
     private static final long serialVersionUID = 1L;
 
     private boolean result;
-    private int code;
+    private String code;
     private String message;
 
     public boolean isSuccess() {

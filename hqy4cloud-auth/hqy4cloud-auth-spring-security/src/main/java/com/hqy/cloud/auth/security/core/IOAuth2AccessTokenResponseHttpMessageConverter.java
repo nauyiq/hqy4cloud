@@ -1,6 +1,6 @@
 package com.hqy.cloud.auth.security.core;
 
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpInputMessage;

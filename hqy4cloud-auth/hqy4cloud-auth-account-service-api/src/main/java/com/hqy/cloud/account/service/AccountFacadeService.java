@@ -1,10 +1,12 @@
 package com.hqy.cloud.account.service;
 
+import com.hqy.cloud.account.request.AccountAuthRequest;
 import com.hqy.cloud.account.request.AccountQueryParams;
 import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
+import com.hqy.cloud.account.response.AccountOperationInfo;
 import com.hqy.cloud.account.response.RegisterInfo;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,5 +39,12 @@ public interface AccountFacadeService {
      * @return               认证信息
      */
     R<RegisterInfo> registerByPhone(RegistryAccountByPhoneParams registryParams);
+
+    /**
+     * 实名认证
+     * @param request 入参
+     * @return        响应
+     */
+    R<AccountOperationInfo> auth(AccountAuthRequest request);
 
 }

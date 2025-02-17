@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MultiResponse<T> extends BsResponse {
+public class MultiResponse<T> extends Response {
 
     /**
      * data

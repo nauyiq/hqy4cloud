@@ -1,8 +1,6 @@
-package com.hqy.cloud.common.bind;
+package com.hqy.cloud.common.result;
 
 import com.hqy.cloud.common.response.Response;
-import com.hqy.cloud.common.result.Result;
-import com.hqy.cloud.common.result.ResultCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,12 +14,29 @@ import lombok.Setter;
 public class R<T> extends Response {
 
     private T data;
+
     public static <T> R<T> ok() {
         return setResult(true, ResultCode.SUCCESS);
     }
 
     public static <T> R<T> ok(T data) {
-        return setResult(true,  ResultCode.SUCCESS, data);
+        return setResult(true, ResultCode.SUCCESS, data);
+    }
+
+    public static <T> R<T> ok(String code, String message, T data) {
+        return setResult(true, code, message, data);
+    }
+
+    public static <T> R<T> success() {
+        return setResult(true, ResultCode.SUCCESS);
+    }
+
+    public static <T> R<T> success(T data) {
+        return setResult(true, ResultCode.SUCCESS, data);
+    }
+
+    public static <T> R<T> success(String code, String message, T data) {
+        return setResult(true, code, message, data);
     }
 
     public static <T> R<T> failed() {
@@ -29,10 +44,10 @@ public class R<T> extends Response {
     }
 
     public static <T> R<T> failed(String message) {
-        return failed(message, ResultCode.FAILED.code);
+        return failed(ResultCode.FAILED.code, message);
     }
 
-    public static <T> R<T> failed(String message, int code) {
+    public static <T> R<T> failed(String code, String message) {
         return setResult(false, code, message, null);
     }
 
@@ -48,7 +63,7 @@ public class R<T> extends Response {
         return setResult(result, resultCode.getCode(), resultCode.getMessage(), data);
     }
 
-    public static <T> R<T> setResult(boolean result, int code, String msg, T data) {
+    public static <T> R<T> setResult(boolean result, String code, String msg, T data) {
         R<T> apiResult = new R<>();
         apiResult.setResult(result);
         apiResult.setCode(code);

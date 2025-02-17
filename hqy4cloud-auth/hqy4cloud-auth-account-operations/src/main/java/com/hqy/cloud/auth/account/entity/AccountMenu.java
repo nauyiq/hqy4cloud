@@ -1,8 +1,6 @@
 package com.hqy.cloud.auth.account.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.hqy.cloud.db.mybatisplus.BaseEntity;
+import com.hqy.cloud.db.entity.CommonEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,10 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AccountMenu extends BaseEntity {
-
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class AccountMenu extends CommonEntity {
 
     /**
      * 账号id

@@ -4,7 +4,7 @@ import com.hqy.cloud.auth.admin.service.RequestAdminSystemSettingService;
 import com.hqy.cloud.auth.annotation.PreAuthentication;
 import com.hqy.cloud.auth.base.vo.BlackAddressVO;
 import com.hqy.cloud.auth.base.dto.BlackWhitelistDTO;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

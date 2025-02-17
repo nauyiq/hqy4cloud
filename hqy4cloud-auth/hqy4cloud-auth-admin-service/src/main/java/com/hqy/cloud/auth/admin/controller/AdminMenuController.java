@@ -7,7 +7,7 @@ import com.hqy.cloud.auth.base.enums.MenuType;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
 import com.hqy.cloud.auth.utils.AuthUtils;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

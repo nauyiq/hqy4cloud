@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.support.handler;
 
 import com.hqy.cloud.auth.security.core.IOAuth2AccessTokenResponseHttpMessageConverter;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

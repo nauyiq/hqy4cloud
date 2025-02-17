@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
     public boolean hasAuthorities(String... authorities) {
         // 获取当前登录用户权限
         List<String> currentAuthorities = AuthUtils.getCurrentAuthorities();
-        return currentAuthorities.containsAll(List.of(authorities));
+        return new HashSet<>(currentAuthorities).containsAll(List.of(authorities));
     }
 
     @Override

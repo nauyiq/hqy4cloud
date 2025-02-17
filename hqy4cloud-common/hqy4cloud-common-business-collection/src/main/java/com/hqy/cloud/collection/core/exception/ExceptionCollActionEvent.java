@@ -2,7 +2,7 @@ package com.hqy.cloud.collection.core.exception;
 
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
-import com.hqy.cloud.common.enums.ExceptionType;
+import com.hqy.cloud.common.constants.ExceptionType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;

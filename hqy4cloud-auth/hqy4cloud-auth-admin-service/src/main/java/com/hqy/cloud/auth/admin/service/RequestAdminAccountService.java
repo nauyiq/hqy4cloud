@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.admin.service;
 import com.hqy.cloud.auth.base.dto.UserDTO;
 import com.hqy.cloud.auth.base.vo.AccountInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminUserInfoVO;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.PageResult;
 
 /**
@@ -31,7 +31,6 @@ public interface RequestAdminAccountService {
      * @return              R.
      */
     R<PageResult<AccountInfoVO>> getPageUsers(String username, String nickname, Long id, Integer current, Integer size);
-
 
     /**
      * 检查参数是否存在

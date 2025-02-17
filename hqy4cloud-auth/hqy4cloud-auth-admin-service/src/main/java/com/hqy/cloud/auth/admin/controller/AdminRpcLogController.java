@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.admin.controller;
 
 import com.hqy.cloud.auth.admin.service.RequestAdminRpcLogService;
 import com.hqy.cloud.auth.annotation.PreAuthentication;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.coll.struct.PageRpcExceptionRecordStruct;
 import com.hqy.cloud.coll.struct.PageRpcFlowRecordStruct;
 import lombok.RequiredArgsConstructor;

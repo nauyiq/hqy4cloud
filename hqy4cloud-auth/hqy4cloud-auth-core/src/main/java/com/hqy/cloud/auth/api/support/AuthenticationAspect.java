@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.api.support;
 
 import com.hqy.cloud.auth.annotation.PreAuthentication;
 import com.hqy.cloud.auth.api.AuthPermissionService;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

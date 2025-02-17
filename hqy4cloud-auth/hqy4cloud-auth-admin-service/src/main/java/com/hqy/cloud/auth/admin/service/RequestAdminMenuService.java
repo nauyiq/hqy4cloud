@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.admin.service;
 import com.hqy.cloud.auth.base.dto.MenuDTO;
 import com.hqy.cloud.auth.base.vo.AdminMenuInfoVO;
 import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 
 import java.util.List;
 

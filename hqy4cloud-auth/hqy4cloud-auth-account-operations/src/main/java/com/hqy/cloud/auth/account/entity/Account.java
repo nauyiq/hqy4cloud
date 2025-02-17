@@ -1,23 +1,18 @@
 package com.hqy.cloud.auth.account.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyEmail;
 import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
+import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.auth.common.UserRole;
+import com.hqy.cloud.db.entity.CommonEntity;
 import com.hqy.cloud.db.handler.AesEncryptTypeHandler;
-import com.hqy.cloud.db.mybatisplus.BaseEntity;
 import com.hqy.cloud.sharding.id.DistributedIdGen;
 import com.hqy.cloud.sharding.id.WorkerIdHolder;
 import lombok.*;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.io.Serial;
-import java.util.Date;
 import java.util.List;
-
-import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 
 /**
  * 账户表 t_account
@@ -30,15 +25,7 @@ import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.COMMA;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Account extends BaseEntity {
-    @Serial
-    private static final long serialVersionUID = -7814298685660847656L;
-
-    /**
-     * id
-     */
-    @TableId
-    private Long id;
+public class Account extends CommonEntity {
 
     /**
      * 用户名
@@ -85,30 +72,19 @@ public class Account extends BaseEntity {
     private UserRole role;
 
     /**
-     * 拥有的权限
-     */
-    private String authorities;
-
-    /**
      * 状态
      */
-    private Boolean status;
+    private AccountStatus status;
 
-    /**
-     * 是否删除
-     */
-    private Boolean deleted = false;
 
-    public Account(Long id, String username, String password, String email, String phone, UserRole role, List<String> authorities) {
-        super(new Date());
-        this.id = id;
+    public Account(Long id, String username, String password, String email, String phone, UserRole role) {
+        setId(id);
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
         this.phone = phone;
-        this.status = true;
-        this.authorities = String.join(COMMA, authorities);
+        this.status = AccountStatus.ACTIVE;
     }
 
     public static Account register(String username, String password, String email, String phone, UserRole userRole, List<String> authorities) {
@@ -117,12 +93,12 @@ public class Account extends BaseEntity {
         if (userRole == null) {
             userRole = UserRole.CUSTOMER;
         }
-        if (CollectionUtils.isEmpty(authorities)) {
-            authorities = List.of(userRole.name());
-        } else {
-            authorities.add(userRole.name());
-        }
-        return new Account(accountId, username, password, email, phone, userRole, authorities);
+        return new Account(accountId, username, password, email, phone, userRole);
     }
 
+    public void auth(String rearName, String idCard) {
+        setCertification(true);
+        setRealName(rearName);
+        setIdCard(idCard);
+    }
 }

@@ -4,7 +4,7 @@ import com.alibaba.csp.sentinel.adapter.spring.webmvc_v6x.callback.BlockExceptio
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityException;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.config.YamlPropertySourceFactory;

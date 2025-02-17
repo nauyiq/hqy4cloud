@@ -2,8 +2,7 @@ package com.hqy.cloud.actuator.filter.support;
 
 import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
-import com.hqy.cloud.common.bind.R;
-import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
 import com.hqy.cloud.web.utils.IpUtil;
 import com.hqy.cloud.web.utils.ResponseUtil;

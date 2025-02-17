@@ -1,15 +1,13 @@
 package com.hqy.cloud.auth.base.converter;
 
+import com.hqy.cloud.account.response.AccountInfo;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.account.struct.AccountProfileStruct;
 import com.hqy.cloud.account.struct.AccountStruct;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.entity.AccountProfile;
 import com.hqy.cloud.common.base.converter.CommonConverter;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,7 +16,7 @@ import org.mapstruct.factory.Mappers;
  * @date 2023/9/1 14:43
  */
 @SuppressWarnings("all")
-@Mapper(uses = CommonConverter.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(uses = CommonConverter.class,  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountConverter {
      AccountConverter CONVERTER = Mappers.getMapper(AccountConverter.class);
 
@@ -36,4 +34,6 @@ public interface AccountConverter {
 
     @Mapping(target = "birthday", source = "birthday", qualifiedByName = "dateConvertBirthday")
     AccountProfileStruct convert(AccountProfile profile);
+
+    AccountInfo mapToVo(Account account);
 }

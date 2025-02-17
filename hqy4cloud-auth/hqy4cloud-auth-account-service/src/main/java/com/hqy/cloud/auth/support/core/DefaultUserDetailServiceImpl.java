@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/2/27 9:11
+ * @date 2023/2/27
  */
 @Slf4j
 @Service
@@ -35,10 +35,10 @@ public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
         if (Objects.isNull(account)) {
             throw new UsernameNotFoundException(AccountResultCode.USER_NOT_FOUND.message);
         }
-
         UserDetails userDetails = new SecurityAuthUser(account.getId(), account.getUsername(), account.getPassword(),
                 account.getEmail(), account.getPhone(), account.getStatus(), account.getRole(),
-                AuthorityUtils.commaSeparatedStringToAuthorityList(account.getAuthorities()));
+                // TODO 暂时用角色代表权限
+                AuthorityUtils.commaSeparatedStringToAuthorityList(account.getRole().toString()));
         //校验user.
         checkUserDetails(userDetails);
         return userDetails;

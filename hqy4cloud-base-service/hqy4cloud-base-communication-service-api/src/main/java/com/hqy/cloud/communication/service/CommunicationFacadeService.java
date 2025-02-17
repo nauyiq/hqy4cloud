@@ -1,6 +1,6 @@
 package com.hqy.cloud.communication.service;
 
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.communication.request.PhoneMsgParams;
 
 /**

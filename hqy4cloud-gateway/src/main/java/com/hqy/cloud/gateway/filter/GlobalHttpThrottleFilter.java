@@ -1,6 +1,6 @@
 package com.hqy.cloud.gateway.filter;
 
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
 import com.hqy.cloud.gateway.Constants;

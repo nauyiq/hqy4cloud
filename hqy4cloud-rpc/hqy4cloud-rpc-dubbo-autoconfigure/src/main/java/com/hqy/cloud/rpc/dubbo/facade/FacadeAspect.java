@@ -171,6 +171,9 @@ public class FacadeAspect {
                 // 校验入参异常
                 response.setCode(ResultCode.ERROR_PARAM.getCode());
                 response.setMessage(ResultCode.ERROR_PARAM.getMessage());
+            } else if (throwable instanceof BizException bizException) {
+                response.setCode(bizException.getCode());
+                response.setMessage(bizException.getMessage());
             } else {
                 response.setMessage(ResultCode.SYSTEM_ERROR.message);
                 response.setCode(ResultCode.SYSTEM_ERROR.code);

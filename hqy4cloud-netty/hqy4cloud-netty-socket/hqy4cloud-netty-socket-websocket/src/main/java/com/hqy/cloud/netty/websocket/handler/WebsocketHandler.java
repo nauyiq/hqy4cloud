@@ -19,7 +19,7 @@ import com.hqy.cloud.netty.websocket.session.BaseWsSession;
 import com.hqy.cloud.netty.websocket.session.ChannelWsSessionManager;
 import com.hqy.cloud.util.JsonUtil;
 import com.hqy.cloud.util.ProjectExecutors;
-import com.hqy.cloud.common.enums.ExceptionType;
+import com.hqy.cloud.common.constants.ExceptionType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;

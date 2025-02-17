@@ -1,7 +1,7 @@
 package com.hqy.cloud.web.utils;
 
 import com.hqy.cloud.common.base.lang.StringConstants;
-import com.hqy.cloud.common.enums.CountryEnum;
+import com.hqy.cloud.common.constants.CountryEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;

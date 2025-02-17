@@ -57,7 +57,7 @@ public final class PfExceptionStruct {
      * 错误的业务状态码
      */
     @ThriftField(7)
-    public Integer resultCode;
+    public String resultCode;
 
     /**
      * url 针对web请求出错的才会采集

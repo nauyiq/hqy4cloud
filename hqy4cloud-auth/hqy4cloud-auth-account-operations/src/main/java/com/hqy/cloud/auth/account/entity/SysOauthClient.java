@@ -2,12 +2,9 @@ package com.hqy.cloud.auth.account.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.hqy.cloud.db.mybatisplus.BaseEntity;
+import com.hqy.cloud.db.entity.CommonEntity;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serial;
-import java.util.Date;
 
 /**
  * spring security oauth2
@@ -17,10 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName("t_sys_oauth_client")
-public class SysOauthClient extends BaseEntity {
-
-    @Serial
-    private static final long serialVersionUID = -8627114377849486540L;
+public class SysOauthClient extends CommonEntity {
 
     /**
      * 用于唯一标识每一个客户端(client)
@@ -92,12 +86,10 @@ public class SysOauthClient extends BaseEntity {
     }
 
     public SysOauthClient(String clientId) {
-        super(new Date());
         this.clientId = clientId;
     }
 
     public SysOauthClient(String clientId, String clientSecret) {
-        super(new Date());
         this.clientId = clientId;
         this.clientSecret = clientSecret;
     }

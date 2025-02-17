@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.support.handler;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
 import jakarta.servlet.ServletException;
@@ -69,7 +69,7 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
                     return errorMessage;
                 }
                 @Override
-                public int getCode() {
+                public String getCode() {
                     return ResultCode.FAILED.code;
                 }
             };

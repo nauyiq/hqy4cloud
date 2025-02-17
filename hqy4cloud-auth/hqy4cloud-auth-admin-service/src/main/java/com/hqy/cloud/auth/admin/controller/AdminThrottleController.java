@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.admin.controller;
 
 import com.hqy.cloud.auth.admin.service.RequestAdminThrottleService;
 import com.hqy.cloud.auth.annotation.PreAuthentication;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.coll.struct.PageThrottledBlockResultStruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

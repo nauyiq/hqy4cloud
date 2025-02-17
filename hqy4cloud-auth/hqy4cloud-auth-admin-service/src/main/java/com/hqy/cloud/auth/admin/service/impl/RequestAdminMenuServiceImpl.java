@@ -17,7 +17,7 @@ import com.hqy.cloud.auth.base.vo.AdminTreeMenuVO;
 import com.hqy.cloud.auth.base.vo.BaseMenuVO;
 import com.hqy.cloud.auth.service.AccountOperationService;
 import com.hqy.cloud.auth.service.AuthOperationService;
-import com.hqy.cloud.common.bind.R;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.util.AssertUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
