@@ -1,5 +1,6 @@
 package com.hqy.cloud.account.response;
 
+import com.hqy.cloud.account.constants.AccountStatus;
 import lombok.*;
 
 import java.io.Serializable;
@@ -65,7 +66,7 @@ public class AccountInfo implements Serializable {
     /**
      * 状态
      */
-    private Boolean status;
+    private AccountStatus status;
 
     /**
      * 是否实名

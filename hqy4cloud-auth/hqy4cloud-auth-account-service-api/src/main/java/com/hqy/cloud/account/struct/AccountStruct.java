@@ -29,7 +29,7 @@ public final class AccountStruct {
     @ThriftField(5)
     public String roles;
     @ThriftField(6)
-    public Boolean status;
+    public String status;
     @ThriftField(7)
     public Long created;
 
