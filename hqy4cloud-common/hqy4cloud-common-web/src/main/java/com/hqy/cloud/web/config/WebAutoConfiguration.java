@@ -22,7 +22,7 @@ public class WebAutoConfiguration {
 
     private final Environment environment;
     private static final String TOKEN_URL_PATTERNS_KEY = "hqy4cloud.token.urls";
-    private static final List<String> DEFAULT_TOKEN_URL_PATTERNS = List.of("/nft/trade/buy");
+    private static final List<String> DEFAULT_TOKEN_URL_PATTERNS = List.of("/nft/trade/buy", "/nft/trade/order");
 
     /**
      * 注册TOKEN 过滤器
