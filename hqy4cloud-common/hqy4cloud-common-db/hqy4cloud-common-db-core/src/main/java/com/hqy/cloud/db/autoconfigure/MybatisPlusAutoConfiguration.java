@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerIntercep
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.hqy.cloud.db.mybatisplus.MybatisDataHandler;
+import com.hqy.cloud.db.service.TransactionLogService;
+import com.hqy.cloud.db.service.impl.TransactionLogServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +41,10 @@ public class MybatisPlusAutoConfiguration {
         return new MybatisDataHandler();
     }
 
-
+    @Bean
+    public TransactionLogService transactionLogService() {
+        return new TransactionLogServiceImpl();
+    }
 
 
 }
