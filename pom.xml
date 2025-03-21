@@ -38,6 +38,12 @@
         <springboot.version>3.2.2</springboot.version>
         <springcloud.version>2023.0.0</springcloud.version>
         <springcloud.alibaba.version>2023.0.1.2</springcloud.alibaba.version>
+
+        <!-- 框架层API服务版本号 -->
+        <account.service.api.version>1.0.0</account.service.api.version>
+        <id.service.api.version>1.0.0</id.service.api.version>
+        <communication.service.api.version>1.0.0</communication.service.api.version>
+        <collection.service.api.version>1.0.0</collection.service.api.version>
     </properties>
 
 

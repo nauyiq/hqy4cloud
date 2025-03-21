@@ -158,9 +158,8 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter implements Di
                 //当接入Gateway时, 源码在此校验握手数据失败时会将连接断开. 这时候Gateway将抛出Connection prematurely closed DURING response异常,即连接提前关闭了 网关还未接收到相应
                 //并且直接往通道里写入HttpErrorMessage对象 交给EncoderHandler去处理异常消息。
                 channel.attr(EncoderHandler.ORIGIN).set(origin);
-                HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
                 channel.writeAndFlush(SocketIoUtil.
-                        createHttpErrorMessage(ResultCode.INVALID_ACCESS_TOKEN.code, ResultCode.INVALID_ACCESS_TOKEN.message));
+                        createHttpErrorMessage(9300, ResultCode.INVALID_ACCESS_TOKEN.message));
                 return false;
             } else {
                 HttpResponse res = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);

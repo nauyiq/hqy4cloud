@@ -50,7 +50,7 @@ public class SnowflakeNacosHolder extends AbstractSnowflakeHolder {
         List<Instance> instances = namingService.selectInstances(nacosDiscoveryProperties.getService(), nacosDiscoveryProperties.getGroup(), true);
         if (CollectionUtils.isEmpty(instances)) {
             //不存在节点列表， 说明注册服务列表存在异常， 需要检查nacos配置.
-            throw new NacosException(ResultCode.FAILED.code, "Id service instances should not be empty.");
+            throw new NacosException(9999, "Id service instances should not be empty.");
         }
 
         UsingIpPort ipPort = ProjectContext.getContextInfo().getUip();

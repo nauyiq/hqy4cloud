@@ -12,6 +12,7 @@
 
     <description>hqy4cloud-基础通讯服务-接口模块</description>
     <artifactId>hqy4cloud-base-communication-service-api</artifactId>
+    <version>${communication.service.api.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>

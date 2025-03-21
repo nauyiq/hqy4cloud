@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>hqy4cloud-auth-account-service-api</artifactId>
+    <version>${account.service.api.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>

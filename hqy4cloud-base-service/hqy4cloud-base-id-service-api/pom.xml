@@ -12,6 +12,7 @@
 
     <artifactId>hqy4cloud-base-id-service-api</artifactId>
     <description>hqy4cloud-基础id服务api模块</description>
+    <version>${id.service.api.version}</version>
 
 
     <dependencies>

@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-auth-account-service-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${account.service.api.version}</version>
         </dependency>
 
         <dependency>
