@@ -1,6 +1,7 @@
 package com.hqy.cloud.account.service;
 
 import com.hqy.cloud.account.request.AccountAuthRequest;
+import com.hqy.cloud.account.request.AccountModifyRequest;
 import com.hqy.cloud.account.request.AccountQueryParams;
 import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
@@ -46,5 +47,12 @@ public interface AccountFacadeService {
      * @return        响应
      */
     R<AccountOperationInfo> auth(AccountAuthRequest request);
+
+    /**
+     * 更改密码
+     * @param request 入参
+     * @return        响应
+     */
+    R<Boolean> updatePassword(AccountModifyRequest request);
 
 }

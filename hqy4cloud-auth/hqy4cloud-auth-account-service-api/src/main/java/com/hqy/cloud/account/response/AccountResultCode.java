@@ -17,54 +17,54 @@ public enum AccountResultCode implements Result {
     /**
      * 找不到该用户
      */
-    USER_NOT_FOUND("A2000", "User not found."),
+    USER_NOT_FOUND("USER_NOT_FOUND", "找不到该用户"),
 
 
     /**
      * 当前用户是禁用状态
      */
-    USER_DISABLED("A2001", "The user disabled."),
+    USER_DISABLED("USER_DISABLED", "当前用户已被禁用"),
 
     /**
      * 用户名不能为空
      */
-    USERNAME_EMPTY("A2002", "The username cannot be empty."),
+    USERNAME_EMPTY("USERNAME_EMPTY", "用户名不能为空"),
 
     /**
      * 用户名已经存在
      */
-    USERNAME_EXIST("A2003","This username already exist."),
+    USERNAME_EXIST("USERNAME_EXIST","用户名已经存在"),
 
     /**
      * 无效的邮箱
      */
-    INVALID_EMAIL("A2004", "Please input valid email."),
+    INVALID_EMAIL("INVALID_EMAIL", "无效的邮箱"),
 
     /**
      * 邮箱已经存在.
      */
-    EMAIL_EXIST("A2005", "Account email already exist."),
+    EMAIL_EXIST("EMAIL_EXIST", "邮箱已经存在"),
 
     /**
      * 找不到邮箱
      */
-    NOT_FOUND_EMAIL("A2006", "Email not found."),
+    NOT_FOUND_EMAIL("NOT_FOUND_EMAIL", "找不到邮箱"),
 
     /**
      * 电话已经存在
      */
-    PHONE_EXIST("A2007","This phone already exist."),
+    PHONE_EXIST("PHONE_EXIST","电话已经存在"),
 
     /**
      * 验证码错误
      */
-    VERIFY_CODE_ERROR("A2008", "Verify code error, please input right code."),
+    VERIFY_CODE_ERROR("VERIFY_CODE_ERROR", "验证码错误"),
 
 
     /**
      * 用户已经存在
      */
-    USER_EXIST("A2009", "This user already exist."),
+    USER_EXIST("USER_EXIST", "用户已经存在"),
 
     /**
      * 注册用户失败
@@ -74,12 +74,12 @@ public enum AccountResultCode implements Result {
     /**
      * 密码错误
      */
-    PASSWORD_ERROR("A2011", "Please input the correct password."),
+    PASSWORD_ERROR("PASSWORD_ERROR", "密码错误"),
 
     /**
      * 用户实名认证失败
      */
-    USER_AUTH_FAIL("A2012", "用户实名认证失败"),
+    USER_AUTH_FAIL("USER_AUTH_FAIL", "用户实名认证失败"),
 
     /**
      * 租户id或租户秘钥错误

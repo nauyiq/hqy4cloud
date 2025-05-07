@@ -1,12 +1,15 @@
 package com.hqy.cloud.file.config;
 
+import com.hqy.cloud.file.api.FileService;
 import com.hqy.cloud.file.api.UploadFileService;
+import com.hqy.cloud.file.check.FileUploadCheckerChain;
+import com.hqy.cloud.file.check.support.FileUploadTypeChecker;
 import com.hqy.cloud.file.core.DefaultUploadFileService;
+import com.hqy.cloud.file.core.oss.AliCloudFileService;
 import com.hqy.cloud.file.domain.DomainServer;
-import com.hqy.cloud.file.domain.support.DefaultDomainServer;
+import com.hqy.cloud.file.domain.support.OssDomainServer;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
@@ -35,19 +38,33 @@ public class UploadFileAutoConfiguration {
         factory.setMaxRequestSize(maxRequestSize);
         return factory.createMultipartConfig();
     }
+    @Bean
+    @ConditionalOnMissingBean
+    public DomainServer domainServer() {
+        return new OssDomainServer();
+    }
 
     @Bean
     @ConditionalOnMissingBean
-    public DomainServer domainServer(Environment environment) {
-        return new DefaultDomainServer(environment);
+    public FileUploadCheckerChain fileUploadCheckerChain() {
+        // 文件类型检查
+        FileUploadTypeChecker fileUploadTypeChecker = new FileUploadTypeChecker();
+        return new FileUploadCheckerChain()
+                .addChecker(fileUploadTypeChecker);
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public FileService fileService() {
+        return new AliCloudFileService();
+    }
 
     @Bean
     @ConditionalOnMissingBean
     public UploadFileService uploadFileService(UploadFileProperties uploadFileProperties) {
         return new DefaultUploadFileService(uploadFileProperties);
     }
+
 
 
 }

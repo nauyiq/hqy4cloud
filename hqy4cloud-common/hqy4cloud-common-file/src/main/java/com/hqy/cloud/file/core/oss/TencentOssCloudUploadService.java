@@ -54,6 +54,7 @@ import static com.hqy.cloud.file.common.FileConstants.*;
  * @date 2023/5/25 10:12
  */
 @Slf4j
+@Deprecated
 public class TencentOssCloudUploadService extends AbstractUploadFileService implements DisposableBean {
     private final String bucketName;
     private final String hostname;
@@ -153,15 +154,14 @@ public class TencentOssCloudUploadService extends AbstractUploadFileService impl
         // 获取输入流.
         try (InputStream inputStream = getInputStream(state, originalFilename, file)) {
             PutObjectRequest putObjectRequest = new PutObjectRequest(this.bucketName, relativeFilePath, inputStream, null);
-            //同步上传
             UploadMode.Mode mode = state.getMode();
+            Upload upload = transferManager.upload(putObjectRequest);
             if (mode == null || mode == UploadMode.Mode.SYNC) {
-                Upload upload = transferManager.upload(putObjectRequest);
+                //同步上传
                 upload.waitForUploadResult();
                 return DefaultResultUploadResponse.of(mode, result);
             } else {
                 //异步上传
-                Upload upload = transferManager.upload(putObjectRequest);
                 CompletableFuture<UploadResult> future = CompletableFuture.supplyAsync(() -> {
                     try {
                         upload.waitForUploadResult();

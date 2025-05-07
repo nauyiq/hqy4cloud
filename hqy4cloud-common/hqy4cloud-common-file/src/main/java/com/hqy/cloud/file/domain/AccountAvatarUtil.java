@@ -3,8 +3,8 @@ package com.hqy.cloud.file.domain;
 import cn.hutool.extra.spring.SpringUtil;
 import com.hqy.cloud.common.base.lang.PatternConstants;
 import com.hqy.cloud.common.base.lang.StringConstants;
+import com.hqy.cloud.file.common.constants.FileScene;
 import com.hqy.cloud.file.common.utils.FileUtil;
-import com.hqy.cloud.file.domain.support.Domain;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -35,7 +35,7 @@ public class AccountAvatarUtil {
         if (!avatar.startsWith(StringConstants.HTTP)) {
             // 如果不是以域名开头, 则获取对应的域名进行拼接
             DomainServer domainServer = SpringUtil.getBean(DomainServer.class);
-            String avatarDomain = domainServer.getDomain(Domain.AVATAR.scene);
+            String avatarDomain = domainServer.getDomain(FileScene.AVATAR.getFolder());
             // 默认返回http的路径.
             avatar = StringConstants.Host.HTTP.concat(avatarDomain).concat(avatar);
         }
@@ -73,7 +73,7 @@ public class AccountAvatarUtil {
                 return false;
             }
             DomainServer domainServer = SpringUtil.getBean(DomainServer.class);
-            String avatarDomain = domainServer.getDomain(Domain.AVATAR.scene);
+            String avatarDomain = domainServer.getDomain(FileScene.AVATAR.getFolder());
             // 判断和配置的domain是否一致
             return StringUtils.isBlank(avatarDomain) || avatarDomain.equals(domain);
         }

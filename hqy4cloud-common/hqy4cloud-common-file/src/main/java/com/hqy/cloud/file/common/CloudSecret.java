@@ -20,5 +20,7 @@ public class CloudSecret {
     private String appId;
     private String secretId;
     private String secretKey;
+    private String bucket;
+    private String endpoint;
     private Map<String, String> properties = MapUtil.newHashMap(4);
 }

@@ -1,6 +1,5 @@
 package com.hqy.cloud.rpc.dubbo.facade;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson2.JSON;
 import com.hqy.cloud.common.base.exception.BizException;
 import com.hqy.cloud.common.response.Response;

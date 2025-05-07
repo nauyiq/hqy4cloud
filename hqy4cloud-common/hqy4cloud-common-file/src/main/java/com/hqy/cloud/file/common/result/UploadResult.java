@@ -51,6 +51,8 @@ public class UploadResult {
      */
     private String path;
 
+
+
     public static UploadResult ofTimeout() {
         return DEFAULT_ERROR_RESULT;
     }

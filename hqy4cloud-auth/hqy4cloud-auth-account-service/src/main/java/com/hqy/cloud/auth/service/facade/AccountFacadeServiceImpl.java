@@ -1,11 +1,11 @@
 package com.hqy.cloud.auth.service.facade;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import com.alicp.jetcache.anno.CacheInvalidate;
 import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.account.request.AccountAuthRequest;
+import com.hqy.cloud.account.request.AccountModifyRequest;
 import com.hqy.cloud.account.request.AccountQueryParams;
 import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
@@ -32,11 +32,13 @@ import com.hqy.cloud.rpc.dubbo.facade.Facade;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,12 +48,18 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @DubboService(version = DubboConstants.DEFAULT_DUBBO_SERVICE_VERSION)
-public class AccountFacadeServiceImpl implements AccountFacadeService {
+public class AccountFacadeServiceImpl implements AccountFacadeService, InitializingBean {
     private final PasswordEncoder passwordEncoder;
+    private final RedissonClient redissonClient;
     private final AccountDomainService accountDomainService;
-    private final AccountOperationService accountOperationService;
     private final AuthService authService;
     private final RandomCodeService randomCodeService;
+    private final AccountOperationService accountOperationService;
+
+    /**
+     * 用户名布隆过滤器
+     */
+    private RBloomFilter<String> usernameBloomFilter;;
 
     @Facade
     @Override
@@ -87,21 +95,39 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
         String code = registryParams.getCode();
         // 检查一下验证码是否正确.
         if (!randomCodeService.isExist(code, phone, RandomCodeScene.SMS_AUTH)) {
-            // 验证码错误
             return R.failed(AccountResultCode.VERIFY_CODE_ERROR);
         }
-        String username = StringUtils.isNotBlank(registryParams.getUsername()) ? registryParams.getUsername() :
-                AccountConstants.DEFAULT_NICKNAME_PREFIX + DateUtil.format(new Date(), "MMddHHmm") + phone.substring(7, 11);
-        String password = StringUtils.isNotBlank(registryParams.getPassword()) ? passwordEncoder.encode(registryParams.getPassword()) :
-                passwordEncoder.encode(RandomUtil.randomString(8));
+        String username = getUsername(registryParams);
+        String password = StringUtils.isNotBlank(registryParams.getPassword()) ? registryParams.getPassword() : registryParams.getPhone();
+        password = passwordEncoder.encode(password);
         Account account = Account.register(username, password, null, phone, UserRole.CUSTOMER, null);
         AccountProfile profile = AccountProfile.register(account.getId(), null, username, phone, registryParams.getAvatar());
         boolean result = accountOperationService.registryAccount(account, profile);
         if (result) {
+            addUsername(username);
             // 异步对验证进行续期.防止验证码过期无法登录
             Thread.ofVirtual().start(() -> randomCodeService.saveCode(code, phone, RandomCodeScene.SMS_AUTH));
         }
         return result ? R.ok(new RegisterInfo(account.getId(), account.getUsername(), profile.getNickname(), profile.getAvatar())) : R.failed();
+    }
+
+    private String getUsername(RegistryAccountByPhoneParams registryParams) {
+        String username = registryParams.getUsername();
+        if (StringUtils.isNotBlank(username) && !usernameExist(username)) {
+            return username;
+        }
+        do {
+            String randomString = RandomUtil.randomString(6).toUpperCase();
+            username = AccountConstants.DEFAULT_NICKNAME_PREFIX + randomString + registryParams.getPhone().substring(7, 11);
+        } while (usernameExist(username));
+        return username;
+    }
+
+    private boolean usernameExist(String username) {
+        if (this.usernameBloomFilter != null && this.usernameBloomFilter.contains(username)) {
+            return accountDomainService.queryAccountByUniqueIndex(username) != null;
+        }
+        return false;
     }
 
     @Facade
@@ -128,5 +154,31 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
             return R.ok(AccountOperationInfo.of(AccountConverter.CONVERTER.mapToVo(account)));
         }
         return R.failed(BsResultCode.UPDATE_FAILED);
+    }
+
+    @Override
+    public R<Boolean> updatePassword(AccountModifyRequest request) {
+        Account account = accountDomainService.findById(request.getId());
+        if (account == null) {
+            return R.failed(AccountResultCode.USER_NOT_FOUND);
+        }
+        String password = account.getPassword();
+        if (!passwordEncoder.matches(request.getOldPassword(), password)) {
+            return R.failed(AccountResultCode.PASSWORD_ERROR);
+        }
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        return accountDomainService.updateById(account) ? R.ok() : R.failed(BsResultCode.UPDATE_FAILED);
+    }
+
+    private boolean addUsername(String username) {
+        return this.usernameBloomFilter != null && this.usernameBloomFilter.add(username);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        usernameBloomFilter = redissonClient.getBloomFilter("account-auth-service:username");
+        if (usernameBloomFilter != null && !usernameBloomFilter.isExists()) {
+            usernameBloomFilter.tryInit(100000L, 0.01);
+        }
     }
 }
