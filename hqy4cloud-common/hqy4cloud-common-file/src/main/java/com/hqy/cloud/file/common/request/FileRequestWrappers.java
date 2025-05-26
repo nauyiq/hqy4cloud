@@ -17,28 +17,29 @@ import java.util.Map;
  */
 public class FileRequestWrappers {
 
-    public static BaseFileUploadRequest of(MultipartFile multipartFile, FileScene fileScene) throws Exception {
-        return of(multipartFile, fileScene.getFolder(), fileScene.getAccessControl());
-    }
-    public static BaseFileUploadRequest of(File file, FileScene fileScene) throws Exception {
-        return of(file, fileScene.getFolder(), fileScene.getAccessControl());
+    public static BaseFileUploadRequest of(MultipartFile multipartFile, String accessUnique, FileScene fileScene) throws Exception {
+        return of(multipartFile, fileScene.getFolder(), accessUnique, fileScene.getAccessControl());
     }
 
-    public static BaseFileUploadRequest of(MultipartFile multipartFile, String path, FileAccessControl accessControl) throws Exception {
-        return of(multipartFile.getInputStream(), path, multipartFile.getOriginalFilename(), accessControl, new HashMap<>());
+    public static BaseFileUploadRequest of(File file, String accessUnique, FileScene fileScene) throws Exception {
+        return of(file, fileScene.getFolder(), accessUnique, fileScene.getAccessControl());
     }
 
-    public static BaseFileUploadRequest of(File file, String path, FileAccessControl accessControl) throws Exception {
-        return of(FileUtil.getInputStream(file), path, FileNameUtil.getName(file), accessControl, new HashMap<>());
+    public static BaseFileUploadRequest of(MultipartFile multipartFile, String path, String accessUnique, FileAccessControl accessControl) throws Exception {
+        return of(multipartFile.getInputStream(), path, multipartFile.getOriginalFilename(), accessUnique, accessControl, new HashMap<>());
     }
 
-    public static BaseFileUploadRequest of(InputStream inputStream, String path, String filename, FileAccessControl accessControl, Map<String, String> metadata) {
+    public static BaseFileUploadRequest of(File file, String path, String accessUnique, FileAccessControl accessControl) throws Exception {
+        return of(FileUtil.getInputStream(file), path, FileNameUtil.getName(file), accessUnique, accessControl, new HashMap<>());
+    }
+
+    public static BaseFileUploadRequest of(InputStream inputStream, String path, String filename, String accessUnique, FileAccessControl accessControl, Map<String, String> metadata) {
         return new BaseFileUploadRequest() {
             @Override
             public InputStream getInputStream() {
                 return inputStream;
             }
-        }.setScene(path).setFilename(filename).setFileAccessControl(accessControl).setMetadata(metadata);
+        }.setScene(path).setFilename(filename).setFileAccessControl(accessControl).setAccessUniqueId(accessUnique).setMetadata(metadata);
     }
 
 
