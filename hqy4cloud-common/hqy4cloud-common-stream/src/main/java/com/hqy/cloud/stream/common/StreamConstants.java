@@ -13,4 +13,6 @@ public interface StreamConstants {
 
     String TAGS = "TAGS";
 
+    String BODY = "body";
+
 }

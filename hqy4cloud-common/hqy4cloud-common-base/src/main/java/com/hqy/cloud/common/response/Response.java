@@ -30,5 +30,12 @@ public class Response implements Serializable, Result {
         return this.result;
     }
 
+    public Response ofResult(boolean isSuccess, Result result) {
+        this.result = isSuccess;
+        this.code = result.getCode();
+        this.message = result.getMessage();
+        return this;
+    }
+
 
 }

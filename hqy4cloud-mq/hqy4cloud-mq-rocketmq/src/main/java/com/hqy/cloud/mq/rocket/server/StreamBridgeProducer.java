@@ -22,6 +22,13 @@ import java.util.Map;
 public class StreamBridgeProducer {
     private final StreamBridge streamBridge;
 
+    public static final String ROCKET_MQ_MESSAGE_ID = "ROCKET_MQ_MESSAGE_ID";
+
+    public static final String ROCKET_TAGS = "ROCKET_TAGS";
+
+    public static final String ROCKET_MQ_TOPIC = "ROCKET_MQ_TOPIC";
+
+
     /**
      * 发送消息
      * @param bindingName 绑定的名称，主题

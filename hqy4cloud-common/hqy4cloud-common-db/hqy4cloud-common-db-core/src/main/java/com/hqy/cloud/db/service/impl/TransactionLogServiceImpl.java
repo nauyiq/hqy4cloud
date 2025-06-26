@@ -66,7 +66,7 @@ public class TransactionLogServiceImpl extends ServiceImpl<TransactionLogMapper,
         if (exist.getStatus() == TransactionActionStatus.TRY || exist.getStatus() == TransactionActionStatus.CONFIRM) {
             // 状态是正常CANCEL, 即 TRY -> CANCEL OR CONFIRM -> CANCEL
             exist.setCancelType(exist.getStatus() == TransactionActionStatus.TRY ? TransCancelSuccessType.CANCEL_AFTER_TRY_SUCCESS : TransCancelSuccessType.CANCEL_AFTER_CONFIRM_SUCCESS);
-            exist.setStatus(TransactionActionStatus.CONFIRM);
+            exist.setStatus(TransactionActionStatus.CANCEL);
             return this.updateById(exist) ? TransactionCancelResponse.success(exist.getCancelType()) : TransactionCancelResponse.failed("CANCEL_FAILED", BsResultCode.UPDATE_FAILED.getMessage());
         }
 

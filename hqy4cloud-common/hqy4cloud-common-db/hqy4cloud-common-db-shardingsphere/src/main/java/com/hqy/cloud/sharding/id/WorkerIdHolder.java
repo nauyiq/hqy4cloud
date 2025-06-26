@@ -1,6 +1,7 @@
 package com.hqy.cloud.sharding.id;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
  * @version 1.0
  * @date 2024/7/8
  */
+@Setter
 @RequiredArgsConstructor
 public class WorkerIdHolder implements CommandLineRunner {
     private final RedissonClient redissonClient;
