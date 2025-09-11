@@ -12,6 +12,14 @@ public class TokenUtil {
         return TOKEN_THREADLOCAL.get();
     }
 
+    public static String getAndRemove() {
+        try {
+            return TOKEN_THREADLOCAL.get();
+        } finally {
+            TOKEN_THREADLOCAL.remove();
+        }
+    }
+
     public static void remove() {
         TOKEN_THREADLOCAL.remove();
     }
