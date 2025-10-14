@@ -34,6 +34,13 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
 
+        <!-- Sentinel Transport (用于连接 Dashboard) -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-transport-simple-http</artifactId>
+            <version>1.8.8</version>
+        </dependency>
+
         <!--SpringCloud ailibaba sentinel-datasource-nacos 后续做持久化用到-->
         <dependency>
             <groupId>com.alibaba.csp</groupId>

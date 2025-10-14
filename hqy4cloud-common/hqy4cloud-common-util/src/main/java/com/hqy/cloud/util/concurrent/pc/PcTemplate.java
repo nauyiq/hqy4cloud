@@ -21,7 +21,7 @@ public class PcTemplate<T> {
     private static final int DEFAULT_CONSUMER_TIMEOUT_SECONDS = 5;
     private static final int DEFAULT_PRODUCER_THREAD_NUM = 1;
     private static final int DEFAULT_QUEUE_CAPACITY = 2000;
-    private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = IExecutorsRepository.newExecutor("pcTemplate").getExecutorService();
+    private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = BlockExecutor.getExecutor();
 
     /**
      * 消费者
