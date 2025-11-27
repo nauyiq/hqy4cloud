@@ -16,9 +16,11 @@ public enum BsResultCode implements Result {
     FAILED("FAILED", "失败"),
     PARAMS_ERROR("PARAMS_ERROR", "参数错误"),
     PARAM_UNDEFINED("PARAM_UNDEFINED", "参数未定义或空"),
+    DUPLICATED_REQUEST("DUPLICATED_REQUEST", "重复的请求"),
     INSERT_FAILED("INSERT_FAILED", "数据库插入失败"),
     UPDATE_FAILED("UPDATE_FAILED", "数据库更新失败"),
     UNKNOWN_ERROR("UNKNOWN_ERROR", "未知错误"),
+    SYSTEM_BUSY("SYSTEM_BUSY", "系统繁忙")
 
     ;
 

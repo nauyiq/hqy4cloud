@@ -1,6 +1,5 @@
 package com.hqy.cloud.common.pipeline;
 
-import com.hqy.cloud.common.base.exception.BizException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -17,7 +17,7 @@ public class MybatisDataHandler implements MetaObjectHandler {
         this.setFieldValByNameIfNull("created", new Date(), metaObject);
         this.setFieldValByNameIfNull("updated", new Date(), metaObject);
         this.setFieldValByNameIfNull("deleted", 0, metaObject);
-        this.setFieldValByNameIfNull("lockVersion", 0, metaObject);
+        this.setFieldValByNameIfNull("version", 0, metaObject);
     }
 
     @Override
