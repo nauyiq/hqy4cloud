@@ -23,9 +23,9 @@ public class RegistryAccountByPhoneParams extends BaseRequest {
     private String username;
 
     /**
-     * 用户昵称为空时随机生成昵称
+     * 客户端ID
      */
-    private String nickname;
+    private String clientId;
 
     /**
      * 手机号码
@@ -48,11 +48,5 @@ public class RegistryAccountByPhoneParams extends BaseRequest {
      * 头像
      */
     private String avatar;
-
-    /**
-     * 是否保存一下code
-     */
-    private Boolean saveCode = true;
-
 
 }

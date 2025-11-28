@@ -1,7 +1,6 @@
 package com.hqy.cloud.auth.config;
 
-import com.hqy.cloud.auth.support.core.DefaultDaoAuthenticationProvider;
-import com.hqy.cloud.auth.support.core.FormIdentityLoginConfigurer;
+import com.hqy.cloud.auth.oauth.core.FormIdentityLoginConfigurer;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;

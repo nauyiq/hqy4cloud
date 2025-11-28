@@ -36,8 +36,6 @@ public interface AccountMapper extends BaseMapper<Account> {
      */
     Account queryAccountByUniqueIndex(@Param("value") String uniqueIndex);
 
-
-
     /**
      * 根据id查找用户信息
      * @param id id

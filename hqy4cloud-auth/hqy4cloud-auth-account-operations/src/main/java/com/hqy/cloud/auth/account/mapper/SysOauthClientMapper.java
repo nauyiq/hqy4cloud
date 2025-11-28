@@ -1,7 +1,7 @@
 package com.hqy.cloud.auth.account.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.hqy.cloud.auth.account.entity.SysOauthClient;
+import com.hqy.cloud.auth.account.entity.OauthClient;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2022-03-16 14:51
  */
 @Mapper
-public interface SysOauthClientMapper extends BaseMapper<SysOauthClient> {
+public interface SysOauthClientMapper extends BaseMapper<OauthClient> {
 
 
 }

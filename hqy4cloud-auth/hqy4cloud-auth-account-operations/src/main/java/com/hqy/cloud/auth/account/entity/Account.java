@@ -2,8 +2,6 @@ package com.hqy.cloud.auth.account.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyEmail;
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
 import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.db.entity.CommonEntity;
@@ -28,6 +26,11 @@ import java.util.List;
 public class Account extends CommonEntity {
 
     /**
+     * 商户客户端ID
+     */
+    private String clientId;
+
+    /**
      * 用户名
      */
     private String username;
@@ -40,13 +43,11 @@ public class Account extends CommonEntity {
     /**
      * 邮箱
      */
-    @SensitiveStrategyEmail
     private String email;
 
     /**
      * 手机号
      */
-    @SensitiveStrategyPhone
     private String phone;
 
     /**

@@ -69,23 +69,6 @@ public class AccountDomainServiceImpl extends ServiceImpl<AccountMapper, Account
         return mapper.getAccountInfoByUsernameOrEmail(usernameOrEmail);
     }
 
-    @Override
-    public List<AccountInfoDTO> getAccountInfos(List<Long> ids) {
-        /*Map<Long, AccountInfoDTO> map = AccountAuthCacheManager.getInstance().getAccountCache()
-                .getAll(new HashSet<>(ids));
-        List<AccountInfoDTO> result = new ArrayList<>(map.values());
-        if (MapUtils.isEmpty(map) || map.size() != ids.size()) {
-            List<Long> findIds = ids.stream().filter((id -> !map.containsKey(id))).toList();
-            List<AccountInfoDTO> accountInfos = mapper.getAccountInfos(findIds);
-            if (CollectionUtils.isNotEmpty(accountInfos)) {
-                Map<Long, AccountInfoDTO> findMap = accountInfos.stream().collect(Collectors.toMap(AccountInfoDTO::getId, Function.identity()));
-                AccountAuthCacheManager.getInstance().getAccountCache().putAll(findMap);
-                result.addAll(accountInfos);
-            }
-        }
-        return result;*/
-        return null;
-    }
 
     @Override
     public List<AccountInfoDTO> getAccountInfosByName(String name) {

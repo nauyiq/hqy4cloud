@@ -1,6 +1,5 @@
 package com.hqy.cloud.actuator.service.impl;
 
-import com.hqy.cloud.account.service.RemoteAuthService;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
 import com.hqy.cloud.auth.utils.AuthUtils;

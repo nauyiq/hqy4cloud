@@ -67,13 +67,6 @@ public interface AccountDomainService extends IService<Account> {
     AccountInfoDTO getAccountInfoByUsernameOrEmail(String usernameOrEmail);
 
     /**
-     * 查找用户信息
-     * @param ids 用户id 列表
-     * @return    AccountInfoDTO Set.
-     */
-    List<AccountInfoDTO> getAccountInfos(List<Long> ids);
-
-    /**
      * get account information by name
      * @param name username or nickname
      * @return    {@link AccountInfoDTO}

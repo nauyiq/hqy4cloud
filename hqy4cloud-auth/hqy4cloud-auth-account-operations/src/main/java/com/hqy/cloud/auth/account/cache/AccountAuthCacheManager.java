@@ -6,8 +6,7 @@ import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
 import com.hqy.cloud.auth.account.entity.Account;
-import com.hqy.cloud.auth.account.entity.SysOauthClient;
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
+import com.hqy.cloud.auth.account.entity.OauthClient;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -61,7 +60,7 @@ public class AccountAuthCacheManager {
     }
 
     private Cache<Long, Account> accountCache;
-    private Cache<String, SysOauthClient> oauthClientCache;
+    private Cache<String, OauthClient> oauthClientCache;
 
     public void put(Long id, Account account) {
         this.accountCache.put(id, account);

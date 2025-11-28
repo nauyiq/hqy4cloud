@@ -1,19 +1,19 @@
 package com.hqy.cloud.auth.account.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.hqy.cloud.auth.account.entity.SysOauthClient;
+import com.hqy.cloud.auth.account.entity.OauthClient;
 
 /**
  * @author qiyuan.hong
  * @date 2022-03-16 14:52
  */
-public interface SysOauthClientService extends IService<SysOauthClient> {
+public interface SysOauthClientService extends IService<OauthClient> {
 
     /**
      * 根据租户id获取租户信息
      * @param clientId 租户id
      * @return          租户信息
      */
-    SysOauthClient findByClientId(String clientId);
+    OauthClient findByClientId(String clientId);
 
 }
