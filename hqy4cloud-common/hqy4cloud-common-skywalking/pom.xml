@@ -10,29 +10,24 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <description>web模块</description>
-    <artifactId>hqy4cloud-common-web</artifactId>
+    <artifactId>hqy4cloud-common-skywalking</artifactId>
+
+    <properties>
+        <skywalking.version>9.4.0</skywalking.version>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <version>${skywalking.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-auth-core</artifactId>
-            <version>${revision}</version>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-trace</artifactId>
+            <version>${skywalking.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-business-collection</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
     </dependencies>
-
-
 
 </project>

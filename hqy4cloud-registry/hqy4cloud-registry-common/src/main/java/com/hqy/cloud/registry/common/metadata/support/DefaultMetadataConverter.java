@@ -37,7 +37,7 @@ public class DefaultMetadataConverter implements MetadataConverter {
             metadataInfo.setPubMode(PubMode.of(Integer.parseInt(metadataMap.get(MetadataPropertyKeyConstants.APPLICATION_PUB_MODE))));
             metadataInfo.setWeight(Integer.parseInt(metadataMap.get(MetadataPropertyKeyConstants.APPLICATION_WEIGHT)));
         } catch (Throwable cause) {
-            log.error("Failed execute to convert metadataMap to metadataInfo, cause: {}.", cause.getMessage());
+            log.error("Failed execute to convert metadataMap to metadataInfo, cause: {}.", cause.getMessage(), cause);
         }
         return metadataInfo;
     }

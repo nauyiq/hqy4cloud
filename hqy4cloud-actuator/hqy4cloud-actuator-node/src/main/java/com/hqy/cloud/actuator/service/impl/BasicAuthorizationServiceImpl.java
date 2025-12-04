@@ -3,9 +3,6 @@ package com.hqy.cloud.actuator.service.impl;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
 import com.hqy.cloud.auth.utils.AuthUtils;
-import com.hqy.cloud.common.swticher.CommonSwitcher;
-import com.hqy.cloud.rpc.starter.client.RpcClient;
-import com.hqy.cloud.rpc.thrift.struct.CommonResultStruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +31,6 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         if (!StringUtils.isAllBlank(username, password) &&
                 username.equals(basicAuthorization.getUsername()) && password.equals(basicAuthorization.getPassword())) {
             return true;
-        }
-        // 采用账号RPC进行认证
-        if (CommonSwitcher.ENABLE_ACCOUNT_RPC_QUERY_ACTUATOR_BASIC_AUTHORIZATION.isOn()) {
-            RemoteAuthService authService = RpcClient.getRemoteService(RemoteAuthService.class);
-            CommonResultStruct struct = authService.basicAuth(basicAuthorization.getUsername(), basicAuthorization.getUsername());
-            return struct.result;
         }
         return false;
     }

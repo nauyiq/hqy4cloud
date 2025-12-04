@@ -1,9 +1,8 @@
 package com.hqy.cloud.auth.account.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.account.entity.Account;
-import org.apache.ibatis.annotations.Mapper;
+import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
  * @author qiyuan.hong
  * @date 2022-03-10 21:42
  */
-@Mapper
 public interface AccountMapper extends BaseMapper<Account> {
 
     /**

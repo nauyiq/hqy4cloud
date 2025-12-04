@@ -14,6 +14,7 @@
     <description>账号-认证服务, 同时作为auth2中的认证服务器</description>
 
     <dependencies>
+        <!-- nacos -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
             <artifactId>hqy4cloud-registry-nacos-starter</artifactId>
@@ -27,10 +28,10 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- 自研rpc -->
+        <!-- skywalking -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-thrift-rpc-springboot-autoconfigure</artifactId>
+            <artifactId>hqy4cloud-common-skywalking</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -56,19 +57,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-common-seata</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>auth-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

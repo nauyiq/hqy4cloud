@@ -1,20 +1,21 @@
+logging:
+  config: classpath:logback.xml
+
 server:
-  port: 8088
+  port: 8801
 
 spring:
   application:
-    name: @artifactId@
+    name: auth-service
   main:
     allow-bean-definition-overriding: true
 
   config:
     import:
       - classpath:nacos_config.yml
-      - nacos:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml
-      - nacos:datasource-app.yaml
-      - nacos:shardingshpere-app.yaml
+      - nacos:datasource-auth.yaml
 
   freemarker:
     template-loader-path:

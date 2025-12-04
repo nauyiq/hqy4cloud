@@ -52,10 +52,10 @@ public class ActuatorAutoConfiguration implements BeanFactoryAware, SmartInitial
         return new MicroServiceInfoContributorEndpoint();
     }*/
 
-    @Bean
+   /* @Bean
     public BasicAuthorizationService basicAuthorizationService() {
         return new BasicAuthorizationServiceImpl();
-    }
+    }*/
 
     /*@Bean
     public EndpointBasicAuthorizationFilter filter(BasicAuthorizationService basicAuthorizationService) {

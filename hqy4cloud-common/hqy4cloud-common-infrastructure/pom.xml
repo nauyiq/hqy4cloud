@@ -13,6 +13,9 @@
     <description>通用的基础设施模块</description>
     <artifactId>hqy4cloud-common-infrastructure</artifactId>
 
+    <properties>
+        <sensitive.version>1.7.0</sensitive.version>
+    </properties>
 
     <dependencies>
         <!-- 缓存模块 -->
@@ -40,7 +43,20 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>sensitive-core</artifactId>
-            <version>1.7.0</version>
+            <version>${sensitive.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-logback</artifactId>
+            <version>${sensitive.version}</version>
+        </dependency>
+
+        <!-- skywalking -->
+        <dependency>
+            <groupId>com.hqy.cloud</groupId>
+            <artifactId>hqy4cloud-common-skywalking</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

@@ -142,13 +142,17 @@
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
-
-
         <!-- validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>3.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-annotation</artifactId>
+            <version>1.7.0</version>
         </dependency>
     </dependencies>
 

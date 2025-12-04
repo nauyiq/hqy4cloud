@@ -218,6 +218,7 @@ public abstract class AbstractRegistry implements Registry {
         AssertUtil.notNull(listener, "notify listener should not be null.");
         if (CollectionUtils.isEmpty(serviceInstances)) {
             log.warn("Ignore empty notify instance for subscribe url {}", serviceInstances);
+            return;
         }
         if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
             log.info("Notify urls for subscribe instance {}, url size {}", projectInfoModel, serviceInstances.size());

@@ -34,6 +34,7 @@
         <module>hqy4cloud-common-business-collection</module>
         <module>hqy4cloud-common-quartz</module>
         <module>hqy4cloud-common-xxljob</module>
+        <module>hqy4cloud-common-skywalking</module>
     </modules>
 
     <dependencies>

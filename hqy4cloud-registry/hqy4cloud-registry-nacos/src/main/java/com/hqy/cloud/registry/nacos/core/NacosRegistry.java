@@ -149,6 +149,9 @@ public class NacosRegistry extends FailedBackRegistry {
         String group = model.getGroup();
         try {
             List<Instance> allInstances = namingService.getAllInstances(applicationName, group);
+            if (CollectionUtils.isEmpty(allInstances)) {
+                return;
+            }
             notifySubscriber(model, allInstances, listener);
             subscribeEventListener(applicationName, model, listener);
         } catch (NacosException cause) {

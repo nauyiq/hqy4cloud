@@ -16,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Map;
@@ -31,7 +33,7 @@ import java.util.Map;
  * @date 2024/1/5
  */
 @Slf4j
-//@Configuration(proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnNacosDiscoveryEnabled
 @PropertySource(value = "classpath:nacos_config.yml", factory = YamlPropertySourceFactory.class)
@@ -40,6 +42,7 @@ import java.util.Map;
 public class NacosRegistryBindingAutoConfiguration {
 
     @Bean
+    @ConditionalOnBean(ProjectInfoModel.class)
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = {"spring.cloud.nacos.discovery.watch.enabled"}, matchIfMissing = true)
     public NacosWatch nacosWatch(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceManager nacosServiceManager,
