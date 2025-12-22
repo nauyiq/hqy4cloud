@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.security.common.Oauth2EndpointUtils;
 import com.hqy.cloud.auth.security.core.Oauth2ErrorCodesExpand;
 import com.hqy.cloud.auth.account.entity.OauthClient;
-import com.hqy.cloud.auth.account.service.SysOauthClientService;
+import com.hqy.cloud.auth.account.service.SysOauthClientDomainService;
 import com.hqy.cloud.auth.oauth.handler.DefaultAuthenticationFailureHandler;
 import com.hqy.cloud.common.base.lang.DateMeasureConstants;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class AuthEndpoint {
 
-    private final SysOauthClientService sysOauthClientService;
+    private final SysOauthClientDomainService sysOauthClientDomainService;
     private final OAuth2AuthorizationService oAuth2AuthorizationService;
     private final AuthenticationFailureHandler authenticationFailureHandler = new DefaultAuthenticationFailureHandler();
     private final HttpMessageConverter<OAuth2AccessTokenResponse> accessTokenHttpResponseConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
@@ -100,7 +100,7 @@ public class AuthEndpoint {
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
                                 @RequestParam(OAuth2ParameterNames.STATE) String state) {
 
-        OauthClient clientDetails = sysOauthClientService.findByClientId(clientId);
+        OauthClient clientDetails = sysOauthClientDomainService.findByClientId(clientId);
         if (Objects.isNull(clientDetails)) {
             throw new NotAuthenticationException("clientId 不合法");
         }

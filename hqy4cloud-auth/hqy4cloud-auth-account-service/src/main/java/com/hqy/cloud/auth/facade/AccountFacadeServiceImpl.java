@@ -3,6 +3,7 @@ package com.hqy.cloud.auth.facade;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import com.alicp.jetcache.anno.CacheInvalidate;
+import com.hqy.cloud.account.constants.AccountResultCode;
 import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.account.request.AccountAuthRequest;
 import com.hqy.cloud.account.request.AccountModifyRequest;
@@ -10,7 +11,6 @@ import com.hqy.cloud.account.request.AccountQueryParams;
 import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
 import com.hqy.cloud.account.response.AccountInfo;
 import com.hqy.cloud.account.response.AccountOperationInfo;
-import com.hqy.cloud.account.response.AccountResultCode;
 import com.hqy.cloud.account.response.RegisterInfo;
 import com.hqy.cloud.account.service.AccountFacadeService;
 import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
@@ -99,14 +99,15 @@ public class AccountFacadeServiceImpl implements AccountFacadeService, Initializ
         String username = getUsername(registryParams);
         String password = StringUtils.isNotBlank(registryParams.getPassword()) ? registryParams.getPassword() : registryParams.getPhone();
         password = passwordEncoder.encode(password);
-        Account account = Account.register(username, password, null, phone, UserRole.CUSTOMER, null);
-        boolean result = accountOperationService.registryAccount(account);
-        if (result) {
+        Account account = Account.register(registryParams.getClientId(), username, password, null, phone, UserRole.CUSTOMER);
+        R<Void> result = accountOperationService.registryAccount(account);
+        if (result.isSuccess()) {
             addUsername(username);
             // 异步对验证进行续期.防止验证码过期无法登录
             Thread.ofVirtual().start(() -> randomCodeService.saveCode(code, phone, RandomCodeScene.SMS_AUTH));
+            return R.ok(new RegisterInfo(account.getId(), account.getUsername()));
         }
-        return result ? R.ok(new RegisterInfo(account.getId(), account.getUsername())) : R.failed();
+        return R.failed();
     }
 
     private String getUsername(RegistryAccountByPhoneParams registryParams) {

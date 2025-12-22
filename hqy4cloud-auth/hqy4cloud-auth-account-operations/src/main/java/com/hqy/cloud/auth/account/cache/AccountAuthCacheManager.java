@@ -29,12 +29,12 @@ public class AccountAuthCacheManager {
     /**
      * 账号用户信息缓存key
      */
-    public static final String ACCOUNT_USER_CACHE_KEY = ":account:cache:id:";
+    public static final String ACCOUNT_USER_CACHE_KEY = "account:cache:id:";
 
     /**
      * oauth2租户缓存key
      */
-    public static final String OAUTH2_CLIENT_CACHE_KEY = ":account:cache:oauth_client:";
+    public static final String OAUTH2_CLIENT_CACHE_KEY = "account:cache:oauth_client:";
 
 
     @PostConstruct

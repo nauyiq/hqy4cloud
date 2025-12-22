@@ -78,9 +78,10 @@ public class Account extends CommonEntity {
     private AccountStatus status;
 
 
-    public Account(Long id, String username, String password, String email, String phone, UserRole role) {
+    public Account(Long id, String clientId, String username, String password, String email, String phone, UserRole role) {
         setId(id);
         this.username = username;
+        this.clientId = clientId;
         this.password = password;
         this.email = email;
         this.role = role;
@@ -88,13 +89,12 @@ public class Account extends CommonEntity {
         this.status = AccountStatus.ACTIVE;
     }
 
-    public static Account register(String username, String password, String email, String phone, UserRole userRole, List<String> authorities) {
-        // 生成分布式用户ID
+    public static Account register(String clientId, String username, String password, String email, String phone, UserRole userRole) {
         long accountId = DistributedIdGen.getSnowflakeId(WorkerIdHolder.workerId);
         if (userRole == null) {
             userRole = UserRole.CUSTOMER;
         }
-        return new Account(accountId, username, password, email, phone, userRole);
+        return new Account(accountId, clientId, username, password, email, phone, userRole);
     }
 
     public void auth(String rearName, String idCard) {

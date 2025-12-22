@@ -1,12 +1,12 @@
 package com.hqy.cloud.auth.autoconfigure;
 
 import com.hqy.cloud.auth.api.AuthPermissionService;
-import com.hqy.cloud.auth.api.support.AuthenticationAspect;
 import com.hqy.cloud.auth.api.support.DefaultAuthPermissionService;
+import com.hqy.cloud.auth.core.AuthorizationResourceRepository;
 import com.hqy.cloud.limiter.api.ManualWhiteIpService;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * @author qiyuan.hong
@@ -17,13 +17,12 @@ import org.springframework.core.env.Environment;
 public class AuthAutoConfiguration {
 
     @Bean
-    public AuthPermissionService authPermissionService(Environment environment, ManualWhiteIpService manualWhiteIpService) {
-        return new DefaultAuthPermissionService(environment, manualWhiteIpService);
+    public AuthPermissionService authPermissionService(AuthorizationResourceRepository authorizationResourceRepository, ManualWhiteIpService manualWhiteIpService) {
+        return new DefaultAuthPermissionService(authorizationResourceRepository, manualWhiteIpService);
     }
-
     @Bean
-    public AuthenticationAspect authenticationAspect(AuthPermissionService authPermissionService) {
-        return new AuthenticationAspect(authPermissionService);
+    public AuthorizationResourceRepository authorizationResourceRepository(RedissonClient redissonClient) {
+        return new AuthorizationResourceRepository(redissonClient);
     }
 
 

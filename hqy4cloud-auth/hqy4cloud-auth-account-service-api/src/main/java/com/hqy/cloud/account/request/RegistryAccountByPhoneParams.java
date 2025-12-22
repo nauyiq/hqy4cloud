@@ -25,6 +25,7 @@ public class RegistryAccountByPhoneParams extends BaseRequest {
     /**
      * 客户端ID
      */
+    @NotBlank
     private String clientId;
 
     /**

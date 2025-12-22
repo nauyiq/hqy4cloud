@@ -1,6 +1,6 @@
 package com.hqy.cloud.actuator.filter.support;
 
-import com.hqy.cloud.account.response.AccountResultCode;
+import com.hqy.cloud.account.constants.AccountResultCode;
 import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.swticher.CommonSwitcher;

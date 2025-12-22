@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2022/12/21 16:54
  */
+@Deprecated
 @Component
 public class ImageCodeAuthorizationChecker extends AbstractCodeAuthorizationChecker {
 

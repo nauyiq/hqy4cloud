@@ -3,7 +3,7 @@ package com.hqy.cloud.auth.oauth.core;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hqy.cloud.auth.account.entity.OauthClient;
-import com.hqy.cloud.auth.account.service.SysOauthClientService;
+import com.hqy.cloud.auth.account.service.SysOauthClientDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DefaultRegisteredClientRepository implements RegisteredClientRepository {
 
-    private final SysOauthClientService sysOauthClientService;
+    private final SysOauthClientDomainService sysOauthClientDomainService;
 
     /**
      * 刷新令牌有效期默认 30 天
@@ -71,7 +71,7 @@ public class DefaultRegisteredClientRepository implements RegisteredClientReposi
     @Override
     @SneakyThrows
     public RegisteredClient findByClientId(String clientId) {
-        OauthClient oauthClient = sysOauthClientService.findByClientId(clientId);
+        OauthClient oauthClient = sysOauthClientDomainService.findByClientId(clientId);
         if (Objects.isNull(oauthClient)) {
             throw new OAuth2AuthorizationCodeRequestAuthenticationException(new OAuth2Error("Not found Oauth client by db."), null);
         }

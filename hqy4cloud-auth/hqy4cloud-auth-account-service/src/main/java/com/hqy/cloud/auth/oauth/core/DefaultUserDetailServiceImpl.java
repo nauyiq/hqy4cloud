@@ -2,7 +2,7 @@ package com.hqy.cloud.auth.oauth.core;
 
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.service.AccountDomainService;
-import com.hqy.cloud.account.response.AccountResultCode;
+import com.hqy.cloud.account.constants.AccountResultCode;
 import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
 import com.hqy.cloud.auth.security.core.SecurityAuthUser;
 import com.hqy.cloud.util.JsonUtil;

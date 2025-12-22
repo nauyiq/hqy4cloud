@@ -7,7 +7,7 @@ import com.hqy.cloud.auth.account.entity.OauthClient;
  * @author qiyuan.hong
  * @date 2022-03-16 14:52
  */
-public interface SysOauthClientService extends IService<OauthClient> {
+public interface SysOauthClientDomainService extends IService<OauthClient> {
 
     /**
      * 根据租户id获取租户信息

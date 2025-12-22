@@ -17,11 +17,6 @@ import org.springframework.web.reactive.socket.server.upgrade.TomcatRequestUpgra
 @Configuration
 public class GatewayConfiguration {
 
-    /*@Bean
-    public AuthorizationManager authorizationManager(AuthPermissionService authPermissionService) {
-        return new AuthorizationManager(authPermissionService);
-    }*/
-
     @Bean
     public GlobalExceptionHandler globalExceptionHandler() {
         return new GlobalExceptionHandler();

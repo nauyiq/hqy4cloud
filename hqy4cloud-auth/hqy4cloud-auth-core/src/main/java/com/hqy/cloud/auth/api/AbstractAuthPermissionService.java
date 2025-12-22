@@ -1,6 +1,7 @@
 package com.hqy.cloud.auth.api;
 
-import com.hqy.cloud.auth.common.OAuthConstants;
+import com.alibaba.fastjson2.JSON;
+import com.hqy.cloud.auth.core.AuthorizationResourceRepository;
 import com.hqy.cloud.auth.utils.AuthUtils;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import com.hqy.cloud.util.AssertUtil;
@@ -8,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -24,9 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class AbstractAuthPermissionService implements AuthPermissionService {
 
-    private final Environment environment;
-//    private final AuthoritiesRoleService authoritiesRoleService;
-
+    private final AuthorizationResourceRepository authorizationResourceRepository;
 
     @Override
     public final boolean isPermitRequest(AuthenticationRequest request) {
@@ -40,21 +39,14 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
             return true;
         }
 
-        // 判断是否认证
+        // 获取用户允许访问的权限， 这里配置的是用户角色
         List<String> authorities = request.authorities();
-        if (CollectionUtils.isNotEmpty(authorities)) {
-            return true;
+        if (CollectionUtils.isEmpty(authorities)) {
+            log.warn("AuthenticationRequest has no authorities, request:{}", JSON.toJSONString(request));
+            return false;
         }
 
-
-        return false;
-
-        // 基于RBAC进行鉴权. 通过该请求对应的用户是什么角色, 那些角色能访问什么权限.
-//        List<String> authorities = request.authorities();
-//        if (CollectionUtils.isEmpty(authorities)) {
-//            return false;
-//        }
-//        return checkAuthoritiesRequest(authorities, request);
+        return authorizationResourceRepository.authenticate(request);
     }
 
     private boolean isWhiteRequest(AuthenticationRequest request) {
@@ -72,37 +64,10 @@ public abstract class AbstractAuthPermissionService implements AuthPermissionSer
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> getBusinessWhiteUris() {
-        return this.environment.getProperty(OAuthConstants.BUSINESS_WHITE_URIS_KEY, List.class, OAuthConstants.DEFAULT_BUSINESS_WHITE_URIS);
+        return new ArrayList<>(authorizationResourceRepository.getIgnoredAccessTokenUri());
     }
 
-    protected boolean checkAuthoritiesRequest(List<String> authorities, AuthenticationRequest request) {
-        // 权限角色信息.
-        /*List<AuthenticationModuleInfo> moduleInfos = authoritiesRoleService.loadAuthenticationModulesByAuthorities(authorities);
-        if (CollectionUtils.isEmpty(moduleInfos)) {
-            return false;
-        }
-        String method = request.method();
-        String requestUri = request.requestUri();
-        AntPathMatcher antPathMatcher = StaticEndpointAuthorizationManager.getInstance().getAntPathMatcher();
-        // 只有任意一个角色，权限可以访问该uri 则放行该请求。
-        return moduleInfos.parallelStream().anyMatch(moduleInfo -> {
-            List<AuthenticationModuleInfo.ModuleInfo> infos = moduleInfo.getModuleInfos();
-            if (CollectionUtils.isEmpty(infos)) {
-                return false;
-            }
-            return infos.parallelStream().anyMatch(info -> {
-                if (StringUtils.isBlank(info.getMethod())) {
-                    return antPathMatcher.match(info.getModuleExpression(), requestUri);
-                } else {
-                    // 如果配置了请求方式，则校验一下配置的方法请求方式是否包含了本次请求的方法请求方式
-                    return info.getMethod().toLowerCase().contains(method.toLowerCase()) && antPathMatcher.match(info.getModuleExpression(), requestUri);
-                }
-            });
-        });*/
-        return true;
-    }
 
     protected boolean isWhiteStaticEndpoint(String requestUri) {
         if (StringUtils.isBlank(requestUri)) {

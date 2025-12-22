@@ -13,7 +13,6 @@ import com.hqy.cloud.gateway.server.auth.ClientSecretReactiveAuthenticationManag
 import com.hqy.cloud.gateway.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -50,7 +49,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResourceServerConfiguration {
 
-    private final MessageSource securityMessageSource;
     private final AuthPermissionService authPermissionService;
     private final AuthorizationManager authorizationManager;
 
@@ -144,11 +142,6 @@ public class ResourceServerConfiguration {
     public ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, e) -> {
             R<String> result = R.setResult(false, ResultCode.INVALID_ACCESS_TOKEN, e.getMessage());
-            /*if (e instanceof InvalidBearerTokenException
-                    || e instanceof InsufficientAuthenticationException) {
-                result.setMessage(this.securityMessageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired",
-                        null, LocaleContextHolder.getLocale()));
-            }*/
             ServerHttpResponse response = exchange.getResponse();
             return Mono.defer(() -> {
                 DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.UNAUTHORIZED);

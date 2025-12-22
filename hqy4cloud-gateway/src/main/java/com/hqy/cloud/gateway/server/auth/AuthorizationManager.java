@@ -28,7 +28,6 @@ import java.util.Objects;
  */
 @Slf4j
 @Component
-//@Deprecated
 @RequiredArgsConstructor
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
     private final AuthPermissionService authPermissionService;

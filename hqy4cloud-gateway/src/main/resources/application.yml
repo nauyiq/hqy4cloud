@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: @artifactId@
+    name: gateway-service
 
   main:
     allow-bean-definition-overriding: true
@@ -15,11 +15,14 @@ spring:
       - nacos:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml
-
   cloud:
     gateway:
-      #default-filters:
-        #- DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      # 动态路由配置
+      dynamic-route:
+        enabled: true
+        type: nacos
+        data-id: gateway-routing.json
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
       discovery:
         locator:
           enabled: true
@@ -36,17 +39,4 @@ spring:
             data-type: json
             ruleType: flow
 
-# 动态路由配置
-gateway:
-  dynamicRoute:
-    dataId: gateway-routing.json
-    group: ${NACOS_GROUP:DEFAULT_GROUP}
-    enabled: true
-    type: nacos
-
-# 业务uris白名单配置
-hqy4cloud:
-  auth:
-    white:
-      uris: /blog/**, /nft/user/register, /nft/collection/list
 

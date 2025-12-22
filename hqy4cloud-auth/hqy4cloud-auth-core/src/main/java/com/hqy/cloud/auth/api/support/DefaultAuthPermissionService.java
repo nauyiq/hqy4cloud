@@ -1,8 +1,8 @@
 package com.hqy.cloud.auth.api.support;
 
 import com.hqy.cloud.auth.api.AbstractAuthPermissionService;
+import com.hqy.cloud.auth.core.AuthorizationResourceRepository;
 import com.hqy.cloud.limiter.api.ManualWhiteIpService;
-import org.springframework.core.env.Environment;
 
 /**
  * @author qiyuan.hong
@@ -12,8 +12,8 @@ import org.springframework.core.env.Environment;
 public class DefaultAuthPermissionService extends AbstractAuthPermissionService {
     private final ManualWhiteIpService manualWhiteIpService;
 
-    public DefaultAuthPermissionService(Environment environment, ManualWhiteIpService manualWhiteIpService) {
-        super(environment);
+    public DefaultAuthPermissionService(AuthorizationResourceRepository authorizationResourceRepository, ManualWhiteIpService manualWhiteIpService) {
+        super(authorizationResourceRepository);
         this.manualWhiteIpService = manualWhiteIpService;
     }
 

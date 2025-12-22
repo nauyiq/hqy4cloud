@@ -3,6 +3,7 @@ package com.hqy.cloud.auth.service;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.base.dto.AccountInfoDTO;
 import com.hqy.cloud.auth.base.dto.UserDTO;
+import com.hqy.cloud.common.result.R;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface AccountOperationService {
      * @param account         account实体
      * @return                是否成功
      */
-    boolean registryAccount(Account account);
+    R<Void> registryAccount(Account account);
 
 
 

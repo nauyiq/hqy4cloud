@@ -23,6 +23,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Aspect
+@Deprecated
 @RequiredArgsConstructor
 public class AuthenticationAspect {
     private final AuthPermissionService authPermissionService;

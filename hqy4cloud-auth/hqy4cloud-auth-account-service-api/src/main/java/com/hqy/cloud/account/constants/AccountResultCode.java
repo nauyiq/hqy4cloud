@@ -1,4 +1,4 @@
-package com.hqy.cloud.account.response;
+package com.hqy.cloud.account.constants;
 
 import com.hqy.cloud.common.result.Result;
 import lombok.AllArgsConstructor;
@@ -82,10 +82,14 @@ public enum AccountResultCode implements Result {
     USER_AUTH_FAIL("USER_AUTH_FAIL", "用户实名认证失败"),
 
     /**
+     * 租户id不存在
+     */
+    AUTH_CLIENT_NOT_EXIST("AUTH_CLIENT_NOT_EXIST", "租户不存在"),
+
+    /**
      * 租户id或租户秘钥错误
      */
     INVALID_CLIENT_OR_SECRET("A2022", "ClientId or secret incorrect."),
-
 
 
     ;
