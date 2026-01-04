@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("t_oauth_client")
+@TableName("oauth_client")
 public class OauthClient {
 
     /**

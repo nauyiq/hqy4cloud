@@ -10,8 +10,6 @@ import com.hqy.cloud.sharding.id.DistributedIdGen;
 import com.hqy.cloud.sharding.id.WorkerIdHolder;
 import lombok.*;
 
-import java.util.List;
-
 /**
  * 账户表 t_account
  * @author qiyuan.hong
@@ -19,7 +17,7 @@ import java.util.List;
  */
 @Data
 @ToString
-@TableName("t_account")
+@TableName("account")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
