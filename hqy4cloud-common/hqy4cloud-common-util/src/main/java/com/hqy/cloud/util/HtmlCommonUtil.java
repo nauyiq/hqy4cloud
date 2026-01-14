@@ -1,10 +1,8 @@
-package com.hqy.cloud.web.utils;
+package com.hqy.cloud.util;
 
-import com.hqy.cloud.common.base.lang.PatternConstants;
-import com.hqy.cloud.common.base.lang.StringConstants;
+import cn.hutool.http.HtmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -77,7 +75,7 @@ public class HtmlCommonUtil {
                 log.warn(e.getMessage(), e);
             }
         }
-        return HtmlUtils.htmlUnescape(s);
+        return HtmlUtil.unescape(s);
     }
 
     public static final List<String> HACK_WORDS_IN_PARAM = new LinkedList<>(Arrays.asList("javascript", "<script",

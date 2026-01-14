@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * spring security oauth2
  * @author qiyuan.hong
@@ -12,7 +16,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("oauth_client")
-public class OauthClient {
+public class OauthClient implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 用于唯一标识每一个客户端(client)
@@ -93,6 +100,17 @@ public class OauthClient {
     @TableField(fill = FieldFill.INSERT)
     private Integer version;
 
+    /**
+     * 创建时间
+     */
+    @TableField(value = "created", fill = FieldFill.INSERT)
+    private Date created;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "updated", fill = FieldFill.INSERT_UPDATE)
+    private Date updated;
 
 
 }

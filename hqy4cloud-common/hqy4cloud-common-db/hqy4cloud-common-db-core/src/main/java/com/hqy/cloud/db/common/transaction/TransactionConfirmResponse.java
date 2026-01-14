@@ -18,14 +18,14 @@ public class TransactionConfirmResponse extends Response {
 
     public static TransactionConfirmResponse success(TransConfirmSuccessType type) {
         TransactionConfirmResponse response = new TransactionConfirmResponse();
-        response.setResult(true);
+        response.setSuccess(true);
         response.setTransConfirmSuccessType(type);
         return response;
     }
 
     public static TransactionConfirmResponse failed(String code, String message) {
         TransactionConfirmResponse response = new TransactionConfirmResponse();
-        response.setResult(false);
+        response.setSuccess(false);
         response.setCode(code);
         response.setMessage(message);
         return response;

@@ -83,7 +83,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService, Initializ
     @Facade
     @Override
     public R<List<AccountInfo>> queryList(Collection<Long> ids) {
-        List<Account> accounts = accountDomainService.findByIds(ids);
+        List<Account> accounts = accountDomainService.listByIds(ids);
         return R.ok(accounts.stream().map(AccountConverter.CONVERTER::mapToVo).toList());
     }
 

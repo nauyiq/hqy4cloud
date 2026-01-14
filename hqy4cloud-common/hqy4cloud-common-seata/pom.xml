@@ -35,12 +35,6 @@
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.hqy.cloud</groupId>-->
-<!--            <artifactId>hqy4cloud-thrift-rpc-seata-adaptor</artifactId>-->
-<!--            <version>${revision}</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-transaction-base-seata-at</artifactId>

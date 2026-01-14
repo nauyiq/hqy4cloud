@@ -32,13 +32,6 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- actuator 客户端端点模块 -->
-        <dependency>
-            <groupId>com.hqy.cloud</groupId>
-            <artifactId>hqy4cloud-actuator-node</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
         <!-- 敏感词脱敏 -->
         <dependency>
             <groupId>com.github.houbb</groupId>

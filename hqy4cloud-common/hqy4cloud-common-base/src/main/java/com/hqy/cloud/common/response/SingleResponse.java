@@ -65,7 +65,7 @@ public class SingleResponse<T> extends Response {
 
     public static <T> SingleResponse<T> setResult(boolean result, String code, String msg, T data) {
         SingleResponse<T> apiResult = new SingleResponse<>();
-        apiResult.setResult(result);
+        apiResult.setSuccess(result);
         apiResult.setCode(code);
         apiResult.setData(data);
         apiResult.setMessage(msg);

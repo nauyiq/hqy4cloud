@@ -18,14 +18,14 @@ public class TransactionTryResponse extends Response {
 
     public static TransactionTryResponse success(TransTrySuccessType transTrySuccessType) {
         TransactionTryResponse response = new TransactionTryResponse();
-        response.setResult(true);
+        response.setSuccess(true);
         response.setTransTrySuccessType(transTrySuccessType);
         return response;
     }
 
     public static TransactionTryResponse failed(String code, String message) {
         TransactionTryResponse response = new TransactionTryResponse();
-        response.setResult(false);
+        response.setSuccess(false);
         response.setCode(code);
         response.setMessage(message);
         return response;

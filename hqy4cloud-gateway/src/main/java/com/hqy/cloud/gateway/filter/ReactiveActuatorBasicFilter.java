@@ -1,8 +1,7 @@
 package com.hqy.cloud.gateway.filter;
 
 import com.hqy.cloud.account.constants.AccountResultCode;
-import com.hqy.cloud.actuator.filter.AbstractActuatorBasicFilter;
-import com.hqy.cloud.actuator.service.BasicAuthorizationService;
+import com.hqy.cloud.auth.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
 import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.swticher.CommonSwitcher;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono;
 //@Component
 @Deprecated
 @RequiredArgsConstructor
-public class ReactiveActuatorBasicFilter extends AbstractActuatorBasicFilter implements WebFilter {
+public class ReactiveActuatorBasicFilter implements WebFilter {
     private final BasicAuthorizationService basicAuthorizationService;
 
     @Override

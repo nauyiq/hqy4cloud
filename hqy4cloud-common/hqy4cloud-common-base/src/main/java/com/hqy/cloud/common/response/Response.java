@@ -22,16 +22,13 @@ public class Response implements Serializable, Result {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private boolean result;
+    private boolean success;
     private String code;
     private String message;
 
-    public boolean isSuccess() {
-        return this.result;
-    }
 
     public Response ofResult(boolean isSuccess, Result result) {
-        this.result = isSuccess;
+        this.success = isSuccess;
         this.code = result.getCode();
         this.message = result.getMessage();
         return this;

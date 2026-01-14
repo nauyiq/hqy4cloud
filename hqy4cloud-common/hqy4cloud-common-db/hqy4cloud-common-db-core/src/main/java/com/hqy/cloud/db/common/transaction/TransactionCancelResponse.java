@@ -18,14 +18,14 @@ public class TransactionCancelResponse extends Response {
 
     public static TransactionCancelResponse success(TransCancelSuccessType type) {
         TransactionCancelResponse response = new TransactionCancelResponse();
-        response.setResult(true);
+        response.setSuccess(true);
         response.setTransCancelSuccessType(type);
         return response;
     }
 
     public static TransactionCancelResponse failed(String code, String message) {
         TransactionCancelResponse response = new TransactionCancelResponse();
-        response.setResult(false);
+        response.setSuccess(false);
         response.setCode(code);
         response.setMessage(message);
         return response;

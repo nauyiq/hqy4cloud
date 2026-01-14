@@ -2,17 +2,9 @@ package com.hqy.cloud.actuator.config;
 
 import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.actuator.core.GradeSwitcherListener;
-import com.hqy.cloud.actuator.endpoint.MicroServiceInfoContributorEndpoint;
-import com.hqy.cloud.actuator.filter.support.DruidMonitorAutoBasicAuthFilter;
-import com.hqy.cloud.actuator.filter.support.EndpointBasicAuthorizationFilter;
 import com.hqy.cloud.actuator.server.GradeSwitcherCenter;
 import com.hqy.cloud.actuator.server.GradeSwitcherListenerRepository;
-import com.hqy.cloud.actuator.service.BasicAuthorizationService;
-import com.hqy.cloud.actuator.service.MicroServiceGradeManageService;
-import com.hqy.cloud.actuator.service.impl.BasicAuthorizationServiceImpl;
-import com.hqy.cloud.actuator.service.impl.MicroServiceGradeManageServiceImpl;
 import com.hqy.cloud.common.swticher.AbstractSwitcher;
-import com.hqy.cloud.registry.api.Registry;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
@@ -20,10 +12,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Nonnull;

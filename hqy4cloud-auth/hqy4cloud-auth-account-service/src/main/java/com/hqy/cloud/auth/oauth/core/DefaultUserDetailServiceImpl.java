@@ -1,8 +1,10 @@
 package com.hqy.cloud.auth.oauth.core;
 
 import com.hqy.cloud.auth.account.entity.Account;
+import com.hqy.cloud.auth.account.entity.OauthClient;
 import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.account.constants.AccountResultCode;
+import com.hqy.cloud.auth.account.service.SysOauthClientDomainService;
 import com.hqy.cloud.auth.security.api.UserDetailsServiceWrapper;
 import com.hqy.cloud.auth.security.core.SecurityAuthUser;
 import com.hqy.cloud.util.JsonUtil;
@@ -28,6 +30,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
     private final AccountDomainService service;
+    private final SysOauthClientDomainService SysOauthClientDomainService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,10 +38,13 @@ public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
         if (Objects.isNull(account)) {
             throw new UsernameNotFoundException(AccountResultCode.USER_NOT_FOUND.message);
         }
+        OauthClient oauthClient = SysOauthClientDomainService.findByClientId(account.getClientId());
+        if (Objects.isNull(oauthClient)) {
+            throw new UsernameNotFoundException(AccountResultCode.AUTH_CLIENT_NOT_EXIST.message);
+        }
         UserDetails userDetails = new SecurityAuthUser(account.getId(), account.getUsername(), account.getPassword(),
                 account.getEmail(), account.getPhone(), account.getStatus(), account.getRole(),
-                // TODO 暂时用角色代表权限
-                AuthorityUtils.commaSeparatedStringToAuthorityList(account.getRole().toString()));
+                AuthorityUtils.commaSeparatedStringToAuthorityList(oauthClient.getAuthorities()));
         //校验user.
         checkUserDetails(userDetails);
         return userDetails;

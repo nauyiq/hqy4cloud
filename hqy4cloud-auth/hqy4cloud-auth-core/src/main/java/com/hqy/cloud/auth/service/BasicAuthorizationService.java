@@ -1,4 +1,4 @@
-package com.hqy.cloud.actuator.service;
+package com.hqy.cloud.auth.service;
 
 /**
  * basic 认证服务

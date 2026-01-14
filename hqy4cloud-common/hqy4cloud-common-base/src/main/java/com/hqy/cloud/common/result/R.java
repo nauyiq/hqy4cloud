@@ -65,7 +65,7 @@ public class R<T> extends Response {
 
     public static <T> R<T> setResult(boolean result, String code, String msg, T data) {
         R<T> apiResult = new R<>();
-        apiResult.setResult(result);
+        apiResult.setSuccess(result);
         apiResult.setCode(code);
         apiResult.setData(data);
         apiResult.setMessage(msg);

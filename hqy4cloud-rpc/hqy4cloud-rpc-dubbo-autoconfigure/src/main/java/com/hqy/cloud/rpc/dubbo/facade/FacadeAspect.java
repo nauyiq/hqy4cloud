@@ -114,7 +114,7 @@ public class FacadeAspect {
         stringBuilder.append(stopWatch.getTime()).append(" ms");
         if (response instanceof Response) {
             stringBuilder.append(" ,success = ");
-            stringBuilder.append(((Response) response).isResult());
+            stringBuilder.append(((Response) response).isSuccess());
         }
         if (exception != null) {
             stringBuilder.append(" ,success = ");
@@ -134,7 +134,7 @@ public class FacadeAspect {
         }
 
         if (response instanceof Response baseResponse) {
-            if (!baseResponse.isResult()) {
+            if (!baseResponse.isSuccess()) {
                 stringBuilder.append(" , execute_failed");
             }
         }
@@ -148,7 +148,7 @@ public class FacadeAspect {
      */
     private void enrichObject(Object response) {
         if (response instanceof Response) {
-            if (!((Response) response).isResult()) {
+            if (!((Response) response).isSuccess()) {
                 //如果状态是成功的，需要将未设置的responseCode设置成BIZ_ERROR
                 if (StringUtils.isEmpty(((Response) response).getMessage())) {
                     ((Response) response).setMessage(ResultCode.FAILED.getMessage());
@@ -165,7 +165,7 @@ public class FacadeAspect {
 
         //如果返回值的类型为BaseResponse 的子类，则创建一个通用的失败响应
         if (returnType.getDeclaredConstructor().newInstance() instanceof Response response) {
-            response.setResult(false);
+            response.setSuccess(false);
             if (valid) {
                 // 校验入参异常
                 response.setCode(ResultCode.ERROR_PARAM.getCode());

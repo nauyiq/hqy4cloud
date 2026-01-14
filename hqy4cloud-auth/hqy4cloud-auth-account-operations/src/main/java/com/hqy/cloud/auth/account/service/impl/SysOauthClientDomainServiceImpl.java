@@ -24,7 +24,7 @@ public class SysOauthClientDomainServiceImpl extends ServiceImpl<SysOauthClientM
 
     @Override
     @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
-    @Cached(name = "account:cache:oauth_client:", expire = 3000,  cacheType = CacheType.REMOTE, key = "#clientId", cacheNullValue = true)
+    @Cached(name = "account:cache:oauth_client:", expire = 3000,  cacheType = CacheType.REMOTE, key = "#clientId", cacheNullValue = false)
     public OauthClient findByClientId(String clientId) {
         return getBaseMapper().selectById(clientId);
     }

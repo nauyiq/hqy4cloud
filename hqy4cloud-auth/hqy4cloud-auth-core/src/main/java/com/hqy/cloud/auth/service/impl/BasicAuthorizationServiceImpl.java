@@ -1,7 +1,7 @@
-package com.hqy.cloud.actuator.service.impl;
+package com.hqy.cloud.auth.service.impl;
 
-import com.hqy.cloud.actuator.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.common.UsernamePasswordAuthentication;
+import com.hqy.cloud.auth.service.BasicAuthorizationService;
 import com.hqy.cloud.auth.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

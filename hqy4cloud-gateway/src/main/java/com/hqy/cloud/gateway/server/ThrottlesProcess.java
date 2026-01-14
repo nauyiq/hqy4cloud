@@ -5,7 +5,7 @@ import com.hqy.cloud.limiter.api.ManualWhiteIpService;
 import com.hqy.cloud.limiter.api.ThrottlesServer;
 import com.hqy.cloud.limiter.core.BiBlockedIpRedisService;
 import com.hqy.cloud.limiter.core.ManualBlockedIpService;
-import com.hqy.cloud.web.utils.HtmlCommonUtil;
+import com.hqy.cloud.util.HtmlCommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

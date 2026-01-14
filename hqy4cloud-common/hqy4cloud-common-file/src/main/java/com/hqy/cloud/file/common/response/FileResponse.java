@@ -32,7 +32,7 @@ public class FileResponse extends Response {
 
     public static FileResponse ok() {
         FileResponse fileResponse = new FileResponse();
-        fileResponse.setResult(true);
+        fileResponse.setSuccess(true);
         return fileResponse;
     }
 
@@ -42,7 +42,7 @@ public class FileResponse extends Response {
 
     public static FileResponse ok(String path, String relativePath, InputStream inputStream) {
         FileResponse fileResponse = new FileResponse();
-        fileResponse.setResult(true);
+        fileResponse.setSuccess(true);
         fileResponse.setPath(path);
         fileResponse.setRelativePath(relativePath);
         fileResponse.setInputStream(inputStream);
@@ -51,7 +51,7 @@ public class FileResponse extends Response {
 
     public static FileResponse failed(Result result) {
         FileResponse fileResponse = new FileResponse();
-        fileResponse.setResult(false);
+        fileResponse.setSuccess(false);
         fileResponse.setCode(result.getCode());
         fileResponse.setMessage(result.getMessage());
         return fileResponse;
