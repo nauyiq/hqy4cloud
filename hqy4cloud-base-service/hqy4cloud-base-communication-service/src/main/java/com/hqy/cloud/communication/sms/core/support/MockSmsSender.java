@@ -8,7 +8,6 @@ import com.hqy.cloud.lock.annotation.DistributeLock;
  * @version 1.0
  * @date 2024/7/12
  */
-
 public class MockSmsSender implements SmsSender {
 
     @Override

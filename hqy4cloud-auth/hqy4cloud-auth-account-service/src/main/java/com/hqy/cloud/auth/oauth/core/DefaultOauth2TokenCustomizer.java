@@ -29,7 +29,6 @@ public class DefaultOauth2TokenCustomizer implements OAuth2TokenCustomizer<OAuth
         }
         SecurityAuthUser securityUser = (SecurityAuthUser) context.getPrincipal().getPrincipal();
         claims.claim(SecurityConstants.USERNAME, securityUser.getName());
-//        claims.claim(SecurityConstants.ROLES, securityUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
         claims.claim(SecurityConstants.ROLES, securityUser.getUserRole().name());
         claims.claim(SecurityConstants.ID, securityUser.getId());
     }

@@ -16,15 +16,12 @@ public interface AccountDomainService extends IService<Account> {
      */
     Account findById(Long id);
 
-
     /**
      * 查询账户信息
      * @param uniqueIndex     唯一索引（用户名，手机号，邮箱）
      * @return                Account
      */
     Account queryAccountByUniqueIndex(String uniqueIndex);
-
-
 
 
 }

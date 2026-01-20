@@ -20,9 +20,9 @@ import java.util.Map;
 @AllArgsConstructor
 @ConfigurationProperties(prefix = SmsProperties.PREFIX)
 public class SmsProperties {
-    public static final String PREFIX = "hqy4cloud.sms";
+    public static final String PREFIX = "sys.communication.sms";
 
-    private boolean enabled = true;
+    private boolean mock;
 
     private String host;
 

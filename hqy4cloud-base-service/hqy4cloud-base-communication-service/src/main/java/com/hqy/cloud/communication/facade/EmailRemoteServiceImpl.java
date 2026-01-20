@@ -26,7 +26,7 @@ import java.util.Set;
  * @date 2022/10/14 15:01
  */
 @Slf4j
-@Service
+@Deprecated
 @RequiredArgsConstructor
 public class EmailRemoteServiceImpl extends AbstractRPCService implements EmailRemoteService {
 

@@ -16,7 +16,7 @@ public class MybatisDataHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByNameIfNull("created", new Date(), metaObject);
         this.setFieldValByNameIfNull("updated", new Date(), metaObject);
-        this.setFieldValByNameIfNull("deleted", 0, metaObject);
+        this.setFieldValByNameIfNull("deleted", false, metaObject);
         this.setFieldValByNameIfNull("version", 0, metaObject);
     }
 

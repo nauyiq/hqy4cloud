@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
     private PasswordEncoder passwordEncoder;
     private static final String USER_NOT_FOUND_PASSWORD = "userNotFoundPassword";
-    private final static BasicAuthenticationConverter basicConvert = new BasicAuthenticationConverter();
+    private final static BasicAuthenticationConverter BASIC_CONVERT = new BasicAuthenticationConverter();
 
 
     /**
@@ -83,7 +83,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
             if (grantType.equals(SecurityConstants.EMAIL)) {
                 // 校验邮箱验证是否正确
                 RandomCodeService service = SpringUtil.getBean(RandomCodeService.class);
-                String email = request.getParameter(SecurityConstants.EMAIL_PARAMETER_NAME);
+                String email = request.getParameter(SecurityConstants.EMAIL);
                 if (StringUtils.isBlank(email) || !service.isExist(code, email, RandomCodeScene.EMAIL_AUTH)) {
                     Oauth2EndpointUtils.throwError(Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE, Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE,
                             Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
@@ -115,7 +115,7 @@ public class DefaultDaoAuthenticationProvider extends AbstractUserDetailsAuthent
         String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
         String clientId = request.getParameter(OAuth2ParameterNames.CLIENT_ID);
         if (StrUtil.isBlank(clientId)) {
-            clientId = basicConvert.convert(request).getName();
+            clientId = BASIC_CONVERT.convert(request).getName();
         }
 
         Map<String, UserDetailsServiceWrapper> userDetailsServiceMap = SpringUtil.getBeansOfType(UserDetailsServiceWrapper.class);

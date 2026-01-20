@@ -13,10 +13,6 @@
     <description>通用的基础设施模块</description>
     <artifactId>hqy4cloud-common-infrastructure</artifactId>
 
-    <properties>
-        <sensitive.version>1.7.0</sensitive.version>
-    </properties>
-
     <dependencies>
         <!-- 缓存模块 -->
         <dependency>

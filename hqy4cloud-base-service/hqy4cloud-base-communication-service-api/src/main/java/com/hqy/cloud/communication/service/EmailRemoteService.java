@@ -14,6 +14,7 @@ import java.util.Set;
  * @version 1.0
  * @date 2022/10/14 14:57
  */
+@Deprecated
 @ThriftService(MicroServiceConstants.COMMUNICATION_SERVICE)
 public interface EmailRemoteService extends RPCService {
 

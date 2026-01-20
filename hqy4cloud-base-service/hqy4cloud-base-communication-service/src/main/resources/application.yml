@@ -1,15 +1,16 @@
+logging:
+  config: classpath:logback.xml
 server:
-  port: 8777
+  port: 8002
 
 spring:
+  profiles:
+    active: dev
   application:
-    name: @artifactId@
-
+    name: communication-service
   config:
     import:
       - classpath:nacos_config.yml
-      - nacos:sms.yml
-      - nacos:email.yml
-      - nacos:dubbo.yml
       - nacos:@profiles.active@.yaml
       - nacos:redis.yaml
+

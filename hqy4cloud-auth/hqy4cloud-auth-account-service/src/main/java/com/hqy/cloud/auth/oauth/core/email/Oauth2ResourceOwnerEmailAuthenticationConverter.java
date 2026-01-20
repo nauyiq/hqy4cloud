@@ -35,11 +35,11 @@ public class Oauth2ResourceOwnerEmailAuthenticationConverter extends Oauth2Resou
     @Override
     public void checkParams(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = Oauth2EndpointUtils.getParameters(request);
-        String email = parameters.getFirst(SecurityConstants.EMAIL_PARAMETER_NAME);
+        String email = parameters.getFirst(SecurityConstants.EMAIL);
         String code = parameters.getFirst(SecurityConstants.CODE_PARAMETER_NAME);
-        if (StringUtils.isAnyBlank(email, code) || parameters.get(SecurityConstants.EMAIL_PARAMETER_NAME).size() != 1 ||
+        if (StringUtils.isAnyBlank(email, code) || parameters.get(SecurityConstants.EMAIL).size() != 1 ||
                 parameters.get(SecurityConstants.CODE_PARAMETER_NAME).size() != 1) {
-            Oauth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.EMAIL_PARAMETER_NAME,
+            Oauth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.EMAIL,
                     Oauth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 

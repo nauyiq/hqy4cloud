@@ -1,8 +1,13 @@
 package com.hqy.cloud.rpc.dubbo.facade;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
+import com.github.houbb.sensitive.core.api.SensitiveUtil;
 import com.hqy.cloud.common.base.exception.BizException;
+import com.hqy.cloud.common.response.MultiResponse;
 import com.hqy.cloud.common.response.Response;
+import com.hqy.cloud.common.response.SingleResponse;
+import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.util.BeanValidator;
 import jakarta.validation.ValidationException;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Facade 切面处理类， 统一进行参数校验和异常捕获，采集
@@ -42,6 +48,8 @@ public class FacadeAspect {
             log.debug("start to execute , method = {} , args = {}", method.getName(), JSON.toJSONString(args));
         }
 
+        Facade facade = method.getAnnotation(Facade.class);
+
         Class returnType = ((MethodSignature) pjp.getSignature()).getMethod().getReturnType();
 
         //循环遍历所有参数，进行参数校验
@@ -59,6 +67,12 @@ public class FacadeAspect {
             Object response = pjp.proceed();
             enrichObject(response);
             printLog(stopWatch, method, args, "end to execute", response, null);
+
+            if (facade.desensitize()) {
+                // 如果需要脱敏展示数据， 则脱敏后返回
+                return desensitize(response);
+            }
+
             return response;
         } catch (Throwable throwable) {
             // TODO 异常采集
@@ -68,6 +82,35 @@ public class FacadeAspect {
             return getFailedResponse(returnType, throwable, false);
         }
 
+    }
+
+
+    /**
+     * 脱敏处理, 基于sensitive
+     * @return
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Object desensitize(Object result) {
+        if (result instanceof R<?>) {
+            R r = (R) result;
+            Object desCopyData = SensitiveUtil.desCopy(r.getData());
+            r.setData(desCopyData);
+            return r;
+        } else if (result instanceof SingleResponse) {
+            SingleResponse response = (SingleResponse) result;
+            Object desCopyData = SensitiveUtil.desCopy(response.getData());
+            response.setData(desCopyData);
+            return response;
+        } else if (result instanceof MultiResponse) {
+            MultiResponse multipleResponse = (MultiResponse) result;
+            List desCopyCollection = SensitiveUtil.desCopyCollection(multipleResponse.getData());
+            multipleResponse.setData(desCopyCollection);
+            return multipleResponse;
+        } else if (result instanceof String && (JSONUtil.isTypeJSON((String) result) || JSONUtil.isTypeJSONArray((String)  result))) {
+            return SensitiveUtil.desJson(result);
+        } else {
+            return SensitiveUtil.desCopy(result);
+        }
     }
 
 

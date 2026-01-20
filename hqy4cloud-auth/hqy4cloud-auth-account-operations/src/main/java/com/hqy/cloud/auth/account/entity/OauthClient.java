@@ -47,7 +47,7 @@ public class OauthClient implements Serializable {
     /**
      * 指定客户端支持的grant_type,可选值包括authorization_code,password,refresh_token,implicit,client_credentials
      */
-    private String authorizedGrantTypes = "password,refresh_token,authorization_code";
+    private String authorizedGrantTypes;
 
     /**
      * 客户端的重定向URI,可为空
@@ -63,12 +63,12 @@ public class OauthClient implements Serializable {
     /**
      * 设定客户端的access_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 12, 12小时).
      */
-    private Integer accessTokenValidity;
+    private Integer accessTokenValidity = 43200;
 
     /**
      * 设定客户端的refresh_token的有效时间值(单位:秒),可选, 若不设定值则使用默认的有效时间值(60 * 60 * 24 * 30, 30天).
      */
-    private Integer refreshTokenValidity;
+    private Integer refreshTokenValidity = 2592000;
 
     /**
      * 预留的字段,在Oauth的流程中没有实际的使用,可选,但若设置值,必须是JSON格式的数据

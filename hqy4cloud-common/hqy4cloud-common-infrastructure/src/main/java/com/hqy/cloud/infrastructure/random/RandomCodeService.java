@@ -13,55 +13,30 @@ public interface RandomCodeService {
 
     int DEFAULT_LENGTH = 6;
 
-
     default String randomNumber(int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
         return randomNumber(DEFAULT_LENGTH, expired, timeUnit, scene, value);
     }
 
-    /**
-     * 生成随机的number code
-     * @param length     code长度
-     * @param expired    过期时间
-     * @param timeUnit   过期时间单位
-     * @param scene      场景
-     * @param value      缓存的值
-     * @return           随机生成的code
-     */
-    String randomNumber(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value);
+    default String randomNumber(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
+        return randomNumber(length, expired, timeUnit, scene, "default", value);
+    }
 
+    String randomNumber(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String clientId, String value);
 
     default String randomStr(int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
         return randomStr(DEFAULT_LENGTH, expired, timeUnit, scene, value);
     }
 
-    /**
-     * 生成随机Str code
-     * @param length         code长度
-     * @param expired       过期时间
-     * @param timeUnit      过期时间单位
-     * @param scene         场景
-     * @param value         缓存的值
-     * @return              随机生成的code
-     */
-    String randomStr(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value);
+    default String randomStr(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String value) {
+        return randomStr(length, expired, timeUnit, scene, "default", value);
+    }
 
-    /**
-     * code是否存在
-     * @param code           验证code
-     * @param value          保存的值
-     * @param scene          场景
-     * @return     result.
-     */
-    boolean isExist(String code, String value, RandomCodeScene scene);
+    String randomStr(int length, int expired, TimeUnit timeUnit, RandomCodeScene scene, String clientId, String value);
 
+    default boolean isExist(String code, String value, RandomCodeScene scene) {
+        return isExist(code, value, "default", scene);
+    }
 
-    /**
-     * 保存一下code
-     * @param code  code
-     * @param value 保存的值
-     * @param scene 场景
-     * @return      是否保存成功
-     */
-    boolean saveCode(String code, String value, RandomCodeScene scene);
+    boolean isExist(String code, String value, String clientId, RandomCodeScene scene);
 
 }

@@ -40,7 +40,7 @@ public class Oauth2ResourceOwnerSmsAuthenticationProvider extends Oauth2Resource
     @Override
     public boolean supports(Class<?> authentication) {
         boolean supports = Oauth2ResourceOwnerSmsAuthenticationToken.class.isAssignableFrom(authentication);
-        log.warn("supports authentication={} returning {}", authentication, supports);
+        log.debug("supports authentication={} returning {}", authentication, supports);
         return supports;
     }
 
@@ -57,5 +57,10 @@ public class Oauth2ResourceOwnerSmsAuthenticationProvider extends Oauth2Resource
     public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
         String phone = (String) reqParameters.get(SecurityConstants.PHONE_PARAMETER_NAME);
         return new UsernamePasswordAuthenticationToken(phone, null);
+    }
+
+    @Override
+    public AuthorizationGrantType authorizationGrantType() {
+        return new AuthorizationGrantType(SecurityConstants.SMS);
     }
 }

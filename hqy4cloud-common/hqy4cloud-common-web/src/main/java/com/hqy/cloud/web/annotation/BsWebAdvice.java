@@ -23,4 +23,10 @@ public @interface BsWebAdvice {
      * @return
      */
     boolean requiredIdentifier() default false;
+
+    /**
+     * 是否需要脱敏
+     * @return
+     */
+    boolean desensitize() default false;
 }

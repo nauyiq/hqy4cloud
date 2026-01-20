@@ -57,7 +57,7 @@ public class HttpAuthenticationResourceScanner implements BeanPostProcessor {
             }
 
             BsWebAdvice bsWebAdvice = AnnotationUtils.findAnnotation(method, BsWebAdvice.class);
-            if (bsWebAdvice != null && bsWebAdvice.requiredToken()) {
+            if (bsWebAdvice != null) {
                 processBsWebAdvice(targetClass, method, classLevelPath, bsWebAdvice);
             }
         }
@@ -206,12 +206,6 @@ public class HttpAuthenticationResourceScanner implements BeanPostProcessor {
      * 获取方法级别的路径
      */
     private String getMethodPath(Method method) {
-        // 尝试从各种RequestMapping注解中获取路径
-        RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-        if (requestMapping != null) {
-            return getPathFromAnnotation(requestMapping.value(), requestMapping.path());
-        }
-
         GetMapping getMapping = AnnotationUtils.findAnnotation(method, GetMapping.class);
         if (getMapping != null) {
             return getPathFromAnnotation(getMapping.value(), getMapping.path());
@@ -236,6 +230,14 @@ public class HttpAuthenticationResourceScanner implements BeanPostProcessor {
         if (patchMapping != null) {
             return getPathFromAnnotation(patchMapping.value(), patchMapping.path());
         }
+
+        // 尝试从各种RequestMapping注解中获取路径
+        RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+        if (requestMapping != null) {
+            return getPathFromAnnotation(requestMapping.value(), requestMapping.path());
+        }
+
+
 
         return null;
     }

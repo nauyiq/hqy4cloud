@@ -89,6 +89,8 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
      */
     public abstract UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters);
 
+    public abstract AuthorizationGrantType authorizationGrantType();
+
     @Deprecated
     public void setRefreshTokenGenerator(Supplier<String> refreshTokenGenerator) {
         Assert.notNull(refreshTokenGenerator, "refreshTokenGenerator cannot be null");
@@ -147,13 +149,13 @@ public abstract class Oauth2ResourceOwnerBaseAuthenticationProvider <T extends O
                     .principal(usernamePasswordAuthentication)
                     .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                     .authorizedScopes(authorizedScopes)
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                    .authorizationGrantType(authorizationGrantType())
                     .authorizationGrant(resourceOwnerBaseAuthentication);
             // @formatter:on
 
             OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
                     .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName())
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                    .authorizationGrantType(authorizationGrantType())
                     // 0.4.0 新增的方法
                     .authorizedScopes(authorizedScopes);
 

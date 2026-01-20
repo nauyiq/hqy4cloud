@@ -75,7 +75,7 @@ public enum ResultCode implements Result {
     /**
      * 无效的token
      */
-    INVALID_ACCESS_TOKEN("9300", "Invalid token, token expired or invalid."),
+    INVALID_ACCESS_TOKEN("INVALID_ACCESS_TOKEN", "令牌不存在或已过期."),
 
     /**
      * 权限不够
@@ -110,7 +110,7 @@ public enum ResultCode implements Result {
     /**
      * 错误参数，检查参数是否存在
      */
-    ERROR_PARAM_UNDEFINED("1002", "Invalid parameter, please check undefined."),
+    ERROR_PARAM_UNDEFINED("ERROR_PARAM_UNDEFINED", "参数为空，请检查"),
 
     /**
      * 无效的数据
@@ -125,7 +125,7 @@ public enum ResultCode implements Result {
     /**
      * 找不到短信模板
      */
-    NOT_FOUND_SMS_TEMPLATE("2001", "Not found sms template."),
+    NOT_FOUND_SMS_TEMPLATE("NOT_FOUND_SMS_TEMPLATE", "未找到短信模板"),
 
     /**
      * 发送短信失败
@@ -149,8 +149,6 @@ public enum ResultCode implements Result {
      * 角色名已经存在
      */
     ROLE_NAME_EXIST("3005", "This role name already exist."),
-
-
 
 
     /**

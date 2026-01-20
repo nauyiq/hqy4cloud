@@ -80,7 +80,7 @@ public class ResourceServerConfiguration {
             .authorizeExchange(exchange -> exchange
                 // 放行所有option请求
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // 白名单uri
+                    // 白名单uri
                 .pathMatchers(getWhiteUriPatterns()).permitAll()
                 // 默认所有请求都需要登录
                 .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())

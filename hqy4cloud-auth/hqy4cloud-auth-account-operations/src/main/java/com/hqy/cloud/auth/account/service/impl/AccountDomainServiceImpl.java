@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class AccountDomainServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountDomainService {
 
+
     @Override
     @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
     @Cached(name = AccountAuthCacheManager.ACCOUNT_USER_CACHE_KEY, expire = 1440,  cacheType = CacheType.BOTH, key = "#id", cacheNullValue = true)
@@ -32,4 +33,6 @@ public class AccountDomainServiceImpl extends ServiceImpl<AccountMapper, Account
     public Account queryAccountByUniqueIndex(String uniqueIndex) {
         return getBaseMapper().queryAccountByUniqueIndex(uniqueIndex);
     }
+
+
 }

@@ -60,4 +60,9 @@ public class Oauth2ResourceOwnerEmailAuthenticationProvider extends Oauth2Resour
         String email = (String) reqParameters.get(SecurityConstants.EMAIL);
         return new UsernamePasswordAuthenticationToken(email, null);
     }
+
+    @Override
+    public AuthorizationGrantType authorizationGrantType() {
+        return new AuthorizationGrantType(SecurityConstants.EMAIL);
+    }
 }

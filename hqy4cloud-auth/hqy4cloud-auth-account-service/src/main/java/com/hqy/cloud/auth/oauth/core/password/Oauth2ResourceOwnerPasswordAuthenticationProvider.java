@@ -1,5 +1,6 @@
 package com.hqy.cloud.auth.oauth.core.password;
 
+import com.hqy.cloud.auth.common.SecurityConstants;
 import com.hqy.cloud.auth.oauth.base.Oauth2ResourceOwnerBaseAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -57,5 +58,10 @@ public class Oauth2ResourceOwnerPasswordAuthenticationProvider extends Oauth2Res
         String username = (String) reqParameters.get(OAuth2ParameterNames.USERNAME);
         String password = (String) reqParameters.get(OAuth2ParameterNames.PASSWORD);
         return new UsernamePasswordAuthenticationToken(username, password);
+    }
+
+    @Override
+    public AuthorizationGrantType authorizationGrantType() {
+        return new AuthorizationGrantType(SecurityConstants.PASSWORD);
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
+import java.util.Collections;
+
 /**
  * @author qiyuan.hong
  * @date 2024/7/18
@@ -35,7 +37,12 @@ public class WebAutoConfiguration {
         FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new TokenFilter(redissonClient));
         // 获取需要校验token的url pattern
-        registrationBean.addUrlPatterns(repository.getIdentifierTokenUri().toArray(new String[0]));
+        String[] array = repository.getIdentifierTokenUri().toArray(new String[0]);
+        if (array.length > 0) {
+            registrationBean.addUrlPatterns(array);
+        } else {
+            registrationBean.setEnabled(false);
+        }
         registrationBean.setOrder(10);
         return registrationBean;
     }

@@ -1,2 +1,3 @@
 com.hqy.cloud.web.handler.WebMvcGlobalExceptionHandler
 com.hqy.cloud.web.config.WebAutoConfiguration
+com.hqy.cloud.web.support.HttpAuthenticationResourceScanner

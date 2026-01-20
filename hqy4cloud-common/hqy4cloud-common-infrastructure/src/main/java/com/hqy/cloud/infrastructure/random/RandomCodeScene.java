@@ -10,12 +10,12 @@ public enum RandomCodeScene {
     /**
      * 手机验证码认证
      */
-    SMS_AUTH("code:sms:"),
+    SMS_AUTH("randomCode:sms:"),
 
     /**
      * 邮箱验证码认证
      */
-    EMAIL_AUTH("code:email:"),
+    EMAIL_AUTH("randomCode:email:"),
 
 
     ;

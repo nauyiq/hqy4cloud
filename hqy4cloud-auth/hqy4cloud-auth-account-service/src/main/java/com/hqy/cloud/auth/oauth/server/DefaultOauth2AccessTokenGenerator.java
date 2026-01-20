@@ -63,10 +63,14 @@ public class DefaultOauth2AccessTokenGenerator implements OAuth2TokenGenerator<O
             OAuth2TokenClaimsContext.Builder accessTokenContextBuilder = OAuth2TokenClaimsContext.with(claimsBuilder)
                     .registeredClient(context.getRegisteredClient())
                     .principal(context.getPrincipal())
-                    .authorizationServerContext(context.getAuthorizationServerContext())
                     .authorizedScopes(context.getAuthorizedScopes())
                     .tokenType(context.getTokenType())
                     .authorizationGrantType(context.getAuthorizationGrantType());
+
+            if (context.getAuthorizationServerContext() != null) {
+                accessTokenContextBuilder.authorizationServerContext(context.getAuthorizationServerContext());
+            }
+
             if (context.getAuthorization() != null) {
                 accessTokenContextBuilder.authorization(context.getAuthorization());
             }

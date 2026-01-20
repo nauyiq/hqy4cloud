@@ -75,7 +75,11 @@ public class DefaultRegisteredClientRepository implements RegisteredClientReposi
         if (Objects.isNull(oauthClient)) {
             throw new OAuth2AuthorizationCodeRequestAuthenticationException(new OAuth2Error("Not found Oauth client by db."), null);
         }
+        return getRegisteredClient(oauthClient);
+    }
 
+    public RegisteredClient getRegisteredClient(OauthClient oauthClient) {
+        String clientId = oauthClient.getClientId();
         RegisteredClient.Builder builder = RegisteredClient.withId(clientId)
                 .clientId(clientId)
                 .clientSecret(oauthClient.getClientSecret())
@@ -83,8 +87,8 @@ public class DefaultRegisteredClientRepository implements RegisteredClientReposi
 
         // 授权模式
         Optional.ofNullable(oauthClient.getAuthorizedGrantTypes())
-                        .ifPresent(grants -> StringUtils.commaDelimitedListToSet(grants)
-                                .forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
+                .ifPresent(grants -> StringUtils.commaDelimitedListToSet(grants)
+                        .forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
 
         // 回调地址
         Optional.ofNullable(oauthClient.getWebServerRedirectUri()).ifPresent(redirectUri -> Arrays
@@ -105,6 +109,5 @@ public class DefaultRegisteredClientRepository implements RegisteredClientReposi
                 .clientSettings(ClientSettings.builder()
                         .requireAuthorizationConsent(!BooleanUtil.toBoolean(oauthClient.getAutoapprove())).build())
                 .build();
-
     }
 }

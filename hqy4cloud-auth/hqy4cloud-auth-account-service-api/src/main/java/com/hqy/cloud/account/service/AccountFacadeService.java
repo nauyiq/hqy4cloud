@@ -3,10 +3,9 @@ package com.hqy.cloud.account.service;
 import com.hqy.cloud.account.request.AccountAuthRequest;
 import com.hqy.cloud.account.request.AccountModifyRequest;
 import com.hqy.cloud.account.request.AccountQueryParams;
-import com.hqy.cloud.account.request.RegistryAccountByPhoneParams;
+import com.hqy.cloud.account.request.AuthenticateRequest;
 import com.hqy.cloud.account.response.AccountInfo;
-import com.hqy.cloud.account.response.AccountOperationInfo;
-import com.hqy.cloud.account.response.RegisterInfo;
+import com.hqy.cloud.account.response.TokenInfo;
 import com.hqy.cloud.common.result.R;
 
 import java.util.Collection;
@@ -35,18 +34,21 @@ public interface AccountFacadeService {
     R<List<AccountInfo>> queryList(Collection<Long> ids);
 
     /**
-     * 根据手机号注册账号
-     * @param registryParams 注册账号
-     * @return               认证信息
+     * 注册并认证
+     * <pre>
+     *     注册并认证只支持SMS/EMAIL模式
+     * </pre>
+     * @param request 注册并认证请求参数
+     * @return        Token信息
      */
-    R<RegisterInfo> registerByPhone(RegistryAccountByPhoneParams registryParams);
+    R<TokenInfo> registerAndAuthenticate(AuthenticateRequest request);
 
     /**
      * 实名认证
      * @param request 入参
      * @return        响应
      */
-    R<AccountOperationInfo> auth(AccountAuthRequest request);
+    R<AccountInfo> realNameAuth(AccountAuthRequest request);
 
     /**
      * 更改密码

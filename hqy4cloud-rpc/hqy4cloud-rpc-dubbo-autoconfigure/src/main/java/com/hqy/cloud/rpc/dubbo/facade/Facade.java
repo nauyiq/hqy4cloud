@@ -12,4 +12,11 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Facade {
+
+    /**
+     * 是否需要脱敏
+     * @return
+     */
+    boolean desensitize() default false;
+
 }
