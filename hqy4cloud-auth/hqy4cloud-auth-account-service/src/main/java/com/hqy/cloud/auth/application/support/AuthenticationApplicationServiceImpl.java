@@ -142,6 +142,7 @@ public class AuthenticationApplicationServiceImpl implements AuthenticationAppli
             case SMS -> new AuthorizationGrantType(SecurityConstants.SMS);
             case PASSWORD -> new AuthorizationGrantType(SecurityConstants.PASSWORD);
             case EMAIL -> new AuthorizationGrantType(SecurityConstants.EMAIL);
+            default -> throw new UnsupportedOperationException("Unsupported grant type: " + grantType);
         };
 
         // 获取客户端认证token包装类
@@ -149,6 +150,7 @@ public class AuthenticationApplicationServiceImpl implements AuthenticationAppli
             case SMS -> new Oauth2ResourceOwnerSmsAuthenticationToken(authorizationGrantType, oAuth2ClientAuthenticationToken, authorizedScopes, Maps.newHashMap());
             case PASSWORD -> new Oauth2ResourceOwnerPasswordAuthenticationToken(authorizationGrantType, oAuth2ClientAuthenticationToken, authorizedScopes, Maps.newHashMap());
             case EMAIL -> new Oauth2ResourceOwnerEmailAuthenticationToken(authorizationGrantType, oAuth2ClientAuthenticationToken, authorizedScopes, Maps.newHashMap());
+            default -> throw new UnsupportedOperationException("Unsupported grant type: " + grantType);
         };
 
         DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()

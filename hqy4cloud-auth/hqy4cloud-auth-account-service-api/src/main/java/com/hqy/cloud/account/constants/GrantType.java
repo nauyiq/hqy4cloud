@@ -18,6 +18,7 @@ public enum GrantType {
 
     EMAIL,
 
+    REFRESH_TOKEN,
 
     ;
 
