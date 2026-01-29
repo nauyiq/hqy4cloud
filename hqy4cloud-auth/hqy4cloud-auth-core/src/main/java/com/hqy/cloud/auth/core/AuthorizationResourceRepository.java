@@ -113,7 +113,8 @@ public class AuthorizationResourceRepository {
         String resourceId = method + StrUtil.UNDERLINE + uri;
         Set<String> needAuthorities = authorizationResourceMap.get(resourceId);
         if (CollectionUtils.isEmpty(needAuthorities)) {
-            return false;
+            // 没有配置规则
+            return true;
         }
         return CollUtil.containsAny(authorities, needAuthorities);
     }

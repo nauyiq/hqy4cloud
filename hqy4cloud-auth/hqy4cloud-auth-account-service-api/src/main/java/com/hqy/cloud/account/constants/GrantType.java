@@ -16,7 +16,8 @@ public enum GrantType {
 
     SMS,
 
-    EMAIL
+    EMAIL,
+
 
     ;
 

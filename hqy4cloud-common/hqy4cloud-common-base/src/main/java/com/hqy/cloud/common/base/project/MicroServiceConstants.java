@@ -18,7 +18,7 @@ public class MicroServiceConstants {
     /**
      * 全局网关gateway服务
      */
-    public static final String GATEWAY = "hqy4cloud-gateway";
+    public static final String GATEWAY = "gateway-service";
     public static final int DEFAULT_PORT_GATEWAY = 9527;
     public static final String DEFAULT_ACCESS_DOMAIN_NAME = "https://api.hongqy1024.cn";
     public static final ProjectInfo GATEWAY_INFO = new ProjectInfo("网关服务", GATEWAY);
@@ -26,26 +26,26 @@ public class MicroServiceConstants {
     /**
      * 基础采集服务
      */
-    public static final String COMMON_COLLECTOR = "hqy4cloud-base-collection-service";
+    public static final String COMMON_COLLECTOR = "collection-service";
     public static final ProjectInfo COLLECTOR_INFO = new ProjectInfo("采集服务", COMMON_COLLECTOR);
 
     /**
      * 基础通讯服务
      */
-    public static final String COMMUNICATION_SERVICE = "hqy4cloud-base-communication-service";
+    public static final String COMMUNICATION_SERVICE = "communication-service";
     public static final ProjectInfo COMMUNICATION_INFO = new ProjectInfo("通讯服务", COMMUNICATION_SERVICE);
 
 
     /**
      * 基础id生成服务
      */
-    public static final String ID_SERVICE = "hqy4cloud-base-id-service";
+    public static final String ID_SERVICE = "id-service";
     public static final ProjectInfo ID_INFO = new ProjectInfo("分布式id服务", ID_SERVICE);
 
     /**
      * 账号-授权服务
      */
-    public static final String ACCOUNT_SERVICE = "hqy4cloud-auth-account-service";
+    public static final String ACCOUNT_SERVICE = "auth-service";
     public static final ProjectInfo ACCOUNT_AUTH_INFO = new ProjectInfo("账号授权服务", ACCOUNT_SERVICE);
 
     /**

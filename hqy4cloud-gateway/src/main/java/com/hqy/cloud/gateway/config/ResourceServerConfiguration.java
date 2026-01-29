@@ -82,8 +82,8 @@ public class ResourceServerConfiguration {
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // 白名单uri
                 .pathMatchers(getWhiteUriPatterns()).permitAll()
-                // 默认所有请求都需要登录
-                .pathMatchers("/**").hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())
+                .anyExchange().access(authorizationManager)
+//                    .hasAnyAuthority(UserRole.CUSTOMER.name(), UserRole.ADMIN.name(), UserRole.ROOT.name())
             )
 
             .oauth2ResourceServer(oauth2ResourceServerCustomizer -> oauth2ResourceServerCustomizer
@@ -92,7 +92,7 @@ public class ResourceServerConfiguration {
                     // 开放式token
                     .opaqueToken(c -> c.introspector(opaqueTokenIntrospector)))
             // 通用的请求授权走AuthorizationManager
-            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
+//            .authorizeExchange(spec -> spec.anyExchange().access(authorizationManager))
             .addFilterAt(new SecurityAuthenticationFilter(), SecurityWebFiltersOrder.LAST)
             .exceptionHandling(handler -> handler
                     // 拒绝策略

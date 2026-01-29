@@ -60,18 +60,12 @@ public class ServerSwitcher extends CommonSwitcher {
     /**
      * 节点-是否采用自定义的网关负载均衡策略
      */
-    public static final ServerSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new ServerSwitcher(154, "节点-是否采用自定义的网关负载均衡策略", true, MicroServiceConstants.GATEWAY);
+    public static final ServerSwitcher ENABLE_CUSTOMER_GATEWAY_LOAD_BALANCE = new ServerSwitcher(154, "网关服务-是否采用自定义的网关负载均衡策略", true, MicroServiceConstants.GATEWAY);
 
     /**
-     * 节点-网关负载均衡websocket项目时是否重新路由端口
+     * 网关服务-是否启用HTTP请求参数打印
      */
-    public static final ServerSwitcher ENABLE_GATEWAY_WEBSOCKET_ROUTER_PORTER = new ServerSwitcher(155, "节点-网关负载均衡websocket项目时是否重新路由端口", true, MicroServiceConstants.GATEWAY);
-
-    /**
-     * 节点-是否基于http-restful判断请求是读请求还是写请求
-     */
-    public static final ServerSwitcher ENABLE_BASE_HTTP_RESTFUL_CHECK_REQUEST_PERMISSION = new ServerSwitcher(156, "是否开启基于http-restful判断请求的读写权限", true, MicroServiceConstants.GATEWAY);
-
+    public static final ServerSwitcher ENABLE_GATEWAY_HTTP_REQUEST_PARAMS_PRINTER = new ServerSwitcher(155, "网关服务-是否启用HTTP请求参数打印", true, MicroServiceConstants.GATEWAY);
 
     /**
      * 采集服务-是否采集来自采集服务本身的异常

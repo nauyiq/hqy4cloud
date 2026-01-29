@@ -10,6 +10,7 @@ import com.hqy.cloud.auth.security.core.SecurityAuthUser;
 import com.hqy.cloud.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -42,9 +43,14 @@ public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
         if (Objects.isNull(oauthClient)) {
             throw new UsernameNotFoundException(AccountResultCode.AUTH_CLIENT_NOT_EXIST.message);
         }
+
+        String authorities = oauthClient.getAuthorities();
+        if (!authorities.contains(account.getRole().name())) {
+            authorities = StringUtils.isBlank(authorities) ? account.getRole().name() : authorities + "," + account.getRole().name();
+        }
         UserDetails userDetails = new SecurityAuthUser(account.getId(), account.getUsername(), account.getPassword(),
                 account.getEmail(), account.getPhone(), account.getStatus(), account.getRole(),
-                AuthorityUtils.commaSeparatedStringToAuthorityList(oauthClient.getAuthorities()));
+                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
         //校验user.
         checkUserDetails(userDetails);
         return userDetails;

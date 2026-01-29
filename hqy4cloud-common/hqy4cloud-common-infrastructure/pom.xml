@@ -28,19 +28,6 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- 敏感词脱敏 -->
-        <dependency>
-            <groupId>com.github.houbb</groupId>
-            <artifactId>sensitive-core</artifactId>
-            <version>${sensitive.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.houbb</groupId>
-            <artifactId>sensitive-logback</artifactId>
-            <version>${sensitive.version}</version>
-        </dependency>
-
         <!-- skywalking -->
         <dependency>
             <groupId>com.hqy.cloud</groupId>

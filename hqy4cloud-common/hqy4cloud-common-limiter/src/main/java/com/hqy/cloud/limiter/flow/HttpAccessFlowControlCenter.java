@@ -40,10 +40,6 @@ public class HttpAccessFlowControlCenter {
      * @return redis流量限流器的检测结果
      */
     public FlowResult needLimitPerTimeWindow(String remoteIp, String method, String uri) {
-        if (CommonSwitcher.JUST_4_TEST_DEBUG.isOn()) {
-            log.info("needLimitPerMinute | {} |  {}", remoteIp, method);
-        }
-
         if (HttpMethod.OPTIONS.matches(method) || HttpMethod.TRACE.matches(method) || HttpMethod.PATCH.matches(method)) {
             //非业务方法不限制
             return FlowResult.build();

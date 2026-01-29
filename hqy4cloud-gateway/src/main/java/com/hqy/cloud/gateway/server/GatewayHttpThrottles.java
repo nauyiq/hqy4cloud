@@ -1,15 +1,12 @@
 package com.hqy.cloud.gateway.server;
 
-import cn.hutool.core.map.MapUtil;
 import com.hqy.cloud.coll.enums.BiBlockType;
 import com.hqy.cloud.coll.struct.ThrottledBlockStruct;
 import com.hqy.cloud.collection.api.Collector;
 import com.hqy.cloud.collection.common.BusinessCollectionType;
 import com.hqy.cloud.collection.core.CollectorHolder;
-import com.hqy.cloud.common.base.lang.StringConstants;
 import com.hqy.cloud.common.request.HttpRequestInfo;
 import com.hqy.cloud.common.swticher.ServerSwitcher;
-import com.hqy.cloud.gateway.util.RequestUtil;
 import com.hqy.cloud.limiter.api.HttpThrottles;
 import com.hqy.cloud.limiter.core.LimitResult;
 import com.hqy.cloud.limiter.flow.FlowResult;
@@ -17,16 +14,10 @@ import com.hqy.cloud.limiter.flow.HttpAccessFlowControlCenter;
 import com.hqy.cloud.registry.context.ProjectContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.*;
+import static com.hqy.cloud.common.base.lang.StringConstants.Symbol.INCLINED_ROD;
 
 /**
  * Http限流器，内部实现了系统忙或者客户端频繁访问时，判定要否限流的功能。也能识别出基本的hack或者数据采集，继而判定要限制访问。<br>
@@ -42,69 +33,6 @@ public class GatewayHttpThrottles implements HttpThrottles {
     private final HttpAccessFlowControlCenter flowControlCenter;
     private final ThrottlesProcess throttlesProcess;
     private static final int MAX_LENGTH = 1024;
-
-    public LimitResult limitValue(ServerHttpRequest request) {
-
-        final HttpRequestInfo requestInfo = new HttpRequestInfo() {
-            @Override
-            public String getUri() {
-                return request.getURI().getPath();
-            }
-
-            @Override
-            public String getRequestUrl() {
-                return request.getURI().toString();
-            }
-
-            @Override
-            public String getMethod() {
-                return request.getMethod().name();
-            }
-
-            @Override
-            public String getRequestIp() {
-                return RequestUtil.getIpAddress(request);
-            }
-
-            @Override
-            public String getIpCountry() {
-                return null;
-            }
-
-            @Override
-            public String getHeader(String header) {
-                List<String> headers = request.getHeaders().get(header);
-                if (CollectionUtils.isNotEmpty(headers)) {
-                    return StringUtils.join(headers, StringConstants.Symbol.COMMA);
-                }
-                return StringConstants.EMPTY;
-            }
-
-            @Override
-            public String getRequestParams() {
-                MultiValueMap<String, String> queryParams = request.getQueryParams();
-                if (MapUtil.isNotEmpty(queryParams)) {
-                    StringBuilder sb = new StringBuilder();
-                    for (Map.Entry<String, String> entry : queryParams.toSingleValueMap().entrySet()) {
-                        sb.append(entry.getKey())
-                                .append(EQUALS)
-                                .append(entry.getValue())
-                                .append(AND);
-                    }
-                    return sb.toString();
-                } else {
-                    return StringConstants.EMPTY;
-                }
-            }
-
-            @Override
-            public String getRequestBody() {
-                return RequestUtil.resolveBodyFromRequest(request);
-            }
-        };
-
-        return limitValue(requestInfo);
-    }
 
     @Override
     public LimitResult limitValue(HttpRequestInfo request) {

@@ -149,11 +149,20 @@
             <version>3.2.2</version>
         </dependency>
 
+
+        <!-- 敏感词脱敏 -->
         <dependency>
             <groupId>com.github.houbb</groupId>
-            <artifactId>sensitive-annotation</artifactId>
-            <version>1.7.0</version>
+            <artifactId>sensitive-core</artifactId>
+            <version>${sensitive.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-logback</artifactId>
+            <version>${sensitive.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

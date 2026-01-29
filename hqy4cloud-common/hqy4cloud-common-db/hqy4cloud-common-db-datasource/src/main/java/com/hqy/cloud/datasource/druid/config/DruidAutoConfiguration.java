@@ -20,7 +20,7 @@ import static com.hqy.cloud.datasource.druid.DruidConstants.FILTER_STAT_PREFIX;
  * @date 2023/12/13 10:38
  */
 @Configuration
-@EnableConfigurationProperties({DataSourceProperties.class, DruidConfigProperties.class})
+@EnableConfigurationProperties({DataSourceProperties.class, DruidConfigProperties.class, SysTraceSqlLogProperties.class})
 public class DruidAutoConfiguration {
 
     @Bean
@@ -30,7 +30,6 @@ public class DruidAutoConfiguration {
     public StatFilter statFilter(DruidConfigProperties druidProperties) {
         return new ExtendDruidStatFilter(druidProperties);
     }
-
 
 
 
