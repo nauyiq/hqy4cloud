@@ -46,13 +46,13 @@ public class SentinelAutoConfiguration {
     public BlockExceptionHandler blockExceptionHandler() {
         return (httpServletRequest, httpServletResponse, resourceName, e) -> {
             if (e instanceof DegradeException) {
-                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_ALREADY_DEGRADE));
+                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.SYSTEM_BUSY));
             } else if (e instanceof ParamFlowException) {
-                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_PRAM_HOT_KET_LIMIT));
+                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_BUSY_LIMIT));
             } else if (e instanceof AuthorityException) {
                 out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.SENTINEL_LIMITED_AUTHORITY));
             } else {
-                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.INTERFACE_LIMITED));
+                out(httpServletResponse, HttpStatus.FORBIDDEN.value(), R.failed(ResultCode.TOO_MANY_REQUEST));
             }
         };
     }

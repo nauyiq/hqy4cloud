@@ -6,11 +6,18 @@ package com.hqy.cloud.account.constants;
  */
 public enum AccountStatus {
 
-    INIT,
-
+    /**
+     * 活跃的
+     */
     ACTIVE,
 
+    /**
+     * 已禁用
+     */
     DISABLED,
 
-
+    /**
+     * 已注销
+     */
+    CANCELLED,
 }

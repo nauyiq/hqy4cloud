@@ -47,13 +47,6 @@ public class SecurityAuthenticationFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOff()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Not support security authentication diffuse inner user.");
-            }
-            return chain.filter(exchange);
-        }
-
         HttpHeaders headers = request.getHeaders();
         if (headers.containsKey(AuthUserHeaderConstants.AUTH_USER)) {
             // 防止用户伪造请求头

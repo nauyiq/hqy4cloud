@@ -17,6 +17,20 @@ public interface AccountDomainService extends IService<Account> {
     Account findById(Long id);
 
     /**
+     * 根据手机号码查找
+     * @param phone
+     * @return
+     */
+    Account findByPhone(String phone);
+
+    /**
+     * 根据邮箱查找
+     * @param email
+     * @return
+     */
+    Account findByEmail(String email);
+
+    /**
      * 查询账户信息
      * @param uniqueIndex     唯一索引（用户名，手机号，邮箱）
      * @return                Account

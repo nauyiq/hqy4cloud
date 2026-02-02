@@ -21,6 +21,6 @@ public class SentinelExceptionHandler implements BlockRequestHandler {
     @Override
     public Mono<ServerResponse> handleRequest(ServerWebExchange serverWebExchange, Throwable throwable) {
         return ServerResponse.status(HttpStatus.FORBIDDEN)
-                .body(BodyInserters.fromValue(R.failed(ResultCode.INTERFACE_LIMITED)));
+                .body(BodyInserters.fromValue(R.failed(ResultCode.INTERFACE_BUSY_LIMIT)));
     }
 }

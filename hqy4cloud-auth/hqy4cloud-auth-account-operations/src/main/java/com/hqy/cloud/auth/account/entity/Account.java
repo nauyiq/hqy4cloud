@@ -100,4 +100,13 @@ public class Account extends CommonEntity {
         setRealName(rearName);
         setIdCard(idCard);
     }
+
+    public boolean isDisabled() {
+        return this.status == AccountStatus.DISABLED;
+    }
+
+    public boolean isCancelled() {
+        return this.status == AccountStatus.CANCELLED;
+    }
+
 }

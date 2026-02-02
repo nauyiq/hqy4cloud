@@ -1,7 +1,6 @@
 package com.hqy.cloud.auth.facade;
 
 import cn.hutool.core.lang.Assert;
-import com.alicp.jetcache.anno.CacheInvalidate;
 import com.hqy.cloud.account.constants.AccountResultCode;
 import com.hqy.cloud.account.constants.AccountStatus;
 import com.hqy.cloud.account.constants.GrantType;
@@ -12,15 +11,14 @@ import com.hqy.cloud.account.request.AuthenticateRequest;
 import com.hqy.cloud.account.response.AccountInfo;
 import com.hqy.cloud.account.response.TokenInfo;
 import com.hqy.cloud.account.service.AccountFacadeService;
-import com.hqy.cloud.auth.account.cache.AccountAuthCacheManager;
 import com.hqy.cloud.auth.account.entity.Account;
 import com.hqy.cloud.auth.account.service.AccountDomainService;
 import com.hqy.cloud.auth.application.AccountApplicationService;
 import com.hqy.cloud.auth.application.AuthenticationApplicationService;
 import com.hqy.cloud.auth.base.converter.AccountConverter;
 import com.hqy.cloud.common.base.exception.BizException;
-import com.hqy.cloud.common.result.BsResultCode;
 import com.hqy.cloud.common.result.R;
+import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.rpc.dubbo.DubboConstants;
 import com.hqy.cloud.rpc.dubbo.facade.Facade;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +57,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
             account = accountDomainService.queryAccountByUniqueIndex(queryParams.getEmail());
         }
         if (account == null) {
-            return R.failed(AccountResultCode.USER_NOT_FOUND);
+            return R.failed(AccountResultCode.ACCOUNT_NOT_FOUND);
         }
 
         AccountInfo accountInfo = AccountConverter.CONVERTER.mapToVo(account);
@@ -78,7 +76,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     public R<TokenInfo> registerAndAuthenticate(AuthenticateRequest request) {
         // 1. 请求校验, 注册并认证只支持SMS/EMAIL模式
         GrantType grantType = request.getGrantType();
-        if (grantType == GrantType.PASSWORD) {
+        if (grantType != GrantType.EMAIL && grantType != GrantType.SMS) {
             return R.failed(AccountResultCode.UNSUPPORTED_AUTHENTICATION_GRANT_TYPE);
         }
 
@@ -94,7 +92,7 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     @Override
     public R<AccountInfo> realNameAuth(AccountAuthRequest request) {
         Account account = accountDomainService.findById(request.getId());
-        Assert.notNull(account, () -> new BizException(AccountResultCode.USER_NOT_FOUND));
+        Assert.notNull(account, () -> new BizException(AccountResultCode.ACCOUNT_NOT_FOUND));
         if (account.getCertification()) {
             // 已经实名
             return R.ok(AccountConverter.CONVERTER.mapToVo(account));
@@ -112,14 +110,14 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     public R<Boolean> updatePassword(AccountModifyRequest request) {
         Account account = accountDomainService.findById(request.getId());
         if (account == null) {
-            return R.failed(AccountResultCode.USER_NOT_FOUND);
+            return R.failed(AccountResultCode.ACCOUNT_NOT_FOUND);
         }
         String password = account.getPassword();
         if (!passwordEncoder.matches(request.getOldPassword(), password)) {
-            return R.failed(AccountResultCode.PASSWORD_ERROR);
+            return R.failed(AccountResultCode.INCORRECT_PASSWORD);
         }
         account.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        return accountDomainService.updateById(account) ? R.ok() : R.failed(BsResultCode.UPDATE_FAILED);
+        return accountDomainService.updateById(account) ? R.ok() : R.failed(ResultCode.UPDATE_FAILED);
     }
 
 

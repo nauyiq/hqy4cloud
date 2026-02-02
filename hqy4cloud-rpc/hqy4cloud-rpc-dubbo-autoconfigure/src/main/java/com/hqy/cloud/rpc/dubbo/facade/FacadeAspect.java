@@ -211,14 +211,14 @@ public class FacadeAspect {
             response.setSuccess(false);
             if (valid) {
                 // 校验入参异常
-                response.setCode(ResultCode.ERROR_PARAM.getCode());
-                response.setMessage(ResultCode.ERROR_PARAM.getMessage());
+                response.setCode(ResultCode.PARAMS_ERROR.getCode());
+                response.setMessage(ResultCode.PARAMS_ERROR.getMessage());
             } else if (throwable instanceof BizException bizException) {
                 response.setCode(bizException.getCode());
                 response.setMessage(bizException.getMessage());
             } else {
-                response.setMessage(ResultCode.SYSTEM_ERROR.message);
-                response.setCode(ResultCode.SYSTEM_ERROR.code);
+                response.setMessage(ResultCode.SYSTEM_INTERVAL_ERROR.message);
+                response.setCode(ResultCode.SYSTEM_INTERVAL_ERROR.code);
             }
             return response;
         }

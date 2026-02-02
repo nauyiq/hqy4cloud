@@ -62,16 +62,18 @@ public class AccountApplicationServiceImpl implements AccountApplicationService 
     @Override
     public Account register(AuthenticateRequest request) {
         if (StringUtils.isAllBlank(request.getAccessAccount(), request.getAccessSecret())) {
-            throw new BizException(ResultCode.ERROR_PARAM_UNDEFINED);
-        }
-        // 1. 查询用户是否存在
-        Account existAccount = accountDomainService.queryAccountByUniqueIndex(request.getAccessAccount());
-        if (existAccount != null) {
-            return existAccount;
+            throw new BizException(ResultCode.PARAM_UNDEFINED);
         }
 
-        // 2. 验证密钥
+        // 1. 验证密钥
         validRegisterSecret(request);
+
+        // 1. 查询用户是否存在
+        Account existAccount = request.getGrantType() == GrantType.SMS ? accountDomainService.findByPhone(request.getAccessAccount()) : accountDomainService.findByEmail(request.getAccessAccount());
+        if (existAccount != null) {
+            Assert.isTrue(existAccount.isCancelled(), () -> new BizException(AccountResultCode.ACCOUNT_ALREADY_CANCELLED));
+            return existAccount;
+        }
 
         // 3. 新增account
         Account account = Account.register(

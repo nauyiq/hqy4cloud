@@ -53,40 +53,24 @@ public class AuthUtils {
 
         HttpServletRequest request = WebUtils.currentRequest();
         Assert.notNull(request, "Current env not support spring mvc.");
-        if (CommonSwitcher.ENABLE_DIFFUSE_INNER_USER_AUTH_INFO.isOn()) {
-            // 从请求头获取用户信息
-            try {
-                String authUserJson = request.getHeader(AuthUserHeaderConstants.AUTH_USER);
-                AssertUtil.notEmpty(authUserJson, "AuthUser is empty from request header.");
-                authUser = JSON.parseObject(Base64.decodeStr(authUserJson), DefaultAuthUser.class);
-            } catch (Exception cause) {
-                log.error(cause.getMessage(), cause);
-                throw new AuthException(ResultCode.NOT_LOGIN);
-            }
-        } else {
-            authUser = getAuthUserByService(request);
+        // 从请求头获取用户信息
+        try {
+            String authUserJson = request.getHeader(AuthUserHeaderConstants.AUTH_USER);
+            AssertUtil.notEmpty(authUserJson, "AuthUser is empty from request header.");
+            authUser = JSON.parseObject(Base64.decodeStr(authUserJson), DefaultAuthUser.class);
+        } catch (Exception cause) {
+            log.error(cause.getMessage(), cause);
+            throw new AuthException(ResultCode.INVALID_ACCESS_TOKEN);
         }
-
         if (authUser != null) {
             THREAD_LOCAL.set(authUser);
         } else {
-            throw new AuthException(ResultCode.NOT_LOGIN);
+            throw new AuthException(ResultCode.INVALID_ACCESS_TOKEN);
         }
 
        return authUser;
     }
 
-    private static AuthUser getAuthUserByService(HttpServletRequest request) {
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasLength(authorization)) {
-            throw new AuthException(ResultCode.NOT_LOGIN);
-        }
-        AuthUserService service = SpringUtil.getBean(AuthUserService.class);
-        if (service == null) {
-            throw new AuthException(ResultCode.SYSTEM_ERROR.code, "Not found AuthUser service.");
-        }
-        return service.getAuthUserByToken(authorization);
-    }
 
     public Long getCurrentUserId() {
         return getCurrentUser().getId();

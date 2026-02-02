@@ -55,9 +55,9 @@ public class DefaultAuthenticationFailureHandler implements AuthenticationFailur
 
         if (StrUtil.isNotBlank(errorCode)) {
             result = switch (errorCode) {
-                case OAuth2ErrorCodes.INVALID_REQUEST -> ResultCode.ERROR_PARAM;
+                case OAuth2ErrorCodes.INVALID_REQUEST -> ResultCode.PARAMS_ERROR;
                 case Oauth2ErrorCodesExpand.INVALID_REQUEST_CODE -> AccountResultCode.VERIFY_CODE_ERROR;
-                case Oauth2ErrorCodesExpand.USERNAME_NOT_FOUND -> AccountResultCode.USER_NOT_FOUND;
+                case Oauth2ErrorCodesExpand.USERNAME_NOT_FOUND -> AccountResultCode.ACCOUNT_NOT_FOUND;
                 default -> null;
             };
         }

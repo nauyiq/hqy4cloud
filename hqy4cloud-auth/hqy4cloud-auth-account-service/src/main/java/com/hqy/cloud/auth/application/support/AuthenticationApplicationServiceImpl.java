@@ -37,7 +37,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
@@ -227,11 +226,11 @@ public class AuthenticationApplicationServiceImpl implements AuthenticationAppli
 
         // 加载用户信息
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        Assert.notNull(userDetails, () -> new BizException(AccountResultCode.USER_NOT_FOUND));
+        Assert.notNull(userDetails, () -> new BizException(AccountResultCode.ACCOUNT_NOT_FOUND));
 
         SecurityAuthUser securityAuthUser = (SecurityAuthUser) userDetails;
         switch (grantType) {
-            case PASSWORD -> Assert.isTrue(passwordEncoder.matches(request.getAccessSecret(), userDetails.getPassword()), () -> new BizException(AccountResultCode.PASSWORD_ERROR));
+            case PASSWORD -> Assert.isTrue(passwordEncoder.matches(request.getAccessSecret(), userDetails.getPassword()), () -> new BizException(AccountResultCode.INCORRECT_PASSWORD));
             case SMS -> Assert.isTrue(randomCodeService.isExist(request.getAccessSecret(), request.getAccessAccount(), request.getClientId(), RandomCodeScene.SMS_AUTH), () -> new BizException(AccountResultCode.VERIFY_CODE_ERROR));
             case EMAIL -> Assert.isTrue(randomCodeService.isExist(request.getAccessSecret(), request.getAccessAccount(), request.getClientId(), RandomCodeScene.EMAIL_AUTH), () -> new BizException(AccountResultCode.VERIFY_CODE_ERROR));
         }

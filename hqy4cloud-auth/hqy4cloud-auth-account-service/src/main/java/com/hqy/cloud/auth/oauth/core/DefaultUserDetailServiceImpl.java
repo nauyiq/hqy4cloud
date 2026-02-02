@@ -37,7 +37,7 @@ public class DefaultUserDetailServiceImpl implements UserDetailsServiceWrapper {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = service.queryAccountByUniqueIndex(username);
         if (Objects.isNull(account)) {
-            throw new UsernameNotFoundException(AccountResultCode.USER_NOT_FOUND.message);
+            throw new UsernameNotFoundException(AccountResultCode.ACCOUNT_NOT_FOUND.message);
         }
         OauthClient oauthClient = SysOauthClientDomainService.findByClientId(account.getClientId());
         if (Objects.isNull(oauthClient)) {

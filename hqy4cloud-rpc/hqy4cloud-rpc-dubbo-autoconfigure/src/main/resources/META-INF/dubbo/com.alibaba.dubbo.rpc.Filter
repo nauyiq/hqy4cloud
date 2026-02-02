@@ -1,0 +1,1 @@
+facadeFilter=com.hqy.cloud.rpc.dubbo.filter.SysFacadeFilter

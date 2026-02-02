@@ -42,6 +42,6 @@ public class CommunicationFacadeServiceImpl implements CommunicationFacadeServic
                 RandomCodeScene.SMS_AUTH,
                 params.getClientId(),
                 phone);
-        return smsSender.send(params.getSmsType().type, phone, code) ? R.ok() : R.failed(ResultCode.FAILED_SEND_SMS);
+        return smsSender.send(params.getSmsType().type, phone, code) ? R.ok() : R.failed(CommunicationResultCode.FAILED_SEND_SMS);
     }
 }

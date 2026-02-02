@@ -1,7 +1,7 @@
 package com.hqy.cloud.gateway.config;
 
+import com.hqy.cloud.account.constants.AccountResultCode;
 import com.hqy.cloud.auth.api.AuthPermissionService;
-import com.hqy.cloud.auth.common.UserRole;
 import com.hqy.cloud.auth.security.core.DefaultReactiveOpaqueTokenIntrospector;
 import com.hqy.cloud.auth.security.core.RedisOAuth2AuthorizationService;
 import com.hqy.cloud.auth.utils.StaticEndpointAuthorizationManager;
@@ -119,7 +119,7 @@ public class ResourceServerConfiguration {
         return (webFilterExchange, exception) -> {
             ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
             return Mono.defer(() -> {
-                R<Object> failed = R.failed(ResultCode.INVALID_ACCESS_USER);
+                R<Object> failed = R.failed(AccountResultCode.INCORRECT_PASSWORD);
                 DataBuffer buffer = ResponseUtil.outputBuffer(failed, response, HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Flux.just(buffer));
             });
@@ -131,7 +131,7 @@ public class ResourceServerConfiguration {
     ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> Mono.defer(()-> {
             ServerHttpResponse response = exchange.getResponse();
-            R<String> result = R.setResult(false, ResultCode.LIMITED_AUTHORITY, denied.getMessage());
+            R<String> result = R.setResult(false, ResultCode.NOT_PERMISSION, denied.getMessage());
             DataBuffer buffer = ResponseUtil.outputBuffer(result, response, HttpStatus.FORBIDDEN);
             return response.writeWith(Flux.just(buffer));
         });

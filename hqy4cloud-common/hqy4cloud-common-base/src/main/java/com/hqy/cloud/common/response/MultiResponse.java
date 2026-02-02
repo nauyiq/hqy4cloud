@@ -1,6 +1,5 @@
 package com.hqy.cloud.common.response;
 
-import com.hqy.cloud.common.result.BsResultCode;
 import com.hqy.cloud.common.result.PageResult;
 import com.hqy.cloud.common.result.Result;
 import com.hqy.cloud.common.result.ResultCode;
@@ -47,11 +46,11 @@ public class MultiResponse<T> extends Response {
 
 
     public static <T> MultiResponse<T> ok(List<T> data, long total, int page, int size) {
-        return new MultiResponse<T>(true, BsResultCode.SUCCESS.code, BsResultCode.SUCCESS.message, data, total, page, size);
+        return new MultiResponse<T>(true, ResultCode.SUCCESS.code, ResultCode.SUCCESS.message, data, total, page, size);
     }
 
 
-    public static <T> MultiResponse<T> failed(BsResultCode result) {
+    public static <T> MultiResponse<T> failed(Result result) {
         return new MultiResponse<>(false, result.getCode(), result.getMessage(), null, 0, 0, 0);
     }
 

@@ -1,9 +1,17 @@
 package com.hqy.cloud.common.result;
 
 /**
+ * <p>
+ *     格式: T + MM + NNN
+ *      │   │    │
+ *      │   │    └── NNN: 具体错误序号 (001-999)
+ *      │   └────── MM: 业务模块编码 (00-99)
+ *      └────────── T: 错误类型 (0-9)
+ *
+ *     @see com.hqy.cloud.common.result.ResultCodeConstants
+ * </p>
  * @author qiyuan.hong
  * @version 1.0
- * @date 2023/3/10
  */
 public interface Result {
 
@@ -27,6 +35,11 @@ public interface Result {
         return null;
     }
 
-
-
+    /**
+     * 获取 i18n 消息 key
+     * @return i18n key
+     */
+    default String getI18nKey() {
+        return "error." + getCode();
+    }
 }

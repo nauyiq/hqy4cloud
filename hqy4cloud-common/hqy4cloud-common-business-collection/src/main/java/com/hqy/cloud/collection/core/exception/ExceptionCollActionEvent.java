@@ -84,7 +84,7 @@ public class ExceptionCollActionEvent extends ApplicationEvent {
     /**
      * 异常的状态码
      */
-    private Result resultCode = ResultCode.SYSTEM_ERROR;
+    private Result resultCode = ResultCode.SYSTEM_BUSY;
 
     @Override
     public boolean equals(Object o) {

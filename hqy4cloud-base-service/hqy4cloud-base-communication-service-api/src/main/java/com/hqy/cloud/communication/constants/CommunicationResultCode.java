@@ -12,7 +12,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CommunicationResultCode implements Result {
 
-    INVALID_PHONE("INVALID_PHONE", "手机号码格式不正确"),
+    //  ==================== 参数异常 ====================
+    INVALID_PHONE("104001", "手机号码格式不正确"),
+
+    //  ==================== 业务异常 ====================
+    FAILED_SEND_SMS("304001", "发送短信失败"),
+    NOT_FOUND_SMS_TEMPLATE("304002", "短信模板不存在")
 
     ;
 

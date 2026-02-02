@@ -6,11 +6,10 @@ import com.google.common.collect.Maps;
 import com.hqy.cloud.collection.core.exception.ExceptionCollActionEvent;
 import com.hqy.cloud.common.base.exception.BizException;
 import com.hqy.cloud.common.base.lang.exception.NotAuthenticationException;
-import com.hqy.cloud.common.base.lang.exception.RpcException;
+import com.hqy.cloud.common.constants.ExceptionType;
 import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.web.utils.IpUtil;
-import com.hqy.cloud.common.constants.ExceptionType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,17 +75,7 @@ public class WebMvcGlobalExceptionHandler {
         log.error(e.getMessage(), e);
         // 异常采集
         collectionException(e, request);
-        return R.failed(ResultCode.SYSTEM_ERROR);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(RpcException.class)
-    public R<Boolean> handler(RpcException rpcException, HttpServletRequest request) {
-        if (rpcException.isBiz()) {
-            return R.failed(ResultCode.RPC_INTERFACE_TOO_MANY_REQUEST);
-        } else {
-            return R.failed(ResultCode.SYSTEM_BUSY);
-        }
+        return R.failed(ResultCode.SYSTEM_INTERVAL_ERROR);
     }
 
     private void collectionException(RuntimeException e, HttpServletRequest request) {
@@ -113,19 +102,8 @@ public class WebMvcGlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return R.failed(JSONUtil.toJsonStr(errors), ResultCode.ERROR_PARAM.code);
+        return R.failed(JSONUtil.toJsonStr(errors), ResultCode.PARAMS_ERROR.code);
     }
 
-    /**
-     * javax.validation.ValidationException 捕获
-     * @param e ValidationException
-     * @return MessageResponse
-     */
-   /* @ExceptionHandler(ValidationException.class)
-    @ResponseBody
-    public R<Boolean> validationException(ValidationException  e) {
-        log.warn(e.getMessage());
-        return R.failed(ResultCode.ERROR_PARAM);
-    }*/
 
 }

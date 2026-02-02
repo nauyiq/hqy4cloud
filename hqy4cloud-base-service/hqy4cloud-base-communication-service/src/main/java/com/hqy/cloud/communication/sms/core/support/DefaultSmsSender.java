@@ -4,6 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.google.common.collect.Maps;
 import com.hqy.cloud.common.result.ResultCode;
+import com.hqy.cloud.communication.constants.CommunicationResultCode;
 import com.hqy.cloud.communication.sms.common.SmsConstants;
 import com.hqy.cloud.communication.sms.common.SmsException;
 import com.hqy.cloud.communication.sms.config.SmsProperties;
@@ -32,7 +33,7 @@ public class DefaultSmsSender implements SmsSender {
     public boolean send(String type, String phoneNumber, String code) {
         SmsProperties.SmsTemplate template = smsProperties.getTemplates().get(type);
         if (template == null) {
-            throw new SmsException(ResultCode.NOT_FOUND_SMS_TEMPLATE.getCode(), "Not found sms template by type: " + type);
+            throw new SmsException(CommunicationResultCode.NOT_FOUND_SMS_TEMPLATE.getCode(), "Not found sms template by type: " + type);
         }
 
         // 创建国阳云HTTP URL请求 参考文档：http://help.guoyangyun.com/Problem/Qm.html
