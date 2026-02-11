@@ -37,7 +37,7 @@ public class MultiResponse<T> extends Response {
     private int size;
 
     public MultiResponse(boolean result, String code, String message, List<T> data, long total, int page, int size) {
-        super(result, message, code);
+        super(result, code, message);
         this.data = data;
         this.total = total;
         this.page = page;

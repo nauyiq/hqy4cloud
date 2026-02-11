@@ -35,11 +35,4 @@ public interface Result {
         return null;
     }
 
-    /**
-     * 获取 i18n 消息 key
-     * @return i18n key
-     */
-    default String getI18nKey() {
-        return "error." + getCode();
-    }
 }

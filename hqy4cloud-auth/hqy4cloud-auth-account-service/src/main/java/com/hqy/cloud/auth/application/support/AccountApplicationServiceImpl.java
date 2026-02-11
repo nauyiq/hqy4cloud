@@ -71,7 +71,7 @@ public class AccountApplicationServiceImpl implements AccountApplicationService 
         // 1. 查询用户是否存在
         Account existAccount = request.getGrantType() == GrantType.SMS ? accountDomainService.findByPhone(request.getAccessAccount()) : accountDomainService.findByEmail(request.getAccessAccount());
         if (existAccount != null) {
-            Assert.isTrue(existAccount.isCancelled(), () -> new BizException(AccountResultCode.ACCOUNT_ALREADY_CANCELLED));
+            Assert.isFalse(existAccount.isCancelled(), () -> new BizException(AccountResultCode.ACCOUNT_ALREADY_CANCELLED));
             return existAccount;
         }
 
