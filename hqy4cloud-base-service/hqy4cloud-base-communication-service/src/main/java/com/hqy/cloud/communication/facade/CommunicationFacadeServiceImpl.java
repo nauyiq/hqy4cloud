@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.Validator;
 import com.hqy.cloud.common.base.exception.BizException;
 import com.hqy.cloud.common.result.R;
-import com.hqy.cloud.common.result.ResultCode;
 import com.hqy.cloud.communication.constants.CommunicationResultCode;
 import com.hqy.cloud.communication.request.PhoneMsgParams;
 import com.hqy.cloud.communication.service.CommunicationFacadeService;
@@ -12,7 +11,6 @@ import com.hqy.cloud.communication.sms.core.SmsSender;
 import com.hqy.cloud.infrastructure.random.RandomCodeScene;
 import com.hqy.cloud.infrastructure.random.RandomCodeService;
 import com.hqy.cloud.rpc.dubbo.DubboConstants;
-import com.hqy.cloud.rpc.dubbo.facade.Facade;
 import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.DubboService;
 
@@ -28,7 +26,6 @@ public class CommunicationFacadeServiceImpl implements CommunicationFacadeServic
     private final RandomCodeService randomCodeService;
     private final SmsSender smsSender;
 
-    @Facade
     @Override
     public R<Boolean> sendAuthSms(PhoneMsgParams params) {
         String phone = params.getPhone();

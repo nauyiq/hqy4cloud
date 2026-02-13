@@ -44,7 +44,6 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
     private final AccountApplicationService accountApplicationService;
     private final AuthenticationApplicationService authenticationApplicationService;
 
-    @Facade
     @Override
     public R<AccountInfo> query(AccountQueryParams queryParams) {
         Account account = null;
@@ -64,14 +63,12 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
         return R.ok(accountInfo);
     }
 
-    @Facade
     @Override
     public R<List<AccountInfo>> queryList(Collection<Long> ids) {
         List<Account> accounts = accountDomainService.listByIds(ids);
         return R.ok(accounts.stream().map(AccountConverter.CONVERTER::mapToVo).toList());
     }
 
-    @Facade
     @Override
     public R<TokenInfo> registerAndAuthenticate(AuthenticateRequest request) {
         // 1. 请求校验, 注册并认证只支持SMS/EMAIL模式
@@ -88,7 +85,6 @@ public class AccountFacadeServiceImpl implements AccountFacadeService {
         return R.ok(authenticationApplicationService.authenticate(request));
     }
 
-    @Facade
     @Override
     public R<AccountInfo> realNameAuth(AccountAuthRequest request) {
         Account account = accountDomainService.findById(request.getId());

@@ -38,9 +38,9 @@ import java.util.List;
 public class FacadeAspect {
 
     @Around("@annotation(com.hqy.cloud.rpc.dubbo.facade.Facade)")
-    public Object facade(ProceedingJoinPoint pjp) throws Exception {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+    public Object facade(ProceedingJoinPoint pjp) throws Throwable {
+//        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start();
 
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
         Object[] args = pjp.getArgs();
@@ -53,20 +53,20 @@ public class FacadeAspect {
         Class returnType = ((MethodSignature) pjp.getSignature()).getMethod().getReturnType();
 
         //循环遍历所有参数，进行参数校验
-        for (Object parameter : args) {
-            try {
-                BeanValidator.validateObject(parameter);
-            } catch (ValidationException e) {
-                printLog(stopWatch, method, args, "failed to validate", null, e);
-                return getFailedResponse(returnType, e, true);
-            }
-        }
+//        for (Object parameter : args) {
+//            try {
+//                BeanValidator.validateObject(parameter);
+//            } catch (ValidationException e) {
+//                printLog(stopWatch, method, args, "failed to validate", null, e);
+//                return getFailedResponse(returnType, e, true);
+//            }
+//        }
 
-        try {
+//        try {
             // 目标方法执行
             Object response = pjp.proceed();
-            enrichObject(response);
-            printLog(stopWatch, method, args, "end to execute", response, null);
+//            enrichObject(response);
+//            printLog(stopWatch, method, args, "end to execute", response, null);
 
             if (facade.desensitize()) {
                 // 如果需要脱敏展示数据， 则脱敏后返回
@@ -74,13 +74,13 @@ public class FacadeAspect {
             }
 
             return response;
-        } catch (Throwable throwable) {
-            // TODO 异常采集
-
-            // 如果执行异常，则返回一个失败的response
-            printLog(stopWatch, method, args, "failed to execute", null, throwable);
-            return getFailedResponse(returnType, throwable, false);
-        }
+//        } catch (Throwable throwable) {
+//            // TODO 异常采集
+//
+//            // 如果执行异常，则返回一个失败的response
+////            printLog(stopWatch, method, args, "failed to execute", null, throwable);
+////            return getFailedResponse(returnType, throwable, false);
+//        }
 
     }
 

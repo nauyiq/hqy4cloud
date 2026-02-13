@@ -7,7 +7,6 @@ import com.hqy.cloud.account.service.AccountAuthenticationFacadeService;
 import com.hqy.cloud.auth.application.AuthenticationApplicationService;
 import com.hqy.cloud.common.result.R;
 import com.hqy.cloud.rpc.dubbo.DubboConstants;
-import com.hqy.cloud.rpc.dubbo.facade.Facade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -23,7 +22,6 @@ public class AccountAuthenticationFacadeServiceImpl implements AccountAuthentica
     private final AuthenticationApplicationService authenticationApplicationService;
 
 
-    @Facade
     @Override
     public R<TokenInfo> authenticate(AuthenticateRequest request) {
         log.info("RPC authenticate request, clientId: {}, grantType: {}, username: {}",
@@ -32,7 +30,6 @@ public class AccountAuthenticationFacadeServiceImpl implements AccountAuthentica
         return R.ok(tokenInfo);
     }
 
-    @Facade
     @Override
     public R<TokenInfo> refreshToken(RefreshTokenRequest request) {
         log.info("RPC refreshToken request, clientId: {}", request.getClientId());
@@ -40,7 +37,6 @@ public class AccountAuthenticationFacadeServiceImpl implements AccountAuthentica
         return R.ok(tokenInfo);
     }
 
-    @Facade
     @Override
     public R<Boolean> revokeToken(String accessToken) {
         log.info("RPC revokeToken request");

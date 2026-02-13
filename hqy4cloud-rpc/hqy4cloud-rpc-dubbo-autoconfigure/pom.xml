@@ -14,7 +14,7 @@
     <artifactId>hqy4cloud-rpc-dubbo-autoconfigure</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <dubbo.version>3.2.10</dubbo.version>
+        <dubbo.version>3.3.0</dubbo.version>
     </properties>
 
     <dependencies>
