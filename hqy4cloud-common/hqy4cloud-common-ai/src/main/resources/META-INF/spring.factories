@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.hqy.cloud.chatgpt.config.OpenAiChatGptAutoConfiguration,\
-com.hqy.cloud.chatgpt.config.ChatGptConfigurationProperties
